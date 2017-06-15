@@ -18,7 +18,7 @@
       },
       computed: {
         ...mapGetters([
-          'roles'
+          'permission'
         ])
       },
       watch: {

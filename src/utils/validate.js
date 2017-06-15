@@ -2,7 +2,7 @@
  * Created by jiachenpan on 16/11/18.
  */
 
-/* 是否是公司邮箱*/
+/* 是否是邮箱*/
 export function isWscnEmail(str) {
     const reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/i;
     return reg.test(str.trim());
@@ -19,12 +19,6 @@ export function validateLowerCase(str) {
     const reg = /^[a-z]+$/;
     return reg.test(str);
 }
-
-/* 验证key*/
-// export function validateKey(str) {
-//     var reg = /^[a-z_\-:]+$/;
-//     return reg.test(str);
-// }
 
 /* 大写字母*/
 export function validateUpperCase(str) {

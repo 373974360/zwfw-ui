@@ -22,14 +22,14 @@
                 'avatar',
                 'account',
                 'introduction',
-                'roles'
+                'permission'
             ])
         },
         created() {
-            if (this.roles.indexOf('admin') >= 0) {
+            if (this.permission.indexOf('admin') >= 0) {
                 return;
             }
-            // const isEditor = this.roles.some(v => v.indexOf('editor') >= 0)
+            // const isEditor = this.permission.some(v => v.indexOf('editor') >= 0)
             // if (!isEditor) {
             //   this.currentRole = 'DefaultDashboard';
             // }

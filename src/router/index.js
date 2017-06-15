@@ -110,9 +110,9 @@ export const asyncRouterMap = [
         redirect: '/permission/index',
         name: '权限测试',
         icon: 'quanxian',
-        meta: {role: ['admin']},
+        meta: {permission: ['org:admin']},
         noDropdown: true,
-        children: [{path: 'index', component: Permission, name: '权限测试页', meta: {role: ['admin']}}]
+        children: [{path: 'index', component: Permission, name: '权限测试页', meta: {permission: ['org:admin']}}]
     },
     {
         path: '/components',

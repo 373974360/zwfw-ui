@@ -1,8 +1,8 @@
 {
-  "name": "juicy",
+  "name": "base4j-ui",
   "version": "1.0.1",
   "description": "A Vue.js admin",
-  "author": "Pan <panfree23@gmail.com>",
+  "author": "Pan <373974360@qq.com>",
   "license": "MIT",
   "private": true,
   "scripts": {

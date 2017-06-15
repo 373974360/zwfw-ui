@@ -9,11 +9,11 @@ const user = {
         code: '',
         uid: undefined,
         auth_type: '',
-        token: Cookies.get('Admin-Token'),
+        token: Cookies.get('Base4j-Token'),
         name: '',
         avatar: '',
         introduction: '',
-        roles: [],
+        permissions: [],
         setting: {
             articlePlatform: []
         }
@@ -50,8 +50,8 @@ const user = {
         SET_AVATAR: (state, avatar) => {
             state.avatar = avatar;
         },
-        SET_ROLES: (state, roles) => {
-            state.roles = roles;
+        SET_PERMISSINSS: (state, permissions) => {
+            state.permissions = permissions;
         },
         LOGIN_SUCCESS: () => {
             console.log('login success')
@@ -66,11 +66,15 @@ const user = {
         LoginByEmail({commit}, userInfo) {
             return new Promise((resolve, reject) => {
                 loginByEmail(userInfo).then(response => {
-                    const data = response.data;
-                    Cookies.set('Admin-Token', data.id);
-                    commit('SET_TOKEN', data.id);
-                    commit('SET_EMAIL', data.account);
-                    resolve();
+                    if(response.httpCode !== 200){
+                        reject(response.msg);
+                    }else{
+                        const data = response.data;
+                        Cookies.set('Base4j-Token', data.id);
+                        commit('SET_TOKEN', data.id);
+                        commit('SET_EMAIL', data.account);
+                        resolve();
+                    }
                 }).catch(error => {
                     reject(error);
                 });
@@ -82,7 +86,7 @@ const user = {
             return new Promise((resolve, reject) => {
                 getInfo(state.token).then(response => {
                     const data = response.data;
-                    commit('SET_ROLES', data.role);
+                    commit('SET_PERMISSINSS', data.permissions);
                     commit('SET_NAME', data.userName);
                     commit('SET_AVATAR', data.avatar);
                     commit('SET_UID', data.id);
@@ -100,7 +104,7 @@ const user = {
                 logout(state.token).then(() => {
                     commit('SET_TOKEN', '');
                     commit('SET_ROLES', []);
-                    Cookies.remove('Admin-Token');
+                    Cookies.remove('Base4j-Token');
                     resolve();
                 }).catch(error => {
                     reject(error);
@@ -112,7 +116,7 @@ const user = {
         FedLogOut({commit}) {
             return new Promise(resolve => {
                 commit('SET_TOKEN', '');
-                Cookies.remove('Admin-Token');
+                Cookies.remove('Base4j-Token');
                 resolve();
             });
         },
@@ -120,9 +124,9 @@ const user = {
         // 动态修改权限
         ChangeRole({commit}, role) {
             return new Promise(resolve => {
-                commit('SET_ROLES', [role]);
+                commit('SET_PERMISSINSS', [role]);
                 commit('SET_TOKEN', role);
-                Cookies.set('Admin-Token', role);
+                Cookies.set('Base4j-Token', role);
                 resolve();
             })
         }

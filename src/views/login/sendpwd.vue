@@ -31,7 +31,7 @@
 
 <script>
     import {isWscnEmail} from 'utils/validate';
-    // import { sendPWD2Email } from 'api/login';
+    import {sendPWD2Email} from 'api/login';
     import doCanvas from 'utils/canvas';
 
     export default {
@@ -50,8 +50,7 @@
                 },
                 resetRules: {
                     account: [
-                        {required: true, trigger: 'blur'},
-                        {validator: validateEmail}
+                        {required: true, trigger: 'blur', validator: validateEmail}
                     ]
                 },
                 loading: false
@@ -62,13 +61,13 @@
                 this.loading = true;
                 this.$refs.resetForm.validate(valid => {
                     if (valid) {
-                        //   sendPWD2Email(this.resetForm.account).then(() => {
-                        //     this.$message.success('密码有发送至邮箱,请查收')
-                        //   });
+                        sendPWD2Email(this.resetForm.account).then(() => {
+                            this.$message.success('密码有发送至邮箱,请查收')
+                        });
                     } else {
-                        this.$message.error('错误提交!!');
+                        this.loading = false;
+                        return false;
                     }
-                    this.loading = false;
                 });
             }
         },

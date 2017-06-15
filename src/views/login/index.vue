@@ -52,12 +52,7 @@
                         </router-link>
                     </el-col>
                 </el-row>
-
             </el-form>
-            <el-dialog title="第三方验证" :visible.sync="showDialog">
-                邮箱登录成功,请选择第三方验证
-                <socialSign></socialSign>
-            </el-dialog>
         </div>
     </div>
 </template>
@@ -65,7 +60,6 @@
 <script>
     import {mapGetters} from 'vuex';
     import {isWscnEmail} from 'utils/validate';
-    // import { getQueryObject } from 'utils';
     import doCanvas from 'utils/canvas';
 
     export default {
@@ -110,14 +104,8 @@
                         {required: true, trigger: 'blur', validator: validateCaptcha}
                     ]
                 },
-                loading: false,
-                showDialog: false
+                loading: false
             }
-        },
-        computed: {
-            ...mapGetters([
-                'auth_type'
-            ])
         },
         methods: {
             handleLogin() {
@@ -127,10 +115,12 @@
                         this.$store.dispatch('LoginByEmail', this.loginForm).then(() => {
                             this.loading = false;
                             this.$router.push({path: '/'});
-                            // this.showDialog = true;
                         }).catch(err => {
-                            this.$message.error(err);
                             this.loading = false;
+                            this.$message.error(err);
+                            this.loginForm.password = '';
+                            this.loginForm.captcha = '';
+                            this.changeCaptcha();
                         });
                     } else {
                         console.log('error submit!!');
@@ -140,44 +130,20 @@
             },
             changeCaptcha() {
                 this.loginForm.imgUrl = process.env.BASE_API + '/base/getVerifyCode?' + Math.random();
-            },
-            afterQRScan() {
-                // const hash = window.location.hash.slice(1);
-                // const hashObj = getQueryObject(hash);
-                // const originUrl = window.location.origin;
-                // history.replaceState({}, '', originUrl);
-                // const codeMap = {
-                //   wechat: 'code',
-                //   tencent: 'code'
-                // };
-                // const codeName = hashObj[codeMap[this.auth_type]];
-                // if (!codeName) {
-                //   alert('第三方登录失败');
-                // } else {
-                //   this.$store.dispatch('LoginByThirdparty', codeName).then(() => {
-                //     this.$router.push({ path: '/' });
-                //   });
-                // }
             }
         },
         mounted() {
             doCanvas();
             this.changeCaptcha();
-            window.onresize = function() {
+            window.onresize = function () {
                 doCanvas();
             }
-        },
-        created() {
-            // window.addEventListener('hashchange', this.afterQRScan);
-        },
-        destroyed() {
-            // window.removeEventListener('hashchange', this.afterQRScan);
         }
     }
 </script>
 
 <style rel="stylesheet/scss" lang="scss">
-    @import "src/styles/mixin.scss";
+    @import 'src/styles/mixin.scss';
 
     canvas {
         position: fixed;
@@ -195,81 +161,81 @@
 
     .login-container {
 
-    input:-webkit-autofill {
-        -webkit-box-shadow: 0 0 0px 1000px #e0e1e2 inset !important;
-        -webkit-text-fill-color: #000000 !important;
-    }
+        input:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0px 1000px #e0e1e2 inset !important;
+            -webkit-text-fill-color: #000000 !important;
+        }
 
-    input {
-        background: transparent;
-        border: 0px;
-        -webkit-appearance: none;
-        border-radius: 0px;
-        padding: 12px 5px 12px 15px;
-        color: #000000;
-        height: 47px;
-    }
+        input {
+            background: transparent;
+            border: 0px;
+            -webkit-appearance: none;
+            border-radius: 0px;
+            padding: 12px 5px 12px 15px;
+            color: #000000;
+            height: 47px;
+        }
 
-    .login-form {
-        position: absolute;
-        left: 0;
-        right: 0;
-        width: 350px;
-        padding: 35px 35px 15px 35px;
-        margin: 170px auto;
-    }
+        .login-form {
+            position: absolute;
+            left: 0;
+            right: 0;
+            width: 350px;
+            padding: 35px 35px 15px 35px;
+            margin: 170px auto;
+        }
 
-    .card-box {
-        padding: 20px;
-        box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.06), 0 1px 0px 0 rgba(0, 0, 0, 0.02);
-        -webkit-border-radius: 5px;
-        border-radius: 5px;
-        -moz-border-radius: 5px;
-        background-clip: padding-box;
-        margin-bottom: 20px;
-        background-color: #F9FAFC;
-        width: 430px;
-        border: 2px solid #8492A6;
-    }
+        .card-box {
+            padding: 20px;
+            box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.06), 0 1px 0px 0 rgba(0, 0, 0, 0.02);
+            -webkit-border-radius: 5px;
+            border-radius: 5px;
+            -moz-border-radius: 5px;
+            background-clip: padding-box;
+            margin-bottom: 20px;
+            background-color: #F9FAFC;
+            width: 430px;
+            border: 2px solid #8492A6;
+        }
 
-    .title {
-        margin: 0px auto 28px auto;
-        text-align: center;
-        color: #505458;
-    }
+        .title {
+            margin: 0px auto 28px auto;
+            text-align: center;
+            color: #505458;
+        }
 
-    .el-input {
-        display: inline-block;
-        height: 47px;
-        width: 85%;
-    }
+        .el-input {
+            display: inline-block;
+            height: 47px;
+            width: 85%;
+        }
 
-    .svg-container {
-        padding: 6px 5px 6px 15px;
-        color: #889aa4;
-    }
+        .svg-container {
+            padding: 6px 5px 6px 15px;
+            color: #889aa4;
+        }
 
-    .el-form-item {
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background: rgba(0, 0, 0, 0.1);
-        border-radius: 5px;
-        color: #454545;
-    }
+        .el-form-item {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            color: #454545;
+        }
 
-    .captcha {
-        width: 70px;
-        height: 35px;
-        position: absolute;
-        right: 10px;
-        top: 6px;
-        cursor: pointer;
-    }
+        .captcha {
+            width: 70px;
+            height: 35px;
+            position: absolute;
+            right: 10px;
+            top: 6px;
+            cursor: pointer;
+        }
 
-    .forget-pwd {
-        color: #000;
-        font-size: small;
-        margin-right: 10px;
-    }
+        .forget-pwd {
+            color: #000;
+            font-size: small;
+            margin-right: 10px;
+        }
 
     }
 </style>
