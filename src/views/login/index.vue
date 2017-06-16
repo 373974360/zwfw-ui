@@ -9,7 +9,7 @@
                 <el-row type="flex" justify="center">
                     <el-col :span="24">
                         <el-form-item prop="account">
-                            <span class="svg-container"><wscn-icon-svg icon-class="jiedianyoujian"/></span>
+                            <span class="svg-container"><wscn-icon-svg icon-class="youxiang"/></span>
                             <el-input name="account" type="text" v-model="loginForm.account" autoComplete="on"
                                       placeholder="帐号"></el-input>
                         </el-form-item>
@@ -104,7 +104,8 @@
                         {required: true, trigger: 'blur', validator: validateCaptcha}
                     ]
                 },
-                loading: false
+                loading: false,
+                canvas: true
             }
         },
         methods: {
@@ -114,6 +115,7 @@
                         this.loading = true;
                         this.$store.dispatch('LoginByEmail', this.loginForm).then(() => {
                             this.loading = false;
+                            this.canvas = false;
                             this.$router.push({path: '/'});
                         }).catch(err => {
                             this.loading = false;
@@ -135,8 +137,11 @@
         mounted() {
             doCanvas();
             this.changeCaptcha();
+            const _this = this;
             window.onresize = function () {
-                doCanvas();
+                if(_this.canvas){
+                    doCanvas();
+                }
             }
         }
     }

@@ -119,16 +119,6 @@ const user = {
                 Cookies.remove('Base4j-Token');
                 resolve();
             });
-        },
-
-        // 动态修改权限
-        ChangeRole({commit}, role) {
-            return new Promise(resolve => {
-                commit('SET_PERMISSINSS', [role]);
-                commit('SET_TOKEN', role);
-                Cookies.set('Base4j-Token', role);
-                resolve();
-            })
         }
     }
 };

@@ -2,7 +2,7 @@
     <div class="dashboard-editor-container">
         <div class=" clearfix">
             <PanThumb style="float: left" :image="avatar"> 你的权限:
-                <span class="pan-info-roles" v-for="item in permission">{{item}}</span>
+                <span class="pan-info-roles" v-for="item in permissions">{{item}}</span>
             </PanThumb>
             <a href="https://github.com/PanJiaChen/vue-element-admin" target="_blank" class="github-corner"
                aria-label="View source on Github">
@@ -124,7 +124,7 @@
                 'account',
                 'uid',
                 'introduction',
-                'permission'
+                'permissions'
             ]),
             recentArticles() {
                 return this.list.slice(0, 7)
@@ -132,9 +132,9 @@
         },
         methods: {
             fetchData() {
-                getList(this.listQuery).then(response => {
-                    this.list = response.data;
-                })
+//                getList(this.listQuery).then(response => {
+//                    this.list = response.data;
+//                })
             }
         },
         filters: {

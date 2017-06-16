@@ -13,8 +13,11 @@ const reset = () => import('../views/login/reset');
 /* dashboard */
 const dashboard = () => import('../views/dashboard/index');
 
-/* Introduction */
-const Introduction = () => import('../views/introduction/index');
+/* org */
+const Dept = () => import('../views/org/dept');
+const User = () => import('../views/org/user');
+const Menu = () => import('../views/org/menu');
+const Role = () => import('../views/org/role');
 
 /* components */
 const componentsIndex = () => import('../views/components/index');
@@ -58,9 +61,6 @@ const DragTable = () => import('../views/example/table/dragTable');
 const InlineEditTable = () => import('../views/example/table/inlineEditTable');
 const Form1 = () => import('../views/example/form1');
 
-/* permission */
-const Permission = () => import('../views/permission/index');
-
 
 Vue.use(Router);
 
@@ -86,14 +86,6 @@ export const constantRouterMap = [
         name: '首页',
         hidden: true,
         children: [{path: 'dashboard', component: dashboard}]
-    },
-    {
-        path: '/introduction',
-        component: Layout,
-        redirect: '/introduction/index',
-        icon: 'xinrenzhinan',
-        noDropdown: true,
-        children: [{path: 'index', component: Introduction, name: '简述'}]
     }
 ]
 
@@ -105,14 +97,17 @@ export default new Router({
 
 export const asyncRouterMap = [
     {
-        path: '/permission',
+        path: '/org',
         component: Layout,
-        redirect: '/permission/index',
-        name: '权限测试',
-        icon: 'quanxian',
-        meta: {permission: ['org:admin']},
-        noDropdown: true,
-        children: [{path: 'index', component: Permission, name: '权限测试页', meta: {permission: ['org:admin']}}]
+        redirect: 'noredirect',
+        name: '组织机构',
+        icon: 'zuzhi',
+        children: [
+            {path: 'dept', component: Dept, name: '部门管理 '},
+            {path: 'user', component: User, name: '用户管理'},
+            {path: 'menu', component: Menu, name: '菜单管理'},
+            {path: 'role', component: Role, name: '角色管理'}
+        ]
     },
     {
         path: '/components',

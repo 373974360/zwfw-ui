@@ -106,3 +106,12 @@ export function html2Text(val) {
 export function toThousandslsFilter(num) {
   return (+num || 0).toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
 }
+
+export function statusFilter(status) {
+    const statusMap = {
+        '1': 'success',
+        '0': 'gray',
+        '-1': 'danger'
+    };
+    return statusMap[status]
+}

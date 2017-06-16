@@ -7,10 +7,9 @@
 <script>
     import {mapGetters} from 'vuex';
     import EditorDashboard from './editor/index';
-    import DefaultDashboard from './default/index';
     export default {
         name: 'dashboard',
-        components: {EditorDashboard, DefaultDashboard},
+        components: {EditorDashboard},
         data() {
             return {
                 currentRole: 'EditorDashboard'
@@ -22,18 +21,8 @@
                 'avatar',
                 'account',
                 'introduction',
-                'permission'
+                'permissions'
             ])
-        },
-        created() {
-            if (this.permission.indexOf('admin') >= 0) {
-                return;
-            }
-            // const isEditor = this.permission.some(v => v.indexOf('editor') >= 0)
-            // if (!isEditor) {
-            //   this.currentRole = 'DefaultDashboard';
-            // }
-            this.currentRole = 'DefaultDashboard';
         }
     }
 </script>

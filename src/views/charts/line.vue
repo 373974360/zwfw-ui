@@ -1,6 +1,6 @@
 <template>
   <div class="components-container" style='height:100vh'>
-    https://github.com/ecomfe/echarts/blob/master/index.js
+    https://github.com/ecomfe/echarts/blob/master/dept.js
     http://echarts.baidu.com/tutorial.html
     <div class='chart-container'>
        <lineMarker height='100%' width='100%' />
