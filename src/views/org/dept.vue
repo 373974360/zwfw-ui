@@ -53,10 +53,10 @@
             <el-table-column align="center" label="操作" width="140">
                 <template scope="scope">
                     <el-button v-if="scope.row.status!='draft'" type="primary" size="small"
-                               @click="handleModifyStatus(scope.row,'draft')">编辑
+                               @click="handleUpdate(scope.row)">编辑
                     </el-button>
                     <el-button v-if="scope.row.status!='deleted'" size="small" type="danger"
-                               @click="handleModifyStatus(scope.row,'deleted')">删除
+                               @click="handleDelete(scope.row)">删除
                     </el-button>
                 </template>
             </el-table-column>
