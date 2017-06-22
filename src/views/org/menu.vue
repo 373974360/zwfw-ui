@@ -1,123 +1,33 @@
 <template>
     <div class="app-container calendar-list-container">
-        <div class="filter-container">
-            <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="标题"
-                      v-model="listQuery.title">
-            </el-input>
-
-            <el-select clearable class="filter-item" style="width: 130px" v-model="listQuery.type" placeholder="类型">
-                <el-option v-for="item in  calendarTypeOptions" :key="item.key"
-                           :label="item.display_name+'('+item.key+')'" :value="item.key">
-                </el-option>
-            </el-select>
-
-            <el-button class="filter-item" type="primary" v-waves icon="search" @click="handleFilter">搜索</el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="edit">
-                添加
-            </el-button>
-            <el-button class="filter-item" type="primary" icon="document" @click="handleDownload">导出</el-button>
-            <el-checkbox class="filter-item" @change='tableKey=tableKey+1' v-model="showAuditor">显示审核人</el-checkbox>
-        </div>
-
-        <el-table :key='tableKey' :data="list" v-loading.body="listLoading" border fit highlight-current-row
-                  style="width: 100%">
-
-            <el-table-column align="center" label="序号" width="65">
-                <template scope="scope">
-                    <span>{{scope.row.id}}</span>
-                </template>
-            </el-table-column>
-
-            <el-table-column width="180px" align="center" label="部门全称">
-                <template scope="scope">
-                    <span>{{scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}')}}</span>
-                </template>
-            </el-table-column>
-
-            <el-table-column min-width="300px" label="部门简称">
-                <template scope="scope">
-                    <span class="link-type" @click="handleUpdate(scope.row)">{{scope.row.title}}</span>
-                    <el-tag>{{scope.row.type | typeFilter}}</el-tag>
-                </template>
-            </el-table-column>
-
-            <el-table-column width="110px" align="center" label="部门编号">
-                <template scope="scope">
-                    <span>{{scope.row.author}}</span>
-                </template>
-            </el-table-column>
-
-            <el-table-column align="center" label="上级部门" width="95">
-                <template scope="scope">
-                    <span class="link-type" @click='handleFetchPv(scope.row.pageviews)'>{{scope.row.pageviews}}</span>
-                </template>
-            </el-table-column>
-
-            <el-table-column class-name="status-col" label="状态" width="90">
-                <template scope="scope">
-                    <el-tag :type="scope.row.status | statusFilter">{{scope.row.status}}</el-tag>
-                </template>
-            </el-table-column>
-
-            <el-table-column align="center" label="操作" width="150">
-                <template scope="scope">
-                    <el-button v-if="scope.row.status!='published'" size="small" type="success"
-                               @click="handleModifyStatus(scope.row,'published')">发布
-                    </el-button>
-                    <el-button v-if="scope.row.status!='draft'" size="small"
-                               @click="handleModifyStatus(scope.row,'draft')">草稿
-                    </el-button>
-                    <el-button v-if="scope.row.status!='deleted'" size="small" type="danger"
-                               @click="handleModifyStatus(scope.row,'deleted')">删除
-                    </el-button>
-                </template>
-            </el-table-column>
-
-        </el-table>
-
-        <div v-show="!listLoading" class="pagination-container">
-            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                           :current-page.sync="listQuery.page" :page-sizes="[10,20,30, 50]"
-                           :page-size="listQuery.limit" layout="total, sizes, prev, pager, next, jumper" :total="total">
-            </el-pagination>
-        </div>
+        <tree-grid :columns="columns" :tree-structure="true" :data-source="list" :list-loading="listLoading"
+                   :handle-toggle="handleToggle" :handle-create="handleCreate"
+                   :handle-update="handleUpdate" :handle-delete="handleDelete"></tree-grid>
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
             <el-form class="small-space" :model="temp" label-position="left" label-width="70px"
-                     style='width: 400px; margin-left:50px;'>
-                <el-form-item label="类型">
-                    <el-select class="filter-item" v-model="temp.type" placeholder="请选择">
-                        <el-option v-for="item in  calendarTypeOptions" :key="item.key" :label="item.display_name"
-                                   :value="item.key">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
+                     style='width: 80%; margin-left:10%;'>
+                <el-form-item label="上级菜单">
 
-                <el-form-item label="状态">
-                    <el-select class="filter-item" v-model="temp.status" placeholder="请选择">
-                        <el-option v-for="item in  statusOptions" :key="item" :label="item" :value="item">
-                        </el-option>
-                    </el-select>
+                    <el-input v-model="temp.parentId"></el-input>
                 </el-form-item>
-
-                <el-form-item label="时间">
-                    <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="选择日期时间">
-                    </el-date-picker>
+                <el-form-item label="菜单名称">
+                    <el-input v-model="temp.menuName"></el-input>
                 </el-form-item>
-
-                <el-form-item label="标题">
-                    <el-input v-model="temp.title"></el-input>
+                <el-form-item label="菜单类型">
+                    <el-input v-model="temp.menuType"></el-input>
                 </el-form-item>
-
-                <el-form-item label="重要性">
-                    <el-rate style="margin-top:8px;" v-model="temp.importance"
-                             :colors="['#99A9BF', '#F7BA2A', '#FF9900']"></el-rate>
+                <el-form-item label="菜单图标">
+                    <el-input v-model="temp.iconcls"></el-input>
                 </el-form-item>
-
-                <el-form-item label="点评">
-                    <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4}" placeholder="请输入内容"
-                              v-model="temp.remark">
-                    </el-input>
+                <el-form-item label="请求地址">
+                    <el-input v-model="temp.request"></el-input>
+                </el-form-item>
+                <el-form-item label="权限标识">
+                    <el-input v-model="temp.permission"></el-input>
+                </el-form-item>
+                <el-form-item label="备注">
+                    <el-input v-model="temp.remark"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -126,110 +36,94 @@
                 <el-button v-else type="primary" @click="update">确 定</el-button>
             </div>
         </el-dialog>
-
     </div>
 </template>
 
 <script>
-    import {getDeptList} from 'api/org/dept';
+    import TreeGrid from 'components/TreeGrid'
+    import app from 'store/modules/app';
+    import {getMenuList} from 'api/org/menu';
     import {parseTime} from 'utils';
-
-    const calendarTypeOptions = [
-        {key: 'FD', display_name: '经济数据'},
-        {key: 'FE', display_name: '财经大事'},
-        {key: 'BI', display_name: '国债发行'},
-        {key: 'VN', display_name: '假期报告'}
-    ];
-
-    // arr to obj
-    const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-        acc[cur.key] = cur.display_name;
-        return acc
-    }, {});
-
     export default {
-        name: 'table_demo',
-        data() {
+        name: 'menu_table',
+        data () {
             return {
-                list: null,
-                total: null,
+                itemList: [],
                 listLoading: true,
-                listQuery: {
-                    page: store.app.page,
-                    rows: store.app.rows,
-                    deptName: undefined
-                },
                 temp: {
                     id: undefined,
-                    deptName: 0,
-                    shortName: '',
-                    deptCode: 0,
-                    parentId: '',
-                    status: 'published'
+                    menuName: 0,
+                    menuType: 0,
+                    iconcls: '',
+                    parentId: 0,
+                    request: '',
+                    expand: 0,
+                    sortNo: 0,
+                    permission: '',
+                    status: 1
                 },
-                calendarTypeOptions,
-                statusOptions: ['published', 'draft', 'deleted'],
                 dialogFormVisible: false,
                 dialogStatus: '',
                 textMap: {
                     update: '编辑',
-                    create: '创建'
+                    create: '添加'
                 },
-                showAuditor: false,
-                tableKey: 0
+                columns: [
+                    {
+                        text: '序号',
+                        dataIndex: 'id'
+                    },
+                    {
+                        text: '菜单名称',
+                        dataIndex: 'menuName',
+                        editAble: true
+                    },
+                    {
+                        text: '菜单类型',
+                        dataIndex: 'menuType',
+                        enums:'MenuType'
+                    },
+                    {
+                        text: '请求地址',
+                        dataIndex: 'request'
+                    }
+                    ,
+                    {
+                        text: '权限标识',
+                        dataIndex: 'permission'
+                    }
+                ]
             }
         },
-        created() {
-            this.getList();
-        },
-        filters: {
-            statusFilter(status) {
-                const statusMap = {
-                    published: 'success',
-                    draft: 'gray',
-                    deleted: 'danger'
-                };
-                return statusMap[status]
-            },
-            typeFilter(type) {
-                return calendarTypeKeyValue[type]
+        computed:{
+            list: function(){
+                return this.itemList;
             }
+        },
+        components: {
+            TreeGrid
         },
         methods: {
             getList() {
                 this.listLoading = true;
-                getDeptList(this.listQuery).then(response => {
-                    this.list = response.data.items;
-                    this.total = response.data.total;
+                getMenuList(this.listQuery).then(response => {
+                    this.itemList = response.data;
                     this.listLoading = false;
                 })
             },
-            handleFilter() {
-                this.getList();
-            },
-            handleSizeChange(val) {
-                this.listQuery.limit = val;
-                this.getList();
-            },
-            handleCurrentChange(val) {
-                this.listQuery.page = val;
-                this.getList();
-            },
-            timeFilter(time) {
-                if (!time[0]) {
-                    this.listQuery.start = undefined;
-                    this.listQuery.end = undefined;
-                    return;
-                }
-                this.listQuery.start = parseInt(+time[0] / 1000);
-                this.listQuery.end = parseInt((+time[1] + 3600 * 1000 * 24) / 1000);
-            },
-            handleModifyStatus(row, status) {
-                this.$message({
-                    message: '操作成功',
-                    type: 'success'
-                });
-                row.status = status;
+            handleToggle(row){
+                row._expanded = !row._expanded;
+//                this.listQuery.parentId = row.id;
+//                let children = [];
+//                getMenuList(this.listQuery).then(response => {
+//                    children = response.data.list;
+//                    if(children.length > 0){
+//                        row.children = children;
+//                    }else{
+//                        row.isLeaf = 0;
+//                    }
+//                    this.listLoading = false;
+//                })
             },
             handleCreate() {
                 this.resetTemp();
@@ -257,12 +151,7 @@
                 this.temp.author = '原创作者';
                 this.list.unshift(this.temp);
                 this.dialogFormVisible = false;
-                this.$notify({
-                    title: '成功',
-                    message: '创建成功',
-                    type: 'success',
-                    duration: 2000
-                });
+                this.$message.success('创建成功');
             },
             update() {
                 this.temp.timestamp = +this.temp.timestamp;
@@ -274,12 +163,7 @@
                     }
                 }
                 this.dialogFormVisible = false;
-                this.$notify({
-                    title: '成功',
-                    message: '更新成功',
-                    type: 'success',
-                    duration: 2000
-                });
+                this.$message.success('更新成功');
             },
             resetTemp() {
                 this.temp = {
@@ -291,25 +175,14 @@
                     status: 'published',
                     type: ''
                 };
-            },
-            handleDownload() {
-                require.ensure([], () => {
-                    const {export_json_to_excel} = require('vendor/Export2Excel');
-                    const tHeader = ['时间', '地区', '类型', '标题', '重要性'];
-                    const filterVal = ['timestamp', 'province', 'type', 'title', 'importance'];
-                    const data = this.formatJson(filterVal, this.list);
-                    export_json_to_excel(tHeader, data, 'table数据');
-                })
-            },
-            formatJson(filterVal, jsonData) {
-                return jsonData.map(v => filterVal.map(j => {
-                    if (j === 'timestamp') {
-                        return parseTime(v[j])
-                    } else {
-                        return v[j]
-                    }
-                }))
             }
+        },
+        created() {
+            this.getList();
         }
     }
 </script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+</style>

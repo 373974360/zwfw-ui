@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie';
+import {getEnums} from 'api/common';
 
 const app = {
     state: {
@@ -8,6 +9,7 @@ const app = {
         sidebar: {
             opened: !+Cookies.get('sidebarStatus')
         },
+        enums:[],
         theme: 'default',
         livenewsChannels: Cookies.get('livenewsChannels') || '[]'
     },
@@ -19,12 +21,30 @@ const app = {
                 Cookies.set('sidebarStatus', 0);
             }
             state.sidebar.opened = !state.sidebar.opened;
-        }
+        },
+        SET_ENUMS: (state, enums) => {
+            state.enums = enums;
+        },
     },
     actions: {
         ToggleSideBar: ({commit}) => {
             commit('TOGGLE_SIDEBAR')
-        }
+        },
+        // 获取后台的所有枚举json数据
+        SetEnums({commit}) {
+            return new Promise((resolve, reject) => {
+                getEnums().then(response => {
+                    if(response.httpCode !== 200){
+                        reject(response.msg);
+                    }else{
+                        const enums = response.data;
+                        commit('SET_ENUMS', enums);
+                    }
+                }).catch(error => {
+                    reject(error);
+                });
+            });
+        },
     }
 };
 

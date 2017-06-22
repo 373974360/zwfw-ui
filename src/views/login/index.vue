@@ -114,6 +114,7 @@
                     if (valid) {
                         this.loading = true;
                         this.$store.dispatch('LoginByEmail', this.loginForm).then(() => {
+                            this.$message.success("登陆成功");
                             this.loading = false;
                             this.canvas = false;
                             this.$router.push({path: '/'});

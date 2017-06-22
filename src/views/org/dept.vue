@@ -133,7 +133,7 @@
                 dialogStatus: '',
                 textMap: {
                     update: '编辑',
-                    create: '创建'
+                    create: '添加'
                 }
             }
         },
@@ -153,7 +153,7 @@
                 this.getList();
             },
             handleSizeChange(val) {
-                this.listQuery.limit = val;
+                this.listQuery.rows = val;
                 this.getList();
             },
             handleCurrentChange(val) {

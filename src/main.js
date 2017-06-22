@@ -46,6 +46,10 @@ router.beforeEach((to, from, next) => {
         if (to.path === '/login') {
             next({path: '/'});
         } else {
+            if(store.getters.enums.length === 0){
+                store.dispatch('SetEnums');
+                next();
+            }
             if (store.getters.permissions.length === 0) { // 判断当前用户是否已拉取完user_info信息
                 store.dispatch('GetInfo').then(res => { // 拉取user_info
                     const permissions = res.data.permissions;

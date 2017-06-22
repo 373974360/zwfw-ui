@@ -49,7 +49,7 @@ service.interceptors.response.use(
                 type: 'error',
                 duration: 5 * 1000
             });
-            if(code === 50008 || code === 50014 || code === 50012){
+            if(code === 403 || code === 401 || code === 50012){
                 // 登出
                 store.dispatch('FedLogOut').then(() => {
                     router.push({ path: '/login' })
