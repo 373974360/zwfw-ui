@@ -1,7 +1,7 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="edit">
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">
                 添加
             </el-button>
         </div>
@@ -11,7 +11,7 @@
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
             <el-form ref="menuForm" class="small-space" :model="sysMenu" label-position="right" label-width="80px"
-                     style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="menuRules">
+                     style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="sysMenuRules">
 
                 <el-form-item label="上级菜单">
                     <el-cascader :options="cascader" v-model="cascaderModel" :show-all-levels="true"
@@ -55,7 +55,6 @@
 </template>
 <script>
     import TreeGrid from 'components/TreeGrid'
-    import app from 'store/modules/app';
     import {getMenuTree, getMenuCascader, createMenu, updateMenu, delMenu} from 'api/org/menu';
     import {copyProperties, objectMerge} from 'utils';
     import {mapGetters} from 'vuex';
@@ -103,7 +102,7 @@
                     sortNo: 1,
                     permission: ''
                 },
-                menuRules: {
+                sysMenuRules: {
                     menuName: [
                         {required: true, message: '请输入菜单名称', trigger: 'blur'}
                     ],
@@ -117,10 +116,6 @@
                 dialogFormVisible: false,
                 dialogStatus: '',
                 dialogLoading: false,
-                textMap: {
-                    update: '编辑',
-                    create: '添加'
-                },
                 cascader: []
             }
         },
@@ -144,6 +139,7 @@
             },
             ...mapGetters([
                 'enums',
+                'textMap'
             ])
         },
         components: {

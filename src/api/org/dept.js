@@ -8,31 +8,39 @@ export function getDeptList(query) {
     });
 }
 
-
-export function getInfo(token) {
-    const data = {id: token};
+export function getDeptCascader() {
     return fetch({
-        url: '/sysUser/select',
-        method: 'get',
-        params: data
+        url: '/sysDept/selectCascader',
+        method: 'get'
     });
 }
 
-export function sendPWD2Email(account){
+export function createDept(sysDeptVo){
+    const data = sysDeptVo;
     return fetch({
-        url: '/sysUser/select',
-        method: 'get',
-        params: {account}
-    });
+        url:'/sysDept/add',
+        method: 'post',
+        data
+    })
 }
 
-export function logout() {
+export function updateDept(sysDeptVo){
+    const data = sysDeptVo;
     return fetch({
-        url: '/login/logout',
-        method: 'post'
-    });
+        url:'/sysDept/edit',
+        method: 'post',
+        data
+    })
 }
 
+export function delDept(id){
+    const data = {id};
+    return fetch({
+        url:'/sysDept/del',
+        method: 'post',
+        data
+    })
+}
 
 
 

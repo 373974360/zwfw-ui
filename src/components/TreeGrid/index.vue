@@ -120,14 +120,14 @@
             },
             // 显示层级关系的空格和图标
             spaceIconShow (index) {
-                if (index === 0) {
+                if (index === 0 || index === 1) {
                     return true
                 }
                 return false
             },
             // 点击展开和关闭的时候，图标的切换
             toggleIconShow (index, record) {
-                if (index === 0 && record.children &&  record.children.length > 0) {
+                if (index === 0 && record.children && record.children.length > 0) {
                     return true
                 }
                 return false

@@ -109,9 +109,9 @@ export function toThousandslsFilter(num) {
 
 export function statusFilter(status) {
     const statusMap = {
-        '1': 'success',
-        '0': 'gray',
-        '-1': 'danger'
+        '正常': 'success',
+        '禁用': 'gray',
+        '已删除': 'danger'
     };
     return statusMap[status]
 }

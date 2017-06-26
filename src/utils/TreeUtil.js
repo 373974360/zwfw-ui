@@ -61,4 +61,16 @@ TreeUtil.delRow = function(currentRow,treeData){
     }
 }
 
+TreeUtil.getRowById = function(id,treeData){
+    for(const node of treeData){
+        if(node.children && node.children.length > 0){
+            return TreeUtil.getRowById(id,node.children);
+        }else{
+            if(id === node.id){
+                return node;
+            }
+        }
+    }
+}
+
 export default TreeUtil

@@ -6,6 +6,10 @@ const app = {
         page: 1,
         rows: 20,
         pageSize: [10,20,30,40,50],
+        textMap:{
+            update: '编辑',
+            create: '创建'
+        },
         sidebar: {
             opened: !+Cookies.get('sidebarStatus')
         },
