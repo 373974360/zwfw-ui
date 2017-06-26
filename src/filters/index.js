@@ -117,5 +117,9 @@ export function statusFilter(status) {
 }
 
 export function enums(value, type) {
-    return app.state.enums[type][value] || value;
+    var array = app.state.enums[type];
+    var result = array.filter(function(item){
+        return item.code === value;
+    });
+    return result[0].value || value;
 }

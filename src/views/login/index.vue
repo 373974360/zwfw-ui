@@ -10,7 +10,7 @@
                     <el-col :span="24">
                         <el-form-item prop="account">
                             <span class="svg-container"><wscn-icon-svg icon-class="youxiang"/></span>
-                            <el-input name="account" type="text" v-model="loginForm.account" autoComplete="on"
+                            <el-input type="text" v-model="loginForm.account" autoComplete="on"
                                       placeholder="帐号"></el-input>
                         </el-form-item>
                     </el-col>
@@ -19,7 +19,7 @@
                     <el-col :span="24">
                         <el-form-item prop="password">
                             <span class="svg-container"><wscn-icon-svg icon-class="mima"/></span>
-                            <el-input name="password" type="password" @keyup.enter.native="handleLogin"
+                            <el-input type="password" @keyup.enter.native="handleLogin"
                                       v-model="loginForm.password"
                                       autoComplete="on" placeholder="密码"></el-input>
                         </el-form-item>
@@ -29,7 +29,7 @@
                     <el-col :span="24">
                         <el-form-item prop="captcha">
                             <span class="svg-container"><wscn-icon-svg icon-class="yanzhengma"/></span>
-                            <el-input name="" type="text" v-model="loginForm.captcha" @keyup.enter.native="handleLogin"
+                            <el-input type="text" v-model="loginForm.captcha" @keyup.enter.native="handleLogin"
                                       placeholder="验证码"></el-input>
                             <img class="captcha" :src="loginForm.imgUrl" @click.self="changeCaptcha">
                         </el-form-item>
@@ -72,20 +72,6 @@
                     callback();
                 }
             };
-            const validatePass = (rule, value, callback) => {
-                if (value.length < 6) {
-                    callback(new Error('密码不能小于6位'));
-                } else {
-                    callback();
-                }
-            };
-            const validateCaptcha = (rule, value, callback) => {
-                if (value.length !== 4) {
-                    callback(new Error('验证码只能是4位'));
-                } else {
-                    callback();
-                }
-            };
             return {
                 loginForm: {
                     account: '373974360@qq.com',
@@ -98,10 +84,10 @@
                         {required: true, trigger: 'blur', validator: validateEmail}
                     ],
                     password: [
-                        {required: true, trigger: 'blur', validator: validatePass}
+                        { min: 6, message: '密码不能小于6位', trigger: 'blur' }
                     ],
                     captcha: [
-                        {required: true, trigger: 'blur', validator: validateCaptcha}
+                        { min: 4, max: 4, message: '验证码只能是4位', trigger: 'blur' }
                     ]
                 },
                 loading: false,

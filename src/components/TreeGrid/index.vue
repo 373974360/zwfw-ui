@@ -29,7 +29,7 @@
         </el-table-column>
         <el-table-column label="操作" v-if="treeType === 'normal'" width="200">
             <template scope="scope">
-                <el-button type="primary" size="small" @click="onHandleAdd()">添加</el-button>
+                <el-button type="primary" size="small" @click="onHandleAdd(scope.row)">添加</el-button>
                 <el-button type="" size="small" @click="onHandleUpdate(scope.row)">编辑</el-button>
                 <el-button type="danger" size="small" @click="onHandleDelete(scope.row)">删除</el-button>
             </template>
@@ -37,7 +37,7 @@
     </el-table>
 </template>
 <script>
-    import DataTransfer from 'utils/dataTranslate.js'
+    import TreeUtil from 'utils/TreeUtil.js'
     //  import Vue from 'vue'
     export default {
         name: 'tree-grid',
@@ -67,7 +67,7 @@
             defaultExpandAll: {
                 type: Boolean,
                 default: function () {
-                    return false
+                    return true
                 }
             },
             listLoading: {
@@ -108,7 +108,7 @@
             // 格式化数据源
             data: function () {
                 let me = this
-                return DataTransfer.treeToArray(me.dataSource, null, null, me.defaultExpandAll);
+                return TreeUtil.treeToArray(me.dataSource, null, null, me.defaultExpandAll);
             }
         },
         methods: {
@@ -127,7 +127,7 @@
             },
             // 点击展开和关闭的时候，图标的切换
             toggleIconShow (index, record) {
-                if (index === 0 && record.isLeaf === 0) {
+                if (index === 0 && record.children &&  record.children.length > 0) {
                     return true
                 }
                 return false
@@ -137,9 +137,9 @@
                     this.handleToggle(trIndex);
                 }
             },
-            onHandleAdd(){
+            onHandleAdd(data){
                 if (this.handleCreate) {
-                    this.handleCreate();
+                    this.handleCreate(data);
                 }
             },
             onHandleUpdate(data){

@@ -1,33 +1,48 @@
 <template>
     <div class="app-container calendar-list-container">
-        <tree-grid :columns="columns" :tree-structure="true" :data-source="list" :list-loading="listLoading"
+        <div class="filter-container">
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="edit">
+                添加
+            </el-button>
+        </div>
+        <tree-grid :columns="columns" :tree-structure="true" :data-source="itemList" :list-loading="listLoading"
                    :handle-toggle="handleToggle" :handle-create="handleCreate"
                    :handle-update="handleUpdate" :handle-delete="handleDelete"></tree-grid>
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-            <el-form class="small-space" :model="temp" label-position="left" label-width="70px"
-                     style='width: 80%; margin-left:10%;'>
-                <el-form-item label="上级菜单">
+            <el-form ref="menuForm" class="small-space" :model="sysMenu" label-position="right" label-width="80px"
+                     style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="menuRules">
 
-                    <el-input v-model="temp.parentId"></el-input>
+                <el-form-item label="上级菜单">
+                    <el-cascader :options="cascader" v-model="cascaderModel" :show-all-levels="true"
+                                 :change-on-select="true" style="width:100%" :disabled="true"></el-cascader>
                 </el-form-item>
-                <el-form-item label="菜单名称">
-                    <el-input v-model="temp.menuName"></el-input>
+                <el-form-item label="菜单名称" prop="menuName">
+                    <el-input v-model="sysMenu.menuName"/>
                 </el-form-item>
                 <el-form-item label="菜单类型">
-                    <el-input v-model="temp.menuType"></el-input>
+                    <el-select v-model="sysMenu.menuType" placeholder="请选择" style="width:100%">
+                        <el-option
+                                v-for="item in enums['MenuType']"
+                                :key="item.code"
+                                :label="item.value"
+                                :value="item.code"/>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="菜单图标">
-                    <el-input v-model="temp.iconcls"></el-input>
+                    <el-input v-model="sysMenu.iconcls"/>
                 </el-form-item>
-                <el-form-item label="请求地址">
-                    <el-input v-model="temp.request"></el-input>
+                <el-form-item label="请求地址" prop="request">
+                    <el-input v-model="sysMenu.request"/>
                 </el-form-item>
-                <el-form-item label="权限标识">
-                    <el-input v-model="temp.permission"></el-input>
+                <el-form-item label="权限标识" prop="permission">
+                    <el-input v-model="sysMenu.permission"/>
+                </el-form-item>
+                <el-form-item label="排序">
+                    <el-input-number v-model="sysMenu.sortNo" :min="1" :max="100"/>
                 </el-form-item>
                 <el-form-item label="备注">
-                    <el-input v-model="temp.remark"></el-input>
+                    <el-input type="textarea" v-model="sysMenu.remark" :rows="3"/>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -38,36 +53,20 @@
         </el-dialog>
     </div>
 </template>
-
 <script>
     import TreeGrid from 'components/TreeGrid'
     import app from 'store/modules/app';
-    import {getMenuList} from 'api/org/menu';
-    import {parseTime} from 'utils';
+    import {getMenuTree, getMenuCascader, createMenu, updateMenu, delMenu} from 'api/org/menu';
+    import {copyProperties, objectMerge} from 'utils';
+    import {mapGetters} from 'vuex';
+    import TreeUtil from 'utils/TreeUtil.js'
     export default {
         name: 'menu_table',
         data () {
             return {
                 itemList: [],
                 listLoading: true,
-                temp: {
-                    id: undefined,
-                    menuName: 0,
-                    menuType: 0,
-                    iconcls: '',
-                    parentId: 0,
-                    request: '',
-                    expand: 0,
-                    sortNo: 0,
-                    permission: '',
-                    status: 1
-                },
-                dialogFormVisible: false,
-                dialogStatus: '',
-                textMap: {
-                    update: '编辑',
-                    create: '添加'
-                },
+                currentRow: [],
                 columns: [
                     {
                         text: '序号',
@@ -81,7 +80,7 @@
                     {
                         text: '菜单类型',
                         dataIndex: 'menuType',
-                        enums:'MenuType'
+                        enums: 'MenuType'
                     },
                     {
                         text: '请求地址',
@@ -92,13 +91,60 @@
                         text: '权限标识',
                         dataIndex: 'permission'
                     }
-                ]
+                ],
+                sysMenu: {
+                    id: undefined,
+                    parentId: 0,
+                    menuName: '',
+                    menuType: 1,
+                    iconcls: '',
+                    treePosition: '',
+                    request: '',
+                    sortNo: 1,
+                    permission: ''
+                },
+                menuRules: {
+                    menuName: [
+                        {required: true, message: '请输入菜单名称', trigger: 'blur'}
+                    ],
+                    request: [
+                        {required: true, message: '请输入请求地址', trigger: 'blur'}
+                    ],
+                    permission: [
+                        {required: true, message: '请输入权限标识', trigger: 'blur'}
+                    ]
+                },
+                dialogFormVisible: false,
+                dialogStatus: '',
+                dialogLoading: false,
+                textMap: {
+                    update: '编辑',
+                    create: '添加'
+                },
+                cascader: []
             }
         },
-        computed:{
-            list: function(){
-                return this.itemList;
-            }
+        computed: {
+            cascaderModel: function () {
+                if (this.sysMenu.treePosition) {
+                    var arr = this.sysMenu.treePosition.split('&');
+                    if (this.dialogStatus === 'update') {
+                        return arr.splice(0, arr.length - 2);
+                    } else {
+                        return arr.splice(0, arr.length - 1);
+                    }
+                }
+            },
+            parentId: function () {
+                if (this.cascaderModel) {
+                    return this.cascaderModel[this.cascaderModel.length - 1];
+                } else {
+                    return 0;
+                }
+            },
+            ...mapGetters([
+                'enums',
+            ])
         },
         components: {
             TreeGrid
@@ -106,74 +152,92 @@
         methods: {
             getList() {
                 this.listLoading = true;
-                getMenuList(this.listQuery).then(response => {
+                getMenuTree().then(response => {
                     this.itemList = response.data;
                     this.listLoading = false;
                 })
             },
+            getOptions(id){
+                this.dialogLoading = true;
+                getMenuCascader(id).then(response => {
+                    this.cascader = response.data;
+                    this.dialogLoading = false;
+                })
+            },
             handleToggle(row){
                 row._expanded = !row._expanded;
-//                this.listQuery.parentId = row.id;
-//                let children = [];
-//                getMenuList(this.listQuery).then(response => {
-//                    children = response.data.list;
-//                    if(children.length > 0){
-//                        row.children = children;
-//                    }else{
-//                        row.isLeaf = 0;
-//                    }
-//                    this.listLoading = false;
-//                })
             },
-            handleCreate() {
+            handleCreate(row) {
+                this.currentRow = row;
                 this.resetTemp();
+                this.sysMenu.treePosition = row.treePosition;
+                this.getOptions(null);
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
             },
             handleUpdate(row) {
-                this.temp = Object.assign({}, row);
+                this.currentRow = row;
+                this.sysMenu = copyProperties(this.sysMenu, row);
+                this.getOptions(this.sysMenu.id);
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
             handleDelete(row) {
-                this.$notify({
-                    title: '成功',
-                    message: '删除成功',
-                    type: 'success',
-                    duration: 2000
+                this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    delMenu(row.id).then(response => {
+                        TreeUtil.delRow(row, this.itemList);
+                        this.$message.success('删除成功');
+                    })
+                }).catch(() => {
+                    console.dir("取消");
                 });
-                const index = this.list.indexOf(row);
-                this.list.splice(index, 1);
             },
             create() {
-                this.temp.id = parseInt(Math.random() * 100) + 1024;
-                this.temp.timestamp = +new Date();
-                this.temp.author = '原创作者';
-                this.list.unshift(this.temp);
-                this.dialogFormVisible = false;
-                this.$message.success('创建成功');
+                this.$refs['menuForm'].validate((valid) => {
+                    if (valid) {
+                        this.dialogFormVisible = false;
+                        this.listLoading = true;
+                        this.sysMenu.parentId = this.parentId;
+                        createMenu(this.sysMenu).then(response => {
+                            TreeUtil.addRow(this.currentRow, response.data, this.itemList);
+                            this.$message.success('创建成功');
+                            this.listLoading = false;
+                        })
+                    } else {
+                        return false;
+                    }
+                });
             },
             update() {
-                this.temp.timestamp = +this.temp.timestamp;
-                for (const v of this.list) {
-                    if (v.id === this.temp.id) {
-                        const index = this.list.indexOf(v);
-                        this.list.splice(index, 1, this.temp);
-                        break;
+                this.$refs['menuForm'].validate((valid) => {
+                    if (valid) {
+                        this.dialogFormVisible = false;
+                        this.listLoading = true;
+                        updateMenu(this.sysMenu).then(response => {
+                            copyProperties(this.currentRow, response.data);
+                            this.$message.success('更新成功');
+                            this.listLoading = false;
+                        })
+                    } else {
+                        return false;
                     }
-                }
-                this.dialogFormVisible = false;
-                this.$message.success('更新成功');
+                });
             },
             resetTemp() {
-                this.temp = {
+                this.sysMenu = {
                     id: undefined,
-                    importance: 0,
-                    remark: '',
-                    timestamp: 0,
-                    title: '',
-                    status: 'published',
-                    type: ''
+                    menuName: '',
+                    menuType: 1,
+                    iconcls: '',
+                    parentId: 0,
+                    treePosition: '',
+                    request: '',
+                    sortNo: 1,
+                    permission: ''
                 };
             }
         },
@@ -182,7 +246,3 @@
         }
     }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>

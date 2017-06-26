@@ -71,25 +71,25 @@
         </div>
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-            <el-form class="small-space" :model="temp" label-position="left" label-width="70px"
+            <el-form class="small-space" :model="sysMenu" label-position="left" label-width="70px"
                      style='width: 80%; margin-left:10%;'>
                 <el-form-item label="上级部门">
-                    <el-input v-model="temp.parentId"></el-input>
+                    <el-input v-model="sysMenu.parentId"></el-input>
                 </el-form-item>
                 <el-form-item label="部门全称">
-                    <el-input v-model="temp.deptName"></el-input>
+                    <el-input v-model="sysMenu.deptName"></el-input>
                 </el-form-item>
                 <el-form-item label="部门简称">
-                    <el-input v-model="temp.shortName"></el-input>
+                    <el-input v-model="sysMenu.shortName"></el-input>
                 </el-form-item>
                 <el-form-item label="部门编号">
-                    <el-input v-model="temp.deptCode"></el-input>
+                    <el-input v-model="sysMenu.deptCode"></el-input>
                 </el-form-item>
                 <el-form-item label="排序">
-                    <el-input v-model="temp.sortNo"></el-input>
+                    <el-input v-model="sysMenu.sortNo"></el-input>
                 </el-form-item>
                 <el-form-item label="备注">
-                    <el-input v-model="temp.remark"></el-input>
+                    <el-input v-model="sysMenu.remark"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -120,7 +120,7 @@
                     rows: app.state.rows,
                     deptName: undefined
                 },
-                temp: {
+                sysMenu: {
                     id: undefined,
                     deptName: 0,
                     shortName: '',
@@ -166,7 +166,7 @@
                 this.dialogFormVisible = true;
             },
             handleUpdate(row) {
-                this.temp = Object.assign({}, row);
+                this.sysMenu = Object.assign({}, row);
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
@@ -181,19 +181,19 @@
                 this.list.splice(index, 1);
             },
             create() {
-                this.temp.id = parseInt(Math.random() * 100) + 1024;
-                this.temp.timestamp = +new Date();
-                this.temp.author = '原创作者';
-                this.list.unshift(this.temp);
+                this.sysMenu.id = parseInt(Math.random() * 100) + 1024;
+                this.sysMenu.timestamp = +new Date();
+                this.sysMenu.author = '原创作者';
+                this.list.unshift(this.sysMenu);
                 this.dialogFormVisible = false;
                 this.$message.success('创建成功');
             },
             update() {
-                this.temp.timestamp = +this.temp.timestamp;
+                this.sysMenu.timestamp = +this.sysMenu.timestamp;
                 for (const v of this.list) {
-                    if (v.id === this.temp.id) {
+                    if (v.id === this.sysMenu.id) {
                         const index = this.list.indexOf(v);
-                        this.list.splice(index, 1, this.temp);
+                        this.list.splice(index, 1, this.sysMenu);
                         break;
                     }
                 }
@@ -201,7 +201,7 @@
                 this.$message.success('更新成功');
             },
             resetTemp() {
-                this.temp = {
+                this.sysMenu = {
                     id: undefined,
                     importance: 0,
                     remark: '',

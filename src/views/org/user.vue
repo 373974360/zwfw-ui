@@ -1,4 +1,4 @@
-dept.vuedept.vue<template>
+<template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
             <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="标题"
@@ -83,10 +83,10 @@ dept.vuedept.vue<template>
         </div>
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-            <el-form class="small-space" :model="temp" label-position="left" label-width="70px"
+            <el-form class="small-space" :model="sysMenu" label-position="left" label-width="70px"
                      style='width: 400px; margin-left:50px;'>
                 <el-form-item label="类型">
-                    <el-select class="filter-item" v-model="temp.type" placeholder="请选择">
+                    <el-select class="filter-item" v-model="sysMenu.type" placeholder="请选择">
                         <el-option v-for="item in  calendarTypeOptions" :key="item.key" :label="item.display_name"
                                    :value="item.key">
                         </el-option>
@@ -94,29 +94,29 @@ dept.vuedept.vue<template>
                 </el-form-item>
 
                 <el-form-item label="状态">
-                    <el-select class="filter-item" v-model="temp.status" placeholder="请选择">
+                    <el-select class="filter-item" v-model="sysMenu.status" placeholder="请选择">
                         <el-option v-for="item in  statusOptions" :key="item" :label="item" :value="item">
                         </el-option>
                     </el-select>
                 </el-form-item>
 
                 <el-form-item label="时间">
-                    <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="选择日期时间">
+                    <el-date-picker v-model="sysMenu.timestamp" type="datetime" placeholder="选择日期时间">
                     </el-date-picker>
                 </el-form-item>
 
                 <el-form-item label="标题">
-                    <el-input v-model="temp.title"></el-input>
+                    <el-input v-model="sysMenu.title"></el-input>
                 </el-form-item>
 
                 <el-form-item label="重要性">
-                    <el-rate style="margin-top:8px;" v-model="temp.importance"
+                    <el-rate style="margin-top:8px;" v-model="sysMenu.importance"
                              :colors="['#99A9BF', '#F7BA2A', '#FF9900']"></el-rate>
                 </el-form-item>
 
                 <el-form-item label="点评">
                     <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4}" placeholder="请输入内容"
-                              v-model="temp.remark">
+                              v-model="sysMenu.remark">
                     </el-input>
                 </el-form-item>
             </el-form>
@@ -159,7 +159,7 @@ dept.vuedept.vue<template>
                     rows: this.$store.state.app.rows,
                     deptName: undefined
                 },
-                temp: {
+                sysMenu: {
                     id: undefined,
                     deptName: 0,
                     shortName: '',
@@ -238,7 +238,7 @@ dept.vuedept.vue<template>
                 this.dialogFormVisible = true;
             },
             handleUpdate(row) {
-                this.temp = Object.assign({}, row);
+                this.sysMenu = Object.assign({}, row);
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
@@ -253,10 +253,10 @@ dept.vuedept.vue<template>
                 this.list.splice(index, 1);
             },
             create() {
-                this.temp.id = parseInt(Math.random() * 100) + 1024;
-                this.temp.timestamp = +new Date();
-                this.temp.author = '原创作者';
-                this.list.unshift(this.temp);
+                this.sysMenu.id = parseInt(Math.random() * 100) + 1024;
+                this.sysMenu.timestamp = +new Date();
+                this.sysMenu.author = '原创作者';
+                this.list.unshift(this.sysMenu);
                 this.dialogFormVisible = false;
                 this.$notify({
                     title: '成功',
@@ -266,11 +266,11 @@ dept.vuedept.vue<template>
                 });
             },
             update() {
-                this.temp.timestamp = +this.temp.timestamp;
+                this.sysMenu.timestamp = +this.sysMenu.timestamp;
                 for (const v of this.list) {
-                    if (v.id === this.temp.id) {
+                    if (v.id === this.sysMenu.id) {
                         const index = this.list.indexOf(v);
-                        this.list.splice(index, 1, this.temp);
+                        this.list.splice(index, 1, this.sysMenu);
                         break;
                     }
                 }
@@ -283,7 +283,7 @@ dept.vuedept.vue<template>
                 });
             },
             resetTemp() {
-                this.temp = {
+                this.sysMenu = {
                     id: undefined,
                     importance: 0,
                     remark: '',
