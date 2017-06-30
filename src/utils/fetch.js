@@ -10,7 +10,11 @@ axios.defaults.withCredentials = true
 const service = axios.create({
     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
     baseURL: process.env.BASE_API, // api的base_url
+<<<<<<< HEAD
     timeout: 50000,                  // 请求超时时间
+=======
+    timeout: 1000 * 60 * 5,                  // 请求超时时间  1000 * 60 * 5
+>>>>>>> origin/master
     withCredentials: true,  // 跨域允许cookie
     // 请求数据转为json格式 springmvc自动填充
     transformRequest: [function(data) {

@@ -42,5 +42,15 @@ export function delDept(id) {
     })
 }
 
+export function deleteDept(id) {
+    const data = {id};
+    return fetch({
+        url: '/sysDept/delete',
+        method: 'post',
+        data
+    })
+}
+
+
 
 

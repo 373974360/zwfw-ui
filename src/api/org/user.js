@@ -29,7 +29,11 @@ export function updateUser(sysUserVo) {
 export function delUser(ids) {
     const data = {ids};
     return fetch({
+<<<<<<< HEAD
         url: '/sysUser/dels',
+=======
+        url:  '/sysUser/dels',
+>>>>>>> origin/master
         method: 'post',
         data
     })
