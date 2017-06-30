@@ -151,9 +151,7 @@
 </template>
 
 <script>
-  /* eslint-disable indent */
-
-  import { fetchList, fetchPv } from 'api/article_table';
+    import { fetchList, fetchPv } from 'api/article_table';
     import { parseTime } from 'utils';
 
     const calendarTypeOptions = [
