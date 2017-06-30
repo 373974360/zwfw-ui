@@ -76,10 +76,11 @@
             <el-form ref="userForm" class="small-space" :model="sysUser" label-position="right" label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="sysUserRules">
                 <el-form-item label="部门" props="deptId">
-                    <el-cascader :options="cascader" class="filter-item" v-model="cascaderModel2"
-                                 :show-all-levels="true"
-                                 :change-on-select="true" style="width: 180px" placeholder="选择部门" filterable
-                                 clearable></el-cascader>
+                    <!--<el-cascader :options="cascader" class="filter-item" v-model="cascaderModel2"-->
+                                 <!--:show-all-levels="true"-->
+                                 <!--:change-on-select="true" style="width: 180px" placeholder="选择部门" filterable-->
+                                 <!--clearable></el-cascader>-->
+                    <el-input v-model="sysUser.deptName"/>
                 </el-form-item>
                 <el-form-item label="姓名" prop="userName">
                     <el-input v-model="sysUser.userName"/>
@@ -91,6 +92,7 @@
                                 :key="item.code"
                                 :label="item.value"
                                 :value="item.code"/>
+
                     </el-select>
                 </el-form-item>
                 <el-form-item label="电话" prop="phone">
@@ -102,13 +104,19 @@
                 <el-form-item label="帐号" prop="account">
                     <el-input v-model="sysUser.account"/>
                 </el-form-item>
-                <el-form-item label="密码" prop="password">
-                    <el-input-number v-model="sysUser.password" :min="1" :max="100"/>
-                </el-form-item>
-                <el-form-item label="确认密码" prop="passwordConfirm">
-                    <el-input-number v-model="sysUser.passwordConfirm" :min="1" :max="100"/>
-                </el-form-item>
-                <el-form-item label="状态" prop="enable">
+                <!--<el-form-item label="密码" prop="password">-->
+                    <!--<el-input-number v-model="sysUser.password" :min="1" :max="100"/>-->
+                <!--</el-form-item>-->
+                <!--<el-form-item label="确认密码" prop="passwordConfirm">-->
+                    <!--<el-input-number v-model="sysUser.passwordConfirm" :min="1" :max="100"/>-->
+                <!--</el-form-item>-->
+                <!--<el-form-item label="密码" prop="password">-->
+                    <!--<el-input type="password" v-model="sysUser.password" auto-complete="off"></el-input>-->
+                <!--</el-form-item>-->
+                <!--<el-form-item label="确认密码" prop="passwordConfirm">-->
+                    <!--<el-input type="password" v-model="sysUser.passwordConfirm"  auto-complete="off"></el-input>-->
+                <!--</el-form-item>-->
+               <el-form-item label="状态" prop="enable">
                     <el-select v-model="sysUser.enable" placeholder="请选择" style="width:100%">
                         <el-option
                                 v-for="item in enums['Enable']"
@@ -131,28 +139,33 @@
 </template>
 
 <script>
+    /* eslint-disable brace-style,no-unused-vars,object-shorthand,comma-style,rest-spread-spacing,prefer-const,no-array-constructor,quotes,indent,dot-notation,no-var,comma-spacing,arrow-parens,no-empty-function,space-before-blocks,arrow-spacing,padded-blocks */
+
     import {getDeptCascader} from 'api/org/dept';
-    import {getUserList, delUser} from 'api/org/user';
+    import {getUserList, delUser,createUser,updateUser} from 'api/org/user';
     import {parseTime} from 'utils';
     import {mapGetters} from 'vuex';
     import {validatMobiles} from 'utils/validate';
     export default {
         name: 'table_demo',
         data() {
-            var validatMobiles = (rule, value, callback) => {
-                if (!validatMobiles(value)) {
-                    return callback(new Error('手机号码不正确'));
-                }
-            }
+//           var validatMobiles = (rule, value, callback) => {
+//               if (value === '') {
+//                 return callback(new Error('请输入您的电话'));
+//                }
+//            }
+
             var validatePass2 = (rule, value, callback) => {
                 if (value === '') {
-                    callback(new Error('请再次输入密码'));
-                } else if (value !== this.userForm.password) {
+                   callback(new Error('请再次输入密码'));
+                } else if (value === "") {
                     callback(new Error('两次输入密码不一致!'));
                 } else {
                     callback();
                 }
             };
+
+
             return {
                 list: null,
                 total: null,
@@ -166,7 +179,7 @@
                 sysUser: {
                     id: undefined,
                     deptId: undefined,
-                    sex: 0,
+                    sex: 1,
                     phone: '',
                     avatar: '',
                     account: '',
@@ -183,16 +196,16 @@
                         {required: true, message: '请输入姓名', trigger: 'blur'}
                     ],
                     phone: [
-                        {validator: validatMobiles, trigger: 'blur'}
+                        {required: true, message: '请输入电话', trigger: 'blur'}
                     ],
                     avatar: [
                         {type: 'url', required: true, message: '头像地址不正确', trigger: 'blur'}
                     ],
                     account: [
-                        {required: true, message: '请输入电话', trigger: 'blur'}
+                        {required: true, message: '请输您的账号', trigger: 'blur'}
                     ],
                     password: [
-                        {required: true, message: '请输入电话', trigger: 'blur'},
+                        {required: true, message: '请输入密码', trigger: 'blur'},
                         {min: 6, max: 18, message: '长度在 6 到 18 个字符', trigger: 'blur'}
                     ],
                     passwordConfirm: [
@@ -208,9 +221,9 @@
         },
         computed: {
             cascaderModel: {
-                get: function () {
+                get: function(){
                 },
-                set: function (value) {
+                set: function(value) {
                     if (value && value.length > 0) {
                         this.listQuery.deptId = value[value.length - 1];
                     }
@@ -220,10 +233,10 @@
                 }
             },
             cascaderModel2: {
-                get: function () {
+                get: () =>{
                 }
                 ,
-                set: function (value) {
+                set: function(value) {
                     if (value && value.length > 0) {
                         this.sysUser.deptId = value[value.length - 1];
                     } else {
@@ -241,7 +254,8 @@
         created()
         {
             this.getList();
-            this.getOptions();
+            this.getOptions();//            选择部门
+
         }
         ,
         methods: {
@@ -313,48 +327,67 @@
                     });
                 }
             },
-            create()
-            {
-                this.sysUser.id = parseInt(Math.random() * 100) + 1024;
-                this.sysUser.timestamp = +new Date();
-                this.sysUser.author = '原创作者';
-                this.list.unshift(this.sysUser);
-                this.dialogFormVisible = false;
-                this.$notify({
-                    title: '成功',
-                    message: '创建成功',
-                    type: 'success',
-                    duration: 2000
+            create() {
+                this.$refs['userForm'].validate((valid)=>{
+                    alert(valid);
+                    if (valid) {
+                        this.dialogFormVisible = false;
+                        this.listLoading = true;
+                        createUser(this.sysUser).then(response => {
+//                            this.list = response.data.list;
+//                            this.total = response.data.total;
+                            this.$message.success('创建成功');
+                            this.listLoading = false;
+
+                        })
+                    } else {
+                        return false;
+                    }
                 });
             },
-            update()
-            {
-                this.sysUser.timestamp = +this.sysUser.timestamp;
-                for (const v of this.list) {
-                    if (v.id === this.sysUser.id) {
-                        const index = this.list.indexOf(v);
-                        this.list.splice(index, 1, this.sysUser);
-                        break;
+//            update() {
+//                this.$refs['userForm'].validate((valid) => {
+//                    alert(valid);
+//                    if (valid) {
+//                        this.dialogFormVisible = false;
+//                        this.listLoading = true;
+//                        updateUser(this.sysUser).then(response => {
+//                            this.$message.success('更新成功');
+//                            this.listLoading = false;
+//                        })
+//                    } else {
+//                        return false;
+//                    }
+//                });
+//            },
+
+            update() {
+                this.$refs['userForm'].validate((valid) => {
+                    if (valid) {
+                        this.dialogFormVisible = false;
+                        this.listLoading = true;
+                        updateUser(this.sysUser).then(response => {
+                            this.$message.success('更新成功');
+                            this.listLoading = false;
+                        })
+                    } else {
+                        return false;
                     }
-                }
-                this.dialogFormVisible = false;
-                this.$notify({
-                    title: '成功',
-                    message: '更新成功',
-                    type: 'success',
-                    duration: 2000
                 });
             },
             resetTemp()
             {
                 this.sysUser = {
                     id: undefined,
-                    importance: 0,
-                    remark: '',
-                    timestamp: 0,
-                    title: '',
-                    status: 'published',
-                    type: ''
+                    deptId: undefined,
+                    sex: 1,
+                    phone: '',
+                    avatar: '',
+                    account: '',
+                    password: '',
+                    passwordConfirm: '',
+                    enable: 1,
+                    remark: ''
                 };
             },
             handleDownload()

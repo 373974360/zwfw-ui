@@ -11,32 +11,32 @@ export function getMenuCascader(id) {
     return fetch({
         url: '/sysMenu/selectCascader',
         method: 'get',
-        params:{id}
+        params: {id}
     });
 }
 
-export function createMenu(sysMenuVo){
+export function createMenu(sysMenuVo) {
     const data = sysMenuVo;
     return fetch({
-        url:'/sysMenu/add',
+        url: '/sysMenu/add',
         method: 'post',
         data
     })
 }
 
-export function updateMenu(sysMenuVo){
+export function updateMenu(sysMenuVo) {
     const data = sysMenuVo;
     return fetch({
-        url:'/sysMenu/edit',
+        url: '/sysMenu/edit',
         method: 'post',
         data
     })
 }
 
-export function delMenu(id){
+export function delMenu(id) {
     const data = {id};
     return fetch({
-        url:'/sysMenu/del',
+        url: '/sysMenu/del',
         method: 'post',
         data
     })

@@ -11,6 +11,12 @@
             <el-button class="filter-item" type="primary" icon="document" @click="handleDownload">导出</el-button>
         </div>
 
+
+        <!--<tree-grid :columns="columns" :tree-structure="true" :data-source="itemList" :list-loading="listLoading"-->
+        <!--:handle-toggle="handleToggle" :handle-create="handleCreate"-->
+        <!--:handle-update="handleUpdate" :handle-delete="handleDelete">-->
+        <!--</tree-grid>-->
+
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row
                   style="width: 100%">
 
@@ -71,7 +77,7 @@
         </div>
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-            <el-form class="small-space" :model="sysMenu" label-position="left" label-width="70px"
+            <el-form ref="deptForm" class="small-space" :model="sysMenu" label-position="left" label-width="70px"
                      style='width: 80%; margin-left:10%;'>
                 <el-form-item label="上级部门">
                     <el-input v-model="sysMenu.parentId"></el-input>
@@ -103,8 +109,10 @@
 </template>
 
 <script>
+    /* eslint-disable dot-notation */
+
     import app from 'store/modules/app';
-    import {getDeptList} from 'api/org/dept';
+    import {getDeptList, createDept, updateDept} from 'api/org/dept';
     import {parseTime} from 'utils';
 
     export default {
@@ -115,6 +123,8 @@
                 total: null,
                 pageSize: app.state.pageSize,
                 listLoading: true,
+                currentRow: [],
+                itemList:[],
                 listQuery: {
                     page: app.state.page,
                     rows: app.state.rows,
@@ -181,24 +191,35 @@
                 this.list.splice(index, 1);
             },
             create() {
-                this.sysMenu.id = parseInt(Math.random() * 100) + 1024;
-                this.sysMenu.timestamp = +new Date();
-                this.sysMenu.author = '原创作者';
-                this.list.unshift(this.sysMenu);
-                this.dialogFormVisible = false;
-                this.$message.success('创建成功');
+                this.$refs['deptForm'].validate((valid) => {
+                    alert(valid);
+                    if (valid) {
+                        this.dialogFormVisible = false;
+                        this.listLoading = true;
+                        createDept(this.sysMenu).then(response => {
+                            this.list = response.data.list;
+                            this.$message.success('创建成功');
+                            this.listLoading = false;
+                        })
+                    } else {
+                        return false;
+                    }
+                });
             },
             update() {
-                this.sysMenu.timestamp = +this.sysMenu.timestamp;
-                for (const v of this.list) {
-                    if (v.id === this.sysMenu.id) {
-                        const index = this.list.indexOf(v);
-                        this.list.splice(index, 1, this.sysMenu);
-                        break;
+                this.$refs['deptForm'].validate((valid) => {
+                    if (valid) {
+                        this.dialogFormVisible = false;
+                        this.listLoading = true;
+                        updateDept(this.sysMenu).then(response => {
+                            this.list = response.data.list;
+                            this.$message.success('更新成功');
+                            this.listLoading = false;
+                        })
+                    } else {
+                        return false;
                     }
-                }
-                this.dialogFormVisible = false;
-                this.$message.success('更新成功');
+                });
             },
             resetTemp() {
                 this.sysMenu = {
