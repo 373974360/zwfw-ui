@@ -228,7 +228,7 @@
                 if (value === '') {
                    callback(new Error('请再次输入密码'));
                 } else if (value === "") {
-=======
+
             const reg = /^((13|15|18|14|17)+\d{9})$/;
             const validatMobiles = (rule, value, callback) => {
                 if (!reg.test(value)) {
@@ -241,7 +241,7 @@
                 if (value === '') {
                     callback(new Error('请再次输入密码'));
                 } else if (value !== this.sysUser.password) {
->>>>>>> origin/master
+
                     callback(new Error('两次输入密码不一致!'));
                 } else {
                     callback();
@@ -262,13 +262,12 @@
                 sysUser: {
                     id: undefined,
                     deptId: undefined,
-<<<<<<< HEAD
-                    sex: 1,
-=======
+                     sex: 1,
+
                     userName: '',
                     deptName: '',
                     sex: '',
->>>>>>> origin/master
+
                     phone: '',
                     avatar: '',
                     account: '',
@@ -291,11 +290,11 @@
                         {type: 'url', required: true, message: '头像地址不正确', trigger: 'blur'}
                     ],
                     account: [
-<<<<<<< HEAD
+
                         {required: true, message: '请输您的账号', trigger: 'blur'}
-=======
+
                         {required: true, message: '请输入账号', trigger: 'blur'}
->>>>>>> origin/master
+
                     ],
                     password: [
                         {required: true, message: '请输入密码', trigger: 'blur'},
@@ -328,7 +327,7 @@
             }
         },
         computed: {
-<<<<<<< HEAD
+
             cascaderModel: {
                 get: function(){
                 },
@@ -354,13 +353,13 @@
                 }
             }
             ,
-=======
+
             cascaderModel: function() {
             },
             cascaderModel2: function () {
             },
->>>>>>> origin/master
-            ...
+
+
                 mapGetters([
                     'textMap',
                     'enums'
