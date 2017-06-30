@@ -47,7 +47,6 @@ export function deleteMenu(id) {
     const data = {id};
     return fetch({
         url: '/sysMenu/delete',
->>>>>>> origin/master
         method: 'post',
         data
     })
