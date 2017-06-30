@@ -8,10 +8,18 @@ export function getDeptList(query) {
     });
 }
 
-export function getDeptCascader() {
+export function getDeptTree() {
+    return fetch({
+        url: '/sysDept/selectTree',
+        method: 'get'
+    });
+}
+
+export function getDeptCascader(id) {
     return fetch({
         url: '/sysDept/selectCascader',
-        method: 'get'
+        method: 'get',
+        params: {id}
     });
 }
 
@@ -32,7 +40,6 @@ export function updateDept(sysDeptVo){
         data
     })
 }
-
 export function delDept(id) {
     const data = {id};
     return fetch({
