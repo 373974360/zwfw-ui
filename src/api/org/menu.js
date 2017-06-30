@@ -37,8 +37,7 @@ export function delMenu(id) {
     const data = {id};
     return fetch({
         url: '/sysMenu/del',
-<<<<<<< HEAD
-=======
+
         method: 'post',
         data
     })
