@@ -52,21 +52,21 @@ TreeUtil.addRow = function(currentRow,data,treeData){
 }
 
 TreeUtil.delRow = function(currentRow,treeData){
-    if(currentRow._parent){
+    if (currentRow._parent){
         const index = currentRow._parent.children.indexOf(currentRow);
         currentRow._parent.children.splice(index, 1);
-    }else {
+    } else {
         const index = treeData.indexOf(currentRow);
         treeData.splice(index, 1);
     }
 }
 
-TreeUtil.getRowById = function(id,treeData){
-    for(const node of treeData){
-        if(node.children && node.children.length > 0){
-            return TreeUtil.getRowById(id,node.children);
-        }else{
-            if(id === node.id){
+TreeUtil.getRowById = function(id, treeData) {
+    for (const node of treeData) {
+        if (node.children && node.children.length > 0){
+            return TreeUtil.getRowById(id, node.children);
+        } else {
+            if (id === node.id) {
                 return node;
             }
         }

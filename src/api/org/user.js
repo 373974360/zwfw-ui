@@ -8,19 +8,19 @@ export function getUserList(query) {
     });
 }
 
-export function createUser(sysUserVo){
+export function createUser(sysUserVo) {
     const data = sysUserVo;
     return fetch({
-        url:'/sysUser/add',
+        url: '/sysUser/add',
         method: 'post',
         data
     })
 }
 
-export function updateUser(sysUserVo){
+export function updateUser(sysUserVo) {
     const data = sysUserVo;
     return fetch({
-        url:'/sysUser/edit',
+        url: '/sysUser/edit',
         method: 'post',
         data
     })
@@ -29,7 +29,7 @@ export function updateUser(sysUserVo){
 export function delUser(ids){
     const data = {ids};
     return fetch({
-        url:'/sysUser/dels',
+        url:  '/sysUser/dels',
         method: 'post',
         data
     })
