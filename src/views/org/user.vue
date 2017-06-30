@@ -75,20 +75,13 @@
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
             <el-form ref="userForm" class="small-space" :model="sysUser" label-position="right" label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="sysUserRules">
-<<<<<<< HEAD
-                <el-form-item label="部门" props="deptId">
-                    <!--<el-cascader :options="cascader" class="filter-item" v-model="cascaderModel2"-->
-                                 <!--:show-all-levels="true"-->
-                                 <!--:change-on-select="true" style="width: 180px" placeholder="选择部门" filterable-->
-                                 <!--clearable></el-cascader>-->
-                    <el-input v-model="sysUser.deptName"/>
-=======
+
                 <el-form-item label="部门" prop="deptId">
                     <el-cascader :options="cascader" class="filter-item" v-model="cascaderModel2"
                                  :show-all-levels="true"
                                  :change-on-select="true" style="width: 180px" placeholder="选择部门" filterable
                                  clearable></el-cascader>
->>>>>>> origin/master
+
                 </el-form-item>
                 <el-form-item label="姓名" prop="userName">
                     <el-input v-model="sysUser.userName"/>
@@ -190,7 +183,6 @@
                     <el-input v-model="sysUser.passwordConfirm" type="password"/>
                 </el-form-item>
                 <el-form-item label="状态" prop="enable">
->>>>>>> origin/master
                     <el-select v-model="sysUser.enable" placeholder="请选择" style="width:100%">
                         <el-option
                                 v-for="item in enums['Enable']"
@@ -216,20 +208,16 @@
     /* eslint-disable brace-style,no-unused-vars,object-shorthand,comma-style,rest-spread-spacing,prefer-const,no-array-constructor,quotes,indent,dot-notation,no-var,comma-spacing,arrow-parens,no-empty-function,space-before-blocks,arrow-spacing,padded-blocks */
 
     import {getDeptCascader} from 'api/org/dept';
-<<<<<<< HEAD
+
     import {getUserList, delUser,createUser,updateUser} from 'api/org/user';
     import {parseTime} from 'utils';
-=======
-    import {getUserList, updateUser, createUser, delUser} from 'api/org/user';
-    import {copyProperties} from 'utils';
->>>>>>> origin/master
+
     import {mapGetters} from 'vuex';
     import TreeUtil from 'utils/TreeUtil.js';
 
     export default {
         name: 'table_demo',
-        data() {
-<<<<<<< HEAD
+
 //           var validatMobiles = (rule, value, callback) => {
 //               if (value === '') {
 //                 return callback(new Error('请输入您的电话'));
