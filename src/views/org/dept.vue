@@ -1,7 +1,7 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="标题"
+            <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="部门全称/部门简称"
                       v-model="listQuery.deptName">
             </el-input>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="handleFilter">搜索</el-button>
@@ -76,26 +76,28 @@
             </el-pagination>
         </div>
 
+
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-            <el-form ref="deptForm" class="small-space" :model="sysMenu" label-position="left" label-width="70px"
+            <el-form ref="deptForm" class="small-space" :model="sysDept" label-position="left" label-width="70px"
                      style='width: 80%; margin-left:10%;'>
                 <el-form-item label="上级部门">
-                    <el-input v-model="sysMenu.parentId"></el-input>
+                    <el-cascader :options="cascader" v-model="cascaderModel" :show-all-levels="true"
+                                 :change-on-select="true" style="width:100%" :disabled="true"></el-cascader>
                 </el-form-item>
                 <el-form-item label="部门全称">
-                    <el-input v-model="sysMenu.deptName"></el-input>
+                    <el-input v-model="sysDept.deptName"></el-input>
                 </el-form-item>
                 <el-form-item label="部门简称">
-                    <el-input v-model="sysMenu.shortName"></el-input>
+                    <el-input v-model="sysDept.shortName"></el-input>
                 </el-form-item>
                 <el-form-item label="部门编号">
-                    <el-input v-model="sysMenu.deptCode"></el-input>
+                    <el-input v-model="sysDept.deptCode"></el-input>
                 </el-form-item>
                 <el-form-item label="排序">
-                    <el-input v-model="sysMenu.sortNo"></el-input>
+                    <el-input-number v-model="sysDept.sortNo" :min="1" :max="100"/>
                 </el-form-item>
                 <el-form-item label="备注">
-                    <el-input v-model="sysMenu.remark"></el-input>
+                    <el-input v-model="sysDept.remark"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -109,35 +111,36 @@
 </template>
 
 <script>
-    /* eslint-disable dot-notation */
-
     import app from 'store/modules/app';
-    import {getDeptList, createDept, updateDept} from 'api/org/dept';
-    import {parseTime} from 'utils';
+    import {getDeptList, createDept, updateDept, delDept} from 'api/org/dept';
+    import {copyProperties} from 'utils';
+    import TreeUtil from 'utils/TreeUtil.js';
 
     export default {
         name: 'dept_table',
         data() {
             return {
-                list: null,
+//                list: null,
                 total: null,
                 pageSize: app.state.pageSize,
                 listLoading: true,
                 currentRow: [],
-                itemList:[],
+                list: [],
+                cascader: [],
                 listQuery: {
                     page: app.state.page,
                     rows: app.state.rows,
                     deptName: undefined
                 },
-                sysMenu: {
+                sysDept: {
                     id: undefined,
-                    deptName: 0,
+                    deptName: '',
                     shortName: '',
-                    deptCode: 0,
-                    parentId: '',
-                    sortNo: 0,
-                    status: 1
+                    deptCode: '',
+                    parentId: 0,
+                    sortNo: 1,
+                    status: 1,
+                    treePosition: ''
                 },
                 dialogFormVisible: false,
                 dialogStatus: '',
@@ -149,6 +152,25 @@
         },
         created() {
             this.getList();
+        },
+        computed: {
+            cascaderModel: function() {
+                if (this.sysDept.treePosition) {
+                    var arr = this.sysDept.treePosition.split('&');
+                    if (this.dialogStatus === 'update') {
+                        return arr.splice(0, arr.length - 2);
+                    } else {
+                        return arr.splice(0, arr.length - 1);
+                    }
+                }
+            },
+            parentId: function () {
+                if (this.cascaderModel) {
+                    return this.cascaderModel[this.cascaderModel.length - 1];
+                } else {
+                    return 0;
+                }
+            }
         },
         methods: {
             getList() {
@@ -170,34 +192,54 @@
                 this.listQuery.page = val;
                 this.getList();
             },
-            handleCreate() {
+            handleCreate(row) {
+                this.currentRow = row;
                 this.resetTemp();
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
             },
             handleUpdate(row) {
-                this.sysMenu = Object.assign({}, row);
+                this.currentRow = row;
+                this.resetTemp();
+                this.sysDept = copyProperties(this.sysDept, row);
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
             handleDelete(row) {
-                this.$notify({
-                    title: '成功',
-                    message: '删除成功',
-                    type: 'success',
-                    duration: 2000
+                this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    delDept(row.id).then(response => {
+//                        this.getList();
+//                        this.currentRow.splice()
+                        const index = this.list.indexOf(row);
+                        this.list.splice(index, 1);
+//                        TreeUtil.delRow(row, this.list);
+//                        this.$message.success('删除成功');
+                    })
+                }).catch(() => {
+                    console.dir("取消");
                 });
-                const index = this.list.indexOf(row);
-                this.list.splice(index, 1);
+//                this.$notify({
+//                    title: '成功',
+//                    message: '删除成功',
+//                    type: 'success',
+//                    duration: 2000
+//                });
+//                const index = this.list.indexOf(row);
+//                this.list.splice(index, 1);
             },
             create() {
-                this.$refs['deptForm'].validate((valid) => {
-                    alert(valid);
+                this.$refs['deptForm'].validate(valid => {
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
-                        createDept(this.sysMenu).then(response => {
-                            this.list = response.data.list;
+                        createDept(this.sysDept).then(response => {
+                            TreeUtil.addRow(this.currentRow, response.data, this.list);
+//                            this.getList();
+//                            this.list = response.data.list;
                             this.$message.success('创建成功');
                             this.listLoading = false;
                         })
@@ -207,12 +249,12 @@
                 });
             },
             update() {
-                this.$refs['deptForm'].validate((valid) => {
+                this.$refs['deptForm'].validate(valid => {
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
-                        updateDept(this.sysMenu).then(response => {
-                            this.list = response.data.list;
+                        updateDept(this.sysDept).then(response => {
+                            copyProperties(this.currentRow, response.data);
                             this.$message.success('更新成功');
                             this.listLoading = false;
                         })
@@ -222,14 +264,15 @@
                 });
             },
             resetTemp() {
-                this.sysMenu = {
+                this.sysDept = {
                     id: undefined,
-                    importance: 0,
-                    remark: '',
-                    timestamp: 0,
-                    title: '',
-                    status: 'published',
-                    type: ''
+                    deptName: '',
+                    shortName: '',
+                    deptCode: '',
+                    parentId: 0,
+                    sortNo: 1,
+                    status: 1,
+                    treePosition: ''
                 };
             },
             handleDownload() {

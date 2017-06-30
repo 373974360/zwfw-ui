@@ -26,10 +26,10 @@ export function updateUser(sysUserVo) {
     })
 }
 
-export function delUser(ids) {
+export function delUser(ids){
     const data = {ids};
     return fetch({
-        url: '/sysUser/dels',
+        url:  '/sysUser/dels',
         method: 'post',
         data
     })

@@ -100,7 +100,7 @@
                     <el-input v-model="sysUser.avatar"/>
                 </el-form-item>
                 <el-form-item label="帐号" prop="account">
-                    <el-input v-model="sysUser.account" placeholder="邮箱账号"/>
+                    <el-input v-model="sysUser.account"/>
                 </el-form-item>
                 <el-form-item label="密码" prop="password">
                     <el-input v-model="sysUser.password" type="password"/>
@@ -192,7 +192,6 @@
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import TreeUtil from 'utils/TreeUtil.js';
-    import {isWscnEmail} from 'utils/validate.js';
 
     export default {
         name: 'table_demo',
@@ -214,11 +213,6 @@
                     callback();
                 }
             };
-            const isWscnEmail = (rule, value, callback) => {
-                if (!isWscnEmail(value)) {
-                    return callback(new Error('请输入合法的邮箱'));
-                }
-            }
             return {
                 list: null,
                 total: null,
@@ -278,7 +272,7 @@
                         {type: 'url', required: true, message: '头像地址不正确', trigger: 'blur'}
                     ],
                     account: [
-                        {validator: isWscnEmail, message: '请输入账号', trigger: 'blur'}
+                        {required: true, message: '请输入账号', trigger: 'blur'}
                     ]
                 },
                 selectedRows: [],
