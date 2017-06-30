@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import fetch from 'utils/fetch';
 
 export function fetchList(query) {

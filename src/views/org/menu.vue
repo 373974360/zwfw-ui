@@ -15,7 +15,7 @@
 
                 <el-form-item label="上级菜单">
                     <el-cascader :options="cascader" v-model="cascaderModel" :show-all-levels="true"
-                                 :change-on-select="true" style="width:100%" :disabled="false"></el-cascader>
+                                 :change-on-select="true" style="width:100%" :disabled="true"></el-cascader>
                 </el-form-item>
                 <el-form-item label="菜单名称" prop="menuName">
                     <el-input v-model="sysMenu.menuName"/>
@@ -54,12 +54,13 @@
     </div>
 </template>
 <script>
+    /* eslint-disable no-unused-vars,object-shorthand */
+
     import TreeGrid from 'components/TreeGrid'
     import {getMenuTree, getMenuCascader, createMenu, updateMenu, delMenu} from 'api/org/menu';
-    import {copyProperties} from 'utils';
+    import {copyProperties, objectMerge} from 'utils';
     import {mapGetters} from 'vuex';
-    import TreeUtil from 'utils/TreeUtil.js';
-
+    import TreeUtil from 'utils/TreeUtil.js'
     export default {
         name: 'menu_table',
         data () {
@@ -174,7 +175,6 @@
             },
             handleUpdate(row) {
                 this.currentRow = row;
-                this.resetTemp();
                 this.sysMenu = copyProperties(this.sysMenu, row);
                 this.getOptions(this.sysMenu.id);
                 this.dialogStatus = 'update';
@@ -210,6 +210,7 @@
                     }
                 });
             },
+
             update() {
                 this.$refs['menuForm'].validate((valid) => {
                     if (valid) {
