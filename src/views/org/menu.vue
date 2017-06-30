@@ -54,6 +54,8 @@
     </div>
 </template>
 <script>
+    /* eslint-disable no-unused-vars,object-shorthand */
+
     import TreeGrid from 'components/TreeGrid'
     import {getMenuTree, getMenuCascader, createMenu, updateMenu, delMenu} from 'api/org/menu';
     import {copyProperties, objectMerge} from 'utils';
@@ -208,6 +210,7 @@
                     }
                 });
             },
+
             update() {
                 this.$refs['menuForm'].validate((valid) => {
                     if (valid) {

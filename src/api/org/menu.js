@@ -11,7 +11,7 @@ export function getMenuCascader(id) {
     return fetch({
         url: '/sysMenu/selectCascader',
         method: 'get',
-        params:{id}
+        params: {id}
     });
 }
 
@@ -37,6 +37,8 @@ export function delMenu(id) {
     const data = {id};
     return fetch({
         url: '/sysMenu/del',
+<<<<<<< HEAD
+=======
         method: 'post',
         data
     })
@@ -46,6 +48,7 @@ export function deleteMenu(id) {
     const data = {id};
     return fetch({
         url: '/sysMenu/delete',
+>>>>>>> origin/master
         method: 'post',
         data
     })

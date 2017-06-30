@@ -15,7 +15,7 @@ export function getDeptCascader() {
     });
 }
 
-export function createDept(sysDeptVo){
+export function createDept(sysDeptVo) {
     const data = sysDeptVo;
     return fetch({
         url:'/sysDept/add',
@@ -24,7 +24,7 @@ export function createDept(sysDeptVo){
     })
 }
 
-export function updateDept(sysDeptVo){
+export function updateDept(sysDeptVo) {
     const data = sysDeptVo;
     return fetch({
         url:'/sysDept/edit',
