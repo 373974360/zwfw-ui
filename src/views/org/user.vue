@@ -4,7 +4,7 @@
             <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="姓名"
                       v-model="listQuery.userName">
             </el-input>
-            <el-cascader :options="cascader" class="filter-item" v-model="npm" :show-all-levels="true"
+            <el-cascader :options="cascader" class="filter-item" v-model="cascaderModel" :show-all-levels="true"
                          :change-on-select="true" style="width: 180px" placeholder="选择部门" filterable
                          clearable></el-cascader>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
@@ -75,11 +75,12 @@
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
             <el-form ref="userForm" class="small-space" :model="sysUser" label-position="right" label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="sysUserRules">
-                <el-form-item label="部门" prop="deptId">
-                    <el-cascader :options="cascader" class="filter-item" v-model="cascaderModel2"
-                                 :show-all-levels="true"
-                                 :change-on-select="true" style="width: 180px" placeholder="选择部门" filterable
-                                 clearable></el-cascader>
+                <el-form-item label="部门" props="deptId">
+                    <!--<el-cascader :options="cascader" class="filter-item" v-model="cascaderModel2"-->
+                                 <!--:show-all-levels="true"-->
+                                 <!--:change-on-select="true" style="width: 180px" placeholder="选择部门" filterable-->
+                                 <!--clearable></el-cascader>-->
+                    <el-input v-model="sysUser.deptName"/>
                 </el-form-item>
                 <el-form-item label="姓名" prop="userName">
                     <el-input v-model="sysUser.userName"/>
@@ -91,62 +92,7 @@
                                 :key="item.code"
                                 :label="item.value"
                                 :value="item.code"/>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="电话" prop="phone">
-                    <el-input v-model="sysUser.phone"/>
-                </el-form-item>
-                <el-form-item label="头像" prop="avatar">
-                    <el-input v-model="sysUser.avatar"/>
-                </el-form-item>
-                <el-form-item label="帐号" prop="account">
-                    <el-input v-model="sysUser.account"/>
-                </el-form-item>
-                <el-form-item label="密码" prop="password">
-                    <el-input v-model="sysUser.password" type="password"/>
-                </el-form-item>
-                <el-form-item label="确认密码" prop="passwordConfirm">
-                    <el-input v-model="sysUser.passwordConfirm" type="password"/>
-                </el-form-item>
-                <el-form-item label="状态" prop="enable">
-                    <el-select v-model="sysUser.enable" placeholder="请选择" style="width:100%">
-                        <el-option
-                                v-for="item in enums['Enable']"
-                                :key="item.code"
-                                :label="item.value"
-                                :value="item.code"/>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="备注">
-                    <el-input type="textarea" v-model="sysUser.remark" :rows="3"/>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" @click="create">确 定</el-button>
-                <el-button v-else type="primary" @click="update">确 定</el-button>
-            </div>
-        </el-dialog>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-            <el-form ref="userForm1" class="small-space" :model="sysUser" label-position="right" label-width="80px"
-                     style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="sysUserRules1">
-                <el-form-item label="部门" prop="deptId">
-                    <el-cascader :options="cascader" class="filter-item" v-model="cascaderModel2"
-                                 :show-all-levels="true"
-                                 :change-on-select="true" style="width: 180px" placeholder="选择部门" filterable
-                                 clearable></el-cascader>
-                </el-form-item>
-                <el-form-item label="姓名" prop="userName">
-                    <el-input v-model="sysUser.userName"/>
-                </el-form-item>
-                <el-form-item label="性别">
-                    <el-select v-model="sysUser.sex" placeholder="请选择" style="width:100%">
-                        <el-option
-                                v-for="item in enums['Gender']"
-                                :key="item.code"
-                                :label="item.value"
-                                :value="item.code"/>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="电话" prop="phone">
@@ -158,13 +104,19 @@
                 <el-form-item label="帐号" prop="account">
                     <el-input v-model="sysUser.account"/>
                 </el-form-item>
-                <el-form-item label="密码" prop="password">
-                    <el-input v-model="sysUser.password" type="password"/>
-                </el-form-item>
-                <el-form-item label="确认密码" prop="passwordConfirm">
-                    <el-input v-model="sysUser.passwordConfirm" type="password"/>
-                </el-form-item>
-                <el-form-item label="状态" prop="enable">
+                <!--<el-form-item label="密码" prop="password">-->
+                    <!--<el-input-number v-model="sysUser.password" :min="1" :max="100"/>-->
+                <!--</el-form-item>-->
+                <!--<el-form-item label="确认密码" prop="passwordConfirm">-->
+                    <!--<el-input-number v-model="sysUser.passwordConfirm" :min="1" :max="100"/>-->
+                <!--</el-form-item>-->
+                <!--<el-form-item label="密码" prop="password">-->
+                    <!--<el-input type="password" v-model="sysUser.password" auto-complete="off"></el-input>-->
+                <!--</el-form-item>-->
+                <!--<el-form-item label="确认密码" prop="passwordConfirm">-->
+                    <!--<el-input type="password" v-model="sysUser.passwordConfirm"  auto-complete="off"></el-input>-->
+                <!--</el-form-item>-->
+               <el-form-item label="状态" prop="enable">
                     <el-select v-model="sysUser.enable" placeholder="请选择" style="width:100%">
                         <el-option
                                 v-for="item in enums['Enable']"
@@ -187,32 +139,33 @@
 </template>
 
 <script>
-    import {getDeptCascader} from 'api/org/dept';
-    import {getUserList, updateUser, createUser, delUser} from 'api/org/user';
-    import {copyProperties} from 'utils';
-    import {mapGetters} from 'vuex';
-    import TreeUtil from 'utils/TreeUtil.js';
+    /* eslint-disable brace-style,no-unused-vars,object-shorthand,comma-style,rest-spread-spacing,prefer-const,no-array-constructor,quotes,indent,dot-notation,no-var,comma-spacing,arrow-parens,no-empty-function,space-before-blocks,arrow-spacing,padded-blocks */
 
+    import {getDeptCascader} from 'api/org/dept';
+    import {getUserList, delUser,createUser,updateUser} from 'api/org/user';
+    import {parseTime} from 'utils';
+    import {mapGetters} from 'vuex';
+    import {validatMobiles} from 'utils/validate';
     export default {
         name: 'table_demo',
         data() {
-            const reg = /^((13|15|18|14|17)+\d{9})$/;
-            const validatMobiles = (rule, value, callback) => {
-                if (!reg.test(value)) {
-                    return callback(new Error('手机号码不正确'));
-                }else {
-                    callback();
-                }
-            }
-            const validatePass2 = (rule, value, callback) => {
+//           var validatMobiles = (rule, value, callback) => {
+//               if (value === '') {
+//                 return callback(new Error('请输入您的电话'));
+//                }
+//            }
+
+            var validatePass2 = (rule, value, callback) => {
                 if (value === '') {
-                    callback(new Error('请再次输入密码'));
-                } else if (value !== this.sysUser.password) {
+                   callback(new Error('请再次输入密码'));
+                } else if (value === "") {
                     callback(new Error('两次输入密码不一致!'));
                 } else {
                     callback();
                 }
             };
+
+
             return {
                 list: null,
                 total: null,
@@ -226,9 +179,7 @@
                 sysUser: {
                     id: undefined,
                     deptId: undefined,
-                    userName: '',
-                    deptName: '',
-                    sex: '',
+                    sex: 1,
                     phone: '',
                     avatar: '',
                     account: '',
@@ -245,13 +196,13 @@
                         {required: true, message: '请输入姓名', trigger: 'blur'}
                     ],
                     phone: [
-                        {validator: validatMobiles, trigger: 'blur'}
+                        {required: true, message: '请输入电话', trigger: 'blur'}
                     ],
                     avatar: [
                         {type: 'url', required: true, message: '头像地址不正确', trigger: 'blur'}
                     ],
                     account: [
-                        {required: true, message: '请输入账号', trigger: 'blur'}
+                        {required: true, message: '请输您的账号', trigger: 'blur'}
                     ],
                     password: [
                         {required: true, message: '请输入密码', trigger: 'blur'},
@@ -261,33 +212,39 @@
                         {validator: validatePass2, trigger: 'blur'}
                     ]
                 },
-                sysUserRules1: {
-                    userName: [
-                        {required: true, message: '请输入姓名', trigger: 'blur'}
-                    ],
-                    phone: [
-                        {validator: validatMobiles, trigger: 'blur'}
-                    ],
-                    avatar: [
-                        {type: 'url', required: true, message: '头像地址不正确', trigger: 'blur'}
-                    ],
-                    account: [
-                        {required: true, message: '请输入账号', trigger: 'blur'}
-                    ]
-                },
                 selectedRows: [],
                 cascader: [],
                 dialogFormVisible: false,
                 dialogStatus: '',
                 dialogLoading: false
-
             }
         },
         computed: {
-            cascaderModel: function() {
+            cascaderModel: {
+                get: function(){
+                },
+                set: function(value) {
+                    if (value && value.length > 0) {
+                        this.listQuery.deptId = value[value.length - 1];
+                    }
+                    else {
+                        this.listQuery.deptId = undefined;
+                    }
+                }
             },
-            cascaderModel2: function () {
-            },
+            cascaderModel2: {
+                get: () =>{
+                }
+                ,
+                set: function(value) {
+                    if (value && value.length > 0) {
+                        this.sysUser.deptId = value[value.length - 1];
+                    } else {
+                        this.sysUser.deptId = undefined;
+                    }
+                }
+            }
+            ,
             ...
                 mapGetters([
                     'textMap',
@@ -297,16 +254,19 @@
         created()
         {
             this.getList();
-            this.getOptions();
+            this.getOptions();//            选择部门
+
         }
         ,
         methods: {
-            getOptions(id) {
-                getDeptCascader(id).then(response => {
+            getOptions()
+            {
+                getDeptCascader().then(response => {
                     this.cascader = response.data;
                 })
             },
-            getList() {
+            getList()
+            {
                 this.listLoading = true;
                 getUserList(this.listQuery).then(response => {
                     this.list = response.data.list;
@@ -314,32 +274,34 @@
                     this.listLoading = false;
                 })
             },
-            handleSizeChange(val) {
+            handleSizeChange(val)
+            {
                 this.listQuery.rows = val;
                 this.getList();
             },
-            handleCurrentChange(val) {
+            handleCurrentChange(val)
+            {
                 this.listQuery.page = val;
                 this.getList();
             },
-            handleSelectionChange(rows) {
+            handleSelectionChange(rows)
+            {
                 this.selectedRows = rows;
             },
-            handleCreate(row) {
-                this.currentRow = row;
+            handleCreate()
+            {
                 this.resetTemp();
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
             },
-            handleUpdate(row) {
-                this.currentRow = row;
-                this.resetTemp();
+            handleUpdate(row)
+            {
                 this.sysUser = Object.assign({}, row);
-                this.sysUser.password = '';
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
-            handleDelete() {
+            handleDelete()
+            {
                 if (!this.selectedRows) {
                     this.$message.error('请选择需要操作的记录');
                 } else {
@@ -361,75 +323,64 @@
                             this.list.splice(index, 1);
                         }
                     }).catch(() => {
-                        console.dir('取消');
+                        console.dir("取消");
                     });
                 }
             },
             create() {
-                this.$refs['userForm'].validate(valid => {
+                this.$refs['userForm'].validate((valid)=>{
+                    alert(valid);
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         createUser(this.sysUser).then(response => {
-                            TreeUtil.addRow(this.currentRow, response.data, this.list);
-//                            this.getList();
 //                            this.list = response.data.list;
+//                            this.total = response.data.total;
                             this.$message.success('创建成功');
                             this.listLoading = false;
+
                         })
                     } else {
                         return false;
                     }
                 });
-//                this.sysUser.id = parseInt(Math.random() * 100) + 1024;
-//                this.sysUser.timestamp = +new Date();
-//                this.sysUser.author = '原创作者';
-//                this.list.unshift(this.sysUser);
-//                this.dialogFormVisible = false;
-//                this.$notify({
-//                    title: '成功',
-//                    message: '创建成功',
-//                    type: 'success',
-//                    duration: 2000
-//                });
             },
+//            update() {
+//                this.$refs['userForm'].validate((valid) => {
+//                    alert(valid);
+//                    if (valid) {
+//                        this.dialogFormVisible = false;
+//                        this.listLoading = true;
+//                        updateUser(this.sysUser).then(response => {
+//                            this.$message.success('更新成功');
+//                            this.listLoading = false;
+//                        })
+//                    } else {
+//                        return false;
+//                    }
+//                });
+//            },
+
             update() {
-                this.$refs['userForm1'].validate(valid => {
+                this.$refs['userForm'].validate((valid) => {
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         updateUser(this.sysUser).then(response => {
-                            copyProperties(this.currentRow, response.data);
                             this.$message.success('更新成功');
                             this.listLoading = false;
                         })
                     } else {
                         return false;
                     }
-                })
-//                this.sysUser.timestamp = +this.sysUser.timestamp;
-//                for (const v of this.list) {
-//                    if (v.id === this.sysUser.id) {
-//                        const index = this.list.indexOf(v);
-//                        this.list.splice(index, 1, this.sysUser);
-//                        break;
-//                    }
-//                }
-//                this.dialogFormVisible = false;
-//                this.$notify({
-//                    title: '成功',
-//                    message: '更新成功',
-//                    type: 'success',
-//                    duration: 2000
-//                });
+                });
             },
-            resetTemp() {
+            resetTemp()
+            {
                 this.sysUser = {
                     id: undefined,
                     deptId: undefined,
-                    userName: '',
-                    deptName: '',
-                    sex: '',
+                    sex: 1,
                     phone: '',
                     avatar: '',
                     account: '',
@@ -439,7 +390,8 @@
                     remark: ''
                 };
             },
-            handleDownload() {
+            handleDownload()
+            {
                 require.ensure([], () => {
                     const {export_json_to_excel} = require('vendor/Export2Excel');
                     const tHeader = ['时间', '地区', '类型', '标题', '重要性'];
@@ -448,7 +400,8 @@
                     export_json_to_excel(tHeader, data, 'table数据');
                 })
             },
-            formatJson(filterVal, jsonData) {
+            formatJson(filterVal, jsonData)
+            {
                 return jsonData.map(v => filterVal.map(j => {
                     if (j === 'timestamp') {
                         return parseTime(v[j])
