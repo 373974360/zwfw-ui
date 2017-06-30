@@ -4,7 +4,7 @@
             <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="姓名"
                       v-model="listQuery.userName">
             </el-input>
-            <el-cascader :options="cascader" class="filter-item" v-model="npm" :show-all-levels="true"
+            <el-cascader :options="cascader" class="filter-item" v-model="cascaderModel" :show-all-levels="true"
                          :change-on-select="true" style="width: 180px" placeholder="选择部门" filterable
                          clearable></el-cascader>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
@@ -75,13 +75,11 @@
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
             <el-form ref="userForm" class="small-space" :model="sysUser" label-position="right" label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="sysUserRules">
-
                 <el-form-item label="部门" prop="deptId">
                     <el-cascader :options="cascader" class="filter-item" v-model="cascaderModel2"
                                  :show-all-levels="true"
                                  :change-on-select="true" style="width: 180px" placeholder="选择部门" filterable
                                  clearable></el-cascader>
-
                 </el-form-item>
                 <el-form-item label="姓名" prop="userName">
                     <el-input v-model="sysUser.userName"/>
@@ -93,7 +91,6 @@
                                 :key="item.code"
                                 :label="item.value"
                                 :value="item.code"/>
-
                     </el-select>
                 </el-form-item>
                 <el-form-item label="电话" prop="phone">
@@ -103,23 +100,8 @@
                     <el-input v-model="sysUser.avatar"/>
                 </el-form-item>
                 <el-form-item label="帐号" prop="account">
-                    <el-input v-model="sysUser.account"/>
+                    <el-input v-model="sysUser.account" placeholder="邮箱账号"/>
                 </el-form-item>
-<<<<<<< HEAD
-                <!--<el-form-item label="密码" prop="password">-->
-                    <!--<el-input-number v-model="sysUser.password" :min="1" :max="100"/>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="确认密码" prop="passwordConfirm">-->
-                    <!--<el-input-number v-model="sysUser.passwordConfirm" :min="1" :max="100"/>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="密码" prop="password">-->
-                    <!--<el-input type="password" v-model="sysUser.password" auto-complete="off"></el-input>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="确认密码" prop="passwordConfirm">-->
-                    <!--<el-input type="password" v-model="sysUser.passwordConfirm"  auto-complete="off"></el-input>-->
-                <!--</el-form-item>-->
-               <el-form-item label="状态" prop="enable">
-=======
                 <el-form-item label="密码" prop="password">
                     <el-input v-model="sysUser.password" type="password"/>
                 </el-form-item>
@@ -205,30 +187,16 @@
 </template>
 
 <script>
-    /* eslint-disable brace-style,no-unused-vars,object-shorthand,comma-style,rest-spread-spacing,prefer-const,no-array-constructor,quotes,indent,dot-notation,no-var,comma-spacing,arrow-parens,no-empty-function,space-before-blocks,arrow-spacing,padded-blocks */
-
     import {getDeptCascader} from 'api/org/dept';
-
-    import {getUserList, delUser,createUser,updateUser} from 'api/org/user';
-    import {parseTime} from 'utils';
-
+    import {getUserList, updateUser, createUser, delUser} from 'api/org/user';
+    import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import TreeUtil from 'utils/TreeUtil.js';
+    import {isWscnEmail} from 'utils/validate.js';
 
     export default {
         name: 'table_demo',
-
-//           var validatMobiles = (rule, value, callback) => {
-//               if (value === '') {
-//                 return callback(new Error('请输入您的电话'));
-//                }
-//            }
-
-            var validatePass2 = (rule, value, callback) => {
-                if (value === '') {
-                   callback(new Error('请再次输入密码'));
-                } else if (value === "") {
-=======
+        data() {
             const reg = /^((13|15|18|14|17)+\d{9})$/;
             const validatMobiles = (rule, value, callback) => {
                 if (!reg.test(value)) {
@@ -241,14 +209,16 @@
                 if (value === '') {
                     callback(new Error('请再次输入密码'));
                 } else if (value !== this.sysUser.password) {
->>>>>>> origin/master
                     callback(new Error('两次输入密码不一致!'));
                 } else {
                     callback();
                 }
             };
-
-
+            const isWscnEmail = (rule, value, callback) => {
+                if (!isWscnEmail(value)) {
+                    return callback(new Error('请输入合法的邮箱'));
+                }
+            }
             return {
                 list: null,
                 total: null,
@@ -262,13 +232,9 @@
                 sysUser: {
                     id: undefined,
                     deptId: undefined,
-<<<<<<< HEAD
-                    sex: 1,
-=======
                     userName: '',
                     deptName: '',
                     sex: '',
->>>>>>> origin/master
                     phone: '',
                     avatar: '',
                     account: '',
@@ -285,17 +251,13 @@
                         {required: true, message: '请输入姓名', trigger: 'blur'}
                     ],
                     phone: [
-                        {required: true, message: '请输入电话', trigger: 'blur'}
+                        {validator: validatMobiles, trigger: 'blur'}
                     ],
                     avatar: [
                         {type: 'url', required: true, message: '头像地址不正确', trigger: 'blur'}
                     ],
                     account: [
-<<<<<<< HEAD
-                        {required: true, message: '请输您的账号', trigger: 'blur'}
-=======
                         {required: true, message: '请输入账号', trigger: 'blur'}
->>>>>>> origin/master
                     ],
                     password: [
                         {required: true, message: '请输入密码', trigger: 'blur'},
@@ -316,7 +278,7 @@
                         {type: 'url', required: true, message: '头像地址不正确', trigger: 'blur'}
                     ],
                     account: [
-                        {required: true, message: '请输入账号', trigger: 'blur'}
+                        {validator: isWscnEmail, message: '请输入账号', trigger: 'blur'}
                     ]
                 },
                 selectedRows: [],
@@ -328,38 +290,10 @@
             }
         },
         computed: {
-<<<<<<< HEAD
-            cascaderModel: {
-                get: function(){
-                },
-                set: function(value) {
-                    if (value && value.length > 0) {
-                        this.listQuery.deptId = value[value.length - 1];
-                    }
-                    else {
-                        this.listQuery.deptId = undefined;
-                    }
-                }
-            },
-            cascaderModel2: {
-                get: () =>{
-                }
-                ,
-                set: function(value) {
-                    if (value && value.length > 0) {
-                        this.sysUser.deptId = value[value.length - 1];
-                    } else {
-                        this.sysUser.deptId = undefined;
-                    }
-                }
-            }
-            ,
-=======
             cascaderModel: function() {
             },
             cascaderModel2: function () {
             },
->>>>>>> origin/master
             ...
                 mapGetters([
                     'textMap',
@@ -369,8 +303,7 @@
         created()
         {
             this.getList();
-            this.getOptions();//            选择部门
-
+            this.getOptions();
         }
         ,
         methods: {
@@ -439,29 +372,16 @@
                 }
             },
             create() {
-<<<<<<< HEAD
-                this.$refs['userForm'].validate((valid)=>{
-                    alert(valid);
-=======
                 this.$refs['userForm'].validate(valid => {
->>>>>>> origin/master
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         createUser(this.sysUser).then(response => {
-<<<<<<< HEAD
-//                            this.list = response.data.list;
-//                            this.total = response.data.total;
-                            this.$message.success('创建成功');
-                            this.listLoading = false;
-
-=======
                             TreeUtil.addRow(this.currentRow, response.data, this.list);
 //                            this.getList();
 //                            this.list = response.data.list;
                             this.$message.success('创建成功');
                             this.listLoading = false;
->>>>>>> origin/master
                         })
                     } else {
                         return false;
@@ -479,46 +399,19 @@
 //                    duration: 2000
 //                });
             },
-<<<<<<< HEAD
-//            update() {
-//                this.$refs['userForm'].validate((valid) => {
-//                    alert(valid);
-//                    if (valid) {
-//                        this.dialogFormVisible = false;
-//                        this.listLoading = true;
-//                        updateUser(this.sysUser).then(response => {
-//                            this.$message.success('更新成功');
-//                            this.listLoading = false;
-//                        })
-//                    } else {
-//                        return false;
-//                    }
-//                });
-//            },
-
-            update() {
-                this.$refs['userForm'].validate((valid) => {
-=======
             update() {
                 this.$refs['userForm1'].validate(valid => {
->>>>>>> origin/master
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         updateUser(this.sysUser).then(response => {
-<<<<<<< HEAD
-=======
                             copyProperties(this.currentRow, response.data);
->>>>>>> origin/master
                             this.$message.success('更新成功');
                             this.listLoading = false;
                         })
                     } else {
                         return false;
                     }
-<<<<<<< HEAD
-                });
-=======
                 })
 //                this.sysUser.timestamp = +this.sysUser.timestamp;
 //                for (const v of this.list) {
@@ -535,19 +428,14 @@
 //                    type: 'success',
 //                    duration: 2000
 //                });
->>>>>>> origin/master
             },
             resetTemp() {
                 this.sysUser = {
                     id: undefined,
                     deptId: undefined,
-<<<<<<< HEAD
-                    sex: 1,
-=======
                     userName: '',
                     deptName: '',
                     sex: '',
->>>>>>> origin/master
                     phone: '',
                     avatar: '',
                     account: '',
