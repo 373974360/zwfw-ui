@@ -5,7 +5,7 @@
                 添加
             </el-button>
         </div>
-        <tree-grid :columns="columns" :tree-structure="true" :data-source="itemList" :list-loading="listLoading"
+        <tree-grid :columns="columns" :tree-structure="true" :data-source="menuList" :list-loading="listLoading"
                    :handle-toggle="handleToggle" :handle-create="handleCreate"
                    :handle-update="handleUpdate" :handle-delete="handleDelete"></tree-grid>
 
@@ -15,7 +15,8 @@
 
                 <el-form-item label="上级菜单">
                     <el-cascader :options="cascader" v-model="cascaderModel" :show-all-levels="true"
-                                 :change-on-select="true" style="width:100%" :disabled="false"></el-cascader>
+                                 :change-on-select="true" style="width:100%" :disabled="false" :clearable="true"
+                                 @change="handleChange"></el-cascader>
                 </el-form-item>
                 <el-form-item label="菜单名称" prop="menuName">
                     <el-input v-model="sysMenu.menuName"/>
@@ -64,9 +65,8 @@
         name: 'menu_table',
         data () {
             return {
-                itemList: [],
+                menuList: [],
                 listLoading: true,
-                currentRow: [],
                 columns: [
                     {
                         text: '序号',
@@ -123,19 +123,8 @@
         computed: {
             cascaderModel: function () {
                 if (this.sysMenu.treePosition) {
-                    var arr = this.sysMenu.treePosition.split('&');
-                    if (this.dialogStatus === 'update') {
-                        return arr.splice(0, arr.length - 2);
-                    } else {
-                        return arr.splice(0, arr.length - 1);
-                    }
-                }
-            },
-            parentId: function () {
-                if (this.cascaderModel) {
-                    return this.cascaderModel[this.cascaderModel.length - 1];
-                } else {
-                    return 0;
+                    const arr = this.sysMenu.treePosition.split('&');
+                    return arr;
                 }
             },
             ...mapGetters([
@@ -147,85 +136,103 @@
             TreeGrid
         },
         methods: {
-            getList() {
+            getList()
+            {
                 this.listLoading = true;
                 getMenuTree().then(response => {
-                    this.itemList = response.data;
+                    this.menuList = response.data;
                     this.listLoading = false;
                 })
             },
-            getOptions(id){
+            getOptions(id)
+            {
                 this.dialogLoading = true;
                 getMenuCascader(id).then(response => {
                     this.cascader = response.data;
                     this.dialogLoading = false;
                 })
             },
-            handleToggle(row){
+            handleChange(value)
+            {
+                if (value.length > 0) {
+                    this.sysMenu.parentId = value[value.length - 1];
+                    this.sysMenu.treePosition = value.join('&');
+                } else {
+                    this.sysMenu.parentId = 0;
+                    this.sysMenu.treePosition = undefined;
+                }
+            },
+            handleToggle(row)
+            {
                 row._expanded = !row._expanded;
             },
-            handleCreate(row) {
-                this.currentRow = row;
+            handleCreate(row)
+            {
                 this.resetTemp();
                 this.sysMenu.treePosition = row.treePosition;
+                this.sysMenu.parentId = row.id;
                 this.getOptions(null);
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
             },
-            handleUpdate(row) {
-                this.currentRow = row;
+            handleUpdate(row)
+            {
                 this.resetTemp();
                 this.sysMenu = copyProperties(this.sysMenu, row);
+                if (row._parent) {
+                    this.sysMenu.treePosition = row._parent.treePosition;
+                }else{
+                    this.sysMenu.treePosition = undefined;
+                }
                 this.getOptions(this.sysMenu.id);
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
-            handleDelete(row) {
+            handleDelete(row)
+            {
                 this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
                     delMenu(row.id).then(response => {
-                        TreeUtil.delRow(row, this.itemList);
                         this.$message.success('删除成功');
+                        TreeUtil.delRow(response.data,this.menuList);
                     })
                 }).catch(() => {
                     console.dir("取消");
                 });
             },
-            create() {
+            create()
+            {
                 this.$refs['menuForm'].validate((valid) => {
                     if (valid) {
                         this.dialogFormVisible = false;
-                        this.listLoading = true;
-                        this.sysMenu.parentId = this.parentId;
                         createMenu(this.sysMenu).then(response => {
-                            TreeUtil.addRow(this.currentRow, response.data, this.itemList);
                             this.$message.success('创建成功');
-                            this.listLoading = false;
+                            TreeUtil.addRow(response.data, this.menuList);
                         })
                     } else {
                         return false;
                     }
                 });
             },
-            update() {
+            update()
+            {
                 this.$refs['menuForm'].validate((valid) => {
                     if (valid) {
                         this.dialogFormVisible = false;
-                        this.listLoading = true;
                         updateMenu(this.sysMenu).then(response => {
-                            copyProperties(this.currentRow, response.data);
                             this.$message.success('更新成功');
-                            this.listLoading = false;
+                            TreeUtil.editRow(response.data, this.menuList);
                         })
                     } else {
                         return false;
                     }
                 });
             },
-            resetTemp() {
+            resetTemp()
+            {
                 this.sysMenu = {
                     id: undefined,
                     menuName: '',
@@ -239,7 +246,8 @@
                 };
             }
         },
-        created() {
+        created()
+        {
             this.getList();
         }
     }

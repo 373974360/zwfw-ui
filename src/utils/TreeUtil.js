@@ -36,22 +36,29 @@ TreeUtil.treeToArray = function (data, parent, level, expandedAll) {
     return tmp
 }
 
-TreeUtil.addRow = function(currentRow,data,treeData){
-    if(currentRow.id){
-        Vue.set(data, 'treePosition', currentRow.treePosition + data.id + "&");
-        Vue.set(data, '_parent', currentRow);
-        if (currentRow.children) {
-            currentRow.children.push(data);
+TreeUtil.addRow = function(data,treeData){
+    Vue.set(data, 'treePosition', data.treePosition + '&' + data.id);
+    if(data.parentId != 0){
+        const parent = TreeUtil.getRowById(data.parentId,treeData);
+        Vue.set(data, '_parent', parent);
+        if (parent.children) {
+            parent.children.push(data);
         }else{
-            currentRow.children = [data];
+            parent.children = [data];
         }
     }else{
         treeData.push(data);
-        Vue.set(data, 'treePosition', data.id + "&");
     }
 }
 
+TreeUtil.editRow = function(data,treeData){
+    const old = TreeUtil.getRowById(data.id,treeData);
+    TreeUtil.delRow(old,treeData);
+    TreeUtil.addRow(data,treeData);
+}
+
 TreeUtil.delRow = function(currentRow,treeData){
+    currentRow = TreeUtil.getRowById(currentRow.id,treeData);
     if (currentRow._parent){
         const index = currentRow._parent.children.indexOf(currentRow);
         currentRow._parent.children.splice(index, 1);
@@ -62,15 +69,15 @@ TreeUtil.delRow = function(currentRow,treeData){
 }
 
 TreeUtil.getRowById = function(id, treeData) {
+    let result = undefined;
     for (const node of treeData) {
-        if (node.children && node.children.length > 0){
-            return TreeUtil.getRowById(id, node.children);
-        } else {
-            if (id === node.id) {
-                return node;
-            }
+        if (Number(id) === node.id) {
+            result =  node;
+        }else if (node.children && node.children.length > 0){
+            result = TreeUtil.getRowById(id, node.children);
         }
     }
+    return result;
 }
 
 export default TreeUtil
