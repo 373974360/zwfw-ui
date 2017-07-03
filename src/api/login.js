@@ -28,7 +28,7 @@ export function sendPWD2Email(account){
 
 export function logout() {
     return fetch({
-        url: '/login/logout',
+        url: '/base/sysLogout',
         method: 'post'
     });
 }

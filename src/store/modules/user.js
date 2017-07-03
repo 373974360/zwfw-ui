@@ -66,9 +66,9 @@ const user = {
         LoginByEmail({commit}, userInfo) {
             return new Promise((resolve, reject) => {
                 loginByEmail(userInfo).then(response => {
-                    if(response.httpCode !== 200){
+                    if (response.httpCode !== 200) {
                         reject(response.msg);
-                    }else{
+                    } else {
                         const data = response.data;
                         Cookies.set('Base4j-Token', data.id);
                         commit('SET_TOKEN', data.id);
@@ -103,21 +103,11 @@ const user = {
             return new Promise((resolve, reject) => {
                 logout(state.token).then(() => {
                     commit('SET_TOKEN', '');
-                    commit('SET_ROLES', []);
                     Cookies.remove('Base4j-Token');
                     resolve();
                 }).catch(error => {
                     reject(error);
                 });
-            });
-        },
-
-        // 前端 登出
-        FedLogOut({commit}) {
-            return new Promise(resolve => {
-                commit('SET_TOKEN', '');
-                Cookies.remove('Base4j-Token');
-                resolve();
             });
         }
     }
