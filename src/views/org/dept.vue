@@ -12,7 +12,7 @@
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
             <el-form ref="deptForm" class="small-space" :model="sysDept" label-position="left" label-width="70px"
-                     style='width: 80%; margin-left:10%;'>
+                     style='width: 80%; margin-left:10%;' v-loading="dialogLoading">
                 <el-form-item label="上级部门">
                     <el-cascader :options="cascader" v-model="cascaderModel" @change="handleChange"
                                  :show-all-levels="true" expand-trigger="hover" :clearable="true"
