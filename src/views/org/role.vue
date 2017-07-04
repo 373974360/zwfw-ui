@@ -1,15 +1,15 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="标题"
-                      v-model="listQuery.title">
-            </el-input>
+                <!--<el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="标题"-->
+                          <!--v-model="listQuery.title">-->
+                <!--</el-input>-->
 
-            <el-select clearable class="filter-item" style="width: 130px" v-model="listQuery.type" placeholder="类型">
-                <el-option v-for="item in  calendarTypeOptions" :key="item.key"
-                           :label="item.display_name+'('+item.key+')'" :value="item.key">
-                </el-option>
-            </el-select>
+                <!--<el-select clearable class="filter-item" style="width: 130px" v-model="listQuery.type" placeholder="类型">-->
+                    <!--<el-option v-for="item in  calendarTypeOptions" :key="item.key"-->
+                               <!--:label="item.display_name+'('+item.key+')'" :value="item.key">-->
+                    <!--</el-option>-->
+                <!--</el-select>-->
 
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="handleFilter">搜索</el-button>
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="edit">
@@ -75,12 +75,12 @@
 
         </el-table>
 
-        <div v-show="!listLoading" class="pagination-container">
-            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                           :current-page.sync="listQuery.page" :page-sizes="[10,20,30, 50]"
-                           :page-size="listQuery.limit" layout="total, sizes, prev, pager, next, jumper" :total="total">
-            </el-pagination>
-        </div>
+        <!--<div v-show="!listLoading" class="pagination-container">-->
+            <!--<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"-->
+                           <!--:current-page.sync="listQuery.page" :page-sizes="[10,20,30, 50]"-->
+                           <!--:page-size="listQuery.limit" layout="total, sizes, prev, pager, next, jumper" :total="total">-->
+            <!--</el-pagination>-->
+        <!--</div>-->
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
             <el-form class="small-space" :model="sysMenu" label-position="left" label-width="70px"
@@ -197,12 +197,12 @@
         },
         methods: {
             getList() {
-                this.listLoading = true;
-                getDeptList(this.listQuery).then(response => {
-                    this.list = response.data.items;
-                    this.total = response.data.total;
-                    this.listLoading = false;
-                })
+//                this.listLoading = true;
+//                getDeptList(this.listQuery).then(response => {
+//                    this.list = response.data.items;
+//                    this.total = response.data.total;
+//                    this.listLoading = false;
+//                })
             },
             handleFilter() {
                 this.getList();

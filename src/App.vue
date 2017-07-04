@@ -5,6 +5,8 @@
 </template>
 
 <script>
+    /* eslint-disable indent */
+
     export default{
       name: 'APP'
     }
