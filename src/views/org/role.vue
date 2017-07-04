@@ -186,14 +186,30 @@
                 this.addDialogFormVisible = true;
             },
             handleDelete(row) {
-                this.$notify({
-                    title: '成功',
-                    message: '删除成功',
-                    type: 'success',
-                    duration: 2000
-                });
-                const index = this.list.indexOf(row);
-                this.list.splice(index, 1);
+                if (this.selectedRows.length == 0) {
+                    this.$message.error('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        let ids = new Array();
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        delRole(ids).then(response => {
+                            this.listLoading = false;
+                            this.$message.success('删除成功');
+                        })
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.list.indexOf(deleteRow);
+                            this.list.splice(index, 1);
+                        }
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
             },
             create() {
                 this.$refs['roleForm'].validate(valid => {
@@ -217,7 +233,6 @@
                         updateRole(this.sysRole).then(response => {
                             copyProperties(this.currentRow, response.data);
                             this.$message.success('更新成功');
-                            TreeUtil.editRow(response.data, this.list);
                         })
                     } else {
                         return false;

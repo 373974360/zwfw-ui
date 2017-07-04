@@ -20,7 +20,7 @@ export function createRole(sysRoleVo) {
 export function updateRole(sysRoleVo) {
     const data = sysRoleVo;
     return fetch({
-        url: '/sysUser/edit',
+        url: '/sysRole/edit',
         method: 'post',
         data
     })
@@ -29,7 +29,7 @@ export function updateRole(sysRoleVo) {
 export function delRole(ids) {
     const data = {ids};
     return fetch({
-        url: '/sysRole/dels',
+        url: '/sysRole/del',
         method: 'post',
         data
     })
