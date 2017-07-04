@@ -35,8 +35,8 @@ export function delRole(ids) {
     })
 }
 
-export function createRoleMenus(roleId,menuIds){
-    const data = {roleId,menuIds};
+export function createRoleMenus(roleId, menuIds) {
+    const data = {roleId, menuIds};
     return fetch({
         url: '/sysRoleMenu/addList',
         method: 'post',
@@ -44,10 +44,10 @@ export function createRoleMenus(roleId,menuIds){
     })
 }
 
-export function getAllRoleMenus(roleId){
+export function getAllRoleMenus(roleId) {
     return fetch({
         url: '/sysRoleMenu/selectAll',
         method: 'get',
-        params:{roleId}
+        params: {roleId}
     })
 }

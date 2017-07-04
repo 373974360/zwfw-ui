@@ -33,11 +33,13 @@
             </el-table-column>
             <el-table-column align="center" label="操作">
                 <template scope="scope">
-                    <el-button class="filter-item" style="margin-left: 10px;" @click="handleMenuList(scope.row.id)" type="primary"
+                    <el-button class="filter-item" style="margin-left: 10px;" @click="handleMenuList(scope.row.id)"
+                               type="primary"
                                size="small">
                         关联权限
                     </el-button>
-                    <el-button class="filter-item" style="margin-left: 10px;" @click="handleUserList(scope.row.id)" type="primary"
+                    <el-button class="filter-item" style="margin-left: 10px;" @click="handleUserList(scope.row.id)"
+                               type="primary"
                                size="small">
                         关联用户
                     </el-button>
@@ -107,7 +109,7 @@
 </template>
 
 <script>
-    import {getRoleList, createRole, updateRole,createRoleMenus,getAllRoleMenus} from 'api/org/role';
+    import {getRoleList, createRole, updateRole, createRoleMenus, getAllRoleMenus} from 'api/org/role';
     import {getMenuTree} from 'api/org/menu';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
@@ -244,22 +246,22 @@
             },
             getAllRoleMenu(){
                 this.checkedMenu = [];
-                getAllRoleMenus(this.currentRoleId).then(response =>{
+                getAllRoleMenus(this.currentRoleId).then(response => {
                     const menus = response.data;
                     let checked = [];
-                    for(const menu of menus){
+                    for (const menu of menus) {
                         checked.push(menu.menuId);
                     }
                     this.$refs.menuTree.setCheckedKeys(checked);
                 })
             },
             menuTreeChecked(data, checked, indeterminate){
-                if(checked){
+                if (checked) {
                     this.checkedMenu.push(data.id);
-                }else{
+                } else {
                     const index = this.checkedMenu.indexOf(data.id);
-                    if(index >= 0){
-                        this.checkedMenu.splice(index,1);
+                    if (index >= 0) {
+                        this.checkedMenu.splice(index, 1);
                     }
                 }
             },
@@ -271,7 +273,7 @@
             },
             submitRoleMenu(){
                 this.roleMenuDialogLoading = true;
-                createRoleMenus(this.currentRoleId,this.checkedMenu).then(response => {
+                createRoleMenus(this.currentRoleId, this.checkedMenu).then(response => {
                     this.roleMenuDialogLoading = false;
                     this.roleMenuDialogFormVisible = false;
                     this.$message.success('关联成功');
