@@ -1,124 +1,69 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="标题"
-                      v-model="listQuery.title">
+            <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="角色名称"
+                      v-model="listQuery.roleName">
             </el-input>
 
-            <el-select clearable class="filter-item" style="width: 130px" v-model="listQuery.type" placeholder="类型">
-                <el-option v-for="item in  calendarTypeOptions" :key="item.key"
-                           :label="item.display_name+'('+item.key+')'" :value="item.key">
-                </el-option>
-            </el-select>
-
-            <el-button class="filter-item" type="primary" v-waves icon="search" @click="handleFilter">搜索</el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="edit">
+            <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">
                 添加
             </el-button>
-            <el-button class="filter-item" type="primary" icon="document" @click="handleDownload">导出</el-button>
-            <el-checkbox class="filter-item" @change='tableKey=tableKey+1' v-model="showAuditor">显示审核人</el-checkbox>
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleDelete" type="danger" icon="delete">
+                删除
+            </el-button>
         </div>
-
         <el-table :key='tableKey' :data="list" v-loading.body="listLoading" border fit highlight-current-row
                   style="width: 100%">
 
-            <el-table-column align="center" label="序号" width="65">
+            <el-table-column align="center" label="序号" width="200">
                 <template scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
 
-            <el-table-column width="180px" align="center" label="部门全称">
+            <el-table-column width="200px" align="center" label="角色名称">
                 <template scope="scope">
-                    <span>{{scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}')}}</span>
+                    <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.roleName}}</span>
                 </template>
             </el-table-column>
 
-            <el-table-column min-width="300px" label="部门简称">
+            <el-table-column width="200px" align="center" label="权限">
                 <template scope="scope">
-                    <span class="link-type" @click="handleUpdate(scope.row)">{{scope.row.title}}</span>
-                    <el-tag>{{scope.row.type | typeFilter}}</el-tag>
+                    <span>{{scope.row.menuName}}</span>
                 </template>
             </el-table-column>
-
-            <el-table-column width="110px" align="center" label="部门编号">
+            <el-table-column align="center" label="操作">
                 <template scope="scope">
-                    <span>{{scope.row.author}}</span>
-                </template>
-            </el-table-column>
-
-            <el-table-column align="center" label="上级部门" width="95">
-                <template scope="scope">
-                    <span class="link-type" @click='handleFetchPv(scope.row.pageviews)'>{{scope.row.pageviews}}</span>
-                </template>
-            </el-table-column>
-
-            <el-table-column class-name="status-col" label="状态" width="90">
-                <template scope="scope">
-                    <el-tag :type="scope.row.status | statusFilter">{{scope.row.status}}</el-tag>
-                </template>
-            </el-table-column>
-
-            <el-table-column align="center" label="操作" width="150">
-                <template scope="scope">
-                    <el-button v-if="scope.row.status!='published'" size="small" type="success"
-                               @click="handleModifyStatus(scope.row,'published')">发布
+                    <el-button class="filter-item" style="margin-left: 10px;" @click="handleMenuList" type="primary"
+                               size="small">
+                        分配菜单权限
                     </el-button>
-                    <el-button v-if="scope.row.status!='draft'" size="small"
-                               @click="handleModifyStatus(scope.row,'draft')">草稿
-                    </el-button>
-                    <el-button v-if="scope.row.status!='deleted'" size="small" type="danger"
-                               @click="handleModifyStatus(scope.row,'deleted')">删除
+                    <el-button class="filter-item" style="margin-left: 10px;" @click="handleUserList" type="primary"
+                               size="small">
+                        分配用户权限
                     </el-button>
                 </template>
             </el-table-column>
+
 
         </el-table>
 
+
         <div v-show="!listLoading" class="pagination-container">
             <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                           :current-page.sync="listQuery.page" :page-sizes="[10,20,30, 50]"
-                           :page-size="listQuery.limit" layout="total, sizes, prev, pager, next, jumper" :total="total">
+                           :current-page.sync="listQuery.page" :page-sizes="this.$store.state.app.pageSize"
+                           :page-size="listQuery.rows" layout="total, sizes, prev, pager, next, jumper" :total="total">
             </el-pagination>
         </div>
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-            <el-form class="small-space" :model="sysMenu" label-position="left" label-width="70px"
+            <el-form ref="roleForm" class="small-space" :model="sysRole" label-position="left" label-width="70px"
                      style='width: 400px; margin-left:50px;'>
-                <el-form-item label="类型">
-                    <el-select class="filter-item" v-model="sysMenu.type" placeholder="请选择">
-                        <el-option v-for="item in  calendarTypeOptions" :key="item.key" :label="item.display_name"
-                                   :value="item.key">
-                        </el-option>
-                    </el-select>
+                <el-form-item label="角色名称" prop="roleName">
+                    <el-input v-model="sysRole.roleName"/>
                 </el-form-item>
 
-                <el-form-item label="状态">
-                    <el-select class="filter-item" v-model="sysMenu.status" placeholder="请选择">
-                        <el-option v-for="item in  statusOptions" :key="item" :label="item" :value="item">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-
-                <el-form-item label="时间">
-                    <el-date-picker v-model="sysMenu.timestamp" type="datetime" placeholder="选择日期时间">
-                    </el-date-picker>
-                </el-form-item>
-
-                <el-form-item label="标题">
-                    <el-input v-model="sysMenu.title"></el-input>
-                </el-form-item>
-
-                <el-form-item label="重要性">
-                    <el-rate style="margin-top:8px;" v-model="sysMenu.importance"
-                             :colors="['#99A9BF', '#F7BA2A', '#FF9900']"></el-rate>
-                </el-form-item>
-
-                <el-form-item label="点评">
-                    <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4}" placeholder="请输入内容"
-                              v-model="sysMenu.remark">
-                    </el-input>
-                </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -126,26 +71,45 @@
                 <el-button v-else type="primary" @click="update">确 定</el-button>
             </div>
         </el-dialog>
+        <!--分配菜单权限-->
+        <!--<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">-->
+            <!--<el-form ref="roleForm" class="small-space" :model="sysRole" label-position="left" label-width="100px"-->
+                     <!--style='width: 400px; margin-left:50px;'>-->
+                <!--<el-tree :data="regions" :props="props" :load="loadNode" lazy="" show-checkbox-->
+                         <!--@check-change="handleCheckChange" style="width: 546px;">-->
+                <!--</el-tree>-->
 
+            <!--</el-form>-->
+            <!--<div slot="footer" class="dialog-footer">-->
+                <!--<el-button @click="dialogFormVisible = false">取 消</el-button>-->
+                <!--<el-button v-if="dialogStatus=='menuList'" type="primary" @click="menuList">确 定</el-button>-->
+                <!--<el-button v-else type="primary" @click="update">确 定</el-button>-->
+            <!--</div>-->
+        <!--</el-dialog>-->
+        <!--&lt;!&ndash;分配菜单权限&ndash;&gt;-->
+        <!--<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">-->
+            <!--<el-form ref="roleForm" class="small-space" :model="sysRole" label-position="left" label-width="100px"-->
+                     <!--style='width: 400px; margin-left:50px;'>-->
+                <!--<el-tree :data="regions" :props="defaultProps" @node-click="handleNodeClick" style="width: 546px;">-->
+                <!--</el-tree>-->
+
+            <!--</el-form>-->
+            <!--<div slot="footer" class="dialog-footer">-->
+                <!--<el-button @click="dialogFormVisible = false">取 消</el-button>-->
+                <!--<el-button v-if="dialogStatus=='userList'" type="primary" @click="userList">确 定</el-button>-->
+                <!--<el-button v-else type="primary" @click="update">确 定</el-button>-->
+            <!--</div>-->
+        <!--</el-dialog>-->
     </div>
 </template>
 
 <script>
-    import {getDeptList} from 'api/org/dept';
-    import {parseTime} from 'utils';
+    import {getRoleList, createRole, updateRole} from 'api/org/role';
+    import {copyProperties} from 'utils';
+    import {mapGetters} from 'vuex';
+    import TreeUtil from 'utils/TreeUtil.js';
+    import {getUserList} from 'api/org/user';
 
-    const calendarTypeOptions = [
-        {key: 'FD', display_name: '经济数据'},
-        {key: 'FE', display_name: '财经大事'},
-        {key: 'BI', display_name: '国债发行'},
-        {key: 'VN', display_name: '假期报告'}
-    ];
-
-    // arr to obj
-    const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-        acc[cur.key] = cur.display_name;
-        return acc
-    }, {});
 
     export default {
         name: 'table_demo',
@@ -155,89 +119,122 @@
                 total: null,
                 listLoading: true,
                 listQuery: {
-                    page: store.app.page,
-                    rows: store.app.rows,
-                    deptName: undefined
+                    page: this.$store.state.app.page,
+                    rows: this.$store.state.app.rows
                 },
-                sysMenu: {
+                sysRole: {
                     id: undefined,
-                    deptName: 0,
-                    shortName: '',
-                    deptCode: 0,
-                    parentId: '',
-                    status: 'published'
+                    roleName: ''
                 },
-                calendarTypeOptions,
-                statusOptions: ['published', 'draft', 'deleted'],
                 dialogFormVisible: false,
                 dialogStatus: '',
-                textMap: {
-                    update: '编辑',
-                    create: '创建'
-                },
                 showAuditor: false,
-                tableKey: 0
+                tableKey: 0,
+                cascader: [],
+                currentRow: [],
+                props: [],
+                regions: [{
+                    label: '一级 1',
+                    children: [{
+                        label: '二级 1-1',
+                        children: [{
+                            label: '三级 1-1-1'
+                        }]
+                    }]
+                }, {
+                    label: '一级 2',
+                    children: [{
+                        label: '二级 2-1',
+                        children: [{
+                            label: '三级 2-1-1'
+                        }]
+                    }, {
+                        label: '二级 2-2',
+                        children: [{
+                            label: '三级 2-2-1'
+                        }]
+                    }]
+                }, {
+                    label: '一级 3',
+                    children: [{
+                        label: '二级 3-1',
+                        children: [{
+                            label: '三级 3-1-1'
+                        }]
+                    }, {
+                        label: '二级 3-2',
+                        children: [{
+                            label: '三级 3-2-1'
+                        }]
+                    }]
+                }],
             }
         },
         created() {
             this.getList();
+            this.getOptions();
         },
-        filters: {
-            statusFilter(status) {
-                const statusMap = {
-                    published: 'success',
-                    draft: 'gray',
-                    deleted: 'danger'
-                };
-                return statusMap[status]
+        computed: {
+            cascaderModel: function () {
+                if (this.sysRole.treePosition) {
+                    const arr = this.sysRole.treePosition.split('&');
+                    return arr;
+                }
             },
-            typeFilter(type) {
-                return calendarTypeKeyValue[type]
-            }
+            ...
+                mapGetters([
+                    'textMap',
+                    'enums'
+                ])
         },
         methods: {
+            handleNodeClick(data) {
+                console.log(data);
+            },
             getList() {
                 this.listLoading = true;
-                getDeptList(this.listQuery).then(response => {
-                    this.list = response.data.items;
+                getRoleList(this.listQuery).then(response => {
+                    this.list = response.data.list;
                     this.total = response.data.total;
                     this.listLoading = false;
                 })
             },
-            handleFilter() {
-                this.getList();
+            getOptions() {
+                this.dialogLoading = true;
+                getUserList(this.listQuery).then(response => {
+//                    this.props = response.data;
+                    this.regions = response.data;
+                    this.dialogLoading = false;
+                })
             },
             handleSizeChange(val) {
-                this.listQuery.limit = val;
+                this.listQuery.rows = val;
                 this.getList();
             },
             handleCurrentChange(val) {
                 this.listQuery.page = val;
                 this.getList();
             },
-            timeFilter(time) {
-                if (!time[0]) {
-                    this.listQuery.start = undefined;
-                    this.listQuery.end = undefined;
-                    return;
-                }
-                this.listQuery.start = parseInt(+time[0] / 1000);
-                this.listQuery.end = parseInt((+time[1] + 3600 * 1000 * 24) / 1000);
+            handleSelectionChange(rows) {
+                this.selectedRows = rows;
             },
-            handleModifyStatus(row, status) {
-                this.$message({
-                    message: '操作成功',
-                    type: 'success'
-                });
-                row.status = status;
+            handleMenuList() {
+                this.dialogStatus = 'menuList';
+                this.dialogFormVisible = true;
             },
-            handleCreate() {
+            handleUserList() {
+                this.dialogStatus = 'userList';
+                this.dialogFormVisible = true;
+            },
+            handleCreate(row) {
                 this.resetTemp();
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
             },
             handleUpdate(row) {
-                this.sysMenu = Object.assign({}, row);
+                this.currentRow = row;
+                this.resetTemp();
+                this.sysRole = copyProperties(this.sysRole, row);
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
@@ -252,44 +249,44 @@
                 this.list.splice(index, 1);
             },
             create() {
-                this.sysMenu.id = parseInt(Math.random() * 100) + 1024;
-                this.sysMenu.timestamp = +new Date();
-                this.sysMenu.author = '原创作者';
-                this.list.unshift(this.sysMenu);
-                this.dialogFormVisible = false;
-                this.$notify({
-                    title: '成功',
-                    message: '创建成功',
-                    type: 'success',
-                    duration: 2000
+                this.$refs['roleForm'].validate(valid => {
+                    if (valid) {
+                        this.dialogFormVisible = false;
+                        this.listLoading = true;
+                        createRole(this.sysRole).then(response => {
+                            this.list.push(response.data);
+                            this.$message.success('创建成功');
+                            this.listLoading = false;
+                        })
+                    } else {
+                        return false;
+                    }
                 });
             },
             update() {
-                this.sysMenu.timestamp = +this.sysMenu.timestamp;
-                for (const v of this.list) {
-                    if (v.id === this.sysMenu.id) {
-                        const index = this.list.indexOf(v);
-                        this.list.splice(index, 1, this.sysMenu);
-                        break;
+                this.$refs['roleForm'].validate((valid) => {
+                    if (valid) {
+                        this.dialogFormVisible = false;
+                        updateRole(this.sysRole).then(response => {
+                            copyProperties(this.currentRow, response.data);
+                            this.$message.success('更新成功');
+                            TreeUtil.editRow(response.data, this.list);
+                        })
+                    } else {
+                        return false;
                     }
-                }
-                this.dialogFormVisible = false;
-                this.$notify({
-                    title: '成功',
-                    message: '更新成功',
-                    type: 'success',
-                    duration: 2000
                 });
             },
             resetTemp() {
-                this.sysMenu = {
+                this.sysRole = {
                     id: undefined,
-                    importance: 0,
-                    remark: '',
-                    timestamp: 0,
-                    title: '',
-                    status: 'published',
-                    type: ''
+                    deptName: '',
+                    roleName: '',
+                    roleType: 1,
+                    deptCode: 0,
+                    deptId: '',
+                    treePosition: '',
+                    parentId: 0
                 };
             },
             handleDownload() {

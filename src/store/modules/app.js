@@ -8,7 +8,9 @@ const app = {
         pageSize: [10,20,30,40,50],
         textMap:{
             update: '编辑',
-            create: '创建'
+            create: '创建',
+            menuList:'分配菜单权限',
+            userList:'分配用户'
         },
         sidebar: {
             opened: !+Cookies.get('sidebarStatus')

@@ -129,10 +129,10 @@
             },
             handleChange(value)
             {
-                if(value.length > 0){
+                if (value.length > 0) {
                     this.sysDept.parentId = value[value.length - 1];
                     this.sysDept.treePosition = value.join('&');
-                }else{
+                } else {
                     this.sysDept.parentId = 0;
                     this.sysDept.treePosition = undefined;
                 }
@@ -153,7 +153,7 @@
                 this.sysDept = copyProperties(this.sysDept, row);
                 if (row._parent) {
                     this.sysDept.treePosition = row._parent.treePosition;
-                }else{
+                } else {
                     this.sysDept.treePosition = undefined;
                 }
                 this.getOptions(this.sysDept.id);
@@ -169,7 +169,7 @@
                 }).then(() => {
                     delDept(row.id).then(response => {
                         this.$message.success('删除成功');
-                        TreeUtil.delRow(response.data,this.deptList);
+                        TreeUtil.delRow(response.data, this.deptList);
                     })
                 }).catch(() => {
                     console.dir("取消");
@@ -182,7 +182,7 @@
                         this.dialogFormVisible = false;
                         createDept(this.sysDept).then(response => {
                             this.$message.success('创建成功');
-                            TreeUtil.addRow(response.data,this.deptList);
+                            TreeUtil.addRow(response.data, this.deptList);
                         })
                     } else {
                         return false;
@@ -196,7 +196,7 @@
                         this.dialogFormVisible = false;
                         updateDept(this.sysDept).then(response => {
                             this.$message.success('更新成功');
-                            TreeUtil.editRow(response.data,this.deptList);
+                            TreeUtil.editRow(response.data, this.deptList);
                         })
                     } else {
                         return false;
