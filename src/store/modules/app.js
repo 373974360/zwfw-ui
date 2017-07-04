@@ -5,17 +5,17 @@ const app = {
     state: {
         page: 1,
         rows: 20,
-        pageSize: [10,20,30,40,50],
-        textMap:{
+        pageSize: [10, 20, 30, 40, 50],
+        textMap: {
             update: '编辑',
             create: '创建',
-            menuList:'分配菜单权限',
-            userList:'分配用户'
+            roleMenu: '关联权限',
+            roleUser: '关联用户'
         },
         sidebar: {
             opened: !+Cookies.get('sidebarStatus')
         },
-        enums:[],
+        enums: [],
         theme: 'default',
         livenewsChannels: Cookies.get('livenewsChannels') || '[]'
     },
@@ -40,9 +40,9 @@ const app = {
         SetEnums({commit}) {
             return new Promise((resolve, reject) => {
                 getEnums().then(response => {
-                    if(response.httpCode !== 200){
+                    if (response.httpCode !== 200) {
                         reject(response.msg);
-                    }else{
+                    } else {
                         const enums = response.data;
                         commit('SET_ENUMS', enums);
                     }

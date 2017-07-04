@@ -13,42 +13,39 @@
                 删除
             </el-button>
         </div>
-        <el-table :key='tableKey' :data="list" v-loading.body="listLoading" border fit highlight-current-row
+        <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row
                   style="width: 100%">
-
+            <el-table-column type="selection" width="55"/>
             <el-table-column align="center" label="序号" width="200">
                 <template scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
-
-            <el-table-column width="200px" align="center" label="角色名称">
+            <el-table-column min-width="200px" align="center" label="角色名称">
                 <template scope="scope">
                     <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.roleName}}</span>
                 </template>
             </el-table-column>
-
-            <el-table-column width="200px" align="center" label="权限">
+            <el-table-column width="250px" align="center" label="角色类型">
                 <template scope="scope">
-                    <span>{{scope.row.menuName}}</span>
+                    <span>{{scope.row.roleType | enums('RoleType')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作">
                 <template scope="scope">
-                    <el-button class="filter-item" style="margin-left: 10px;" @click="handleMenuList" type="primary"
+                    <el-button class="filter-item" style="margin-left: 10px;" @click="handleMenuList(scope.row.id)"
+                               type="primary"
                                size="small">
-                        分配菜单权限
+                        关联权限
                     </el-button>
-                    <el-button class="filter-item" style="margin-left: 10px;" @click="handleUserList" type="primary"
+                    <el-button class="filter-item" style="margin-left: 10px;" @click="handleUserList(scope.row.id)"
+                               type="primary"
                                size="small">
-                        分配用户权限
+                        关联用户
                     </el-button>
                 </template>
             </el-table-column>
-
-
         </el-table>
-
 
         <div v-show="!listLoading" class="pagination-container">
             <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
@@ -57,54 +54,63 @@
             </el-pagination>
         </div>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-            <el-form ref="roleForm" class="small-space" :model="sysRole" label-position="left" label-width="70px"
-                     style='width: 400px; margin-left:50px;'>
+        <!--添加编辑-->
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="addDialogFormVisible">
+            <el-form ref="roleForm" class="small-space" :model="sysRole" label-position="left" label-width="80px"
+                     style='width: 80%; margin-left:10%;'>
                 <el-form-item label="角色名称" prop="roleName">
                     <el-input v-model="sysRole.roleName"/>
                 </el-form-item>
-
+                <el-form-item label="角色类型" prop="enable">
+                    <el-select v-model="sysRole.roleType" placeholder="请选择" style="width:100%">
+                        <el-option
+                                v-for="item in enums['RoleType']"
+                                :key="item.code"
+                                :label="item.value"
+                                :value="item.code"/>
+                    </el-select>
+                </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button @click="addDialogFormVisible = false">取 消</el-button>
                 <el-button v-if="dialogStatus=='create'" type="primary" @click="create">确 定</el-button>
                 <el-button v-else type="primary" @click="update">确 定</el-button>
             </div>
         </el-dialog>
-        <!--分配菜单权限-->
-        <!--<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">-->
-            <!--<el-form ref="roleForm" class="small-space" :model="sysRole" label-position="left" label-width="100px"-->
-                     <!--style='width: 400px; margin-left:50px;'>-->
-                <!--<el-tree :data="regions" :props="props" :load="loadNode" lazy="" show-checkbox-->
-                         <!--@check-change="handleCheckChange" style="width: 546px;">-->
-                <!--</el-tree>-->
 
-            <!--</el-form>-->
-            <!--<div slot="footer" class="dialog-footer">-->
-                <!--<el-button @click="dialogFormVisible = false">取 消</el-button>-->
-                <!--<el-button v-if="dialogStatus=='menuList'" type="primary" @click="menuList">确 定</el-button>-->
-                <!--<el-button v-else type="primary" @click="update">确 定</el-button>-->
-            <!--</div>-->
-        <!--</el-dialog>-->
-        <!--&lt;!&ndash;分配菜单权限&ndash;&gt;-->
-        <!--<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">-->
-            <!--<el-form ref="roleForm" class="small-space" :model="sysRole" label-position="left" label-width="100px"-->
-                     <!--style='width: 400px; margin-left:50px;'>-->
-                <!--<el-tree :data="regions" :props="defaultProps" @node-click="handleNodeClick" style="width: 546px;">-->
-                <!--</el-tree>-->
+        <!--关联权限-->
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="roleMenuDialogFormVisible">
+            <el-form ref="roleMenuForm" class="small-space" :model="sysRole" label-position="left" label-width="80px"
+                     style='width: 80%; margin-left:10%;' v-loading="roleMenuDialogLoading">
+                <el-tree ref="menuTree" :data="menuTree" show-checkbox node-key="id" :default-expand-all="true"
+                         @check-change="menuTreeChecked" :default-checked-keys="checkedMenu"></el-tree>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="roleMenuDialogFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="submitRoleMenu">确 定</el-button>
+            </div>
+        </el-dialog>
 
-            <!--</el-form>-->
-            <!--<div slot="footer" class="dialog-footer">-->
-                <!--<el-button @click="dialogFormVisible = false">取 消</el-button>-->
-                <!--<el-button v-if="dialogStatus=='userList'" type="primary" @click="userList">确 定</el-button>-->
-                <!--<el-button v-else type="primary" @click="update">确 定</el-button>-->
-            <!--</div>-->
-        <!--</el-dialog>-->
+        <!--关联用户-->
+        <!--<el-dialog :title="textMap[dialogStatus]" :visible.sync="userRoleDialogFormVisible">
+            <el-form ref="roleForm" class="small-space" :model="sysRole" label-position="left" label-width="100px"
+                     style='width: 400px; margin-left:50px;'>
+                <el-tree :data="regions" :props="defaultProps" @node-click="handleNodeClick" style="width: 546px;">
+                </el-tree>
+
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="userRoleDialogFormVisible = false">取 消</el-button>
+                <el-button v-if="dialogStatus=='userList'" type="primary" @click="userList">确 定</el-button>
+                <el-button v-else type="primary" @click="update">确 定</el-button>
+            </div>
+        </el-dialog>-->
     </div>
 </template>
 
 <script>
-    import {getRoleList, createRole, updateRole} from 'api/org/role';
+    import {getRoleList, createRole, updateRole, createRoleMenus, getAllRoleMenus} from 'api/org/role';
+    import {getMenuTree} from 'api/org/menu';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import TreeUtil from 'utils/TreeUtil.js';
@@ -119,68 +125,32 @@
                 total: null,
                 listLoading: true,
                 listQuery: {
+                    roleName: '',
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows
                 },
                 sysRole: {
                     id: undefined,
-                    roleName: ''
+                    roleName: '',
+                    roleType: 0
                 },
-                dialogFormVisible: false,
                 dialogStatus: '',
-                showAuditor: false,
-                tableKey: 0,
-                cascader: [],
-                currentRow: [],
-                props: [],
-                regions: [{
-                    label: '一级 1',
-                    children: [{
-                        label: '二级 1-1',
-                        children: [{
-                            label: '三级 1-1-1'
-                        }]
-                    }]
-                }, {
-                    label: '一级 2',
-                    children: [{
-                        label: '二级 2-1',
-                        children: [{
-                            label: '三级 2-1-1'
-                        }]
-                    }, {
-                        label: '二级 2-2',
-                        children: [{
-                            label: '三级 2-2-1'
-                        }]
-                    }]
-                }, {
-                    label: '一级 3',
-                    children: [{
-                        label: '二级 3-1',
-                        children: [{
-                            label: '三级 3-1-1'
-                        }]
-                    }, {
-                        label: '二级 3-2',
-                        children: [{
-                            label: '三级 3-2-1'
-                        }]
-                    }]
-                }],
+                addDialogFormVisible: false,
+                roleMenuDialogFormVisible: false,
+                roleMenuDialogLoading: false,
+                userRoleDialogFormVisible: false,
+                userRoleDialogLoading: false,
+                currentRoleId: 0,
+                menuTree: [],
+                checkedMenu: [],
+                userTree: [],
+                checkedUser: []
             }
         },
         created() {
             this.getList();
-            this.getOptions();
         },
         computed: {
-            cascaderModel: function () {
-                if (this.sysRole.treePosition) {
-                    const arr = this.sysRole.treePosition.split('&');
-                    return arr;
-                }
-            },
             ...
                 mapGetters([
                     'textMap',
@@ -188,23 +158,12 @@
                 ])
         },
         methods: {
-            handleNodeClick(data) {
-                console.log(data);
-            },
             getList() {
                 this.listLoading = true;
                 getRoleList(this.listQuery).then(response => {
                     this.list = response.data.list;
                     this.total = response.data.total;
                     this.listLoading = false;
-                })
-            },
-            getOptions() {
-                this.dialogLoading = true;
-                getUserList(this.listQuery).then(response => {
-//                    this.props = response.data;
-                    this.regions = response.data;
-                    this.dialogLoading = false;
                 })
             },
             handleSizeChange(val) {
@@ -215,28 +174,16 @@
                 this.listQuery.page = val;
                 this.getList();
             },
-            handleSelectionChange(rows) {
-                this.selectedRows = rows;
-            },
-            handleMenuList() {
-                this.dialogStatus = 'menuList';
-                this.dialogFormVisible = true;
-            },
-            handleUserList() {
-                this.dialogStatus = 'userList';
-                this.dialogFormVisible = true;
-            },
-            handleCreate(row) {
+            handleCreate() {
                 this.resetTemp();
                 this.dialogStatus = 'create';
-                this.dialogFormVisible = true;
+                this.addDialogFormVisible = true;
             },
             handleUpdate(row) {
-                this.currentRow = row;
                 this.resetTemp();
                 this.sysRole = copyProperties(this.sysRole, row);
                 this.dialogStatus = 'update';
-                this.dialogFormVisible = true;
+                this.addDialogFormVisible = true;
             },
             handleDelete(row) {
                 this.$notify({
@@ -251,7 +198,7 @@
             create() {
                 this.$refs['roleForm'].validate(valid => {
                     if (valid) {
-                        this.dialogFormVisible = false;
+                        this.addDialogFormVisible = false;
                         this.listLoading = true;
                         createRole(this.sysRole).then(response => {
                             this.list.push(response.data);
@@ -266,7 +213,7 @@
             update() {
                 this.$refs['roleForm'].validate((valid) => {
                     if (valid) {
-                        this.dialogFormVisible = false;
+                        this.addDialogFormVisible = false;
                         updateRole(this.sysRole).then(response => {
                             copyProperties(this.currentRow, response.data);
                             this.$message.success('更新成功');
@@ -289,23 +236,53 @@
                     parentId: 0
                 };
             },
-            handleDownload() {
-                require.ensure([], () => {
-                    const {export_json_to_excel} = require('vendor/Export2Excel');
-                    const tHeader = ['时间', '地区', '类型', '标题', '重要性'];
-                    const filterVal = ['timestamp', 'province', 'type', 'title', 'importance'];
-                    const data = this.formatJson(filterVal, this.list);
-                    export_json_to_excel(tHeader, data, 'table数据');
+            getMenuTree(){
+                this.roleMenuDialogLoading = true;
+                getMenuTree().then(response => {
+                    this.menuTree = response.data;
+                    this.roleMenuDialogLoading = false;
+                    this.getAllRoleMenu();
                 })
             },
-            formatJson(filterVal, jsonData) {
-                return jsonData.map(v => filterVal.map(j => {
-                    if (j === 'timestamp') {
-                        return parseTime(v[j])
-                    } else {
-                        return v[j]
+            getAllRoleMenu(){
+                this.checkedMenu = [];
+                getAllRoleMenus(this.currentRoleId).then(response => {
+                    const menus = response.data;
+                    let checked = [];
+                    for (const menu of menus) {
+                        checked.push(menu.menuId);
                     }
-                }))
+                    this.$refs.menuTree.setCheckedKeys(checked);
+                })
+            },
+            menuTreeChecked(data, checked, indeterminate){
+                if (checked) {
+                    this.checkedMenu.push(data.id);
+                } else {
+                    const index = this.checkedMenu.indexOf(data.id);
+                    if (index >= 0) {
+                        this.checkedMenu.splice(index, 1);
+                    }
+                }
+            },
+            handleMenuList(roleId) {
+                this.currentRoleId = roleId;
+                this.dialogStatus = 'roleMenu';
+                this.roleMenuDialogFormVisible = true;
+                this.getMenuTree();
+            },
+            submitRoleMenu(){
+                this.roleMenuDialogLoading = true;
+                createRoleMenus(this.currentRoleId, this.checkedMenu).then(response => {
+                    this.roleMenuDialogLoading = false;
+                    this.roleMenuDialogFormVisible = false;
+                    this.$message.success('关联成功');
+                })
+            },
+            handleUserList(roleId) {
+                this.currentRoleId = roleId;
+                this.dialogStatus = 'roleUser';
+                this.userRoleDialogFormVisible = true;
             }
         }
     }
