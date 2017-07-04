@@ -34,3 +34,20 @@ export function delRole(ids) {
         data
     })
 }
+
+export function createRoleMenus(roleId,menuIds){
+    const data = {roleId,menuIds};
+    return fetch({
+        url: '/sysRoleMenu/addList',
+        method: 'post',
+        data
+    })
+}
+
+export function getAllRoleMenus(roleId){
+    return fetch({
+        url: '/sysRoleMenu/selectAll',
+        method: 'get',
+        params:{roleId}
+    })
+}

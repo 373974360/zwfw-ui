@@ -43,7 +43,7 @@ service.interceptors.response.use(
          */
         // // 50014:Token 过期了 50012:其他客户端登录了 50008:非法的token
         if (code !== 200) {
-            if(code === 403 || code === 401 || code === 50012){
+            if(code === 401){
                 // 登出
                 store.dispatch('LogOut').then(() => {
                     router.push({ path: '/login' })

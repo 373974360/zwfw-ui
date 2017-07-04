@@ -191,8 +191,6 @@
 
 
 <script>
-    /* eslint-disable object-shorthand,object-shorthand,prefer-const,no-unused-vars,dot-notation,no-array-constructor,space-infix-ops,no-multi-spaces,indent,comma-spacing,rest-spread-spacing,keyword-spacing,no-empty-function,no-empty-function,space-before-blocks,comma-style,padded-blocks,brace-style,key-spacing,spaced-comment */
-
     import {getDeptCascader} from 'api/org/dept';
     import {getUserList, updateUser, createUser, delUser} from 'api/org/user';
     import {copyProperties} from 'utils';

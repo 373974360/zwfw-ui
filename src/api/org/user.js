@@ -1,4 +1,3 @@
-/* eslint-disable key-spacing */
 import fetch from 'utils/fetch';
 
 export function getUserList(query) {
