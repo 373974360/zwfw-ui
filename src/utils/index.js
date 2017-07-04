@@ -216,7 +216,7 @@ export function getTime(type) {
 
 export function copyProperties(source,target){
     for(const item in source){
-        if(target[item]){
+        if(target[item] != undefined){
             source[item] = target[item];
         }
     }
