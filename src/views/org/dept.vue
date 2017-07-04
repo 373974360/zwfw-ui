@@ -45,8 +45,6 @@
 </template>
 
 <script>
-    /* eslint-disable object-shorthand,dot-notation,arrow-parens,keyword-spacing,space-before-blocks,brace-style,quotes */
-
     import TreeGrid from 'components/TreeGrid';
     import {getDeptTree, getDeptCascader, createDept, updateDept, delDept} from 'api/org/dept';
     import {copyProperties} from 'utils';
@@ -104,7 +102,7 @@
             this.getList();
         },
         computed: {
-            cascaderModel: function() {
+            cascaderModel: function () {
                 if (this.sysDept.treePosition) {
                     const arr = this.sysDept.treePosition.split('&');
                     return arr;

@@ -4,7 +4,7 @@
             <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="姓名"
                       v-model="listQuery.userName">
             </el-input>
-            <el-cascader :options="cascader" class="filter-item" v-model="cascaderModel" :show-all-levels="true"
+            <el-cascader :options="cascader" class="filter-item" v-model="cascaderModel" @change="handleChange" :show-all-levels="true"
                          :change-on-select="true" style="width: 180px" placeholder="选择部门" filterable
                          clearable></el-cascader>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
@@ -72,68 +72,11 @@
             </el-pagination>
         </div>
 
-        <!--<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">-->
-            <!--<el-form ref="userForm" class="small-space" :model="sysUser" label-position="right" label-width="80px"-->
-                     <!--style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="sysUserRules">-->
-                <!--<el-form-item label="部门" prop="deptId">-->
-                    <!--<el-cascader :options="cascader" class="filter-item" v-model="cascaderModel"-->
-                                 <!--:show-all-levels="true"-->
-                                 <!--:change-on-select="true" style="width: 180px" placeholder="选择部门" filterable-->
-                                 <!--clearable></el-cascader>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="姓名" prop="userName">-->
-                    <!--<el-input v-model="sysUser.userName"/>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="性别">-->
-                    <!--<el-select v-model="sysUser.sex" placeholder="请选择" style="width:100%">-->
-                        <!--<el-option-->
-                                <!--v-for="item in enums['Gender']"-->
-                                <!--:key="item.code"-->
-                                <!--:label="item.value"-->
-                                <!--:value="item.code"/>-->
-                    <!--</el-select>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="电话" prop="phone">-->
-                    <!--<el-input v-model="sysUser.phone"/>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="头像" prop="avatar">-->
-                    <!--<el-input v-model="sysUser.avatar"/>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="帐号" prop="account">-->
-
-                    <!--<el-input v-model="sysUser.account"/>-->
-                <!--</el-form-item>-->
-                <!--&lt;!&ndash;<el-form-item label="密码" prop="password">&ndash;&gt;-->
-                    <!--&lt;!&ndash;<el-input v-model="sysUser.password" type="password"/>&ndash;&gt;-->
-                <!--&lt;!&ndash;</el-form-item>&ndash;&gt;-->
-                <!--&lt;!&ndash;<el-form-item label="确认密码" prop="passwordConfirm">&ndash;&gt;-->
-                    <!--&lt;!&ndash;<el-input v-model="sysUser.passwordConfirm" type="password"/>&ndash;&gt;-->
-                <!--&lt;!&ndash;</el-form-item>&ndash;&gt;-->
-                <!--<el-form-item label="状态" prop="enable">-->
-                    <!--<el-select v-model="sysUser.enable" placeholder="请选择" style="width:100%">-->
-                        <!--<el-option-->
-                                <!--v-for="item in enums['Enable']"-->
-                                <!--:key="item.code"-->
-                                <!--:label="item.value"-->
-                                <!--:value="item.code"/>-->
-                    <!--</el-select>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item label="备注">-->
-                    <!--<el-input type="textarea" v-model="sysUser.remark" :rows="3"/>-->
-                <!--</el-form-item>-->
-            <!--</el-form>-->
-            <!--<div slot="footer" class="dialog-footer">-->
-                <!--<el-button @click="dialogFormVisible = false">取 消</el-button>-->
-                <!--<el-button v-if="dialogStatus=='create'" type="primary" @click="create">确 定</el-button>-->
-                <!--<el-button v-else type="primary" @click="update">确 定</el-button>-->
-            <!--</div>-->
-        <!--</el-dialog>-->
-
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-            <el-form ref="userForm1" class="small-space" :model="sysUser" label-position="right" label-width="80px"
-                     style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="sysUserRules1">
+            <el-form ref="userForm" class="small-space" :model="sysUser" label-position="right" label-width="80px"
+                     style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="sysUserRules">
                 <el-form-item label="部门" prop="deptId">
-                    <el-cascader :options="cascader"  class="filter-item" @change="handleChange"
+                    <el-cascader :options="cascader" class="filter-item" v-model="cascaderModel" @change="handleChange"
                                  :show-all-levels="true"
                                  :change-on-select="true" style="width: 180px" placeholder="选择部门" filterable
                                  clearable></el-cascader>
@@ -179,20 +122,15 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button icon="circle-cross" type="danger" @click="dialogFormVisible = false">取 消</el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定</el-button>
-
-                <el-button v-else type="primary" icon="circle-check"  @click="update">确 定</el-button>
-                <el-button icon="information"  type="warning" @click="resetForm('userForm1')">重置</el-button>
+                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button v-if="dialogStatus=='create'" type="primary" @click="create">确 定</el-button>
+                <el-button v-else type="primary" @click="update">确 定</el-button>
             </div>
         </el-dialog>
     </div>
 </template>
 
-
 <script>
-    /* eslint-disable object-shorthand,object-shorthand,prefer-const,no-unused-vars,dot-notation,no-array-constructor,space-infix-ops,no-multi-spaces,indent,comma-spacing,rest-spread-spacing,keyword-spacing,no-empty-function,no-empty-function,space-before-blocks,comma-style,padded-blocks,brace-style,key-spacing,spaced-comment */
-
     import {getDeptCascader} from 'api/org/dept';
     import {getUserList, updateUser, createUser, delUser} from 'api/org/user';
     import {copyProperties} from 'utils';
@@ -202,43 +140,13 @@
     export default {
         name: 'table_demo',
         data() {
-             //判断中文姓名
-            var namecheck=/^[\u4E00-\u9FA5]{2,8}$/;
-            var  validaUserName =(rule, value, callback) => {
-                if (value === '') {
-                    return callback(new Error('请输入您的姓名'));
+            const validatMobiles = (rule, value, callback) => {
+                if (validatMobiles.test(value)) {
+                    return callback(new Error('手机号码不正确'));
                 }else {
-                    if(!namecheck.test(value)){
-                        return callback(new Error('姓名只能为2-4位中文'));
-                    }
                     callback();
                 }
-            };
-            //判断电话号码
-            var reg = /^((13|15|18|14|17)+\d{9})$/;
-            var validatMobiles = (rule, value, callback) => {
-                if (value === '') {
-                    return callback(new Error('电话不能为空'));
-                 }else {
-                    if(!reg.test(value)){
-                        return callback(new Error('电话号码格式不正确'));
-                    }
-                    callback();
-                }
-                };
-            //判断密码
-            var pass = /(?=.*[a-z])(?=.*\d)(?=.*[#@!~%^&*])[a-z\d#@!~%^&*]{6,16}/i;
-            var validatePass = (rule, value, callback) => {
-                if (value === '') {
-                    return callback(new Error('请输入密码'));
-                } else {
-                    if (!pass.test(value)) {
-                        return callback(new Error('密码格式不正确'));
-                    }
-                    callback();
-                }
-                };
-            //重复密码的正确性
+            }
             const validatePass2 = (rule, value, callback) => {
                 if (value === '') {
                     callback(new Error('请再次输入密码'));
@@ -248,33 +156,19 @@
                     callback();
                 }
             };
-            //判断为邮箱的账号
-            var accountcheck = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
-            var  validateaccount= (rule, value, callback) => {
-                if (value === '') {
-                    return callback(new Error('请输入您的账号'));
-                } else {
-                    if (!accountcheck.test(value)) {
-                        return callback(new Error('账号格式不正确'));
-                    }
-                    callback();
-                }
-            };
-
             return {
                 list: null,
                 total: null,
                 listLoading: true,
-
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     deptName: undefined,
-                    deptId: undefined
+                    deptId: ''
                 },
                 sysUser: {
                     id: undefined,
-                   deptId: undefined,
+                    deptId: '',
                     userName: '',
                     deptName: '',
                     sex: '',
@@ -284,12 +178,16 @@
                     password: '',
                     passwordConfirm: '',
                     enable: 1,
-                    remark: ''
+                    remark: '',
+                    treePosition: '',
+                    parentId: 0
                 },
-
-                sysUserRules1: {
+                sysUserRules: {
+                    deptId: [
+                        {required: true, message: '请选择部门', trigger: 'blur'}
+                    ],
                     userName: [
-                        {validator: validaUserName,  trigger: 'blur'}
+                        {required: true, message: '请输入姓名', trigger: 'blur'}
                     ],
                     phone: [
                         {validator: validatMobiles, trigger: 'blur'}
@@ -298,17 +196,16 @@
                         {type: 'url', required: true, message: '头像地址不正确', trigger: 'blur'}
                     ],
                     account: [
-                        {validator: validateaccount,  trigger: 'blur'}
+                        {required: true, message: '请输入账号', trigger: 'blur'}
                     ],
                     password: [
-                        {validator: validatePass, trigger: 'blur'  }
-
+                        {required: true, message: '请输入密码', trigger: 'blur'},
+                        {min: 6, max: 18, message: '长度在 6 到 18 个字符', trigger: 'blur'}
                     ],
                     passwordConfirm: [
-                        {validator: validatePass2 , trigger: 'blur'}
+                        {validator: validatePass2, trigger: 'blur'}
                     ]
                 },
-
                 selectedRows: [],
                 cascader: [],
                 dialogFormVisible: false,
@@ -317,10 +214,12 @@
 
             }
         },
-
         computed: {
             cascaderModel: function () {
-
+                if (this.sysUser.treePosition) {
+                    const arr = this.sysUser.treePosition.split('&');
+                    return arr;
+                }
             },
             ...
                 mapGetters([
@@ -335,10 +234,25 @@
         }
         ,
         methods: {
-            getOptions(id) {
+            getOptions(id){
+                this.dialogLoading = true;
                 getDeptCascader(id).then(response => {
                     this.cascader = response.data;
+                    this.dialogLoading = false;
                 })
+            },
+            handleChange(value)
+            {
+                if(value.length > 0){
+                    this.listQuery.deptId = value[value.length - 2];
+                    this.sysUser.deptId = value[value.length - 2];
+                    this.sysUser.parentId = value[value.length - 1];
+                    this.sysUser.treePosition = value.join('&');
+                }else{
+                    this.listQuery.deptId = value[value.length - 2];
+                    this.sysUser.parentId = value[value.length - 1];
+                    this.sysRole.treePosition = undefined;
+                }
             },
             getList() {
                 this.listLoading = true;
@@ -352,20 +266,8 @@
                 this.listQuery.rows = val;
                 this.getList();
             },
-            handleChange(value)
-            {
-                if (value.length > 0) {
-                    this.sysUser.deptId = value[value.length - 1];
-
-                } else {
-                    this.sysUser.deptId = 0;
-
-                }
-
-            },
             handleCurrentChange(val) {
                 this.listQuery.page = val;
-
                 this.getList();
             },
             handleSelectionChange(rows) {
@@ -373,29 +275,24 @@
             },
             handleCreate(row) {
                 this.currentRow = row;
-                this.resetTemp();
-                this.sysUser.deptId= row.id;
+                this.getOptions(null);
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
             },
             handleUpdate(row) {
-
-                this.currentRow = row;
                 this.resetTemp();
-                this.sysUser.deptId= row.id;
                 this.sysUser = copyProperties(this.sysUser, row);
-                this.sysUser = Object.assign({}, row);
-                this.sysUser.password = '';
-                this.getOptions(null);
+                if (row._parent) {
+                    this.sysUser.treePosition = row._parent.treePosition;
+                } else {
+                    this.sysUser.treePosition = undefined;
+                }
+                this.getOptions(this.sysUser.id);
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
-                    console.dir(this.sysUser.deptId= row.id);
-            },
-            resetForm(userForm1) {
-                this.$refs[userForm1].resetFields();
             },
             handleDelete() {
-                if (!this.selectedRows) {
+                if (this.selectedRows.length == 0 ) {
                     this.$message.error('请选择需要操作的记录');
                 } else {
                     this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
@@ -403,7 +300,7 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        let ids= new Array();
+                        let ids = new Array();
                         for (const deleteRow of this.selectedRows) {
                             ids.push(deleteRow.id);
                         }
@@ -421,14 +318,12 @@
                 }
             },
             create() {
-                this.$refs['userForm1'].validate(valid => {
-                    alert(valid);
+                this.$refs['userForm'].validate(valid => {
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         createUser(this.sysUser).then(response => {
-
-                           this.list.push(response.data.list);
+                            TreeUtil.addRow(this.currentRow, response.data, this.list);
                             this.$message.success('创建成功');
                             this.listLoading = false;
                         })
@@ -436,7 +331,7 @@
                         return false;
                     }
                 });
-//
+//                this.sysUser.id = parseInt(Math.random() * 100) + 1024;
 //                this.sysUser.timestamp = +new Date();
 //                this.sysUser.author = '原创作者';
 //                this.list.unshift(this.sysUser);
@@ -450,16 +345,14 @@
             },
             update() {
                 this.$refs['userForm1'].validate(valid => {
-                    alert(valid);
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         updateUser(this.sysUser).then(response => {
-                         copyProperties(this.currentRow, response.data);
-                            this.list=response.data.list;
+                            copyProperties(this.currentRow, response.data);
                             this.$message.success('更新成功');
                             this.listLoading = false;
-                         })
+                        })
                     } else {
                         return false;
                     }
@@ -483,7 +376,7 @@
             resetTemp() {
                 this.sysUser = {
                     id: undefined,
-                    deptId: undefined,
+                    deptId: '',
                     userName: '',
                     deptName: '',
                     sex: '',
@@ -493,7 +386,9 @@
                     password: '',
                     passwordConfirm: '',
                     enable: 1,
-                    remark: ''
+                    remark: '',
+                    treePosition: '',
+                    parentId: 0
                 };
             },
             handleDownload() {

@@ -14,8 +14,9 @@
             </el-button>
         </div>
         <el-table :key='tableKey' :data="list" v-loading.body="listLoading" border fit highlight-current-row
-                  style="width: 100%">
+                  style="width: 100%" @selection-change="handleSelectionChange">
 
+            <el-table-column type="selection" width="55"/>
             <el-table-column align="center" label="序号" width="200">
                 <template scope="scope">
                     <span>{{scope.row.id}}</span>
@@ -73,42 +74,41 @@
         </el-dialog>
         <!--分配菜单权限-->
         <!--<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">-->
-            <!--<el-form ref="roleForm" class="small-space" :model="sysRole" label-position="left" label-width="100px"-->
-                     <!--style='width: 400px; margin-left:50px;'>-->
-                <!--<el-tree :data="regions" :props="props" :load="loadNode" lazy="" show-checkbox-->
-                         <!--@check-change="handleCheckChange" style="width: 546px;">-->
-                <!--</el-tree>-->
+        <!--<el-form ref="roleForm" class="small-space" :model="sysRole" label-position="left" label-width="100px"-->
+        <!--style='width: 400px; margin-left:50px;'>-->
+        <!--<el-tree :data="regions" :props="props" :load="loadNode" lazy="" show-checkbox-->
+        <!--@check-change="handleCheckChange" style="width: 546px;">-->
+        <!--</el-tree>-->
 
-            <!--</el-form>-->
-            <!--<div slot="footer" class="dialog-footer">-->
-                <!--<el-button @click="dialogFormVisible = false">取 消</el-button>-->
-                <!--<el-button v-if="dialogStatus=='menuList'" type="primary" @click="menuList">确 定</el-button>-->
-                <!--<el-button v-else type="primary" @click="update">确 定</el-button>-->
-            <!--</div>-->
+        <!--</el-form>-->
+        <!--<div slot="footer" class="dialog-footer">-->
+        <!--<el-button @click="dialogFormVisible = false">取 消</el-button>-->
+        <!--<el-button v-if="dialogStatus=='menuList'" type="primary" @click="menuList">确 定</el-button>-->
+        <!--<el-button v-else type="primary" @click="update">确 定</el-button>-->
+        <!--</div>-->
         <!--</el-dialog>-->
         <!--&lt;!&ndash;分配菜单权限&ndash;&gt;-->
         <!--<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">-->
-            <!--<el-form ref="roleForm" class="small-space" :model="sysRole" label-position="left" label-width="100px"-->
-                     <!--style='width: 400px; margin-left:50px;'>-->
-                <!--<el-tree :data="regions" :props="defaultProps" @node-click="handleNodeClick" style="width: 546px;">-->
-                <!--</el-tree>-->
+        <!--<el-form ref="roleForm" class="small-space" :model="sysRole" label-position="left" label-width="100px"-->
+        <!--style='width: 400px; margin-left:50px;'>-->
+        <!--<el-tree :data="regions" :props="defaultProps" @node-click="handleNodeClick" style="width: 546px;">-->
+        <!--</el-tree>-->
 
-            <!--</el-form>-->
-            <!--<div slot="footer" class="dialog-footer">-->
-                <!--<el-button @click="dialogFormVisible = false">取 消</el-button>-->
-                <!--<el-button v-if="dialogStatus=='userList'" type="primary" @click="userList">确 定</el-button>-->
-                <!--<el-button v-else type="primary" @click="update">确 定</el-button>-->
-            <!--</div>-->
+        <!--</el-form>-->
+        <!--<div slot="footer" class="dialog-footer">-->
+        <!--<el-button @click="dialogFormVisible = false">取 消</el-button>-->
+        <!--<el-button v-if="dialogStatus=='userList'" type="primary" @click="userList">确 定</el-button>-->
+        <!--<el-button v-else type="primary" @click="update">确 定</el-button>-->
+        <!--</div>-->
         <!--</el-dialog>-->
     </div>
 </template>
 
 <script>
-    import {getRoleList, createRole, updateRole} from 'api/org/role';
+    import {getRoleList, createRole, updateRole, delRole} from 'api/org/role';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
-    import TreeUtil from 'utils/TreeUtil.js';
-    import {getUserList} from 'api/org/user';
+    //    import {getUserList} from 'api/org/user';
 
 
     export default {
@@ -126,6 +126,7 @@
                     id: undefined,
                     roleName: ''
                 },
+                selectedRows: [],
                 dialogFormVisible: false,
                 dialogStatus: '',
                 showAuditor: false,
@@ -172,7 +173,7 @@
         },
         created() {
             this.getList();
-            this.getOptions();
+//            this.getOptions();
         },
         computed: {
             cascaderModel: function () {
@@ -188,9 +189,9 @@
                 ])
         },
         methods: {
-            handleNodeClick(data) {
-                console.log(data);
-            },
+//            handleNodeClick(data) {
+//                console.log(data);
+//            },
             getList() {
                 this.listLoading = true;
                 getRoleList(this.listQuery).then(response => {
@@ -199,14 +200,14 @@
                     this.listLoading = false;
                 })
             },
-            getOptions() {
-                this.dialogLoading = true;
-                getUserList(this.listQuery).then(response => {
+//            getOptions() {
+//                this.dialogLoading = true;
+//                getUserList(this.listQuery).then(response => {
 //                    this.props = response.data;
-                    this.regions = response.data;
-                    this.dialogLoading = false;
-                })
-            },
+//                    this.regions = response.data;
+//                    this.dialogLoading = false;
+//                })
+//            },
             handleSizeChange(val) {
                 this.listQuery.rows = val;
                 this.getList();
@@ -226,7 +227,7 @@
                 this.dialogStatus = 'userList';
                 this.dialogFormVisible = true;
             },
-            handleCreate(row) {
+            handleCreate() {
                 this.resetTemp();
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
@@ -239,14 +240,30 @@
                 this.dialogFormVisible = true;
             },
             handleDelete(row) {
-                this.$notify({
-                    title: '成功',
-                    message: '删除成功',
-                    type: 'success',
-                    duration: 2000
-                });
-                const index = this.list.indexOf(row);
-                this.list.splice(index, 1);
+                if (this.selectedRows.length == 0) {
+                    this.$message.error('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        let ids = new Array();
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        delRole(ids).then(response => {
+                            this.listLoading = false;
+                            this.$message.success('删除成功');
+                        })
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.list.indexOf(deleteRow);
+                            this.list.splice(index, 1);
+                        }
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
             },
             create() {
                 this.$refs['roleForm'].validate(valid => {
@@ -270,7 +287,6 @@
                         updateRole(this.sysRole).then(response => {
                             copyProperties(this.currentRow, response.data);
                             this.$message.success('更新成功');
-                            TreeUtil.editRow(response.data, this.list);
                         })
                     } else {
                         return false;
