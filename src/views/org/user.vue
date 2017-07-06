@@ -4,7 +4,17 @@
             <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="姓名"
                       v-model="listQuery.userName">
             </el-input>
-            <el-cascader :options="cascader" class="filter-item" @change="handleChange" v-model="findModel"
+            <el-select v-model="listQuery.sex" clearable placeholder="选择性别" class="filter-item" style="width: 120px;"
+                       @change="findUserSex"
+            >
+                <el-option
+                        v-for="item in enums['Gender']"
+                        :key="item.code"
+                        :label="item.value"
+                        :value="item.code"
+                 />
+            </el-select>
+            <el-cascader :options="cascader" class="filter-item" @change="handleChange"
                          :show-all-levels="true"
                          :change-on-select="true" style="width: 180px" placeholder="选择部门" filterable
                          clearable>
@@ -217,7 +227,8 @@
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     deptName: undefined,
-                    deptId: undefined
+                    deptId: undefined,
+                    sex:''
                 },
                 sysUser: {
                     id: '',
@@ -277,12 +288,11 @@
                 } else {
                     result = [this.sysUser.sysDept.id + '' ];
                 }
-                console.dir(result);
+
                 return result;
-            },
-            findModel: function () {
 
             },
+
             ...
                 mapGetters([
                     'textMap',
@@ -291,6 +301,7 @@
         },
         created()
         {
+
             this.getList();
             this.getOptions();
         }
@@ -308,16 +319,21 @@
                 this.listQuery.rows = val;
                 this.getList();
             },
+            findUserSex(){
+                this.getList();
+
+            },
             handleChange(value)
             {
+
                 if (value.length > 0) {
                     this.sysUser.deptId = value[value.length - 1];
                     this.listQuery.deptId = value[value.length - 1];
-
                 } else {
                     this.sysUser.deptId = 0;
 
                 }
+
             },
             handleCurrentChange(val) {
                 this.listQuery.page = val;
@@ -328,6 +344,7 @@
                 this.selectedRows = rows;
             },
             handleCreate(row) {
+                this.sysUser.treePosition = row.treePosition;
                 this.currentRow = row;
                 this.resetTemp();
                 this.sysUser.deptId = row.id;
@@ -339,12 +356,16 @@
                 this.listLoading = true;
 
                 getUserList(this.listQuery).then(response => {
-
+                    console.dir(this.listQuery.sex);
                     this.list = response.data.list;
                     this.total = response.data.total;
                     this.listLoading = false;
+
                 })
             },
+
+
+
             handleUpdate(row) {
 
                 this.currentRow = row;
@@ -391,10 +412,10 @@
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         createUser(this.sysUser).then(response => {
-
                             this.list.push(response.data.list);
                             this.$message.success('创建成功');
                             this.listLoading = false;
+
                         })
                     } else {
                         return false;
