@@ -142,8 +142,14 @@
             },
             handleCreate(row) {
                 this.resetTemp();
-                this.sysDept.treePosition = row.treePosition;
-                this.sysDept.parentId = row.id;
+                if (row.treePosition) {
+                    this.sysDept.treePosition = row.treePosition;
+                }
+                if (row.id) {
+                    this.sysDept.parentId = row.id;
+                } else {
+                    this.sysDept.parentId = 0;
+                }
                 this.getOptions(null);
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
@@ -180,6 +186,7 @@
                 this.$refs['deptForm'].validate((valid) => {
                     if (valid) {
                         this.dialogFormVisible = false;
+                        console.dir(this.sysDept.parentId);
                         createDept(this.sysDept).then(response => {
                             this.$message.success('创建成功');
                             TreeUtil.addRow(response.data, this.deptList);
