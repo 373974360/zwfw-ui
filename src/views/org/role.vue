@@ -91,30 +91,38 @@
             </div>
         </el-dialog>
 
-        <!--关联用户-->
-        <!--<el-dialog :title="textMap[dialogStatus]" :visible.sync="userRoleDialogFormVisible">
-            <el-form ref="roleForm" class="small-space" :model="sysRole" label-position="left" label-width="100px"
-                     style='width: 400px; margin-left:50px;'>
-                <el-tree :data="regions" :props="defaultProps" @node-click="handleNodeClick" style="width: 546px;">
-                </el-tree>
-
+        <!--关联用户 :default-checked-keys="checkedUserList"-->
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="userRoleDialogFormVisible" >
+            <el-form ref="userForm" class="small-space" :model="sysRole"
+                     label-position="left" label-width="100px"
+                     style='width: 100%;' v-loading="userRoleDialogLoading">
+                <el-form-item :data="deptName" v-for="(users,deptName) in userList">
+                    <div class="" style="margin-left: -98px;margin-bottom: -35px">
+                        <div style="background-color: #eef1f6;">
+                            <h4 class="odd" style="margin-left: 11px;">{{deptName}}：</h4>
+                        </div>
+                        <el-checkbox-group ref="selectUserForm"  style="margin-left: 15px;margin-top: -13px;" 　v-model="sysRole.userId">
+                            <el-checkbox  v-for="user in users" :label="user.id" :key="user.id" @change="UserListChecked" >{{user.userName}}
+                            </el-checkbox>
+                        </el-checkbox-group>
+                    </div>
+                </el-form-item>
             </el-form>
+
             <div slot="footer" class="dialog-footer">
                 <el-button @click="userRoleDialogFormVisible = false">取 消</el-button>
-                <el-button v-if="dialogStatus=='userList'" type="primary" @click="userList">确 定</el-button>
-                <el-button v-else type="primary" @click="update">确 定</el-button>
+                <el-button  type="primary" @click="submitUserRole">确 定</el-button>
             </div>
-        </el-dialog>-->
+        </el-dialog>
     </div>
 </template>
 
 <script>
-    import {getRoleList, createRole, updateRole, createRoleMenus, getAllRoleMenus} from 'api/org/role';
+    import { getRoleList, createRole, updateRole, createRoleMenus, createUserRole, getAllRoleMenus, getAllUserRole } from 'api/org/role';
     import {getMenuTree} from 'api/org/menu';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
-    import TreeUtil from 'utils/TreeUtil.js';
-    import {getUserList} from 'api/org/user';
+    import {selectDeptNameAndUsers} from 'api/org/user';
 
 
     export default {
@@ -132,9 +140,11 @@
                 sysRole: {
                     id: undefined,
                     roleName: '',
-                    roleType: 0
+                    roleType: 0,
+                    userId: ''
                 },
                 dialogStatus: '',
+                checked: true,
                 addDialogFormVisible: false,
                 roleMenuDialogFormVisible: false,
                 roleMenuDialogLoading: false,
@@ -144,7 +154,9 @@
                 menuTree: [],
                 checkedMenu: [],
                 userTree: [],
-                checkedUser: []
+                checkedUser: [],
+                deptList: [],
+                userList: []
             }
         },
         created() {
@@ -242,7 +254,6 @@
             resetTemp() {
                 this.sysRole = {
                     id: undefined,
-                    deptName: '',
                     roleName: '',
                     roleType: 1,
                     deptCode: 0,
@@ -270,6 +281,7 @@
                     this.$refs.menuTree.setCheckedKeys(checked);
                 })
             },
+
             menuTreeChecked(data, checked, indeterminate){
                 if (checked) {
                     this.checkedMenu.push(data.id);
@@ -298,7 +310,45 @@
                 this.currentRoleId = roleId;
                 this.dialogStatus = 'roleUser';
                 this.userRoleDialogFormVisible = true;
-            }
+                this.getDeptAndUsersList();
+            },
+            getDeptAndUsersList() {
+                this.userRoleDialogLoading = true;
+                selectDeptNameAndUsers(this.listQuery).then(response => {
+                    this.userList = response.data;
+                    this.userRoleDialogLoading = false;
+                    this.getAllUserRoles();
+                })
+            },
+            getAllUserRoles(){
+                this.checkedUserList = [];
+                getAllUserRole(this.currentRoleId).then(response => {
+                    const users = response.data;
+                    let checked = [];
+                    for (const user of users) {
+                        checked.push(user.userId);
+                    }
+//                    this.$refs.selectUserForm.setCheckedKeys(checked);
+                })
+            },
+//            UserListChecked(data, checked, indeterminate){
+//                if (checked) {
+//                    this.checkedUserList.push(data.id);
+//                } else {
+//                    const index = this.checkedUserList.indexOf(data.id);
+//                    if (index >= 0) {
+//                        this.checkedUserList.splice(index, 1);
+//                    }
+//                }
+//            },
+//            submitUserRole(){
+//                this.userRoleDialogLoading = true;
+//                createUserRole(this.currentRoleId, this.checkedUserList).then(response => {
+//                    this.userRoleDialogLoading = false;
+//                    this.userRoleDialogFormVisible = false;
+//                    this.$message.success('关联成功');
+//                })
+//            }
         }
     }
 </script>

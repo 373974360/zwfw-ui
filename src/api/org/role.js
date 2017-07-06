@@ -44,6 +44,15 @@ export function createRoleMenus(roleId, menuIds) {
     })
 }
 
+export function createUserRole(roleId, userIds) {
+    const data = {roleId, userIds};
+    return fetch({
+        url: '/sysUserRole/addList',
+        method: 'post',
+        data
+    })
+}
+
 export function getAllRoleMenus(roleId) {
     return fetch({
         url: '/sysRoleMenu/selectAll',
@@ -51,3 +60,11 @@ export function getAllRoleMenus(roleId) {
         params: {roleId}
     })
 }
+export function getAllUserRole(roleId) {
+    return fetch({
+        url: '/sysUserRole/selectAll',
+        method: 'get',
+        params: {roleId}
+    })
+}
+
