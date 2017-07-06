@@ -1,4 +1,3 @@
-/* eslint-disable key-spacing,spaced-comment */
 import fetch from 'utils/fetch';
 
 export function getUserList(query) {
@@ -26,21 +25,20 @@ export function updateUser(sysUserVo) {
         data
     })
 }
-//逻辑删除
-export function delUser(ids){
+
+export function delUser(ids) {
     const data = {ids};
     return fetch({
-        url:  '/sysUser/dels',
+        url: '/sysUser/dels',
         method: 'post',
         data
     })
 }
-    //真实删除
-    export   function deleteUser(sysUserVo) {
-        const data = sysUserVo;
-        return fetch({
-            url: '/sysUser/delete',
-            method: 'post',
-            data
-        })
-    }
+
+export function selectDeptNameAndUsers(query) {
+    return fetch({
+        url: '/sysUser/selectDeptNameAndUsers',
+        mothod: 'get',
+        params: query
+    });
+}
