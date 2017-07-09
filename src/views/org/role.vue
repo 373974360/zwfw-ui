@@ -57,7 +57,7 @@
         <!--添加编辑-->
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="addDialogFormVisible">
             <el-form ref="roleForm" class="small-space" :model="sysRole" label-position="left" label-width="80px"
-                     style='width: 80%; margin-left:10%;'>
+                     style='width: 80%; margin-left:10%;' :rules="roleRules">
                 <el-form-item label="角色名称" prop="roleName">
                     <el-input v-model="sysRole.roleName"/>
                 </el-form-item>
@@ -92,8 +92,8 @@
         </el-dialog>
 
         <!--关联用户 :default-checked-keys="checkedUserList"-->
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="userRoleDialogFormVisible" >
-            <el-form ref="userForm" class="small-space" :model="sysRole"
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="userRoleDialogFormVisible">
+            <el-form id="checkboxTable" ref="userForm" class="small-space" :model="sysRole"
                      label-position="left" label-width="100px"
                      style='width: 100%;' v-loading="userRoleDialogLoading">
                 <el-form-item :data="deptName" v-for="(users,deptName) in userList">
@@ -101,29 +101,40 @@
                         <div style="background-color: #eef1f6;">
                             <h4 class="odd" style="margin-left: 11px;">{{deptName}}：</h4>
                         </div>
-                        <el-checkbox-group ref="selectUserForm"  style="margin-left: 15px;margin-top: -13px;" 　v-model="sysRole.userId">
-                            <el-checkbox  v-for="user in users" :label="user.id" :key="user.id" @change="UserListChecked" >{{user.userName}}
+
+                        <el-checkbox-group ref="selectUserForm" v-model="checkedUsers"
+                                           @change="handleCheckedUsersChange"
+                                           style="margin-left: 15px;margin-top: -13px;">
+                            <el-checkbox v-for="user in users" :label="user.id" :key="user.id">{{user.userName}}
                             </el-checkbox>
                         </el-checkbox-group>
+
                     </div>
                 </el-form-item>
             </el-form>
 
             <div slot="footer" class="dialog-footer">
                 <el-button @click="userRoleDialogFormVisible = false">取 消</el-button>
-                <el-button  type="primary" @click="submitUserRole">确 定</el-button>
+                <el-button type="primary" @click="submitUserRole">确 定</el-button>
             </div>
         </el-dialog>
     </div>
 </template>
 
 <script>
-    import { getRoleList, createRole, updateRole, createRoleMenus, createUserRole, getAllRoleMenus, getAllUserRole } from 'api/org/role';
+    import {
+        getRoleList,
+        createRole,
+        updateRole,
+        createRoleMenus,
+        createUserRole,
+        getAllRoleMenus,
+        getAllUserRole
+    } from 'api/org/role';
     import {getMenuTree} from 'api/org/menu';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import {selectDeptNameAndUsers} from 'api/org/user';
-
 
     export default {
         name: 'table_demo',
@@ -143,6 +154,11 @@
                     roleType: 0,
                     userId: ''
                 },
+                roleRules: {
+                    roleName: [
+                        {required: true, message: '请输入角色名称', trigger: 'blur'}
+                    ]
+                },
                 dialogStatus: '',
                 checked: true,
                 addDialogFormVisible: false,
@@ -156,7 +172,8 @@
                 userTree: [],
                 checkedUser: [],
                 deptList: [],
-                userList: []
+                userList: [],
+                checkedUsers: []
             }
         },
         created() {
@@ -320,35 +337,37 @@
                     this.getAllUserRoles();
                 })
             },
-            getAllUserRoles(){
-                this.checkedUserList = [];
+            getAllUserRoles() {
+                this.checkedMenu = [];
                 getAllUserRole(this.currentRoleId).then(response => {
                     const users = response.data;
                     let checked = [];
                     for (const user of users) {
                         checked.push(user.userId);
                     }
-//                    this.$refs.selectUserForm.setCheckedKeys(checked);
+                    var tmpObj = $("#checkboxTable").find("input.el-checkbox__original");
+                    console.log(tmpObj.length);
+                    var ids = [];
+                    for (var i = 0; i < tmpObj.length; i++) {
+                        var ids = tmpObj[i].defaultValue;
+                        for (var k = 0; k < checked.length; k++) {
+                            if (ids == checked[k]) {
+//                                tmpObj[i].checked = true;
+                            }
+                        }
+                    }
                 })
             },
-//            UserListChecked(data, checked, indeterminate){
-//                if (checked) {
-//                    this.checkedUserList.push(data.id);
-//                } else {
-//                    const index = this.checkedUserList.indexOf(data.id);
-//                    if (index >= 0) {
-//                        this.checkedUserList.splice(index, 1);
-//                    }
-//                }
-//            },
-//            submitUserRole(){
-//                this.userRoleDialogLoading = true;
-//                createUserRole(this.currentRoleId, this.checkedUserList).then(response => {
-//                    this.userRoleDialogLoading = false;
-//                    this.userRoleDialogFormVisible = false;
-//                    this.$message.success('关联成功');
-//                })
-//            }
+            handleCheckedUsersChange(){
+            },
+            submitUserRole() {
+                this.userRoleDialogLoading = true;
+                createUserRole(this.currentRoleId, this.checkedMenu).then(response => {
+                    this.userRoleDialogLoading = false;
+                    this.userRoleDialogFormVisible = false;
+                    this.$message.success('关联成功');
+                })
+            }
         }
     }
 </script>
