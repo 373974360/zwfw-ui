@@ -12,13 +12,13 @@
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
             <el-form ref="deptForm" class="small-space" :model="sysDept" label-position="left" label-width="70px"
-                     style='width: 80%; margin-left:10%;' v-loading="dialogLoading">
+                     style='width: 80%; margin-left:10%;' v-loading="dialogLoading"   :rules="deptRules">
                 <el-form-item label="上级部门">
                     <el-cascader :options="cascader" v-model="cascaderModel" @change="handleChange"
                                  :show-all-levels="true" expand-trigger="hover" :clearable="true"
                                  :change-on-select="true" style="width:100%"></el-cascader>
                 </el-form-item>
-                <el-form-item label="部门全称">
+                <el-form-item label="部门全称" prop="deptId">
                     <el-input v-model="sysDept.deptName"></el-input>
                 </el-form-item>
                 <el-form-item label="部门简称">
@@ -92,7 +92,12 @@
                 cascader: [],
                 dialogFormVisible: false,
                 dialogStatus: '',
-                dialogLoading: false
+                dialogLoading: false,
+                deptRules: {
+                    deptId: [
+                        {required: true, message: '请输入部门名称', trigger: 'blur'}
+                    ]
+                }
             }
         },
         components: {
