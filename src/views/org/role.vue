@@ -14,7 +14,7 @@
             </el-button>
         </div>
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row
-                  style="width: 100%">
+                  style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"/>
             <el-table-column align="center" label="序号" width="200">
                 <template scope="scope">
@@ -94,22 +94,20 @@
         <!--关联用户 :default-checked-keys="checkedUserList"-->
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="userRoleDialogFormVisible">
             <el-form id="checkboxTable" ref="userForm" class="small-space" :model="sysRole"
-                     label-position="left" label-width="100px"
+                     label-position="left" label-width="25px"
                      style='width: 100%;' v-loading="userRoleDialogLoading">
                 <el-form-item :data="deptName" v-for="(users,deptName) in userList">
-                    <div class="" style="margin-left: -98px;margin-bottom: -35px">
-                        <div style="background-color: #eef1f6;">
-                            <h4 class="odd" style="margin-left: 11px;">{{deptName}}：</h4>
-                        </div>
-
-                        <el-checkbox-group ref="selectUserForm" v-model="checkedUsers"
-                                           @change="handleCheckedUsersChange"
-                                           style="margin-left: 15px;margin-top: -13px;">
-                            <el-checkbox v-for="user in users" :label="user.id" :key="user.id">{{user.userName}}
-                            </el-checkbox>
-                        </el-checkbox-group>
-
-                    </div>
+                    <el-checkbox-group v-model="checkedUsers" @change="handleCheckedUsersChange" style="margin-bottom: -39px;">
+                        <el-row >
+                            <el-col :span="12" >
+                                <div class="grid-content bg-purple-light" style="width:191%;">
+                                    <h4 style="margin-left: 16px;margin-top: 0px;">{{deptName}}：</h4>
+                                </div>
+                            </el-col>
+                        </el-row>
+                        <el-checkbox v-for="user in users" :label="user.id" style="top: -29px;">{{user.userName}}
+                        </el-checkbox>
+                    </el-checkbox-group>
                 </el-form-item>
             </el-form>
 
@@ -129,7 +127,8 @@
         createRoleMenus,
         createUserRole,
         getAllRoleMenus,
-        getAllUserRole
+        getAllUserRole,
+        delRole
     } from 'api/org/role';
     import {getMenuTree} from 'api/org/menu';
     import {copyProperties} from 'utils';
@@ -173,7 +172,8 @@
                 checkedUser: [],
                 deptList: [],
                 userList: [],
-                checkedUsers: []
+                checkedUsers: [],
+                selectedRows: []
             }
         },
         created() {
@@ -195,6 +195,9 @@
                     this.listLoading = false;
                 })
             },
+            handleSelectionChange(row) {
+                this.selectedRows = row;
+            },
             handleSizeChange(val) {
                 this.listQuery.rows = val;
                 this.getList();
@@ -214,11 +217,11 @@
                 this.dialogStatus = 'update';
                 this.addDialogFormVisible = true;
             },
-            handleDelete(row) {
+            handleDelete() {
                 if (this.selectedRows.length == 0) {
                     this.$message.error('请选择需要操作的记录');
                 } else {
-                    this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
+                    this.$confirm('此操作将删除关联信息, 是否继续?', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning'
@@ -229,6 +232,7 @@
                         }
                         delRole(ids).then(response => {
                             this.listLoading = false;
+                            this.total -= 1;
                             this.$message.success('删除成功');
                         })
                         for (const deleteRow of this.selectedRows) {
@@ -246,7 +250,8 @@
                         this.addDialogFormVisible = false;
                         this.listLoading = true;
                         createRole(this.sysRole).then(response => {
-                            this.list.push(response.data);
+                            this.list.unshift(response.data);
+                            this.total += 1;
                             this.$message.success('创建成功');
                             this.listLoading = false;
                         })
@@ -256,7 +261,7 @@
                 });
             },
             update() {
-                this.$refs['roleForm'].validate((valid) => {
+                this.$refs['roleForm'].validate(valid => {
                     if (valid) {
                         this.addDialogFormVisible = false;
                         updateRole(this.sysRole).then(response => {
@@ -287,7 +292,7 @@
                     this.getAllRoleMenu();
                 })
             },
-            getAllRoleMenu(){
+            getAllRoleMenu() {
                 this.checkedMenu = [];
                 getAllRoleMenus(this.currentRoleId).then(response => {
                     const menus = response.data;
@@ -338,31 +343,21 @@
                 })
             },
             getAllUserRoles() {
-                this.checkedMenu = [];
+                this.checkedUsers = [];
                 getAllUserRole(this.currentRoleId).then(response => {
-                    const users = response.data;
-                    let checked = [];
-                    for (const user of users) {
-                        checked.push(user.userId);
-                    }
-                    var tmpObj = $("#checkboxTable").find("input.el-checkbox__original");
-                    console.log(tmpObj.length);
-                    var ids = [];
-                    for (var i = 0; i < tmpObj.length; i++) {
-                        var ids = tmpObj[i].defaultValue;
-                        for (var k = 0; k < checked.length; k++) {
-                            if (ids == checked[k]) {
-//                                tmpObj[i].checked = true;
-                            }
+                    if (response.data) {
+                        for (const item of response.data) {
+                            this.checkedUsers.push(item.userId);
                         }
                     }
                 })
             },
-            handleCheckedUsersChange(){
+            handleCheckedUsersChange(value) {
+                this.checkedUsers = value;
             },
             submitUserRole() {
                 this.userRoleDialogLoading = true;
-                createUserRole(this.currentRoleId, this.checkedMenu).then(response => {
+                createUserRole(this.currentRoleId, this.checkedUsers).then(response => {
                     this.userRoleDialogLoading = false;
                     this.userRoleDialogFormVisible = false;
                     this.$message.success('关联成功');
