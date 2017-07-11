@@ -350,6 +350,7 @@
                 this.$refs[userForm1].resetFields();
             },
             handleDelete() {
+                var selectCounts = this.selectedRows.length;
                 if (!this.selectedRows) {
                     this.$message.error('请选择需要操作的记录');
                 } else {
@@ -365,7 +366,7 @@
                         delUser(ids).then(response => {
 
                             this.listLoading = false;
-                            this.total-= 1;
+                            this.total -= selectCounts;
                             this.$message.success('删除成功');
                         })
                         for (const deleteRow of this.selectedRows) {
