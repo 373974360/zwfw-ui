@@ -214,19 +214,19 @@ export function getTime(type) {
     }
 }
 
-export function copyProperties(source,target){
-    for(const item in source){
-        if(target[item] != undefined){
+export function copyProperties(source, target) {
+    for (const item in source) {
+        if (target[item] != undefined) {
             source[item] = target[item];
         }
     }
     return source;
 }
 
-export function mergeTree(list,data,isAppend){
-    for(const item of list){
-        if(isAppend){
-            if(data.parentId == item.id){
+export function mergeTree(list, data, isAppend) {
+    for (const item of list) {
+        if (isAppend) {
+            if (data.parentId == item.id) {
 
             }
         }

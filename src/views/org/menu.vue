@@ -210,6 +210,7 @@
                         this.dialogFormVisible = false;
                         createMenu(this.sysMenu).then(response => {
                             this.$message.success('创建成功');
+
                             TreeUtil.addRow(response.data, this.menuList);
                         })
                     } else {

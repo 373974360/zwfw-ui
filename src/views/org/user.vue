@@ -4,16 +4,6 @@
             <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="姓名"
                       v-model="listQuery.userName">
             </el-input>
-            <el-select v-model="listQuery.sex" clearable placeholder="选择性别" class="filter-item" style="width: 120px;"
-                       @change="findUserSex"
-            >
-                <el-option
-                        v-for="item in enums['Gender']"
-                        :key="item.code"
-                        :label="item.value"
-                        :value="item.code"
-                 />
-            </el-select>
             <el-cascader :options="cascader" class="filter-item" @change="handleChange"
                          :show-all-levels="true"
                          :change-on-select="true" style="width: 180px" placeholder="选择部门" filterable
@@ -47,7 +37,7 @@
 
             <el-table-column align="center" label="部门">
                 <template scope="scope">
-                    <span v-if="scope.row.sysDept">{{scope.row.sysDept.deptName}}</span>
+                    <span v-if="scope.row.sysDeptVo.deptName">{{scope.row.sysDeptVo.deptName}}</span>
                     <span v-else></span>
                 </template>
             </el-table-column>
@@ -138,10 +128,10 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="dialogFormVisible = false">取 消</el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
+                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check"  @click="create">确 定
                 </el-button>
 
-                <el-button v-else type="primary" icon="circle-check" @click="update">确 定</el-button>
+                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定</el-button>
                 <el-button icon="information" type="warning" @click="resetForm('userForm1')">重置</el-button>
             </div>
         </el-dialog>
@@ -154,10 +144,11 @@
     import {getUserList, updateUser, createUser, delUser} from 'api/org/user';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
-    import TreeUtil from 'utils/TreeUtil.js';
+    import TreeUtil from 'utils/TreeUtil';
 
     export default {
         name: 'table_demo',
+
         data() {
             //判断中文姓名
             var namecheck = /^[\u4E00-\u9FA5]{2,8}$/;
@@ -222,19 +213,17 @@
                 list: null,
                 total: null,
                 listLoading: true,
-
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     deptName: undefined,
-                    deptId: undefined,
-                    sex:''
+                    deptId: undefined
                 },
                 sysUser: {
-                    id: '',
-                    deptId: undefined,
-                    userName: '',
-                    sysDept: [],
+                    id:'',
+                    deptId: '',
+                    userName:'',
+                    sysDeptVo:[],
                     sex: '',
                     phone: '',
                     avatar: '',
@@ -282,16 +271,19 @@
 
             },
             updateModel: function () {
+
                 let result = [];
-                if (this.sysUser.sysDept.treePosition) {
-                    result = (this.sysUser.sysDept.treePosition + '&' + this.sysUser.sysDept.id).split('&');
-                } else {
-                    result = [this.sysUser.sysDept.id + '' ];
+                if (this.sysUser.sysDeptVo.treePosition) {
+                    result = (this.sysUser.sysDeptVo.treePosition + '&' + this.sysUser.sysDeptVo.id).split('&');
+                }
+                else {
+                    result = [this.sysUser.sysDeptVo.id +''];
                 }
 
-                return result;
 
+                return result;
             },
+
 
             ...
                 mapGetters([
@@ -301,7 +293,6 @@
         },
         created()
         {
-
             this.getList();
             this.getOptions();
         }
@@ -312,60 +303,60 @@
                 getDeptCascader(id).then(response => {
                     this.cascader = response.data;
 
+
                 })
             },
 
             handleSizeChange(val) {
                 this.listQuery.rows = val;
                 this.getList();
-            },
-            findUserSex(){
-                this.getList();
 
             },
             handleChange(value)
             {
-
                 if (value.length > 0) {
                     this.sysUser.deptId = value[value.length - 1];
                     this.listQuery.deptId = value[value.length - 1];
+
+
                 } else {
                     this.sysUser.deptId = 0;
 
-                }
 
+                }
+                console.dir(this.sysUser.deptId)
             },
             handleCurrentChange(val) {
                 this.listQuery.page = val;
                 this.getList();
+
             },
             handleSelectionChange(rows) {
 
                 this.selectedRows = rows;
             },
             handleCreate(row) {
-                this.sysUser.treePosition = row.treePosition;
                 this.currentRow = row;
                 this.resetTemp();
                 this.sysUser.deptId = row.id;
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
+                //console.dir(this.sysUser.deptId);
+                console.dir(this.sysUser.deptId);
+
+
 
             },
             getList() {
                 this.listLoading = true;
 
                 getUserList(this.listQuery).then(response => {
-                    console.dir(this.listQuery.sex);
+
                     this.list = response.data.list;
                     this.total = response.data.total;
                     this.listLoading = false;
-
                 })
             },
-
-
-
             handleUpdate(row) {
 
                 this.currentRow = row;
@@ -374,6 +365,7 @@
                 this.sysUser.password = '';
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
+
 
             },
             resetForm(userForm1) {
@@ -394,6 +386,7 @@
                         }
                         delUser(ids).then(response => {
                             this.listLoading = false;
+                            this.total-= 1;
                             this.$message.success('删除成功');
                         })
                         for (const deleteRow of this.selectedRows) {
@@ -407,41 +400,32 @@
             },
             create() {
                 this.$refs['userForm1'].validate(valid => {
-                    alert(valid);
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
+
                         createUser(this.sysUser).then(response => {
-                            this.list.push(response.data.list);
+                              this.list.unshift(response.data);
+                            this.total += 1;
                             this.$message.success('创建成功');
                             this.listLoading = false;
-
                         })
                     } else {
                         return false;
                     }
                 });
-//
-//                this.sysUser.timestamp = +new Date();
-//                this.sysUser.author = '原创作者';
-//                this.list.unshift(this.sysUser);
-//                this.dialogFormVisible = false;
-//                this.$notify({
-//                    title: '成功',
-//                    message: '创建成功',
-//                    type: 'success',
-//                    duration: 2000
-//                });
+
             },
             update() {
                 this.$refs['userForm1'].validate(valid => {
-                    alert(valid);
+
                     if (valid) {
+
                         this.dialogFormVisible = false;
                         this.listLoading = true;
+                        this.sysUser.sysDeptVo ={};
                         updateUser(this.sysUser).then(response => {
                             copyProperties(this.currentRow, response.data);
-                            this.list = response.data.list;
                             this.$message.success('更新成功');
                             this.listLoading = false;
                         })
@@ -449,28 +433,14 @@
                         return false;
                     }
                 })
-//                this.sysUser.timestamp = +this.sysUser.timestamp;
-//                for (const v of this.list) {
-//                    if (v.id === this.sysUser.id) {
-//                        const index = this.list.indexOf(v);
-//                        this.list.splice(index, 1, this.sysUser);
-//                        break;
-//                    }
-//                }
-//                this.dialogFormVisible = false;
-//                this.$notify({
-//                    title: '成功',
-//                    message: '更新成功',
-//                    type: 'success',
-//                    duration: 2000
-//                });
+
             },
             resetTemp() {
                 this.sysUser = {
                     id: '',
-                    deptId: undefined,
+                    deptId: '',
                     userName: '',
-                    sysDept: [],
+                    sysDeptVo: [],
                     sex: '',
                     phone: '',
                     avatar: '',
