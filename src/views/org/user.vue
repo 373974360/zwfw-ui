@@ -89,7 +89,7 @@
                 <el-form-item label="姓名" prop="userName">
                     <el-input v-model="sysUser.userName"/>
                 </el-form-item>
-                <el-form-item label="性别">
+                <el-form-item label="性别" prop="sex">
                     <el-select v-model="sysUser.sex" placeholder="请选择" style="width:100%">
                         <el-option
                                 v-for="item in enums['Gender']"
@@ -145,10 +145,8 @@
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import TreeUtil from 'utils/TreeUtil';
-
     export default {
         name: 'table_demo',
-
         data() {
             //判断中文姓名
             var namecheck = /^[\u4E00-\u9FA5]{2,8}$/;
@@ -208,7 +206,6 @@
                     callback();
                 }
             };
-
             return {
                 list: null,
                 total: null,
@@ -223,7 +220,7 @@
                     id:'',
                     deptId: '',
                     userName:'',
-                    sysDeptVo:[],
+                    sysDeptVo:{},
                     sex: '',
                     phone: '',
                     avatar: '',
@@ -233,45 +230,47 @@
                     enable: 1,
                     remark: ''
                 },
-
                 sysUserRules1: {
+                    deptId:[
+                         {required: true, message: '请选择部门',}
+                    ],
+                    sex: [
+                        {required: true, message: '请选择性别',}
+                    ],
                     userName: [
-                        {validator: validaUserName, trigger: 'blur'}
+                        { required: true, validator: validaUserName, trigger: 'blur'}
                     ],
                     phone: [
-                        {validator: validatMobiles, trigger: 'blur'}
+                        { required: true, validator: validatMobiles, trigger: 'blur'}
                     ],
                     avatar: [
                         {type: 'url', required: true, message: '头像地址不正确', trigger: 'blur'}
                     ],
                     account: [
-                        {validator: validateaccount, trigger: 'blur'}
+                        { required: true, validator: validateaccount, trigger: 'blur'}
                     ],
                     password: [
-                        {validator: validatePass, trigger: 'blur'}
+                        {required: true, validator: validatePass, trigger: 'blur'}
 
                     ],
                     passwordConfirm: [
-                        {validator: validatePass2, trigger: 'blur'}
-                    ]
+                        {required: true, validator: validatePass2, trigger: 'blur'}
+                    ],
+                    enable:[
+                        {required: true, message: '请选择状态',}
+                    ],
                 },
-
                 selectedRows: [],
                 cascader: [],
                 dialogFormVisible: false,
                 dialogStatus: '',
                 dialogLoading: false
-
             }
         },
-
         computed: {
             cascaderModel: function () {
-
-
             },
             updateModel: function () {
-
                 let result = [];
                 if (this.sysUser.sysDeptVo.treePosition) {
                     result = (this.sysUser.sysDeptVo.treePosition + '&' + this.sysUser.sysDeptVo.id).split('&');
@@ -279,52 +278,36 @@
                 else {
                     result = [this.sysUser.sysDeptVo.id +''];
                 }
-
-
                 return result;
-            },
-
-
-            ...
+            }, ...
                 mapGetters([
                     'textMap',
                     'enums'
                 ])
         },
-        created()
-        {
+        created() {
             this.getList();
             this.getOptions();
-        }
-        ,
+        },
         methods: {
             getOptions(id) {
-
                 getDeptCascader(id).then(response => {
                     this.cascader = response.data;
-
-
                 })
             },
-
             handleSizeChange(val) {
                 this.listQuery.rows = val;
                 this.getList();
-
             },
-            handleChange(value)
-            {
+            handleChange(value) {
+                this.listQuery.deptId=null;
                 if (value.length > 0) {
                     this.sysUser.deptId = value[value.length - 1];
                     this.listQuery.deptId = value[value.length - 1];
-
-
                 } else {
                     this.sysUser.deptId = 0;
-
-
+                    this.getList();
                 }
-                console.dir(this.sysUser.deptId)
             },
             handleCurrentChange(val) {
                 this.listQuery.page = val;
@@ -341,11 +324,6 @@
                 this.sysUser.deptId = row.id;
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
-                //console.dir(this.sysUser.deptId);
-                console.dir(this.sysUser.deptId);
-
-
-
             },
             getList() {
                 this.listLoading = true;
@@ -385,6 +363,7 @@
                             ids.push(deleteRow.id);
                         }
                         delUser(ids).then(response => {
+
                             this.listLoading = false;
                             this.total-= 1;
                             this.$message.success('删除成功');
@@ -405,11 +384,14 @@
                         this.listLoading = true;
 
                         createUser(this.sysUser).then(response => {
-                              this.list.unshift(response.data);
+
+                            this.list.unshift(response.data);
                             this.total += 1;
+
                             this.$message.success('创建成功');
                             this.listLoading = false;
                         })
+                        this.getList();
                     } else {
                         return false;
                     }
@@ -440,7 +422,7 @@
                     id: '',
                     deptId: '',
                     userName: '',
-                    sysDeptVo: [],
+                    sysDeptVo: { },
                     sex: '',
                     phone: '',
                     avatar: '',
