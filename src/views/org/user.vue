@@ -10,13 +10,23 @@
                          clearable>
 
             </el-cascader>
-            <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">
-                添加
-            </el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleDelete" type="danger" icon="delete">
-                删除
-            </el-button>
+            <el-tooltip class="item" effect="dark" content="搜索用户" placement="top-start">
+                <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
+                    搜索
+                </el-button>
+            </el-tooltip>
+            <el-tooltip class="item" effect="dark" content="添加用户" placement="top-start">
+                <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary"
+                           icon="plus">
+                    添加
+                </el-button>
+            </el-tooltip>
+            <el-tooltip class="item" effect="dark" content="删除用户" placement="top-start">
+                <el-button class="filter-item" style="margin-left: 10px;" @click="handleDelete" type="danger"
+                           icon="delete">
+                    删除
+                </el-button>
+            </el-tooltip>
         </div>
 
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row
@@ -29,10 +39,12 @@
             </el-table-column>
 
             <el-table-column align="center" label="姓名">
-                <template scope="scope">
+                <template scope="scope" >
+                    <el-tooltip class="item" effect="dark" content="修改用户" placement="right-start">
                     <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.userName}}</span>
-
+                    </el-tooltip>
                 </template>
+
             </el-table-column>
 
             <el-table-column align="center" label="部门">
@@ -81,7 +93,7 @@
             <el-form ref="userForm1" class="small-space" :model="sysUser" label-position="right" label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="sysUserRules1">
                 <el-form-item label="部门" prop="deptId">
-                    <el-cascader :options="cascader" class="filter-item" @change="handleChange" v-model="updateModel"
+                    <el-cascader :options="cascader" class="filter-item" @change="handleChanges" v-model="updateModel"
                                  :show-all-levels="true"
                                  :change-on-select="true" :clearable="true" style="width: 180px" placeholder="选择部门"
                     ></el-cascader>
@@ -128,10 +140,11 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="dialogFormVisible = false">取 消</el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check"  @click="create">确 定
+                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
                 </el-button>
 
-                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定</el-button>
+                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
+                </el-button>
                 <el-button icon="information" type="warning" @click="resetForm('userForm1')">重置</el-button>
             </div>
         </el-dialog>
@@ -217,10 +230,10 @@
                     deptId: undefined
                 },
                 sysUser: {
-                    id:'',
+                    id: '',
                     deptId: '',
-                    userName:'',
-                    sysDeptVo:{},
+                    userName: '',
+                    sysDeptVo: {},
                     sex: '',
                     phone: '',
                     avatar: '',
@@ -231,23 +244,23 @@
                     remark: ''
                 },
                 sysUserRules1: {
-                    deptId:[
-                         {required: true, message: '请选择部门',}
+                    deptId: [
+                        {required: true, message: '请选择部门',}
                     ],
                     sex: [
                         {required: true, message: '请选择性别',}
                     ],
                     userName: [
-                        { required: true, validator: validaUserName, trigger: 'blur'}
+                        {required: true, validator: validaUserName, trigger: 'blur'}
                     ],
                     phone: [
-                        { required: true, validator: validatMobiles, trigger: 'blur'}
+                        {required: true, validator: validatMobiles, trigger: 'blur'}
                     ],
                     avatar: [
                         {type: 'url', required: true, message: '头像地址不正确', trigger: 'blur'}
                     ],
                     account: [
-                        { required: true, validator: validateaccount, trigger: 'blur'}
+                        {required: true, validator: validateaccount, trigger: 'blur'}
                     ],
                     password: [
                         {required: true, validator: validatePass, trigger: 'blur'}
@@ -256,7 +269,7 @@
                     passwordConfirm: [
                         {required: true, validator: validatePass2, trigger: 'blur'}
                     ],
-                    enable:[
+                    enable: [
                         {required: true, message: '请选择状态',}
                     ],
                 },
@@ -276,7 +289,7 @@
                     result = (this.sysUser.sysDeptVo.treePosition + '&' + this.sysUser.sysDeptVo.id).split('&');
                 }
                 else {
-                    result = [this.sysUser.sysDeptVo.id +''];
+                    result = [this.sysUser.sysDeptVo.id + ''];
                 }
                 return result;
             }, ...
@@ -300,10 +313,18 @@
                 this.getList();
             },
             handleChange(value) {
-                this.listQuery.deptId=null;
+                this.listQuery.deptId = null;
                 if (value.length > 0) {
                     this.sysUser.deptId = value[value.length - 1];
                     this.listQuery.deptId = value[value.length - 1];
+                } else {
+                    this.sysUser.deptId = 0;
+                    this.getList();
+                }
+            },
+            handleChanges(value) {
+                if (value.length > 0) {
+                    this.sysUser.deptId = value[value.length - 1];
                 } else {
                     this.sysUser.deptId = 0;
                     this.getList();
@@ -351,7 +372,7 @@
             },
             handleDelete() {
                 var selectCounts = this.selectedRows.length;
-                if (!this.selectedRows) {
+                if (this.selectedRows == 0) {
                     this.$message.error('请选择需要操作的记录');
                 } else {
                     this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
@@ -368,6 +389,7 @@
                             this.listLoading = false;
                             this.total -= selectCounts;
                             this.$message.success('删除成功');
+                            this.getList();
                         })
                         for (const deleteRow of this.selectedRows) {
                             const index = this.list.indexOf(deleteRow);
@@ -383,16 +405,12 @@
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
-
                         createUser(this.sysUser).then(response => {
-
                             this.list.unshift(response.data);
                             this.total += 1;
-
                             this.$message.success('创建成功');
                             this.listLoading = false;
                         })
-                        this.getList();
                     } else {
                         return false;
                     }
@@ -406,7 +424,7 @@
 
                         this.dialogFormVisible = false;
                         this.listLoading = true;
-                        this.sysUser.sysDeptVo ={};
+                        this.sysUser.sysDeptVo = {};
                         updateUser(this.sysUser).then(response => {
                             copyProperties(this.currentRow, response.data);
                             this.$message.success('更新成功');
@@ -423,7 +441,7 @@
                     id: '',
                     deptId: '',
                     userName: '',
-                    sysDeptVo: { },
+                    sysDeptVo: {},
                     sex: '',
                     phone: '',
                     avatar: '',
