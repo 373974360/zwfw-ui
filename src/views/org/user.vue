@@ -310,13 +310,15 @@
             },
             handleSizeChange(val) {
                 this.listQuery.rows = val;
+                this.listQuery.deptId='';
+                console.dir(this.listQuery.page);
                 this.getList();
             },
             handleChange(value) {
                 this.listQuery.deptId = null;
                 if (value.length > 0) {
-                    this.sysUser.deptId = value[value.length - 1];
-                    this.listQuery.deptId = value[value.length - 1];
+                    //this.sysUser.deptId = value[value.length - 1];
+                   this.listQuery.deptId = value[value.length - 1];  //部门
                 } else {
                     this.sysUser.deptId = 0;
                     this.getList();
@@ -348,24 +350,19 @@
             },
             getList() {
                 this.listLoading = true;
-
                 getUserList(this.listQuery).then(response => {
-
                     this.list = response.data.list;
                     this.total = response.data.total;
                     this.listLoading = false;
                 })
             },
             handleUpdate(row) {
-
                 this.currentRow = row;
                 this.resetTemp();
                 this.sysUser = copyProperties(this.sysUser, row);
                 this.sysUser.password = '';
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
-
-
             },
             resetForm(userForm1) {
                 this.$refs[userForm1].resetFields();
