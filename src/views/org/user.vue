@@ -17,6 +17,9 @@
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleDelete" type="danger" icon="delete">
                 删除
             </el-button>
+            <el-button style='margin-bottom:20px;float:right' type="primary" icon="document" @click="handleDownload">
+                导出excel
+            </el-button>
         </div>
 
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row
@@ -81,7 +84,7 @@
             <el-form ref="userForm1" class="small-space" :model="sysUser" label-position="right" label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="sysUserRules1">
                 <el-form-item label="部门" prop="deptId">
-                    <el-cascader :options="cascader" class="filter-item" @change="handleChange" v-model="updateModel"
+                    <el-cascader :options="cascader" class="filter-item" @change="handleChange1" v-model="updateModel"
                                  :show-all-levels="true"
                                  :change-on-select="true" :clearable="true" style="width: 180px" placeholder="选择部门"
                     ></el-cascader>
@@ -128,10 +131,11 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="dialogFormVisible = false">取 消</el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check"  @click="create">确 定
+                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
                 </el-button>
 
-                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定</el-button>
+                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
+                </el-button>
                 <el-button icon="information" type="warning" @click="resetForm('userForm1')">重置</el-button>
             </div>
         </el-dialog>
@@ -145,8 +149,11 @@
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import TreeUtil from 'utils/TreeUtil';
+    import {parseTime} from 'utils';
+
     export default {
         name: 'table_demo',
+
         data() {
             //判断中文姓名
             var namecheck = /^[\u4E00-\u9FA5]{2,8}$/;
@@ -206,6 +213,7 @@
                     callback();
                 }
             };
+
             return {
                 list: null,
                 total: null,
@@ -217,7 +225,7 @@
                     deptId: undefined
                 },
                 sysUser: {
-                    id:'',
+                    id: '',
                     deptId: '',
                     userName:'',
                     sysDeptVo:{},
@@ -230,6 +238,7 @@
                     enable: 1,
                     remark: ''
                 },
+
                 sysUserRules1: {
                     deptId:[
                          {required: true, message: '请选择部门',}
@@ -300,10 +309,20 @@
                 this.getList();
             },
             handleChange(value) {
-                this.listQuery.deptId=null;
+                this.listQuery.deptId = null;
                 if (value.length > 0) {
                     this.sysUser.deptId = value[value.length - 1];
                     this.listQuery.deptId = value[value.length - 1];
+                } else {
+                    this.sysUser.deptId = 0;
+                    this.getList();
+                }
+            },
+            handleChange1(value) {
+                this.listQuery.deptId = null;
+                if (value.length > 0) {
+                    this.sysUser.deptId = value[value.length - 1];
+//                    this.listQuery.deptId = value[value.length - 1];
                 } else {
                     this.sysUser.deptId = 0;
                     this.getList();
@@ -384,14 +403,11 @@
                         this.listLoading = true;
 
                         createUser(this.sysUser).then(response => {
-
                             this.list.unshift(response.data);
                             this.total += 1;
-
                             this.$message.success('创建成功');
                             this.listLoading = false;
                         })
-                        this.getList();
                     } else {
                         return false;
                     }
@@ -405,7 +421,7 @@
 
                         this.dialogFormVisible = false;
                         this.listLoading = true;
-                        this.sysUser.sysDeptVo ={};
+                        this.sysUser.sysDeptVo = {};
                         updateUser(this.sysUser).then(response => {
                             copyProperties(this.currentRow, response.data);
                             this.$message.success('更新成功');
@@ -436,18 +452,19 @@
             handleDownload() {
                 require.ensure([], () => {
                     const {export_json_to_excel} = require('vendor/Export2Excel');
-                    const tHeader = ['时间', '地区', '类型', '标题', '重要性'];
-                    const filterVal = ['timestamp', 'province', 'type', 'title', 'importance'];
+                    const tHeader = ['序号', '姓名', '部门'];
+                    const filterVal = ['id', 'userName', 'sysDeptVo.deptName'];
                     const data = this.formatJson(filterVal, this.list);
                     export_json_to_excel(tHeader, data, 'table数据');
                 })
             },
             formatJson(filterVal, jsonData) {
                 return jsonData.map(v => filterVal.map(j => {
-                    if (j === 'timestamp') {
-                        return parseTime(v[j])
+                    const attr = j.split('.');
+                    if (attr.length > 1) {
+                        return v[attr[0]][attr[1]];
                     } else {
-                        return v[j]
+                        return v[j];
                     }
                 }))
             }

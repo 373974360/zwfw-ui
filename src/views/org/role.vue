@@ -213,6 +213,7 @@
                 this.addDialogFormVisible = true;
             },
             handleUpdate(row) {
+                this.currentRow = row;
                 this.resetTemp();
                 this.sysRole = copyProperties(this.sysRole, row);
                 this.dialogStatus = 'update';
