@@ -97,15 +97,17 @@
                      label-position="left" label-width="25px"
                      style='width: 100%;' v-loading="userRoleDialogLoading">
                 <el-form-item :data="deptName" v-for="(users,deptName) in userList">
-                    <el-checkbox-group v-model="checkedUsers" @change="handleCheckedUsersChange" style="margin-bottom: -39px;">
-                        <el-row >
-                            <el-col :span="12" >
+                    <el-checkbox-group v-model="checkedUsers" @change="handleCheckedUsersChange"
+                                       style="margin-bottom: -39px;">
+                        <el-row>
+                            <el-col :span="12">
                                 <div class="grid-content bg-purple-light" style="width:191%;">
                                     <h4 style="margin-left: 16px;margin-top: 0px;">{{deptName}}：</h4>
                                 </div>
                             </el-col>
                         </el-row>
-                        <el-checkbox v-for="user in users" :label="user.id" style="top: -29px;">{{user.userName}}
+                        <el-checkbox v-for="user in users" :label="user.id" style="top: -29px;margin-left: 15px;">
+                            {{user.userName}}
                         </el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
@@ -180,11 +182,10 @@
             this.getList();
         },
         computed: {
-            ...
-                mapGetters([
-                    'textMap',
-                    'enums'
-                ])
+            ...mapGetters([
+                'textMap',
+                'enums'
+            ])
         },
         methods: {
             getList() {
@@ -218,7 +219,8 @@
                 this.addDialogFormVisible = true;
             },
             handleDelete() {
-                if (this.selectedRows.length == 0) {
+                const selectCounts = this.selectedRows.length;
+                if (this.selectedRows.length === 0) {
                     this.$message.error('请选择需要操作的记录');
                 } else {
                     this.$confirm('此操作将删除关联信息, 是否继续?', '提示', {
@@ -232,7 +234,7 @@
                         }
                         delRole(ids).then(response => {
                             this.listLoading = false;
-                            this.total -= 1;
+                            this.total -= selectCounts;
                             this.$message.success('删除成功');
                         })
                         for (const deleteRow of this.selectedRows) {
