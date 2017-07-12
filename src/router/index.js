@@ -18,6 +18,7 @@ const Dept = () => import('../views/org/dept');
 const User = () => import('../views/org/user');
 const Menu = () => import('../views/org/menu');
 const Role = () => import('../views/org/role');
+const Holiday = () => import('../views/system/holiday');
 
 /* components */
 const componentsIndex = () => import('../views/components/index');
@@ -107,6 +108,16 @@ export const asyncRouterMap = [
             {path: 'user', component: User, name: '用户管理'},
             {path: 'menu', component: Menu, name: '菜单管理'},
             {path: 'role', component: Role, name: '角色管理'}
+        ]
+    },
+    {
+        path: '/system',
+        component: Layout,
+        redirect: 'noredirect',
+        name: '系统管理',
+        icon: 'system',
+        children: [
+            {path: 'date', component: Holiday, name: '节假日管理'}
         ]
     },
     {
