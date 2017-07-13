@@ -32,48 +32,49 @@
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"/>
-            <el-table-column align="center" label="序号">
+            <el-table-column align="center" label="序号" >
                 <template scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
 
-            <el-table-column align="center" label="姓名">
-                <template scope="scope" >
-                    <el-tooltip class="item" effect="dark" content="修改用户" placement="right-start">
+            <el-table-column align="center" label="姓名" sortable
+                             >
+                <template scope="scope">
+                    <el-tooltip class="item" effect="dark" content="修改用户" placement="right-start" >
                     <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.userName}}</span>
                     </el-tooltip>
                 </template>
 
             </el-table-column>
 
-            <el-table-column align="center" label="部门">
+            <el-table-column align="center" label="部门" sortable>
                 <template scope="scope">
                     <span v-if="scope.row.sysDeptVo.deptName">{{scope.row.sysDeptVo.deptName}}</span>
                     <span v-else></span>
                 </template>
             </el-table-column>
 
-            <el-table-column align="center" label="性别">
+            <el-table-column align="center" label="性别" sortable>
                 <template scope="scope">
                     <span>{{scope.row.sex | enums('Gender')}}</span>
 
                 </template>
             </el-table-column>
 
-            <el-table-column align="center" label="电话">
+            <el-table-column align="center" label="电话" >
                 <template scope="scope">
                     <span>{{scope.row.phone}}</span>
                 </template>
             </el-table-column>
 
-            <el-table-column class-name="status-col" label="帐号">
+            <el-table-column class-name="status-col" label="帐号" >
                 <template scope="scope">
                     <span>{{scope.row.account}}</span>
                 </template>
             </el-table-column>
 
-            <el-table-column class-name="status-col" label="状态">
+            <el-table-column class-name="status-col" label="状态" sortable>
                 <template scope="scope">
                     <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
                         {{scope.row.enable | enums('Enable')}}
@@ -271,7 +272,7 @@
                     ],
                     enable: [
                         {required: true, message: '请选择状态',}
-                    ],
+                    ]
                 },
                 selectedRows: [],
                 cascader: [],
@@ -310,7 +311,8 @@
             },
             handleSizeChange(val) {
                 this.listQuery.rows = val;
-                this.listQuery.deptId='';
+                this.listQuery.deptId = null;
+                this.listQuery.userName = null;
                 console.dir(this.listQuery.page);
                 this.getList();
             },
