@@ -36,9 +36,9 @@
     export default {
         name: 'datepicker',
         props: {
-            year:{
+            year: {
                 type: Number,
-                default:moment().year()
+                default: moment().year()
             },
             month: {
                 type: Number,
@@ -57,11 +57,11 @@
                 type: Boolean,
                 default: false
             },
-            width:{
+            width: {
                 type: Number,
                 default: 350
             },
-            height:{
+            height: {
                 type: Number,
                 default: 310
             }
@@ -98,7 +98,7 @@
                 let d
                 // 将上个月之前的日期填充
                 for (let i = dayOfWeek; i > 0; i--) {
-                    d = date.clone().subtract(i, 'days')
+                    d = date.clone().add(i, 'days')
                     d.cssClass = {
                         off: true
                     }
@@ -134,7 +134,7 @@
                 })
                 return rows
             },
-            cssDate(date){
+            cssDate(date) {
                 let isActive = false;
                 if (this.weekends) {
                     if (date.day() === 6 || date.day() === 0) {
@@ -166,12 +166,6 @@
                     date.cssClass.active = true;
                     this.value.push(date.format(this.dateFormatter))
                 }
-            }
-        },
-        created() {
-            if (this.isShow) {
-                this.pageDate = moment(this.year + '-' + this.month, this.dateFormatter)
-                this.dates = this.prepareDates(this.pageDate)
             }
         }
     }
