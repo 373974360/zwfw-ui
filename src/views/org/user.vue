@@ -10,61 +10,71 @@
                          clearable>
 
             </el-cascader>
-            <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">
-                添加
-            </el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleDelete" type="danger" icon="delete">
-                删除
-            </el-button>
-            <el-button style='margin-bottom:20px;float:right' type="primary" icon="document" @click="handleDownload">
-                导出excel
-            </el-button>
+            <el-tooltip class="item" effect="dark" content="搜索用户" placement="top-start">
+                <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
+                    搜索
+                </el-button>
+            </el-tooltip>
+            <el-tooltip class="item" effect="dark" content="添加用户" placement="top-start">
+                <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary"
+                           icon="plus">
+                    添加
+                </el-button>
+            </el-tooltip>
+            <el-tooltip class="item" effect="dark" content="删除用户" placement="top-start">
+                <el-button class="filter-item" style="margin-left: 10px;" @click="handleDelete" type="danger"
+                           icon="delete">
+                    删除
+                </el-button>
+            </el-tooltip>
         </div>
 
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"/>
-            <el-table-column align="center" label="序号">
+            <el-table-column align="center" label="序号" >
                 <template scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
 
-            <el-table-column align="center" label="姓名">
+            <el-table-column align="center" label="姓名" sortable
+                             >
                 <template scope="scope">
+                    <el-tooltip class="item" effect="dark" content="修改用户" placement="right-start" >
                     <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.userName}}</span>
-
+                    </el-tooltip>
                 </template>
+
             </el-table-column>
 
-            <el-table-column align="center" label="部门">
+            <el-table-column align="center" label="部门" sortable>
                 <template scope="scope">
                     <span v-if="scope.row.sysDeptVo.deptName">{{scope.row.sysDeptVo.deptName}}</span>
                     <span v-else></span>
                 </template>
             </el-table-column>
 
-            <el-table-column align="center" label="性别">
+            <el-table-column align="center" label="性别" sortable>
                 <template scope="scope">
                     <span>{{scope.row.sex | enums('Gender')}}</span>
 
                 </template>
             </el-table-column>
 
-            <el-table-column align="center" label="电话">
+            <el-table-column align="center" label="电话" >
                 <template scope="scope">
                     <span>{{scope.row.phone}}</span>
                 </template>
             </el-table-column>
 
-            <el-table-column class-name="status-col" label="帐号">
+            <el-table-column class-name="status-col" label="帐号" >
                 <template scope="scope">
                     <span>{{scope.row.account}}</span>
                 </template>
             </el-table-column>
 
-            <el-table-column class-name="status-col" label="状态">
+            <el-table-column class-name="status-col" label="状态" sortable>
                 <template scope="scope">
                     <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
                         {{scope.row.enable | enums('Enable')}}
@@ -84,7 +94,7 @@
             <el-form ref="userForm1" class="small-space" :model="sysUser" label-position="right" label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="sysUserRules1">
                 <el-form-item label="部门" prop="deptId">
-                    <el-cascader :options="cascader" class="filter-item" @change="handleChange1" v-model="updateModel"
+                    <el-cascader :options="cascader" class="filter-item" @change="handleChanges" v-model="updateModel"
                                  :show-all-levels="true"
                                  :change-on-select="true" :clearable="true" style="width: 180px" placeholder="选择部门"
                     ></el-cascader>
@@ -149,11 +159,8 @@
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import TreeUtil from 'utils/TreeUtil';
-    import {parseTime} from 'utils';
-
     export default {
         name: 'table_demo',
-
         data() {
             //判断中文姓名
             var namecheck = /^[\u4E00-\u9FA5]{2,8}$/;
@@ -213,7 +220,6 @@
                     callback();
                 }
             };
-
             return {
                 list: null,
                 total: null,
@@ -227,8 +233,8 @@
                 sysUser: {
                     id: '',
                     deptId: '',
-                    userName:'',
-                    sysDeptVo:{},
+                    userName: '',
+                    sysDeptVo: {},
                     sex: '',
                     phone: '',
                     avatar: '',
@@ -238,25 +244,24 @@
                     enable: 1,
                     remark: ''
                 },
-
                 sysUserRules1: {
-                    deptId:[
-                         {required: true, message: '请选择部门',}
+                    deptId: [
+                        {required: true, message: '请选择部门',}
                     ],
                     sex: [
                         {required: true, message: '请选择性别',}
                     ],
                     userName: [
-                        { required: true, validator: validaUserName, trigger: 'blur'}
+                        {required: true, validator: validaUserName, trigger: 'blur'}
                     ],
                     phone: [
-                        { required: true, validator: validatMobiles, trigger: 'blur'}
+                        {required: true, validator: validatMobiles, trigger: 'blur'}
                     ],
                     avatar: [
                         {type: 'url', required: true, message: '头像地址不正确', trigger: 'blur'}
                     ],
                     account: [
-                        { required: true, validator: validateaccount, trigger: 'blur'}
+                        {required: true, validator: validateaccount, trigger: 'blur'}
                     ],
                     password: [
                         {required: true, validator: validatePass, trigger: 'blur'}
@@ -265,9 +270,9 @@
                     passwordConfirm: [
                         {required: true, validator: validatePass2, trigger: 'blur'}
                     ],
-                    enable:[
+                    enable: [
                         {required: true, message: '请选择状态',}
-                    ],
+                    ]
                 },
                 selectedRows: [],
                 cascader: [],
@@ -285,7 +290,7 @@
                     result = (this.sysUser.sysDeptVo.treePosition + '&' + this.sysUser.sysDeptVo.id).split('&');
                 }
                 else {
-                    result = [this.sysUser.sysDeptVo.id +''];
+                    result = [this.sysUser.sysDeptVo.id + ''];
                 }
                 return result;
             }, ...
@@ -306,23 +311,24 @@
             },
             handleSizeChange(val) {
                 this.listQuery.rows = val;
+                this.listQuery.deptId = null;
+                this.listQuery.userName = null;
+                console.dir(this.listQuery.page);
                 this.getList();
             },
             handleChange(value) {
                 this.listQuery.deptId = null;
                 if (value.length > 0) {
-                    this.sysUser.deptId = value[value.length - 1];
-                    this.listQuery.deptId = value[value.length - 1];
+                    //this.sysUser.deptId = value[value.length - 1];
+                   this.listQuery.deptId = value[value.length - 1];  //部门
                 } else {
                     this.sysUser.deptId = 0;
                     this.getList();
                 }
             },
-            handleChange1(value) {
-                this.listQuery.deptId = null;
+            handleChanges(value) {
                 if (value.length > 0) {
                     this.sysUser.deptId = value[value.length - 1];
-//                    this.listQuery.deptId = value[value.length - 1];
                 } else {
                     this.sysUser.deptId = 0;
                     this.getList();
@@ -346,30 +352,26 @@
             },
             getList() {
                 this.listLoading = true;
-
                 getUserList(this.listQuery).then(response => {
-
                     this.list = response.data.list;
                     this.total = response.data.total;
                     this.listLoading = false;
                 })
             },
             handleUpdate(row) {
-
                 this.currentRow = row;
                 this.resetTemp();
                 this.sysUser = copyProperties(this.sysUser, row);
                 this.sysUser.password = '';
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
-
-
             },
             resetForm(userForm1) {
                 this.$refs[userForm1].resetFields();
             },
             handleDelete() {
-                if (!this.selectedRows) {
+                var selectCounts = this.selectedRows.length;
+                if (this.selectedRows == 0) {
                     this.$message.error('请选择需要操作的记录');
                 } else {
                     this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
@@ -384,8 +386,9 @@
                         delUser(ids).then(response => {
 
                             this.listLoading = false;
-                            this.total-= 1;
+                            this.total -= selectCounts;
                             this.$message.success('删除成功');
+                            this.getList();
                         })
                         for (const deleteRow of this.selectedRows) {
                             const index = this.list.indexOf(deleteRow);
@@ -401,7 +404,6 @@
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
-
                         createUser(this.sysUser).then(response => {
                             this.list.unshift(response.data);
                             this.total += 1;
@@ -438,7 +440,7 @@
                     id: '',
                     deptId: '',
                     userName: '',
-                    sysDeptVo: { },
+                    sysDeptVo: {},
                     sex: '',
                     phone: '',
                     avatar: '',
@@ -452,19 +454,18 @@
             handleDownload() {
                 require.ensure([], () => {
                     const {export_json_to_excel} = require('vendor/Export2Excel');
-                    const tHeader = ['序号', '姓名', '部门'];
-                    const filterVal = ['id', 'userName', 'sysDeptVo.deptName'];
+                    const tHeader = ['时间', '地区', '类型', '标题', '重要性'];
+                    const filterVal = ['timestamp', 'province', 'type', 'title', 'importance'];
                     const data = this.formatJson(filterVal, this.list);
                     export_json_to_excel(tHeader, data, 'table数据');
                 })
             },
             formatJson(filterVal, jsonData) {
                 return jsonData.map(v => filterVal.map(j => {
-                    const attr = j.split('.');
-                    if (attr.length > 1) {
-                        return v[attr[0]][attr[1]];
+                    if (j === 'timestamp') {
+                        return parseTime(v[j])
                     } else {
-                        return v[j];
+                        return v[j]
                     }
                 }))
             }
