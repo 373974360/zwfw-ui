@@ -1,6 +1,6 @@
 <template>
     <div class="hsy-datepicker" :style="divWidth">
-        <div class="calendar" v-show="isShow">
+        <div id="checkDates" class="calendar" v-show="isShow">
             <div class="tables">
                 <div class="table">
                     <table>
@@ -20,7 +20,8 @@
                         </thead>
                         <tbody>
                         <tr v-for="row in dates">
-                            <td v-for="date in row" :class="date.cssClass" @click="selectDate(date)">
+                            <td :lable="date.date()" v-for="date in row" :class="date.cssClass"
+                                @click="selectDate(date)">
                                 {{ date.date()}}
                             </td>
                         </tr>
@@ -37,14 +38,15 @@
         name: 'datepicker',
         props: {
             year: {
-                type: Number,
-                default: moment().year()
+                type: Date,
+                default: new Date().getFullYear()
             },
             month: {
                 type: Number,
                 default: ''
             },
             value: {},
+            list: null,
             weekends: {
                 type: Boolean,
                 default: false
@@ -73,11 +75,14 @@
             }
         },
         watch: {
-            year: {
+            list: {
                 immediate: true,
                 handler(val) {
-                    this.pageDate = moment(val + '-' + this.month, this.dateFormatter)
-                    this.dates = this.prepareDates(this.pageDate)
+                    if (val != null) {
+                        this.list = val
+                        this.pageDate = moment(this.year.getFullYear() + '-' + this.month, this.dateFormatter)
+                        this.dates = this.prepareDates(this.pageDate)
+                    }
                 }
             }
         },
@@ -136,17 +141,27 @@
             },
             cssDate(date) {
                 let isActive = false;
-                if (this.weekends) {
-                    if (date.day() === 6 || date.day() === 0) {
-                        isActive = true
-                        this.value.push(date.format(this.dateFormatter))
+                if (this.list != null && this.list.length > 0) {
+                    for (let day of this.list) {
+                        const days = date.format(this.dateFormatter);
+                        if (days === day.date) {
+                            isActive = true
+                            this.value.push(days)
+                        }
                     }
                 } else {
-                    if (this.value.length > 1) {
-                        for (let select of this.value) {
-                            const dstr = date.format(this.dateFormatter);
-                            if (dstr === select) {
-                                isActive = true
+                    if (this.weekends) {
+                        if (date.day() === 6 || date.day() === 0) {
+                            isActive = true
+                            this.value.push(date.format(this.dateFormatter))
+                        }
+                    } else {
+                        if (this.value.length > 1) {
+                            for (let select of this.value) {
+                                const dstr = date.format(this.dateFormatter);
+                                if (dstr === select) {
+                                    isActive = true
+                                }
                             }
                         }
                     }
