@@ -11,7 +11,7 @@
         </tree-grid>
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-            <el-form ref="deptForm" class="small-space" :model="sysDept" label-position="left" label-width="70px"
+            <el-form ref="deptForm" class="small-space" :model="sysDept" label-position="right" label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading"   :rules="deptRules">
                 <el-form-item label="上级部门">
                     <el-cascader :options="cascader" v-model="cascaderModel" @change="handleChange"

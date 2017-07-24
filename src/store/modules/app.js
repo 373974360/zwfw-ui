@@ -4,11 +4,12 @@ import {getEnums} from 'api/common';
 const app = {
     state: {
         page: 1,
-        rows: 20,
-        pageSize: [10, 20, 30, 40, 50],
+        rows: 15,
+        pageSize: [10, 15, 20, 30, 40, 50, 100],
         textMap: {
-            update: '编辑',
             create: '创建',
+            update: '编辑',
+            view: '查看',
             roleMenu: '关联权限',
             roleUser: '关联用户'
         },

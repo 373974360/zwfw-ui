@@ -42,3 +42,10 @@ export function selectDeptNameAndUsers(query) {
         params: query
     });
 }
+
+export function getAllUser() {
+    return fetch({
+        url: '/sysUser/selectAll',
+        mothod: 'get'
+    });
+}

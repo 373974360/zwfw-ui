@@ -18,7 +18,10 @@ const Dept = () => import('../views/org/dept');
 const User = () => import('../views/org/user');
 const Menu = () => import('../views/org/menu');
 const Role = () => import('../views/org/role');
+
+/* system */
 const Holiday = () => import('../views/system/holiday');
+const Log = () => import('../views/system/log');
 
 /* components */
 const componentsIndex = () => import('../views/components/index');
@@ -117,7 +120,8 @@ export const asyncRouterMap = [
         name: '系统管理',
         icon: 'system',
         children: [
-            {path: 'date', component: Holiday, name: '节假日管理'}
+            {path: 'date', component: Holiday, name: '节假日管理'},
+            {path: 'log', component: Log, name: '日志管理'}
         ]
     },
     {
