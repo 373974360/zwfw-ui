@@ -1,9 +1,12 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="edit">
-                添加
-            </el-button>
+            <el-tooltip class="item" effect="dark" content="添加用户" placement="top-start">
+                <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary"
+                           icon="plus">
+                    添加
+                </el-button>
+            </el-tooltip>
         </div>
         <tree-grid :columns="columns" :tree-structure="true" :data-source="deptList" :list-loading="listLoading"
                    :handle-toggle="handleToggle" :handle-create="handleCreate"

@@ -5,9 +5,9 @@
                       v-model="listQuery.notes">
             </el-input>
             <el-select v-model="listQuery.userIds" class="filter-item" multiple filterable placeholder="请求用户">
-                <el-option v-for="item in userList" :label="item.userName" :value="item.id" />
+                <el-option v-for="item in userList" :label="item.userName" :value="item.id"/>
             </el-select>
-            <el-tooltip class="item" effect="dark" content="搜索用户" placement="top-start">
+            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="搜索用户" placement="top-start">
                 <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
                     搜索
                 </el-button>
@@ -21,7 +21,7 @@
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="请求方法"  min-width="140">
+            <el-table-column align="center" label="请求方法" min-width="140">
                 <template scope="scope">
                     <el-tooltip class="item" effect="dark" content="查看详细" placement="right-start">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.notes}}</span>
@@ -117,9 +117,7 @@
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     userIds: undefined,
-                    notes: undefined,
-                    start: undefined,
-                    end: undefined
+                    notes: undefined
                 },
                 sysLog: {
                     id: '',
@@ -143,11 +141,10 @@
             }
         },
         computed: {
-            ...
-                mapGetters([
-                    'textMap',
-                    'enums'
-                ])
+            ...mapGetters([
+                'textMap',
+                'enums'
+            ])
         },
         created() {
             this.getList();
@@ -221,10 +218,11 @@
     }
 </script>
 <style>
-    .el-input.is-disabled .el-input__inner{
+    .el-input.is-disabled .el-input__inner {
         color: #1f2d3d;
     }
-    .el-textarea.is-disabled .el-textarea__inner{
+
+    .el-textarea.is-disabled .el-textarea__inner {
         color: #1f2d3d;
     }
 </style>

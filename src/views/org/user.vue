@@ -10,7 +10,7 @@
                          clearable>
 
             </el-cascader>
-            <el-tooltip class="item" effect="dark" content="搜索用户" placement="top-start">
+            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="搜索用户" placement="top-start">
                 <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
                     搜索
                 </el-button>
@@ -32,17 +32,17 @@
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"/>
-            <el-table-column align="center" label="序号" >
+            <el-table-column align="center" label="序号">
                 <template scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
 
             <el-table-column align="center" label="姓名" sortable
-                             >
+            >
                 <template scope="scope">
-                    <el-tooltip class="item" effect="dark" content="修改用户" placement="right-start" >
-                    <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.userName}}</span>
+                    <el-tooltip class="item" effect="dark" content="修改用户" placement="right-start">
+                        <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.userName}}</span>
                     </el-tooltip>
                 </template>
 
@@ -62,13 +62,13 @@
                 </template>
             </el-table-column>
 
-            <el-table-column align="center" label="电话" >
+            <el-table-column align="center" label="电话">
                 <template scope="scope">
                     <span>{{scope.row.phone}}</span>
                 </template>
             </el-table-column>
 
-            <el-table-column class-name="status-col" label="帐号" >
+            <el-table-column class-name="status-col" label="帐号">
                 <template scope="scope">
                     <span>{{scope.row.account}}</span>
                 </template>
@@ -91,7 +91,8 @@
         </div>
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-            <el-form ref="userForm1" class="small-space" :model="sysUser" label-position="right" label-width="80px"
+            <el-form id="checkboxTable" ref="userForm1" class="small-space" :model="sysUser" label-position="right"
+                     label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="sysUserRules1">
                 <el-form-item label="部门" prop="deptId">
                     <el-cascader :options="cascader" class="filter-item" @change="handleChanges" v-model="updateModel"
@@ -158,65 +159,22 @@
     import {getUserList, updateUser, createUser, delUser} from 'api/org/user';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
-    import TreeUtil from 'utils/TreeUtil';
     export default {
         name: 'table_demo',
         data() {
-            //判断中文姓名
-            var namecheck = /^[\u4E00-\u9FA5]{2,8}$/;
-            var validaUserName = (rule, value, callback) => {
-                if (value === '') {
-                    return callback(new Error('请输入您的姓名'));
+            const validatMobiles = (rule, value, callback) => {
+                if (!/^((13|15|18|14|17)+\d{9})$/.test(value)) {
+                    return callback(new Error('电话号码格式不正确'));
                 } else {
-                    if (!namecheck.test(value)) {
-                        return callback(new Error('姓名只能为2-4位中文'));
-                    }
                     callback();
                 }
             };
-            //判断电话号码
-            var reg = /^((13|15|18|14|17)+\d{9})$/;
-            var validatMobiles = (rule, value, callback) => {
-                if (value === '') {
-                    return callback(new Error('电话不能为空'));
-                } else {
-                    if (!reg.test(value)) {
-                        return callback(new Error('电话号码格式不正确'));
-                    }
-                    callback();
-                }
-            };
-            //判断密码
-            var pass = /(?=.*[a-z])(?=.*\d)(?=.*[#@!~%^&*])[a-z\d#@!~%^&*]{6,16}/i;
-            var validatePass = (rule, value, callback) => {
-                if (value === '') {
-                    return callback(new Error('请输入密码'));
-                } else {
-                    if (!pass.test(value)) {
-                        return callback(new Error('密码格式不正确'));
-                    }
-                    callback();
-                }
-            };
-            //重复密码的正确性
             const validatePass2 = (rule, value, callback) => {
                 if (value === '') {
                     callback(new Error('请再次输入密码'));
                 } else if (value !== this.sysUser.password) {
                     callback(new Error('两次输入密码不一致!'));
                 } else {
-                    callback();
-                }
-            };
-            //判断为邮箱的账号
-            var accountcheck = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
-            var validateaccount = (rule, value, callback) => {
-                if (value === '') {
-                    return callback(new Error('请输入您的账号'));
-                } else {
-                    if (!accountcheck.test(value)) {
-                        return callback(new Error('账号格式不正确'));
-                    }
                     callback();
                 }
             };
@@ -246,32 +204,29 @@
                 },
                 sysUserRules1: {
                     deptId: [
-                        {required: true, message: '请选择部门',}
+                        {required: false, message: '请选择部门'}
                     ],
                     sex: [
-                        {required: true, message: '请选择性别',}
+                        {required: true, message: '请选择性别'}
                     ],
                     userName: [
-                        {required: true, validator: validaUserName, trigger: 'blur'}
+                        {required: true, message: '请输入姓名', trigger: 'blur'}
                     ],
                     phone: [
-                        {required: true, validator: validatMobiles, trigger: 'blur'}
+                        {required: true, validator: validatMobiles}
                     ],
                     avatar: [
                         {type: 'url', required: true, message: '头像地址不正确', trigger: 'blur'}
                     ],
                     account: [
-                        {required: true, validator: validateaccount, trigger: 'blur'}
+                        {type: 'email', required: true, message: '请输入合法的邮箱'}
                     ],
                     password: [
-                        {required: true, validator: validatePass, trigger: 'blur'}
-
+                        {required: true, message: '请输入密码', trigger: 'blur'},
+                        {min: 6, max: 18, message: '长度在 6 到 18 个字符', trigger: 'blur'}
                     ],
                     passwordConfirm: [
-                        {required: true, validator: validatePass2, trigger: 'blur'}
-                    ],
-                    enable: [
-                        {required: true, message: '请选择状态',}
+                        {required: true, validator: validatePass2}
                     ]
                 },
                 selectedRows: [],
@@ -282,22 +237,19 @@
             }
         },
         computed: {
-            cascaderModel: function () {
-            },
-            updateModel: function () {
+            ...mapGetters([
+                'textMap',
+                'enums'
+            ]),
+            updateModel: function() {
                 let result = [];
                 if (this.sysUser.sysDeptVo.treePosition) {
                     result = (this.sysUser.sysDeptVo.treePosition + '&' + this.sysUser.sysDeptVo.id).split('&');
-                }
-                else {
+                } else {
                     result = [this.sysUser.sysDeptVo.id + ''];
                 }
                 return result;
-            }, ...
-                mapGetters([
-                    'textMap',
-                    'enums'
-                ])
+            }
         },
         created() {
             this.getList();
@@ -319,8 +271,7 @@
             handleChange(value) {
                 this.listQuery.deptId = null;
                 if (value.length > 0) {
-                    //this.sysUser.deptId = value[value.length - 1];
-                   this.listQuery.deptId = value[value.length - 1];  //部门
+                    this.listQuery.deptId = value[value.length - 1];
                 } else {
                     this.sysUser.deptId = 0;
                     this.getList();
@@ -337,10 +288,8 @@
             handleCurrentChange(val) {
                 this.listQuery.page = val;
                 this.getList();
-
             },
             handleSelectionChange(rows) {
-
                 this.selectedRows = rows;
             },
             handleCreate(row) {
@@ -348,6 +297,14 @@
                 this.resetTemp();
                 this.sysUser.deptId = row.id;
                 this.dialogStatus = 'create';
+                this.dialogFormVisible = true;
+            },
+            handleUpdate(row) {
+                this.currentRow = row;
+                this.resetTemp();
+                this.sysUser = copyProperties(this.sysUser, row);
+                this.sysUser.password = '';
+                this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
             getList() {
@@ -358,20 +315,12 @@
                     this.listLoading = false;
                 })
             },
-            handleUpdate(row) {
-                this.currentRow = row;
-                this.resetTemp();
-                this.sysUser = copyProperties(this.sysUser, row);
-                this.sysUser.password = '';
-                this.dialogStatus = 'update';
-                this.dialogFormVisible = true;
-            },
             resetForm(userForm1) {
                 this.$refs[userForm1].resetFields();
             },
             handleDelete() {
                 var selectCounts = this.selectedRows.length;
-                if (this.selectedRows == 0) {
+                if (this.selectedRows === 0) {
                     this.$message.error('请选择需要操作的记录');
                 } else {
                     this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
@@ -384,7 +333,6 @@
                             ids.push(deleteRow.id);
                         }
                         delUser(ids).then(response => {
-
                             this.listLoading = false;
                             this.total -= selectCounts;
                             this.$message.success('删除成功');
@@ -414,13 +362,10 @@
                         return false;
                     }
                 });
-
             },
             update() {
                 this.$refs['userForm1'].validate(valid => {
-
                     if (valid) {
-
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         this.sysUser.sysDeptVo = {};
@@ -433,7 +378,6 @@
                         return false;
                     }
                 })
-
             },
             resetTemp() {
                 this.sysUser = {

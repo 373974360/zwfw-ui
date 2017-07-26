@@ -5,7 +5,7 @@
                       v-model="listQuery.roleName" no-match-text="没有找到哦">
             </el-input>
 
-            <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
+            <el-button style="margin-left: 10px;" class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">
                 添加
             </el-button>
@@ -33,14 +33,10 @@
             </el-table-column>
             <el-table-column align="center" label="操作">
                 <template scope="scope">
-                    <el-button class="filter-item" style="margin-left: 10px;" @click="handleMenuList(scope.row.id)"
-                               type="primary"
-                               size="small">
+                    <el-button class="filter-item" style="margin-left: 10px;" @click="handleMenuList(scope.row.id)" type="primary" size="small">
                         关联权限
                     </el-button>
-                    <el-button class="filter-item" style="margin-left: 10px;" @click="handleUserList(scope.row.id)"
-                               type="primary"
-                               size="small">
+                    <el-button class="filter-item" style="margin-left: 10px;" @click="handleUserList(scope.row.id)" type="primary" size="small">
                         关联用户
                     </el-button>
                 </template>
@@ -122,16 +118,7 @@
 </template>
 
 <script>
-    import {
-        getRoleList,
-        createRole,
-        updateRole,
-        createRoleMenus,
-        createUserRole,
-        getAllRoleMenus,
-        getAllUserRole,
-        delRole
-    } from 'api/org/role';
+    import {getRoleList, createRole, updateRole, createRoleMenus, createUserRole, getAllRoleMenus, getAllUserRole, delRole} from 'api/org/role';
     import {getMenuTree} from 'api/org/menu';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
@@ -248,7 +235,7 @@
                 }
             },
             create() {
-                this.$refs['roleForm'].validate(valid => {
+                this.$refs[' roleForm '].validate(valid => {
                     if (valid) {
                         this.addDialogFormVisible = false;
                         this.listLoading = true;
@@ -264,7 +251,7 @@
                 });
             },
             update() {
-                this.$refs['roleForm'].validate(valid => {
+                this.$refs[' roleForm '].validate(valid => {
                     if (valid) {
                         this.addDialogFormVisible = false;
                         updateRole(this.sysRole).then(response => {
@@ -287,7 +274,7 @@
                     parentId: 0
                 };
             },
-            getMenuTree(){
+            getMenuTree() {
                 this.roleMenuDialogLoading = true;
                 getMenuTree().then(response => {
                     this.menuTree = response.data;
@@ -307,7 +294,7 @@
                 })
             },
 
-            menuTreeChecked(data, checked, indeterminate){
+            menuTreeChecked(data, checked) {
                 if (checked) {
                     this.checkedMenu.push(data.id);
                 } else {
@@ -323,7 +310,7 @@
                 this.roleMenuDialogFormVisible = true;
                 this.getMenuTree();
             },
-            submitRoleMenu(){
+            submitRoleMenu() {
                 this.roleMenuDialogLoading = true;
                 createRoleMenus(this.currentRoleId, this.checkedMenu).then(response => {
                     this.roleMenuDialogLoading = false;
