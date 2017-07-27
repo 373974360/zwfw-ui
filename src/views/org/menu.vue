@@ -63,7 +63,7 @@
 
     export default {
         name: 'menu_table',
-        data () {
+        data() {
             return {
                 menuList: [],
                 listLoading: true,
@@ -85,8 +85,7 @@
                     {
                         text: '请求地址',
                         dataIndex: 'request'
-                    }
-                    ,
+                    },
                     {
                         text: '权限标识',
                         dataIndex: 'permission'
@@ -121,7 +120,7 @@
             }
         },
         computed: {
-            cascaderModel: function () {
+            cascaderModel: function() {
                 if (this.sysMenu.treePosition) {
                     const arr = this.sysMenu.treePosition.split('&');
                     return arr;
@@ -135,25 +134,25 @@
         components: {
             TreeGrid
         },
+        created() {
+            this.getList();
+        },
         methods: {
-            getList()
-            {
+            getList() {
                 this.listLoading = true;
                 getMenuTree().then(response => {
                     this.menuList = response.data;
                     this.listLoading = false;
                 })
             },
-            getOptions(id)
-            {
+            getOptions(id) {
                 this.dialogLoading = true;
                 getMenuCascader(id).then(response => {
                     this.cascader = response.data;
                     this.dialogLoading = false;
                 })
             },
-            handleChange(value)
-            {
+            handleChange(value) {
                 if (value.length > 0) {
                     this.sysMenu.parentId = value[value.length - 1];
                     this.sysMenu.treePosition = value.join('&');
@@ -162,34 +161,36 @@
                     this.sysMenu.treePosition = undefined;
                 }
             },
-            handleToggle(row)
-            {
+            handleToggle(row) {
                 row._expanded = !row._expanded;
             },
-            handleCreate(row)
-            {
+            handleCreate(row) {
                 this.resetTemp();
-                this.sysMenu.treePosition = row.treePosition;
-                this.sysMenu.parentId = row.id;
+                if (row.treePosition) {
+                    this.sysMenu.treePosition = row.treePosition;
+                }
+                if (row.id) {
+                    this.sysMenu.parentId = row.id;
+                } else {
+                    this.sysMenu.parentId = 0;
+                }
                 this.getOptions(null);
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
             },
-            handleUpdate(row)
-            {
+            handleUpdate(row) {
                 this.resetTemp();
                 this.sysMenu = copyProperties(this.sysMenu, row);
                 if (row._parent) {
                     this.sysMenu.treePosition = row._parent.treePosition;
-                }else{
+                } else {
                     this.sysMenu.treePosition = undefined;
                 }
                 this.getOptions(this.sysMenu.id);
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
-            handleDelete(row)
-            {
+            handleDelete(row) {
                 this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
@@ -197,20 +198,18 @@
                 }).then(() => {
                     delMenu(row.id).then(response => {
                         this.$message.success('删除成功');
-                        TreeUtil.delRow(response.data,this.menuList);
+                        TreeUtil.delRow(response.data, this.menuList);
                     })
                 }).catch(() => {
                     console.dir("取消");
                 });
             },
-            create()
-            {
+            create() {
                 this.$refs['menuForm'].validate((valid) => {
                     if (valid) {
                         this.dialogFormVisible = false;
                         createMenu(this.sysMenu).then(response => {
                             this.$message.success('创建成功');
-
                             TreeUtil.addRow(response.data, this.menuList);
                         })
                     } else {
@@ -218,8 +217,7 @@
                     }
                 });
             },
-            update()
-            {
+            update() {
                 this.$refs['menuForm'].validate((valid) => {
                     if (valid) {
                         this.dialogFormVisible = false;
@@ -232,8 +230,7 @@
                     }
                 });
             },
-            resetTemp()
-            {
+            resetTemp() {
                 this.sysMenu = {
                     id: undefined,
                     menuName: '',
@@ -246,10 +243,6 @@
                     permission: ''
                 };
             }
-        },
-        created()
-        {
-            this.getList();
         }
     }
 </script>

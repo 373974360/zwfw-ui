@@ -21,7 +21,7 @@
                                  :show-all-levels="true" expand-trigger="hover" :clearable="true"
                                  :change-on-select="true" style="width:100%"></el-cascader>
                 </el-form-item>
-                <el-form-item label="部门全称" prop="deptId">
+                <el-form-item label="部门全称" prop="deptName">
                     <el-input v-model="sysDept.deptName"></el-input>
                 </el-form-item>
                 <el-form-item label="部门简称">
@@ -97,7 +97,7 @@
                 dialogStatus: '',
                 dialogLoading: false,
                 deptRules: {
-                    deptId: [
+                    deptName: [
                         {required: true, message: '请输入部门名称', trigger: 'blur'}
                     ]
                 }
@@ -110,7 +110,7 @@
             this.getList();
         },
         computed: {
-            cascaderModel: function () {
+            cascaderModel: function() {
                 if (this.sysDept.treePosition) {
                     const arr = this.sysDept.treePosition.split('&');
                     return arr;
@@ -128,15 +128,14 @@
                     this.listLoading = false;
                 })
             },
-            getOptions(id){
+            getOptions(id) {
                 this.dialogLoading = true;
                 getDeptCascader(id).then(response => {
                     this.cascader = response.data;
                     this.dialogLoading = false;
                 })
             },
-            handleChange(value)
-            {
+            handleChange(value) {
                 if (value.length > 0) {
                     this.sysDept.parentId = value[value.length - 1];
                     this.sysDept.treePosition = value.join('&');
@@ -145,7 +144,7 @@
                     this.sysDept.treePosition = undefined;
                 }
             },
-            handleToggle(row){
+            handleToggle(row) {
                 row._expanded = !row._expanded;
             },
             handleCreate(row) {

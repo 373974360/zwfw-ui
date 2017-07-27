@@ -29,7 +29,7 @@
             </el-tooltip>
         </div>
 
-        <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row
+        <el-table  :data="list" v-loading.body="listLoading" border fit highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"/>
             <el-table-column align="center" label="序号">
@@ -38,8 +38,7 @@
                 </template>
             </el-table-column>
 
-            <el-table-column align="center" label="姓名" sortable
-            >
+            <el-table-column prop="userName" align="center" label="姓名" sortable>
                 <template scope="scope">
                     <el-tooltip class="item" effect="dark" content="修改用户" placement="right-start">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.userName}}</span>
@@ -48,14 +47,14 @@
 
             </el-table-column>
 
-            <el-table-column align="center" label="部门" sortable>
+            <el-table-column prop="sysDeptVo.deptName" align="center" label="部门" sortable>
                 <template scope="scope">
                     <span v-if="scope.row.sysDeptVo.deptName">{{scope.row.sysDeptVo.deptName}}</span>
                     <span v-else></span>
                 </template>
             </el-table-column>
 
-            <el-table-column align="center" label="性别" sortable>
+            <el-table-column prop="sex" align="center" label="性别" sortable>
                 <template scope="scope">
                     <span>{{scope.row.sex | enums('Gender')}}</span>
 
@@ -74,7 +73,7 @@
                 </template>
             </el-table-column>
 
-            <el-table-column class-name="status-col" label="状态" sortable>
+            <el-table-column prop="enable" class-name="status-col" label="状态" sortable>
                 <template scope="scope">
                     <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
                         {{scope.row.enable | enums('Enable')}}
