@@ -24,23 +24,27 @@
                 <el-form-item label="部门全称" prop="deptName">
                     <el-input v-model="sysDept.deptName"></el-input>
                 </el-form-item>
-                <el-form-item label="部门简称">
+                <el-form-item label="部门简称"  prop="shortName">
                     <el-input v-model="sysDept.shortName"></el-input>
                 </el-form-item>
-                <el-form-item label="部门编号">
+                <el-form-item label="部门编号"  prop="deptCode">
                     <el-input v-model="sysDept.deptCode"></el-input>
                 </el-form-item>
                 <el-form-item label="排序">
                     <el-input-number v-model="sysDept.sortNo" :min="1" :max="100"/>
                 </el-form-item>
-                <el-form-item label="备注">
+                <el-form-item label="备注"  prop="remark">
                     <el-input v-model="sysDept.remark"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" @click="create">确 定</el-button>
-                <el-button v-else type="primary" @click="update">确 定</el-button>
+                <el-button icon="circle-cross" type="danger" @click="dialogFormVisible = false">取 消</el-button>
+                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
+                </el-button>
+
+                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
+                </el-button>
+                <el-button icon="information" type="warning" @click="resetForm('deptForm')">重置</el-button>
             </div>
         </el-dialog>
 
@@ -90,7 +94,8 @@
                     parentId: 0,
                     sortNo: 1,
                     status: 1,
-                    treePosition: ''
+                    treePosition: '',
+                    remark: ''
                 },
                 cascader: [],
                 dialogFormVisible: false,
@@ -146,6 +151,9 @@
             },
             handleToggle(row) {
                 row._expanded = !row._expanded;
+            },
+            resetForm(deptForm) {
+                this.$refs[deptForm].resetFields();
             },
             handleCreate(row) {
                 this.resetTemp();
@@ -226,7 +234,8 @@
                     parentId: 0,
                     sortNo: 1,
                     status: 1,
-                    treePosition: ''
+                    treePosition: '',
+                    remark: ''
                 };
             }
         }

@@ -7,6 +7,9 @@
             <el-select v-model="listQuery.userIds" class="filter-item" multiple filterable placeholder="请求用户">
                 <el-option v-for="item in userList" :label="item.userName" :value="item.id"/>
             </el-select>
+            <el-date-picker style="top: -5px;" v-model="listQuery.selectDateTime" type="datetimerange"
+                            placeholder="选择时间范围" format="yyyy-MM-dd HH:mm:ss" @change="changeDate">
+            </el-date-picker>
             <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="搜索用户" placement="top-start">
                 <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
                     搜索
@@ -106,6 +109,7 @@
     import {getAllUser} from 'api/org/user';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
+    import moment from 'moment';
     export default {
         name: 'table_demo',
         data() {
@@ -117,7 +121,8 @@
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     userIds: undefined,
-                    notes: undefined
+                    notes: undefined,
+                    selectDateTime: undefined
                 },
                 sysLog: {
                     id: '',
@@ -194,6 +199,14 @@
                     userName: '',
                     timeBetween: '',
                     remark: ''
+                }
+            },
+            changeDate() {
+                if (this.listQuery.selectDateTime[0] == null) {
+                    this.listQuery.selectDateTime = [];
+                } else {
+                    this.listQuery.selectDateTime[0] = moment(this.listQuery.selectDateTime[0]).format("YYYY-MM-DD HH:mm:ss");
+                    this.listQuery.selectDateTime[1] = moment(this.listQuery.selectDateTime[1]).format("YYYY-MM-DD HH:mm:ss");
                 }
             },
             handleDownload() {

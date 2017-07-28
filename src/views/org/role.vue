@@ -68,9 +68,13 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="addDialogFormVisible = false">取 消</el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" @click="create">确 定</el-button>
-                <el-button v-else type="primary" @click="update">确 定</el-button>
+                <el-button icon="circle-cross" type="danger" @click="addDialogFormVisible = false">取 消</el-button>
+                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
+                </el-button>
+
+                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
+                </el-button>
+                <el-button icon="information" type="warning" @click="resetForm('roleForm')">重置</el-button>
             </div>
         </el-dialog>
 
@@ -82,8 +86,9 @@
                          @check-change="menuTreeChecked" :default-checked-keys="checkedMenu"></el-tree>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="roleMenuDialogFormVisible = false">取 消</el-button>
+                <el-button icon="circle-cross" type="danger" @click="roleMenuDialogFormVisible = false">取 消</el-button>
                 <el-button type="primary" @click="submitRoleMenu">确 定</el-button>
+                <el-button icon="information" type="warning" @click="resetMenuForm('menuTree')">重置</el-button>
             </div>
         </el-dialog>
 
@@ -110,8 +115,9 @@
             </el-form>
 
             <div slot="footer" class="dialog-footer">
-                <el-button @click="userRoleDialogFormVisible = false">取 消</el-button>
+                <el-button icon="circle-cross" type="danger" @click="userRoleDialogFormVisible = false">取 消</el-button>
                 <el-button type="primary" @click="submitUserRole">确 定</el-button>
+                <el-button icon="information" type="warning" @click="resetUserForm">重置</el-button>
             </div>
         </el-dialog>
     </div>
@@ -193,6 +199,9 @@
             handleCurrentChange(val) {
                 this.listQuery.page = val;
                 this.getList();
+            },
+            resetForm(roleForm) {
+                this.$refs[roleForm].resetFields();
             },
             handleCreate() {
                 this.resetTemp();
@@ -290,10 +299,10 @@
                     for (const menu of menus) {
                         checked.push(menu.menuId);
                     }
+                    console.log(checked);
                     this.$refs.menuTree.setCheckedKeys(checked);
                 })
             },
-
             menuTreeChecked(data, checked) {
                 if (checked) {
                     this.checkedMenu.push(data.id);
@@ -309,6 +318,10 @@
                 this.dialogStatus = 'roleMenu';
                 this.roleMenuDialogFormVisible = true;
                 this.getMenuTree();
+            },
+            resetMenuForm(menuTree) {
+                let checked = [];
+                this.$refs[menuTree].setCheckedKeys(checked);
             },
             submitRoleMenu() {
                 this.roleMenuDialogLoading = true;
@@ -344,6 +357,9 @@
             },
             handleCheckedUsersChange(value) {
                 this.checkedUsers = value;
+            },
+            resetUserForm() {
+                this.checkedUsers = [];
             },
             submitUserRole() {
                 this.userRoleDialogLoading = true;

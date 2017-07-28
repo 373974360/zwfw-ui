@@ -30,7 +30,7 @@
                                 :value="item.code"/>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="菜单图标">
+                <el-form-item label="菜单图标"  prop="iconcls">
                     <el-input v-model="sysMenu.iconcls"/>
                 </el-form-item>
                 <el-form-item label="请求地址" prop="request">
@@ -42,14 +42,18 @@
                 <el-form-item label="排序">
                     <el-input-number v-model="sysMenu.sortNo" :min="1" :max="100"/>
                 </el-form-item>
-                <el-form-item label="备注">
+                <el-form-item label="备注"  prop="remark">
                     <el-input type="textarea" v-model="sysMenu.remark" :rows="3"/>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" @click="create">确 定</el-button>
-                <el-button v-else type="primary" @click="update">确 定</el-button>
+                <el-button icon="circle-cross" type="danger" @click="dialogFormVisible = false">取 消</el-button>
+                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
+                </el-button>
+
+                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
+                </el-button>
+                <el-button icon="information" type="warning" @click="resetForm('menuForm')">重置</el-button>
             </div>
         </el-dialog>
     </div>
@@ -100,7 +104,8 @@
                     treePosition: '',
                     request: '',
                     sortNo: 1,
-                    permission: ''
+                    permission: '',
+                    remark: ''
                 },
                 sysMenuRules: {
                     menuName: [
@@ -163,6 +168,9 @@
             },
             handleToggle(row) {
                 row._expanded = !row._expanded;
+            },
+            resetForm(menuForm) {
+                this.$refs[menuForm].resetFields();
             },
             handleCreate(row) {
                 this.resetTemp();
@@ -240,7 +248,8 @@
                     treePosition: '',
                     request: '',
                     sortNo: 1,
-                    permission: ''
+                    permission: '',
+                    remark: ''
                 };
             }
         }
