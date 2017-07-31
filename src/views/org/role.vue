@@ -244,7 +244,7 @@
                 }
             },
             create() {
-                this.$refs[' roleForm '].validate(valid => {
+                this.$refs['roleForm'].validate(valid => {
                     if (valid) {
                         this.addDialogFormVisible = false;
                         this.listLoading = true;
@@ -260,7 +260,7 @@
                 });
             },
             update() {
-                this.$refs[' roleForm '].validate(valid => {
+                this.$refs['roleForm'].validate(valid => {
                     if (valid) {
                         this.addDialogFormVisible = false;
                         updateRole(this.sysRole).then(response => {
