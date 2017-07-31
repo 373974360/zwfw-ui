@@ -16,10 +16,12 @@
                 </template>
                 <span v-else-if="index===0" class="ms-tree-space"></span>
                 <span v-if="column.editAble">
-                    <span class="link-type" @click="handleUpdate(scope.row)">
-                        <span v-if="column.enums">{{scope.row[column.dataIndex] | enums(column.enums)}}</span>
-                        <span v-else>{{scope.row[column.dataIndex]}}</span>
-                    </span>
+                    <el-tooltip content="点击编辑" placement="right" effect="dark">
+                        <span class="link-type" @click="handleUpdate(scope.row)">
+                            <span v-if="column.enums">{{scope.row[column.dataIndex] | enums(column.enums)}}</span>
+                            <span v-else>{{scope.row[column.dataIndex]}}</span>
+                        </span>
+                    </el-tooltip>
                 </span>
                 <span v-else>
                     <span v-if="column.enums">{{scope.row[column.dataIndex] | enums(column.enums)}}</span>
@@ -27,10 +29,10 @@
                 </span>
             </template>
         </el-table-column>
-        <el-table-column label="操作" v-if="treeType === 'normal'" width="200">
+        <el-table-column label="操作" v-if="treeType === 'normal'" width="140" align="center">
             <template scope="scope">
                 <el-button type="primary" size="small" @click="onHandleAdd(scope.row)">添加</el-button>
-                <el-button type="" size="small" @click="onHandleUpdate(scope.row)">编辑</el-button>
+                <!--<el-button type="" size="small" @click="onHandleUpdate(scope.row)">编辑</el-button>-->
                 <el-button type="danger" size="small" @click="onHandleDelete(scope.row)">删除</el-button>
             </template>
         </el-table-column>
@@ -101,7 +103,7 @@
                 }
             }
         },
-        data () {
+        data() {
             return {}
         },
         computed: {
@@ -119,35 +121,35 @@
                 return show ? '' : 'display:none;'
             },
             // 显示层级关系的空格和图标
-            spaceIconShow (index) {
+            spaceIconShow(index) {
                 if (index === 0 || index === 1) {
                     return true
                 }
                 return false
             },
             // 点击展开和关闭的时候，图标的切换
-            toggleIconShow (index, record) {
+            toggleIconShow(index, record) {
                 if (index === 0 && record.children && record.children.length > 0) {
                     return true
                 }
                 return false
             },
-            onToggle(trIndex){
+            onToggle(trIndex) {
                 if (this.handleToggle) {
                     this.handleToggle(trIndex);
                 }
             },
-            onHandleAdd(data){
+            onHandleAdd(data) {
                 if (this.handleCreate) {
                     this.handleCreate(data);
                 }
             },
-            onHandleUpdate(data){
+            onHandleUpdate(data) {
                 if (this.handleUpdate) {
                     this.handleUpdate(data);
                 }
             },
-            onHandleDelete(data){
+            onHandleDelete(data) {
                 if (this.handleDelete) {
                     this.handleDelete(data);
                 }

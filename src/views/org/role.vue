@@ -23,7 +23,9 @@
             </el-table-column>
             <el-table-column min-width="200px" align="center" label="角色名称">
                 <template scope="scope">
-                    <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.roleName}}</span>
+                    <el-tooltip content="点击编辑" placement="right" effect="dark">
+                        <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.roleName}}</span>
+                    </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column width="250px" align="center" label="角色类型">
@@ -74,7 +76,6 @@
 
                 <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
                 </el-button>
-                <el-button icon="information" type="warning" @click="resetForm('roleForm')">重置</el-button>
             </div>
         </el-dialog>
 
@@ -128,7 +129,7 @@
     import {getMenuTree} from 'api/org/menu';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
-    import {selectDeptNameAndUsers} from 'api/org/user';
+    import {getDeptNameAndUsers} from 'api/org/user';
 
     export default {
         name: 'table_demo',
@@ -217,8 +218,8 @@
             },
             handleDelete() {
                 const selectCounts = this.selectedRows.length;
-                if (this.selectedRows.length === 0) {
-                    this.$message.error('请选择需要操作的记录');
+                if (this.selectedRows.length == 0) {
+                    this.$message.warning('请选择需要操作的记录');
                 } else {
                     this.$confirm('此操作将删除关联信息, 是否继续?', '提示', {
                         confirmButtonText: '确定',
@@ -339,7 +340,7 @@
             },
             getDeptAndUsersList() {
                 this.userRoleDialogLoading = true;
-                selectDeptNameAndUsers(this.listQuery).then(response => {
+                getDeptNameAndUsers(this.listQuery).then(response => {
                     this.userList = response.data;
                     this.userRoleDialogLoading = false;
                     this.getAllUserRoles();

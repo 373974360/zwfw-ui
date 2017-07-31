@@ -55,14 +55,14 @@ export function createUserRole(roleId, userIds) {
 
 export function getAllRoleMenus(roleId) {
     return fetch({
-        url: '/sysRoleMenu/selectAll',
+        url: '/sysRoleMenu/getAll',
         method: 'get',
         params: {roleId}
     })
 }
 export function getAllUserRole(roleId) {
     return fetch({
-        url: '/sysUserRole/selectAll',
+        url: '/sysUserRole/getAll',
         method: 'get',
         params: {roleId}
     })

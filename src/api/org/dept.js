@@ -10,14 +10,14 @@ export function getDeptList(query) {
 
 export function getDeptTree() {
     return fetch({
-        url: '/sysDept/selectTree',
+        url: '/sysDept/getTree',
         method: 'get'
     });
 }
 
 export function getDeptCascader(id) {
     return fetch({
-        url: '/sysDept/selectCascader',
+        url: '/sysDept/getCascader',
         method: 'get',
         params: {id}
     });

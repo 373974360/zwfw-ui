@@ -44,7 +44,11 @@ const app = {
                     if (response.httpCode !== 200) {
                         reject(response.msg);
                     } else {
-                        const enums = response.data;
+                        let enums = {};
+                        let result = response.data;
+                        for(let obj of result){
+                            enums[obj.name] = obj.value;
+                        }
                         commit('SET_ENUMS', enums);
                     }
                 }).catch(error => {

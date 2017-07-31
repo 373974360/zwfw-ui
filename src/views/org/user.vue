@@ -2,78 +2,53 @@
     <div class="app-container calendar-list-container">
         <div class="filter-container">
             <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="姓名"
-                      v-model="listQuery.userName">
-            </el-input>
+                      v-model="listQuery.userName"></el-input>
             <el-cascader :options="cascader" class="filter-item" @change="handleChange"
-                         :show-all-levels="true"
-                         :change-on-select="true" style="width: 180px" placeholder="选择部门" filterable
-                         clearable>
-
+                         :show-all-levels="true" clearable filterable
+                         :change-on-select="true" style="width: 180px" placeholder="选择部门" >
             </el-cascader>
-            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="搜索用户" placement="top-start">
-                <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
-                    搜索
-                </el-button>
-            </el-tooltip>
-            <el-tooltip class="item" effect="dark" content="添加用户" placement="top-start">
-                <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary"
-                           icon="plus">
-                    添加
-                </el-button>
-            </el-tooltip>
-            <el-tooltip class="item" effect="dark" content="删除用户" placement="top-start">
-                <el-button class="filter-item" style="margin-left: 10px;" @click="handleDelete" type="danger"
-                           icon="delete">
-                    删除
-                </el-button>
-            </el-tooltip>
+            <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">添加</el-button>
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleDelete" type="danger" icon="delete">删除</el-button>
         </div>
 
-        <el-table  :data="list" v-loading.body="listLoading" border fit highlight-current-row
-                  style="width: 100%" @selection-change="handleSelectionChange">
+        <el-table ref="userTable" :data="list" v-loading.body="listLoading" border fit highlight-current-row
+                  style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column type="selection" width="55"/>
             <el-table-column align="center" label="序号">
                 <template scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
-
-            <el-table-column prop="userName" align="center" label="姓名" sortable>
+            <el-table-column prop="userName" align="center" label="姓名">
                 <template scope="scope">
-                    <el-tooltip class="item" effect="dark" content="修改用户" placement="right-start">
+                    <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.userName}}</span>
                     </el-tooltip>
                 </template>
-
             </el-table-column>
-
-            <el-table-column prop="sysDeptVo.deptName" align="center" label="部门" sortable>
+            <el-table-column prop="sysDeptVo.deptName" align="center" label="部门">
                 <template scope="scope">
                     <span v-if="scope.row.sysDeptVo.deptName">{{scope.row.sysDeptVo.deptName}}</span>
                     <span v-else></span>
                 </template>
             </el-table-column>
-
-            <el-table-column prop="sex" align="center" label="性别" sortable>
+            <el-table-column prop="sex" align="center" label="性别">
                 <template scope="scope">
                     <span>{{scope.row.sex | enums('Gender')}}</span>
-
                 </template>
             </el-table-column>
-
             <el-table-column align="center" label="电话">
                 <template scope="scope">
                     <span>{{scope.row.phone}}</span>
                 </template>
             </el-table-column>
-
             <el-table-column class-name="status-col" label="帐号">
                 <template scope="scope">
                     <span>{{scope.row.account}}</span>
                 </template>
             </el-table-column>
-
-            <el-table-column prop="enable" class-name="status-col" label="状态" sortable>
+            <el-table-column prop="enable" class-name="status-col" label="状态">
                 <template scope="scope">
                     <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
                         {{scope.row.enable | enums('Enable')}}
@@ -146,7 +121,6 @@
 
                 <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
                 </el-button>
-                <el-button icon="information" type="warning" @click="resetForm('userForm1')">重置</el-button>
             </div>
         </el-dialog>
     </div>
@@ -158,6 +132,7 @@
     import {getUserList, updateUser, createUser, delUser} from 'api/org/user';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
+
     export default {
         name: 'table_demo',
         data() {
@@ -240,7 +215,7 @@
                 'textMap',
                 'enums'
             ]),
-            updateModel: function() {
+            updateModel: function () {
                 let result = [];
                 if (this.sysUser.sysDeptVo.treePosition) {
                     result = (this.sysUser.sysDeptVo.treePosition + '&' + this.sysUser.sysDeptVo.id).split('&');
@@ -291,6 +266,9 @@
             handleSelectionChange(rows) {
                 this.selectedRows = rows;
             },
+            toggleSelection(row) {
+                this.$refs.userTable.toggleRowSelection(row);
+            },
             handleCreate(row) {
                 this.currentRow = row;
                 this.resetTemp();
@@ -319,8 +297,8 @@
             },
             handleDelete() {
                 var selectCounts = this.selectedRows.length;
-                if (this.selectedRows === 0) {
-                    this.$message.error('请选择需要操作的记录');
+                if (this.selectedRows == 0) {
+                    this.$message.warning('请选择需要操作的记录');
                 } else {
                     this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
                         confirmButtonText: '确定',

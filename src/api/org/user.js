@@ -35,9 +35,9 @@ export function delUser(ids) {
     })
 }
 
-export function selectDeptNameAndUsers(query) {
+export function getDeptNameAndUsers(query) {
     return fetch({
-        url: '/sysUser/selectDeptNameAndUsers',
+        url: '/sysUser/getDeptNameAndUsers',
         mothod: 'get',
         params: query
     });
@@ -45,7 +45,7 @@ export function selectDeptNameAndUsers(query) {
 
 export function getAllUser() {
     return fetch({
-        url: '/sysUser/selectAll',
+        url: '/sysUser/getAll',
         mothod: 'get'
     });
 }

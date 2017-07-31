@@ -6,7 +6,8 @@
  */
 
 import Vue from 'vue';
-function TreeUtil (data) {
+
+function TreeUtil(data) {
     if (!(this instanceof TreeUtil)) {
         return new TreeUtil(data, null, null)
     }
@@ -36,30 +37,33 @@ TreeUtil.treeToArray = function (data, parent, level, expandedAll) {
     return tmp
 }
 
-TreeUtil.addRow = function(data,treeData){
+TreeUtil.addRow = function (data, treeData) {
     Vue.set(data, 'treePosition', data.treePosition + '&' + data.id);
-    if(data.parentId != 0){
-        const parent = TreeUtil.getRowById(data.parentId,treeData);
+    if (data.parentId != 0) {
+        const parent = TreeUtil.getRowById(data.parentId, treeData);
         Vue.set(data, '_parent', parent);
         if (parent.children) {
             parent.children.push(data);
-        }else{
+        } else {
             parent.children = [data];
         }
-    }else{
+    } else {
         treeData.push(data);
     }
 }
 
-TreeUtil.editRow = function(data,treeData){
-    const old = TreeUtil.getRowById(data.id,treeData);
-    TreeUtil.delRow(old,treeData);
-    TreeUtil.addRow(data,treeData);
+TreeUtil.editRow = function (data, treeData) {
+    const old = TreeUtil.getRowById(data.id, treeData);
+    if(old.children && old.children.length > 0){
+        data.children = old.children;
+    }
+    TreeUtil.delRow(old, treeData);
+    TreeUtil.addRow(data, treeData);
 }
 
-TreeUtil.delRow = function(currentRow,treeData){
-    currentRow = TreeUtil.getRowById(currentRow.id,treeData);
-    if (currentRow._parent){
+TreeUtil.delRow = function (currentRow, treeData) {
+    currentRow = TreeUtil.getRowById(currentRow.id, treeData);
+    if (currentRow._parent) {
         const index = currentRow._parent.children.indexOf(currentRow);
         currentRow._parent.children.splice(index, 1);
     } else {
@@ -68,12 +72,12 @@ TreeUtil.delRow = function(currentRow,treeData){
     }
 }
 
-TreeUtil.getRowById = function(id, treeData) {
+TreeUtil.getRowById = function (id, treeData) {
     let result = undefined;
     for (const node of treeData) {
-        if (Number(id) === node.id) {
-            result =  node;
-        }else if (node.children && node.children.length > 0){
+        if (Number(id) == node.id) {
+            return node;
+        } else if (node.children && node.children.length > 0 && !result) {
             result = TreeUtil.getRowById(id, node.children);
         }
     }

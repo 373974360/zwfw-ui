@@ -2,14 +2,14 @@ import fetch from 'utils/fetch';
 
 export function getMenuTree() {
     return fetch({
-        url: '/sysMenu/selectTree',
+        url: '/sysMenu/getTree',
         method: 'get'
     });
 }
 
 export function getMenuCascader(id) {
     return fetch({
-        url: '/sysMenu/selectCascader',
+        url: '/sysMenu/getCascader',
         method: 'get',
         params:{id}
     });

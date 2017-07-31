@@ -34,34 +34,43 @@ service.interceptors.request.use(config => {
 // respone拦截器
 service.interceptors.response.use(
     response => {
-        response = response.data;
-        const code = response.httpCode;
-        const msg = response.msg;
+        let code = response.status;
         /**
          * 下面的注释为通过response自定义code来标示请求状态，当code返回如下情况为权限有问题，登出并返回到登录页
          * 如通过xmlhttprequest 状态码标识 逻辑可写在下面error中
          */
         // // 50014:Token 过期了 50012:其他客户端登录了 50008:非法的token
         if (code !== 200) {
-            if(code === 401){
-                // 登出
-                store.dispatch('LogOut').then(() => {
-                    router.push({ path: '/login' })
+            if(code === 207){
+                Message({
+                    message: "短时间内请求太过频繁，请重新刷新页面",
+                    type: 'error',
+                    duration: 5 * 1000
                 });
             }else{
                 Message({
-                    message: msg,
+                    message: response.data.msg,
                     type: 'error',
                     duration: 5 * 1000
                 });
             }
-        } else {
-            return response;
+        }else{
+            code = response.data.httpCode;
+            if(code === 401){
+                Message({
+                    message: "登录超时，请重新登录",
+                    type: 'error',
+                    duration: 5 * 1000
+                });
+                // 登出
+                store.dispatch('LogOut').then(() => {
+                    router.push({ path: '/login' })
+                });
+            }
         }
-        return response;
+        return response.data;
     },
     error => {
-        console.log('err' + error);// for debug
         Message({
             message: error.message,
             type: 'error',

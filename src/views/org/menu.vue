@@ -53,7 +53,6 @@
 
                 <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
                 </el-button>
-                <el-button icon="information" type="warning" @click="resetForm('menuForm')">重置</el-button>
             </div>
         </el-dialog>
     </div>

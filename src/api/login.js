@@ -12,7 +12,7 @@ export function loginByEmail(userInfo) {
 export function getInfo(token) {
     const data = {id: token};
     return fetch({
-        url: '/sysUser/select',
+        url: '/sysUser/get',
         method: 'get',
         params: data
     });
@@ -20,7 +20,7 @@ export function getInfo(token) {
 
 export function sendPWD2Email(account){
     return fetch({
-        url: '/sysUser/select',
+        url: '/sysUser/get',
         method: 'get',
         params: {account}
     });

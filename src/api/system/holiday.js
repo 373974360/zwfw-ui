@@ -12,7 +12,7 @@ export function createOrUpdateDate(sysHolidayVo) {
 }
 export function getHoliday(query) {
     return fetch({
-        url: '/sysHoliday/selectAll',
+        url: '/sysHoliday/getAll',
         method: 'get',
         params: query
     });

@@ -44,7 +44,6 @@
 
                 <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
                 </el-button>
-                <el-button icon="information" type="warning" @click="resetForm('deptForm')">重置</el-button>
             </div>
         </el-dialog>
 
@@ -71,7 +70,8 @@
                     },
                     {
                         text: '部门名称',
-                        dataIndex: 'deptName'
+                        dataIndex: 'deptName',
+                        editAble: true
                     },
                     {
                         text: '部门简称',

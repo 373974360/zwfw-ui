@@ -22,6 +22,7 @@ const Role = () => import('../views/org/role');
 /* system */
 const Holiday = () => import('../views/system/holiday');
 const Log = () => import('../views/system/log');
+const Cache = () => import('../views/system/cache');
 
 /* components */
 const componentsIndex = () => import('../views/components/index');
@@ -121,6 +122,7 @@ export const asyncRouterMap = [
         icon: 'system',
         children: [
             {path: 'date', component: Holiday, name: '节假日管理'},
+            {path: 'cache', component: Cache, name: '缓存管理'},
             {path: 'log', component: Log, name: '日志管理'}
         ]
     },
