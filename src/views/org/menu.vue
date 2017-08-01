@@ -15,7 +15,7 @@
 
                 <el-form-item label="上级菜单">
                     <el-cascader :options="cascader" v-model="cascaderModel" :show-all-levels="true"
-                                 :change-on-select="true" style="width:100%" :disabled="false" :clearable="true"
+                                 :change-on-select="true" expand-trigger="hover"  style="width:100%" :disabled="false" :clearable="true"
                                  @change="handleChange"></el-cascader>
                 </el-form-item>
                 <el-form-item label="菜单名称" prop="menuName">

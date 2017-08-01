@@ -189,8 +189,12 @@
                     type: 'warning'
                 }).then(() => {
                     delDept(row.id).then(response => {
-                        this.$message.success('删除成功');
-                        TreeUtil.delRow(response.data, this.deptList);
+                        if (response.data.deptUserCount > 0) {
+                            this.$message.warning('关联用户，请先删除用户信息');
+                        } else {
+                            this.$message.success('删除成功');
+                            TreeUtil.delRow(response.data, this.deptList);
+                        }
                     })
                 }).catch(() => {
                     console.dir("取消");
