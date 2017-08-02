@@ -183,18 +183,14 @@
             },
             handleDelete(row)
             {
-                this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
+                this.$confirm('此操作将删除关联用户所有信息, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
                     delDept(row.id).then(response => {
-                        if (response.data.deptUserCount > 0) {
-                            this.$message.warning('关联用户，请先删除用户信息');
-                        } else {
-                            this.$message.success('删除成功');
-                            TreeUtil.delRow(response.data, this.deptList);
-                        }
+                        this.$message.success('删除成功');
+                        TreeUtil.delRow(response.data, this.deptList);
                     })
                 }).catch(() => {
                     console.dir("取消");
