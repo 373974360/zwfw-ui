@@ -6,33 +6,27 @@
                 添加
             </el-button>
         </div>
-        <tree-grid :columns="columns" :tree-structure="true" :data-source="deptList" :list-loading="listLoading"
+        <tree-grid :columns="columns" :tree-structure="true" :data-source="metadataTypeList" :list-loading="listLoading"
                    :handle-toggle="handleToggle" :handle-create="handleCreate"
                    :handle-update="handleUpdate" :handle-delete="handleDelete">
         </tree-grid>
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-            <el-form ref="deptForm" class="small-space" :model="sysDept" label-position="right" label-width="80px"
-                     style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="deptRules">
-                <el-form-item label="上级部门">
+            <el-form ref="metadataTypeForm" class="small-space" :model="sysMetadataType" label-position="right" label-width="80px"
+                     style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="metadataTypeRules">
+                <el-form-item label="上级分类">
                     <el-cascader :options="cascader" v-model="cascaderModel" @change="handleChange"
                                  :show-all-levels="true" expand-trigger="hover" :clearable="true"
                                  :change-on-select="true" style="width:100%"></el-cascader>
                 </el-form-item>
-                <el-form-item label="部门全称" prop="deptName">
-                    <el-input v-model="sysDept.deptName"></el-input>
-                </el-form-item>
-                <el-form-item label="部门简称" prop="shortName">
-                    <el-input v-model="sysDept.shortName"></el-input>
-                </el-form-item>
-                <el-form-item label="部门编号" prop="deptCode">
-                    <el-input v-model="sysDept.deptCode"></el-input>
+                <el-form-item label="分类名称" prop="name">
+                    <el-input v-model="sysMetadataType.name"></el-input>
                 </el-form-item>
                 <el-form-item label="排序">
-                    <el-input-number v-model="sysDept.sortNo" :min="1" :max="100"/>
+                    <el-input-number v-model="sysMetadataType.sortNo" :min="1" :max="100"/>
                 </el-form-item>
                 <el-form-item label="备注" prop="remark">
-                    <el-input v-model="sysDept.remark"></el-input>
+                    <el-input v-model="sysMetadataType.remark"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -50,16 +44,16 @@
 
 <script>
     import TreeGrid from 'components/TreeGrid';
-    import {getDeptTree, getDeptCascader, createDept, updateDept, delDept} from 'api/org/dept';
+    import {getMetadataTypeTree, getMetadataTypeCascader, createMetadataType, updateMetadataType, delMetadataType} from 'api/system/metadataType';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import TreeUtil from 'utils/TreeUtil.js';
 
     export default {
-        name: 'dept_table',
+        name: 'metadataType_table',
         data() {
             return {
-                deptList: [],
+                metadataTypeList: [],
                 listLoading: true,
                 columns: [
                     {
@@ -67,28 +61,18 @@
                         dataIndex: 'id'
                     },
                     {
-                        text: '部门名称',
-                        dataIndex: 'deptName',
+                        text: '分类名称',
+                        dataIndex: 'name',
                         editAble: true
-                    },
-                    {
-                        text: '部门简称',
-                        dataIndex: 'shortName'
-                    },
-                    {
-                        text: '部门编号',
-                        dataIndex: 'deptCode'
                     },
                     {
                         text: '排序',
                         dataIndex: 'sortNo'
                     }
                 ],
-                sysDept: {
+                sysMetadataType: {
                     id: undefined,
-                    deptName: '',
-                    shortName: '',
-                    deptCode: '',
+                    name: '',
                     parentId: 0,
                     sortNo: 1,
                     status: 1,
@@ -99,9 +83,9 @@
                 dialogFormVisible: false,
                 dialogStatus: '',
                 dialogLoading: false,
-                deptRules: {
-                    deptName: [
-                        {required: true, message: '请输入部门名称', trigger: 'blur'}
+                metadataTypeRules: {
+                    name: [
+                        {required: true, message: '请输入分类名称', trigger: 'blur'}
                     ]
                 }
             }
@@ -114,8 +98,8 @@
         },
         computed: {
             cascaderModel: function () {
-                if (this.sysDept.treePosition) {
-                    const arr = this.sysDept.treePosition.split('&');
+                if (this.sysMetadataType.treePosition) {
+                    const arr = this.sysMetadataType.treePosition.split('&');
                     return arr;
                 }
             },
@@ -126,25 +110,25 @@
         methods: {
             getList() {
                 this.listLoading = true;
-                getDeptTree().then(response => {
-                    this.deptList = response.data;
+                getMetadataTypeTree().then(response => {
+                    this.metadataTypeList = response.data;
                     this.listLoading = false;
                 })
             },
             getOptions(id) {
                 this.dialogLoading = true;
-                getDeptCascader(id).then(response => {
+                getMetadataTypeCascader(id).then(response => {
                     this.cascader = response.data;
                     this.dialogLoading = false;
                 })
             },
             handleChange(value) {
                 if (value.length > 0) {
-                    this.sysDept.parentId = value[value.length - 1];
-                    this.sysDept.treePosition = value.join('&');
+                    this.sysMetadataType.parentId = value[value.length - 1];
+                    this.sysMetadataType.treePosition = value.join('&');
                 } else {
-                    this.sysDept.parentId = 0;
-                    this.sysDept.treePosition = undefined;
+                    this.sysMetadataType.parentId = 0;
+                    this.sysMetadataType.treePosition = undefined;
                 }
             },
             handleToggle(row) {
@@ -153,12 +137,12 @@
             handleCreate(row) {
                 this.resetTemp();
                 if (row.treePosition) {
-                    this.sysDept.treePosition = row.treePosition;
+                    this.sysMetadataType.treePosition = row.treePosition;
                 }
                 if (row.id) {
-                    this.sysDept.parentId = row.id;
+                    this.sysMetadataType.parentId = row.id;
                 } else {
-                    this.sysDept.parentId = 0;
+                    this.sysMetadataType.parentId = 0;
                 }
                 this.getOptions(null);
                 this.dialogStatus = 'create';
@@ -166,13 +150,13 @@
             },
             handleUpdate(row) {
                 this.resetTemp();
-                this.sysDept = copyProperties(this.sysDept, row);
+                this.sysMetadataType = copyProperties(this.sysMetadataType, row);
                 if (row._parent) {
-                    this.sysDept.treePosition = row._parent.treePosition;
+                    this.sysMetadataType.treePosition = row._parent.treePosition;
                 } else {
-                    this.sysDept.treePosition = undefined;
+                    this.sysMetadataType.treePosition = undefined;
                 }
-                this.getOptions(this.sysDept.id);
+                this.getOptions(this.sysMetadataType.id);
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
@@ -182,22 +166,22 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    delDept(row.id).then(response => {
+                    delMetadataType(row.id).then(response => {
                         this.$message.success('删除成功');
-                        TreeUtil.delRow(response.data, this.deptList);
+                        TreeUtil.delRow(response.data, this.metadataTypeList);
                     })
                 }).catch(() => {
                     console.dir("取消");
                 });
             },
             create() {
-                this.$refs['deptForm'].validate((valid) => {
+                this.$refs['metadataTypeForm'].validate((valid) => {
                     if (valid) {
                         this.dialogFormVisible = false;
-                        console.dir(this.sysDept.parentId);
-                        createDept(this.sysDept).then(response => {
+                        console.dir(this.sysMetadataType.parentId);
+                        createMetadataType(this.sysMetadataType).then(response => {
                             this.$message.success('创建成功');
-                            TreeUtil.addRow(response.data, this.deptList);
+                            TreeUtil.addRow(response.data, this.metadataTypeList);
                         })
                     } else {
                         return false;
@@ -205,12 +189,12 @@
                 });
             },
             update() {
-                this.$refs['deptForm'].validate((valid) => {
+                this.$refs['metadataTypeForm'].validate((valid) => {
                     if (valid) {
                         this.dialogFormVisible = false;
-                        updateDept(this.sysDept).then(response => {
+                        updateMetadataType(this.sysMetadataType).then(response => {
                             this.$message.success('更新成功');
-                            TreeUtil.editRow(response.data, this.deptList);
+                            TreeUtil.editRow(response.data, this.metadataTypeList);
                         })
                     } else {
                         return false;
@@ -218,11 +202,9 @@
                 });
             },
             resetTemp() {
-                this.sysDept = {
+                this.sysMetadataType = {
                     id: undefined,
-                    deptName: '',
-                    shortName: '',
-                    deptCode: '',
+                    name: '',
                     parentId: 0,
                     sortNo: 1,
                     status: 1,

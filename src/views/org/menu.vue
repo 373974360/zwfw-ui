@@ -168,9 +168,6 @@
             handleToggle(row) {
                 row._expanded = !row._expanded;
             },
-            resetForm(menuForm) {
-                this.$refs[menuForm].resetFields();
-            },
             handleCreate(row) {
                 this.resetTemp();
                 if (row.treePosition) {

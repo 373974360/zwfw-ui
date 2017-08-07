@@ -98,7 +98,7 @@
             <el-form id="checkboxTable" ref="userForm" class="small-space" :model="sysRole"
                      label-position="left" label-width="25px"
                      style='width: 100%;' v-loading="userRoleDialogLoading">
-                <el-form-item :data="deptName" v-for="(users,deptName) in userList">
+                <el-form-item :data="deptName" v-for="(users,deptName) in userList" :key="deptName">
                     <el-checkbox-group v-model="checkedUsers" @change="handleCheckedUsersChange"
                                        style="margin-bottom: -39px;">
                         <el-row>
@@ -108,7 +108,7 @@
                                 </div>
                             </el-col>
                         </el-row>
-                        <el-checkbox v-for="user in users" :label="user.id" style="top: -29px;margin-left: 15px;">
+                        <el-checkbox v-for="user in users" :key="user.id" :label="user.id" style="top: -29px;margin-left: 15px;">
                             {{user.userName}}
                         </el-checkbox>
                     </el-checkbox-group>
