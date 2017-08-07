@@ -28,17 +28,17 @@
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="索引" min-width="140">
-                <template scope="scope">
-                    <span>{{scope.row.key}}</span>
-                </template>
-            </el-table-column>
             <el-table-column align="center" label="字典名称" min-width="140">
                 <template scope="scope">
                     <span class="link-type" @click='handleDictIndexUpdate(scope.row)'>{{scope.row.name}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="备注" min-width="180">
+            <el-table-column align="center" label="索引" min-width="140">
+                <template scope="scope">
+                    <span>{{scope.row.key}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="备注" min-width="130">
                 <template scope="scope">
                     <span>{{scope.row.remark}}</span>
                 </template>
@@ -56,11 +56,11 @@
             <el-form id="checkboxTable" ref="dictIndexForm" class="small-space" :model="sysDictIndex" label-position="right"
                      label-width="80px"
                      style='width: 80%; margin-left:10%;' :rules="sysDictIndexRules">
-                <el-form-item label="索引" prop="key">
-                    <el-input v-model="sysDictIndex.key"/>
-                </el-form-item>
                 <el-form-item label="字典名称" prop="name">
                     <el-input v-model="sysDictIndex.name"/>
+                </el-form-item>
+                <el-form-item label="索引" prop="key">
+                    <el-input v-model="sysDictIndex.key"/>
                 </el-form-item>
                 <el-form-item label="备注">
                     <el-input type="textarea" v-model="sysDictIndex.remark" :rows="3"/>
@@ -70,7 +70,6 @@
                 <el-button icon="circle-cross" type="danger" @click="dialogDictIndexVisible = false">取 消</el-button>
                 <el-button v-if="dialogDictIndexStatus=='create'" type="primary" icon="circle-check" @click="createDictIndex">确 定</el-button>
                 <el-button v-else type="primary" icon="circle-check" @Keyup.enter="updateDictIndex" @click="updateDictIndex">确 定</el-button>
-                <el-button icon="information" type="warning" @click="resetDictIndexForm('dictIndexForm')">重置</el-button>
             </div>
         </el-dialog>
 
@@ -90,14 +89,9 @@
             </div>
             <el-table :data="dictlist" v-loading.body="listDictLoading" border fit highlight-current-row style="width: 100%" @selection-change="handleDictSelectionChange">
                 <el-table-column type="selection" width="55"/>
-                <el-table-column align="center" label="序号">
+                <el-table-column align="center" label="序号"  min-width="140">
                     <template scope="scope">
                         <span>{{scope.row.id}}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column align="center" label="英文代码" min-width="140">
-                    <template scope="scope">
-                        <span>{{scope.row.code}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="子项名称" min-width="140">
@@ -105,12 +99,17 @@
                         <span class="link-type" @click='handleDictUpdate(scope.row)'>{{scope.row.codeText}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column align="center" label="排序" min-width="140">
+                <el-table-column align="center" label="英文代码" min-width="110">
+                    <template scope="scope">
+                        <span>{{scope.row.code}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center" label="排序" min-width="80">
                     <template scope="scope">
                         <span>{{scope.row.sortNo}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column align="center" label="备注" min-width="180">
+                <el-table-column align="center" label="备注" min-width="120">
                     <template scope="scope">
                         <span>{{scope.row.remark}}</span>
                     </template>
@@ -138,7 +137,6 @@
                 <el-button icon="circle-cross" type="danger" @click="dialogDictFormVisible = false">取 消</el-button>
                 <el-button v-if="dialogDictFormStatus=='create'" type="primary" icon="circle-check" @click="createDict">确 定</el-button>
                 <el-button v-else type="primary" icon="circle-check" @Keyup.enter="updateDict" @click="updateDict">确 定</el-button>
-                <el-button icon="information" type="warning" @click="resetDictForm('dictForm')">重置</el-button>
             </div>
         </el-dialog>
     </div>
@@ -296,9 +294,6 @@
                     });
                 }
             },
-            resetDictIndexForm(dictIndexForm) {
-                this.$refs[dictIndexForm].resetFields();
-            },
             resetDictIndexTemp() {
                 this.sysDictIndex = {
                     id: '',
@@ -394,9 +389,6 @@
                         console.dir('取消');
                     });
                 }
-            },
-            resetDictForm(dictForm) {
-                this.$refs[dictForm].resetFields();
             },
             resetDictTemp() {
                 this.sysDict = {
