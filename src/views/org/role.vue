@@ -5,7 +5,9 @@
                       v-model="listQuery.roleName" no-match-text="没有找到哦">
             </el-input>
 
-            <el-button style="margin-left: 10px;" class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
+            <el-button style="margin-left: 10px;" class="filter-item" type="primary" v-waves icon="search"
+                       @click="getList">搜索
+            </el-button>
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">
                 添加
             </el-button>
@@ -35,12 +37,18 @@
             </el-table-column>
             <el-table-column align="center" label="操作">
                 <template scope="scope">
-                    <el-button class="filter-item" style="margin-left: 10px;" @click="handleMenuList(scope.row.id)" type="primary" size="small">
-                        关联权限
-                    </el-button>
-                    <el-button class="filter-item" style="margin-left: 10px;" @click="handleUserList(scope.row.id)" type="primary" size="small">
-                        关联用户
-                    </el-button>
+                    <el-badge :value="scope.row.roleMenuCount" class="item">
+                        <el-button class="filter-item" style="margin-left: 10px;" @click="handleMenuList(scope.row)"
+                                   type="primary" size="small">
+                            关联权限
+                        </el-button>
+                    </el-badge>
+                    <el-badge :value="scope.row.userRoleCount" class="item">
+                        <el-button class="filter-item" style="margin-left: 10px;" @click="handleUserList(scope.row)"
+                                   type="primary" size="small">
+                            关联用户
+                        </el-button>
+                    </el-badge>
                 </template>
             </el-table-column>
         </el-table>
@@ -89,7 +97,6 @@
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="roleMenuDialogFormVisible = false">取 消</el-button>
                 <el-button type="primary" @click="submitRoleMenu">确 定</el-button>
-                <el-button icon="information" type="warning" @click="resetMenuForm('menuTree')">重置</el-button>
             </div>
         </el-dialog>
 
@@ -118,7 +125,6 @@
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="userRoleDialogFormVisible = false">取 消</el-button>
                 <el-button type="primary" @click="submitUserRole">确 定</el-button>
-                <el-button icon="information" type="warning" @click="resetUserForm">重置</el-button>
             </div>
         </el-dialog>
     </div>
@@ -161,7 +167,7 @@
                 roleMenuDialogLoading: false,
                 userRoleDialogFormVisible: false,
                 userRoleDialogLoading: false,
-                currentRoleId: 0,
+                currentRole: [],
                 menuTree: [],
                 checkedMenu: [],
                 userTree: [],
@@ -192,6 +198,7 @@
             },
             handleSelectionChange(row) {
                 this.selectedRows = row;
+                console.log(this.selectedRows);
             },
             handleSizeChange(val) {
                 this.listQuery.rows = val;
@@ -245,7 +252,7 @@
                 }
             },
             create() {
-                this.$refs['roleForm'].validate(valid => {
+                this.$refs[' roleForm '].validate(valid => {
                     if (valid) {
                         this.addDialogFormVisible = false;
                         this.listLoading = true;
@@ -261,7 +268,7 @@
                 });
             },
             update() {
-                this.$refs['roleForm'].validate(valid => {
+                this.$refs[' roleForm '].validate(valid => {
                     if (valid) {
                         this.addDialogFormVisible = false;
                         updateRole(this.sysRole).then(response => {
@@ -294,7 +301,7 @@
             },
             getAllRoleMenu() {
                 this.checkedMenu = [];
-                getAllRoleMenus(this.currentRoleId).then(response => {
+                getAllRoleMenus(this.currentRole.id).then(response => {
                     const menus = response.data;
                     let checked = [];
                     for (const menu of menus) {
@@ -314,26 +321,23 @@
                     }
                 }
             },
-            handleMenuList(roleId) {
-                this.currentRoleId = roleId;
+            handleMenuList(role) {
+                this.currentRole = role;
                 this.dialogStatus = 'roleMenu';
                 this.roleMenuDialogFormVisible = true;
                 this.getMenuTree();
             },
-            resetMenuForm(menuTree) {
-                let checked = [];
-                this.$refs[menuTree].setCheckedKeys(checked);
-            },
             submitRoleMenu() {
                 this.roleMenuDialogLoading = true;
-                createRoleMenus(this.currentRoleId, this.checkedMenu).then(response => {
+                createRoleMenus(this.currentRole.id, this.checkedMenu).then(response => {
                     this.roleMenuDialogLoading = false;
                     this.roleMenuDialogFormVisible = false;
                     this.$message.success('关联成功');
+                    this.currentRole.roleMenuCount = this.checkedMenu.length;
                 })
             },
-            handleUserList(roleId) {
-                this.currentRoleId = roleId;
+            handleUserList(role) {
+                this.currentRole = role;
                 this.dialogStatus = 'roleUser';
                 this.userRoleDialogFormVisible = true;
                 this.getDeptAndUsersList();
@@ -348,7 +352,7 @@
             },
             getAllUserRoles() {
                 this.checkedUsers = [];
-                getAllUserRole(this.currentRoleId).then(response => {
+                getAllUserRole(this.currentRole.id).then(response => {
                     if (response.data) {
                         for (const item of response.data) {
                             this.checkedUsers.push(item.userId);
@@ -359,17 +363,21 @@
             handleCheckedUsersChange(value) {
                 this.checkedUsers = value;
             },
-            resetUserForm() {
-                this.checkedUsers = [];
-            },
             submitUserRole() {
                 this.userRoleDialogLoading = true;
-                createUserRole(this.currentRoleId, this.checkedUsers).then(response => {
+                createUserRole(this.currentRole.id, this.checkedUsers).then(response => {
                     this.userRoleDialogLoading = false;
                     this.userRoleDialogFormVisible = false;
                     this.$message.success('关联成功');
+                    this.currentRole.userRoleCount = this.checkedUsers.length;
                 })
             }
         }
     }
 </script>
+<style>
+    .item {
+        margin-top: 10px;
+        margin-right: 40px;
+    }
+</style>

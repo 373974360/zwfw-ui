@@ -23,6 +23,7 @@ const Role = () => import('../views/org/role');
 const Holiday = () => import('../views/system/holiday');
 const Log = () => import('../views/system/log');
 const Cache = () => import('../views/system/cache');
+const Dict = () => import('../views/system/dict');
 const MetadataType = () => import('../views/system/metadataType');
 
 /* components */
@@ -125,6 +126,7 @@ export const asyncRouterMap = [
             {path: 'date', component: Holiday, name: '节假日管理'},
             {path: 'cache', component: Cache, name: '缓存管理'},
             {path: 'log', component: Log, name: '日志管理'},
+            {path: 'dict', component: Dict, name: '数据字典'},
             {path: 'metadataType', component: MetadataType, name: '元数据类型'}
         ]
     },
