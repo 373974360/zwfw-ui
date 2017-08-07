@@ -118,7 +118,7 @@
                 });
             },
             changeCaptcha() {
-                this.loginForm.imgUrl = process.env.BASE_API + '/base/getVerifyCode?' + Math.random();
+                this.loginForm.imgUrl = process.env.SYS_API + '/base/getVerifyCode?' + Math.random();
             }
         },
         mounted() {
