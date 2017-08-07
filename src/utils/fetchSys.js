@@ -7,7 +7,7 @@ import router from '../router';
 // 创建axios实例
 const service = axios.create({
     // headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-    baseURL: process.env.BASE_API, // api的base_url
+    baseURL: process.env.SYS_API, // api的base_url
     timeout: 1000 * 60 * 5,                  // 请求超时时间  1000 * 60 * 5
     withCredentials: true,  // 跨域允许cookie
     // 请求数据转为json格式 springmvc自动填充
