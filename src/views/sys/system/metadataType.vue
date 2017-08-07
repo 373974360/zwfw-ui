@@ -44,7 +44,7 @@
 
 <script>
     import TreeGrid from 'components/TreeGrid';
-    import {getMetadataTypeTree, getMetadataTypeCascader, createMetadataType, updateMetadataType, delMetadataType} from 'api/system/metadataType';
+    import {getMetadataTypeTree, getMetadataTypeCascader, createMetadataType, updateMetadataType, delMetadataType} from 'api/sys/system/metadataType';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import TreeUtil from 'utils/TreeUtil.js';

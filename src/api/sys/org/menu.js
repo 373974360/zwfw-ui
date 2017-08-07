@@ -1,14 +1,14 @@
-import fetch from 'utils/fetch';
+import fetchSys from 'utils/fetchSys';
 
 export function getMenuTree() {
-    return fetch({
+    return fetchSys({
         url: '/sysMenu/getTree',
         method: 'get'
     });
 }
 
 export function getMenuCascader(id) {
-    return fetch({
+    return fetchSys({
         url: '/sysMenu/getCascader',
         method: 'get',
         params:{id}
@@ -17,7 +17,7 @@ export function getMenuCascader(id) {
 
 export function createMenu(sysMenuVo) {
     const data = sysMenuVo;
-    return fetch({
+    return fetchSys({
         url: '/sysMenu/add',
         method: 'post',
         data
@@ -26,7 +26,7 @@ export function createMenu(sysMenuVo) {
 
 export function updateMenu(sysMenuVo) {
     const data = sysMenuVo;
-    return fetch({
+    return fetchSys({
         url: '/sysMenu/edit',
         method: 'post',
         data
@@ -35,7 +35,7 @@ export function updateMenu(sysMenuVo) {
 
 export function delMenu(id) {
     const data = {id};
-    return fetch({
+    return fetchSys({
         url: '/sysMenu/del',
         method: 'post',
         data
@@ -44,7 +44,7 @@ export function delMenu(id) {
 
 export function deleteMenu(id) {
     const data = {id};
-    return fetch({
+    return fetchSys({
         url: '/sysMenu/delete',
         method: 'post',
         data

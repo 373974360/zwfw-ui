@@ -1,7 +1,7 @@
-import fetch from 'utils/fetch';
+import fetchSys from 'utils/fetchSys';
 
 export function getCacheList(query) {
-    return fetch({
+    return fetchSys({
         url: '/sysRedisCache/list',
         method: 'get',
         params: query
@@ -11,7 +11,7 @@ export function getCacheList(query) {
 
 export function editCache(key,value) {
     const data = {key,value};
-    return fetch({
+    return fetchSys({
         url: '/sysRedisCache/edit',
         method: 'post',
         data
@@ -20,7 +20,7 @@ export function editCache(key,value) {
 
 export function delCache(keys) {
     const data = {keys};
-    return fetch({
+    return fetchSys({
         url: '/sysRedisCache/del',
         method: 'post',
         data
@@ -28,7 +28,7 @@ export function delCache(keys) {
 }
 
 export function flushCache() {
-    return fetch({
+    return fetchSys({
         url: '/sysRedisCache/flush',
         method: 'post'
     })

@@ -142,7 +142,7 @@
     </div>
 </template>
 <script>
-    import {getDictIndexList,updateDictIndex,createDictIndex,delDictIndex,getDictList,updateDict,createDict,delDict} from "api/system/dict";
+    import {getDictIndexList,updateDictIndex,createDictIndex,delDictIndex,getDictList,updateDict,createDict,delDict} from "api/sys/system/dict";
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     export default{

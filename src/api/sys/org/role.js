@@ -1,7 +1,7 @@
-import fetch from 'utils/fetch';
+import fetchSys from 'utils/fetchSys';
 
 export function getRoleList(query) {
-    return fetch({
+    return fetchSys({
         url: '/sysRole/list',
         method: 'get',
         params: query
@@ -10,7 +10,7 @@ export function getRoleList(query) {
 
 export function createRole(sysRoleVo) {
     const data = sysRoleVo;
-    return fetch({
+    return fetchSys({
         url: '/sysRole/add',
         method: 'post',
         data
@@ -19,7 +19,7 @@ export function createRole(sysRoleVo) {
 
 export function updateRole(sysRoleVo) {
     const data = sysRoleVo;
-    return fetch({
+    return fetchSys({
         url: '/sysRole/edit',
         method: 'post',
         data
@@ -28,7 +28,7 @@ export function updateRole(sysRoleVo) {
 
 export function delRole(ids) {
     const data = {ids};
-    return fetch({
+    return fetchSys({
         url: '/sysRole/del',
         method: 'post',
         data
@@ -37,7 +37,7 @@ export function delRole(ids) {
 
 export function createRoleMenus(roleId, menuIds) {
     const data = {roleId, menuIds};
-    return fetch({
+    return fetchSys({
         url: '/sysRoleMenu/addList',
         method: 'post',
         data
@@ -46,7 +46,7 @@ export function createRoleMenus(roleId, menuIds) {
 
 export function createUserRole(roleId, userIds) {
     const data = {roleId, userIds};
-    return fetch({
+    return fetchSys({
         url: '/sysUserRole/addList',
         method: 'post',
         data
@@ -54,14 +54,14 @@ export function createUserRole(roleId, userIds) {
 }
 
 export function getAllRoleMenus(roleId) {
-    return fetch({
+    return fetchSys({
         url: '/sysRoleMenu/getAll',
         method: 'get',
         params: {roleId}
     })
 }
 export function getAllUserRole(roleId) {
-    return fetch({
+    return fetchSys({
         url: '/sysUserRole/getAll',
         method: 'get',
         params: {roleId}

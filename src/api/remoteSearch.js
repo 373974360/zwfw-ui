@@ -1,7 +1,7 @@
-import fetch from 'utils/fetch';
+import fetchSys from 'utils/fetchSys';
 
 export function userSearch(name) {
-  return fetch({
+  return fetchSys({
     url: '/search/user',
     method: 'get',
     params: { name }

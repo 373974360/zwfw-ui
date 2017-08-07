@@ -1,7 +1,7 @@
-import fetch from 'utils/fetch';
+import fetchSys from 'utils/fetchSys';
 
 export function getEnums() {
-    return fetch({
+    return fetchSys({
         url: '/base/enums',
         method: 'get'
     });

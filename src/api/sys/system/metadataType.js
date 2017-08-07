@@ -1,7 +1,7 @@
-import fetch from 'utils/fetch';
+import fetchSys from 'utils/fetchSys';
 
 export function getMetadataTypeList(query) {
-    return fetch({
+    return fetchSys({
         url: '/sysMetadataType/list',
         method: 'get',
         params: query
@@ -9,14 +9,14 @@ export function getMetadataTypeList(query) {
 }
 
 export function getMetadataTypeTree() {
-    return fetch({
+    return fetchSys({
         url: '/sysMetadataType/getTree',
         method: 'get'
     });
 }
 
 export function getMetadataTypeCascader(id) {
-    return fetch({
+    return fetchSys({
         url: '/sysMetadataType/getCascader',
         method: 'get',
         params: {id}
@@ -25,7 +25,7 @@ export function getMetadataTypeCascader(id) {
 
 export function createMetadataType(sysMetadataTypeVo){
     const data = sysMetadataTypeVo;
-    return fetch({
+    return fetchSys({
         url: '/sysMetadataType/add',
         method: 'post',
         data
@@ -34,7 +34,7 @@ export function createMetadataType(sysMetadataTypeVo){
 
 export function updateMetadataType(sysMetadataTypeVo){
     const data = sysMetadataTypeVo;
-    return fetch({
+    return fetchSys({
         url: '/sysMetadataType/edit',
         method: 'post',
         data
@@ -42,7 +42,7 @@ export function updateMetadataType(sysMetadataTypeVo){
 }
 export function delMetadataType(id) {
     const data = {id};
-    return fetch({
+    return fetchSys({
         url: '/sysMetadataType/del',
         method: 'post',
         data
@@ -51,7 +51,7 @@ export function delMetadataType(id) {
 
 export function deleteMetadataType(id) {
     const data = {id};
-    return fetch({
+    return fetchSys({
         url: '/sysMetadataType/delete',
         method: 'post',
         data

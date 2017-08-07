@@ -26,13 +26,13 @@
             <el-table-column min-width="200px" align="center" label="角色名称">
                 <template scope="scope">
                     <el-tooltip content="点击编辑" placement="right" effect="dark">
-                        <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.roleName}}</span>
+                        <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column width="250px" align="center" label="角色类型">
                 <template scope="scope">
-                    <span>{{scope.row.roleType | enums('RoleType')}}</span>
+                    <span>{{scope.row.type | enums('RoleType')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作">
@@ -64,11 +64,11 @@
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="addDialogFormVisible">
             <el-form ref="roleForm" class="small-space" :model="sysRole" label-position="left" label-width="80px"
                      style='width: 80%; margin-left:10%;' :rules="roleRules">
-                <el-form-item label="角色名称" prop="roleName">
-                    <el-input v-model="sysRole.roleName"/>
+                <el-form-item label="角色名称" prop="name">
+                    <el-input v-model="sysRole.name"/>
                 </el-form-item>
                 <el-form-item label="角色类型" prop="enable">
-                    <el-select v-model="sysRole.roleType" placeholder="请选择" style="width:100%">
+                    <el-select v-model="sysRole.type" placeholder="请选择" style="width:100%">
                         <el-option
                                 v-for="item in enums['RoleType']"
                                 :key="item.code"
@@ -105,18 +105,18 @@
             <el-form id="checkboxTable" ref="userForm" class="small-space" :model="sysRole"
                      label-position="left" label-width="25px"
                      style='width: 100%;' v-loading="userRoleDialogLoading">
-                <el-form-item :data="deptName" v-for="(users,deptName) in userList" :key="deptName">
+                <el-form-item :data="name" v-for="(users,name) in userList" :key="name">
                     <el-checkbox-group v-model="checkedUsers" @change="handleCheckedUsersChange"
                                        style="margin-bottom: -39px;">
                         <el-row>
                             <el-col :span="12">
                                 <div class="grid-content bg-purple-light" style="width:191%;">
-                                    <h4 style="margin-left: 16px;margin-top: 0px;">{{deptName}}：</h4>
+                                    <h4 style="margin-left: 16px;margin-top: 0px;">{{name}}：</h4>
                                 </div>
                             </el-col>
                         </el-row>
                         <el-checkbox v-for="user in users" :key="user.id" :label="user.id" style="top: -29px;margin-left: 15px;">
-                            {{user.userName}}
+                            {{user.name}}
                         </el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
@@ -131,11 +131,11 @@
 </template>
 
 <script>
-    import {getRoleList, createRole, updateRole, createRoleMenus, createUserRole, getAllRoleMenus, getAllUserRole, delRole} from 'api/org/role';
-    import {getMenuTree} from 'api/org/menu';
+    import {getRoleList, createRole, updateRole, createRoleMenus, createUserRole, getAllRoleMenus, getAllUserRole, delRole} from 'api/sys/org/role';
+    import {getMenuTree} from 'api/sys/org/menu';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
-    import {getDeptNameAndUsers} from 'api/org/user';
+    import {getDeptNameAndUsers} from 'api/sys/org/user';
 
     export default {
         name: 'table_demo',
@@ -145,18 +145,18 @@
                 total: null,
                 listLoading: true,
                 listQuery: {
-                    roleName: '',
+                    name: '',
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows
                 },
                 sysRole: {
                     id: undefined,
-                    roleName: '',
-                    roleType: 0,
+                    name: '',
+                    type: 0,
                     userId: ''
                 },
                 roleRules: {
-                    roleName: [
+                    name: [
                         {required: true, message: '请输入角色名称', trigger: 'blur'}
                     ]
                 },
@@ -252,7 +252,7 @@
                 }
             },
             create() {
-                this.$refs[' roleForm '].validate(valid => {
+                this.$refs['roleForm'].validate(valid => {
                     if (valid) {
                         this.addDialogFormVisible = false;
                         this.listLoading = true;
@@ -268,7 +268,7 @@
                 });
             },
             update() {
-                this.$refs[' roleForm '].validate(valid => {
+                this.$refs['roleForm'].validate(valid => {
                     if (valid) {
                         this.addDialogFormVisible = false;
                         updateRole(this.sysRole).then(response => {
@@ -283,8 +283,8 @@
             resetTemp() {
                 this.sysRole = {
                     id: undefined,
-                    roleName: '',
-                    roleType: 1,
+                    name: '',
+                    type: 1,
                     deptCode: 0,
                     deptId: '',
                     treePosition: '',

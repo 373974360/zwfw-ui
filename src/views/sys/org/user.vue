@@ -20,16 +20,16 @@
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="userName" align="center" label="姓名">
+            <el-table-column prop="name" align="center" label="姓名">
                 <template scope="scope">
                     <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
-                        <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.userName}}</span>
+                        <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column prop="sysDeptVo.deptName" align="center" label="部门">
+            <el-table-column prop="sysDeptVo.name" align="center" label="部门">
                 <template scope="scope">
-                    <span v-if="scope.row.sysDeptVo.deptName">{{scope.row.sysDeptVo.deptName}}</span>
+                    <span v-if="scope.row.sysDeptVo.name">{{scope.row.sysDeptVo.name}}</span>
                     <span v-else></span>
                 </template>
             </el-table-column>
@@ -74,8 +74,8 @@
                                  :change-on-select="true" expand-trigger="hover" :clearable="true" style="width: 180px" placeholder="选择部门"
                     ></el-cascader>
                 </el-form-item>
-                <el-form-item label="姓名" prop="userName">
-                    <el-input v-model="sysUser.userName"/>
+                <el-form-item label="姓名" prop="name">
+                    <el-input v-model="sysUser.name"/>
                 </el-form-item>
                 <el-form-item label="性别" prop="sex">
                     <el-select v-model="sysUser.sex" placeholder="请选择" style="width:100%">
@@ -128,8 +128,8 @@
 
 
 <script>
-    import {getDeptCascader} from 'api/org/dept';
-    import {getUserList, updateUser, createUser, delUser} from 'api/org/user';
+    import {getDeptCascader} from 'api/sys/org/dept';
+    import {getUserList, updateUser, createUser, delUser} from 'api/sys/org/user';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
 
@@ -159,13 +159,13 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
-                    deptName: undefined,
+                    name: undefined,
                     deptId: undefined
                 },
                 sysUser: {
                     id: '',
                     deptId: '',
-                    userName: '',
+                    name: '',
                     sysDeptVo: {},
                     sex: '',
                     phone: '',
@@ -183,7 +183,7 @@
                     sex: [
                         {required: true, message: '请选择性别'}
                     ],
-                    userName: [
+                    name: [
                         {required: true, message: '请输入姓名', trigger: 'blur'}
                     ],
                     phone: [
@@ -238,7 +238,7 @@
             handleSizeChange(val) {
                 this.listQuery.rows = val;
                 this.listQuery.deptId = null;
-                this.listQuery.userName = null;
+                this.listQuery.name = null;
                 console.dir(this.listQuery.page);
                 this.getList();
             },
@@ -360,7 +360,7 @@
                 this.sysUser = {
                     id: '',
                     deptId: '',
-                    userName: '',
+                    name: '',
                     sysDeptVo: {},
                     sex: '',
                     phone: '',

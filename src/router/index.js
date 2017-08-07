@@ -14,17 +14,17 @@ const reset = () => import('../views/login/reset');
 const dashboard = () => import('../views/dashboard/index');
 
 /* org */
-const Dept = () => import('../views/org/dept');
-const User = () => import('../views/org/user');
-const Menu = () => import('../views/org/menu');
-const Role = () => import('../views/org/role');
+const Dept = () => import('../views/sys/org/dept');
+const User = () => import('../views/sys/org/user');
+const Menu = () => import('../views/sys/org/menu');
+const Role = () => import('../views/sys/org/role');
 
 /* system */
-const Holiday = () => import('../views/system/holiday');
-const Log = () => import('../views/system/log');
-const Cache = () => import('../views/system/cache');
-const Dict = () => import('../views/system/dict');
-const MetadataType = () => import('../views/system/metadataType');
+const Holiday = () => import('../views/sys/system/holiday');
+const Log = () => import('../views/sys/system/log');
+const Cache = () => import('../views/sys/system/cache');
+const Dict = () => import('../views/sys/system/dict');
+const MetadataType = () => import('../views/sys/system/metadataType');
 
 /* components */
 const componentsIndex = () => import('../views/components/index');

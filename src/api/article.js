@@ -1,14 +1,14 @@
-import fetch from 'utils/fetch';
+import fetchSys from 'utils/fetchSys';
 
 export function getList() {
-    return fetch({
+    return fetchSys({
         url: '/article/list',
         method: 'get'
     });
 }
 
 export function getArticle() {
-    return fetch({
+    return fetchSys({
         url: '/article/detail',
         method: 'get'
     });

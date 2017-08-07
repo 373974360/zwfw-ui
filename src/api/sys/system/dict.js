@@ -1,7 +1,7 @@
-import fetch from 'utils/fetch';
+import fetchSys from 'utils/fetchSys';
 
 export function getDictIndexList(query) {
-    return fetch({
+    return fetchSys({
         url: '/sysDicIndex/getAll',
         method: 'get',
         params: query
@@ -10,7 +10,7 @@ export function getDictIndexList(query) {
 
 export function updateDictIndex(sysDictIndex) {
     const data = sysDictIndex;
-    return fetch({
+    return fetchSys({
         url: '/sysDicIndex/edit',
         method: 'post',
         data
@@ -19,7 +19,7 @@ export function updateDictIndex(sysDictIndex) {
 
 export function createDictIndex(sysDictIndex) {
     const data = sysDictIndex;
-    return fetch({
+    return fetchSys({
         url: '/sysDicIndex/add',
         method: 'post',
         data
@@ -28,7 +28,7 @@ export function createDictIndex(sysDictIndex) {
 
 export function delDictIndex(ids) {
     const data = {ids};
-    return fetch({
+    return fetchSys({
         url: '/sysDicIndex/dels',
         method: 'post',
         data
@@ -37,7 +37,7 @@ export function delDictIndex(ids) {
 
 
 export function getDictList(query) {
-    return fetch({
+    return fetchSys({
         url: '/sysDic/getAll',
         method: 'get',
         params: query
@@ -46,7 +46,7 @@ export function getDictList(query) {
 
 export function updateDict(sysDict) {
     const data = sysDict;
-    return fetch({
+    return fetchSys({
         url: '/sysDic/edit',
         method: 'post',
         data
@@ -55,7 +55,7 @@ export function updateDict(sysDict) {
 
 export function createDict(sysDict) {
     const data = sysDict;
-    return fetch({
+    return fetchSys({
         url: '/sysDic/add',
         method: 'post',
         data
@@ -64,7 +64,7 @@ export function createDict(sysDict) {
 
 export function delDict(ids) {
     const data = {ids};
-    return fetch({
+    return fetchSys({
         url: '/sysDic/dels',
         method: 'post',
         data

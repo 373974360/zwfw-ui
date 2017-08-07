@@ -1,7 +1,7 @@
-import fetch from 'utils/fetch';
+import fetchSys from 'utils/fetchSys';
 
 export function fetchList(query) {
-  return fetch({
+  return fetchSys({
     url: '/article_table/list',
     method: 'get',
     params: query
@@ -9,7 +9,7 @@ export function fetchList(query) {
 }
 
 export function fetchPv(pv) {
-  return fetch({
+  return fetchSys({
     url: '/article_table/pv',
     method: 'get',
     params: { pv }

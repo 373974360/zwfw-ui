@@ -1,7 +1,7 @@
-import fetch from 'utils/fetch';
+import fetchSys from 'utils/fetchSys';
 
 export function getDeptList(query) {
-    return fetch({
+    return fetchSys({
         url: '/sysDept/list',
         method: 'get',
         params: query
@@ -9,14 +9,14 @@ export function getDeptList(query) {
 }
 
 export function getDeptTree() {
-    return fetch({
+    return fetchSys({
         url: '/sysDept/getTree',
         method: 'get'
     });
 }
 
 export function getDeptCascader(id) {
-    return fetch({
+    return fetchSys({
         url: '/sysDept/getCascader',
         method: 'get',
         params: {id}
@@ -25,7 +25,7 @@ export function getDeptCascader(id) {
 
 export function createDept(sysDeptVo){
     const data = sysDeptVo;
-    return fetch({
+    return fetchSys({
         url: '/sysDept/add',
         method: 'post',
         data
@@ -34,7 +34,7 @@ export function createDept(sysDeptVo){
 
 export function updateDept(sysDeptVo){
     const data = sysDeptVo;
-    return fetch({
+    return fetchSys({
         url: '/sysDept/edit',
         method: 'post',
         data
@@ -42,7 +42,7 @@ export function updateDept(sysDeptVo){
 }
 export function delDept(id) {
     const data = {id};
-    return fetch({
+    return fetchSys({
         url: '/sysDept/del',
         method: 'post',
         data
@@ -51,7 +51,7 @@ export function delDept(id) {
 
 export function deleteDept(id) {
     const data = {id};
-    return fetch({
+    return fetchSys({
         url: '/sysDept/delete',
         method: 'post',
         data

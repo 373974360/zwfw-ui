@@ -1,7 +1,7 @@
-import fetch from 'utils/fetch';
+import fetchSys from 'utils/fetchSys';
 
 export function getUserList(query) {
-    return fetch({
+    return fetchSys({
         url: '/sysUser/list',
         method: 'get',
         params: query
@@ -10,7 +10,7 @@ export function getUserList(query) {
 
 export function createUser(sysUserVo) {
     const data = sysUserVo;
-    return fetch({
+    return fetchSys({
         url: '/sysUser/add',
         method: 'post',
         data
@@ -19,7 +19,7 @@ export function createUser(sysUserVo) {
 
 export function updateUser(sysUserVo) {
     const data = sysUserVo;
-    return fetch({
+    return fetchSys({
         url: '/sysUser/edit',
         method: 'post',
         data
@@ -28,7 +28,7 @@ export function updateUser(sysUserVo) {
 
 export function delUser(ids) {
     const data = {ids};
-    return fetch({
+    return fetchSys({
         url: '/sysUser/dels',
         method: 'post',
         data
@@ -36,7 +36,7 @@ export function delUser(ids) {
 }
 
 export function getDeptNameAndUsers(query) {
-    return fetch({
+    return fetchSys({
         url: '/sysUser/getDeptNameAndUsers',
         mothod: 'get',
         params: query
@@ -44,7 +44,7 @@ export function getDeptNameAndUsers(query) {
 }
 
 export function getAllUser() {
-    return fetch({
+    return fetchSys({
         url: '/sysUser/getAll',
         mothod: 'get'
     });

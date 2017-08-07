@@ -19,8 +19,8 @@
                                  :show-all-levels="true" expand-trigger="hover" :clearable="true"
                                  :change-on-select="true" style="width:100%"></el-cascader>
                 </el-form-item>
-                <el-form-item label="部门全称" prop="deptName">
-                    <el-input v-model="sysDept.deptName"></el-input>
+                <el-form-item label="部门全称" prop="name">
+                    <el-input v-model="sysDept.name"></el-input>
                 </el-form-item>
                 <el-form-item label="部门简称" prop="shortName">
                     <el-input v-model="sysDept.shortName"></el-input>
@@ -50,7 +50,7 @@
 
 <script>
     import TreeGrid from 'components/TreeGrid';
-    import {getDeptTree, getDeptCascader, createDept, updateDept, delDept} from 'api/org/dept';
+    import {getDeptTree, getDeptCascader, createDept, updateDept, delDept} from 'api/sys/org/dept';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import TreeUtil from 'utils/TreeUtil.js';
@@ -68,7 +68,7 @@
                     },
                     {
                         text: '部门名称',
-                        dataIndex: 'deptName',
+                        dataIndex: 'name',
                         editAble: true
                     },
                     {
@@ -86,7 +86,7 @@
                 ],
                 sysDept: {
                     id: undefined,
-                    deptName: '',
+                    name: '',
                     shortName: '',
                     deptCode: '',
                     parentId: 0,
@@ -100,7 +100,7 @@
                 dialogStatus: '',
                 dialogLoading: false,
                 deptRules: {
-                    deptName: [
+                    name: [
                         {required: true, message: '请输入部门名称', trigger: 'blur'}
                     ]
                 }
@@ -220,7 +220,7 @@
             resetTemp() {
                 this.sysDept = {
                     id: undefined,
-                    deptName: '',
+                    name: '',
                     shortName: '',
                     deptCode: '',
                     parentId: 0,

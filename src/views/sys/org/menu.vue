@@ -18,11 +18,11 @@
                                  :change-on-select="true" expand-trigger="hover"  style="width:100%" :disabled="false" :clearable="true"
                                  @change="handleChange"></el-cascader>
                 </el-form-item>
-                <el-form-item label="菜单名称" prop="menuName">
-                    <el-input v-model="sysMenu.menuName"/>
+                <el-form-item label="菜单名称" prop="name">
+                    <el-input v-model="sysMenu.name"/>
                 </el-form-item>
                 <el-form-item label="菜单类型">
-                    <el-select v-model="sysMenu.menuType" placeholder="请选择" style="width:100%">
+                    <el-select v-model="sysMenu.type" placeholder="请选择" style="width:100%">
                         <el-option
                                 v-for="item in enums['MenuType']"
                                 :key="item.code"
@@ -59,7 +59,7 @@
 </template>
 <script>
     import TreeGrid from 'components/TreeGrid'
-    import {getMenuTree, getMenuCascader, createMenu, updateMenu, delMenu} from 'api/org/menu';
+    import {getMenuTree, getMenuCascader, createMenu, updateMenu, delMenu} from 'api/sys/org/menu';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import TreeUtil from 'utils/TreeUtil.js';
@@ -77,12 +77,12 @@
                     },
                     {
                         text: '菜单名称',
-                        dataIndex: 'menuName',
+                        dataIndex: 'name',
                         editAble: true
                     },
                     {
                         text: '菜单类型',
-                        dataIndex: 'menuType',
+                        dataIndex: 'type',
                         enums: 'MenuType'
                     },
                     {
@@ -97,8 +97,8 @@
                 sysMenu: {
                     id: undefined,
                     parentId: 0,
-                    menuName: '',
-                    menuType: 1,
+                    name: '',
+                    type: 1,
                     iconcls: '',
                     treePosition: '',
                     request: '',
@@ -107,7 +107,7 @@
                     remark: ''
                 },
                 sysMenuRules: {
-                    menuName: [
+                    name: [
                         {required: true, message: '请输入菜单名称', trigger: 'blur'}
                     ],
                     request: [
@@ -237,8 +237,8 @@
             resetTemp() {
                 this.sysMenu = {
                     id: undefined,
-                    menuName: '',
-                    menuType: 1,
+                    name: '',
+                    type: 1,
                     iconcls: '',
                     parentId: 0,
                     treePosition: '',
