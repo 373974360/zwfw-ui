@@ -4,7 +4,7 @@
               :data="data"
               :row-style="showTr" v-loading.body="listLoading">
         <el-table-column v-for="(column, index) in columns" :key="column.dataIndex"
-                         :label="column.text">
+                         :label="column.text" :width="column.width">
             <template scope="scope">
                 <span v-if="spaceIconShow(index)" v-for="(space, levelIndex) in scope.row._level"
                       class="ms-tree-space"></span>
@@ -18,14 +18,20 @@
                 <span v-if="column.editAble">
                     <el-tooltip content="点击编辑" placement="right" effect="dark">
                         <span class="link-type" @click="handleUpdate(scope.row)">
-                            <span v-if="column.enums">{{scope.row[column.dataIndex] | enums(column.enums)}}</span>
-                            <span v-else>{{scope.row[column.dataIndex]}}</span>
+                            <el-tag  :type="scope.row[column.dataIndex] | enums(column.enums)| statusFilter" v-if="column.enums">{{scope.row[column.dataIndex] | enums(column.enums)}}</el-tag>
+                            <span v-else>
+                                <span v-if="column.dateformart">{{scope.row[column.dataIndex] | date(column.dateformart)}}</span>
+                                <span v-else>{{scope.row[column.dataIndex]}}</span>
+                            </span>
                         </span>
                     </el-tooltip>
                 </span>
                 <span v-else>
-                    <span v-if="column.enums">{{scope.row[column.dataIndex] | enums(column.enums)}}</span>
-                    <span v-else>{{scope.row[column.dataIndex]}}</span>
+                        <el-tag :type="scope.row[column.dataIndex] | enums(column.enums)| statusFilter" v-if="column.enums">{{scope.row[column.dataIndex] | enums(column.enums)}}</el-tag>
+                    <span v-else>
+                        <span v-if="column.dateformart">{{scope.row[column.dataIndex] | date(column.dateformart)}}</span>
+                        <span v-else>{{scope.row[column.dataIndex]}}</span>
+                    </span>
                 </span>
             </template>
         </el-table-column>

@@ -26,6 +26,11 @@ const Cache = () => import('../views/sys/system/cache');
 const Dict = () => import('../views/sys/system/dict');
 const MetadataType = () => import('../views/sys/system/metadataType');
 
+/* operate */
+const ItemCategory = () => import('../views/sys/operate/itemCategory');
+const Window = () => import('../views/sys/operate/window');
+
+
 /* components */
 const componentsIndex = () => import('../views/components/index');
 const Tinymce = () => import('../views/components/tinymce');
@@ -128,6 +133,17 @@ export const asyncRouterMap = [
             {path: 'log', component: Log, name: '日志管理'},
             {path: 'dict', component: Dict, name: '数据字典'},
             {path: 'metadataType', component: MetadataType, name: '元数据类型'}
+        ]
+    },
+    {
+        path: '/operate',
+        component: Layout,
+        redirect: 'noredirect',
+        name: '业务管理',
+        icon: 'yewu',
+        children: [
+            {path: 'itemCategory', component: ItemCategory, name: '事项分类管理'},
+            {path: 'window', component: Window, name: '窗口管理'}
         ]
     },
     {

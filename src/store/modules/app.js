@@ -10,8 +10,8 @@ const app = {
             create: '创建',
             update: '编辑',
             view: '查看',
-            roleMenu: '关联权限',
-            roleUser: '关联用户'
+            associateMenu: '关联权限',
+            associateUser: '关联用户'
         },
         sidebar: {
             opened: !+Cookies.get('sidebarStatus')

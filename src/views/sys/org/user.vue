@@ -5,11 +5,15 @@
                       v-model="listQuery.userName"></el-input>
             <el-cascader :options="cascader" class="filter-item" @change="handleChange"
                          :show-all-levels="true" clearable filterable expand-trigger="hover"
-                         :change-on-select="true" style="width: 180px" placeholder="选择部门" >
+                         :change-on-select="true" style="width: 180px" placeholder="选择部门">
             </el-cascader>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">添加</el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleDelete" type="danger" icon="delete">删除</el-button>
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">
+                添加
+            </el-button>
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleDelete" type="danger" icon="delete">
+                删除
+            </el-button>
         </div>
 
         <el-table ref="userTable" :data="list" v-loading.body="listLoading" border fit highlight-current-row
@@ -71,7 +75,8 @@
                 <el-form-item label="部门" prop="deptId">
                     <el-cascader :options="cascader" class="filter-item" @change="handleChanges" v-model="updateModel"
                                  :show-all-levels="true"
-                                 :change-on-select="true" expand-trigger="hover" :clearable="true" style="width: 180px" placeholder="选择部门"
+                                 :change-on-select="true" expand-trigger="hover" :clearable="true" style="width: 180px"
+                                 placeholder="选择部门"
                     ></el-cascader>
                 </el-form-item>
                 <el-form-item label="姓名" prop="name">
@@ -132,6 +137,7 @@
     import {getUserList, updateUser, createUser, delUser} from 'api/sys/org/user';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
+    import {delWindowUser} from 'api/sys/operate/window';
 
     export default {
         name: 'table_demo',
@@ -310,10 +316,12 @@
                             ids.push(deleteRow.id);
                         }
                         delUser(ids).then(response => {
-                            this.listLoading = false;
-                            this.total -= selectCounts;
-                            this.$message.success('删除成功');
-                            this.getList();
+                            delWindowUser(ids).then(response => {
+                                this.listLoading = false;
+                                this.total -= selectCounts;
+                                this.$message.success('删除成功');
+                                this.getList();
+                            })
                         })
                         for (const deleteRow of this.selectedRows) {
                             const index = this.list.indexOf(deleteRow);
