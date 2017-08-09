@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie';
-import {getEnums} from 'api/common';
+import {getEnums,getDicts} from 'api/common';
 
 const app = {
     state: {
@@ -17,6 +17,7 @@ const app = {
             opened: !+Cookies.get('sidebarStatus')
         },
         enums: [],
+        dicts: [],
         theme: 'default',
         livenewsChannels: Cookies.get('livenewsChannels') || '[]'
     },
@@ -32,6 +33,9 @@ const app = {
         SET_ENUMS: (state, enums) => {
             state.enums = enums;
         },
+        SET_DICTS: (state, dicts) => {
+            state.dicts = dicts;
+        },
     },
     actions: {
         ToggleSideBar: ({commit}) => {
@@ -46,10 +50,31 @@ const app = {
                     } else {
                         let enums = {};
                         let result = response.data;
+                        console.log(result);
                         for(let obj of result){
                             enums[obj.name] = obj.value;
                         }
                         commit('SET_ENUMS', enums);
+                    }
+                }).catch(error => {
+                    reject(error);
+                });
+            });
+        },
+        // 获取后台字典项目json数据
+        SetDicts({commit}) {
+            return new Promise((resolve, reject) => {
+                getDicts().then(response => {
+                    if (response.httpCode !== 200) {
+                        reject(response.msg);
+                    } else {
+                        let dicts = {};
+                        let result = response.data;
+                        console.log(result);
+                        for(let obj of result){
+                            dicts[obj.name] = obj.value;
+                        }
+                        commit('SET_DICTS', dicts);
                     }
                 }).catch(error => {
                     reject(error);

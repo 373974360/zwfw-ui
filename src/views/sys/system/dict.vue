@@ -60,7 +60,8 @@
                     <el-input v-model="sysDictIndex.name"/>
                 </el-form-item>
                 <el-form-item label="索引" prop="key">
-                    <el-input v-model="sysDictIndex.key"/>
+                    <span v-if="dialogDictIndexStatus == 'update'"><el-input v-model="sysDictIndex.key" disabled="disabled"/></span>
+                    <span v-else><el-input v-model="sysDictIndex.key"/></span>
                 </el-form-item>
                 <el-form-item label="备注">
                     <el-input type="textarea" v-model="sysDictIndex.remark" :rows="3"/>
@@ -121,7 +122,8 @@
                      label-width="80px"
                      style='width: 80%; margin-left:10%;' :rules="sysDictRules">
                 <el-form-item label="英文代码" prop="code">
-                    <el-input v-model="sysDict.code"/>
+                    <span v-if="dialogDictFormStatus=='update'"><el-input v-model="sysDict.code" disabled="disabled"/></span>
+                    <span v-else><el-input v-model="sysDict.code"/></span>
                 </el-form-item>
                 <el-form-item label="子项名称" prop="codeText">
                     <el-input v-model="sysDict.codeText"/>
@@ -175,7 +177,6 @@
                 dictlist: null,
                 indexId: '',
                 listDictLoading: true,
-                currentDictRow: [],
                 listDictQuery: {
                     indexId: ''
                 },
@@ -243,8 +244,12 @@
                         this.dialogDictIndexVisible = false;
                         this.listDictIndexLoading = true;
                         createDictIndex(this.sysDictIndex).then(response => {
-                            this.dictIndexlist.unshift(response.data);
-                            this.$message.success('更新成功');
+                            if (response.httpCode == 200){
+                                this.dictIndexlist.unshift(response.data);
+                                this.$message.success('更新成功');
+                            } else {
+                                this.$message.error(response.msg);
+                            }
                             this.listDictIndexLoading = false;
                         })
                     } else {
@@ -258,8 +263,12 @@
                         this.dialogDictIndexVisible = false;
                         this.listDictIndexLoading = true;
                         updateDictIndex(this.sysDictIndex).then(response => {
-                            copyProperties(this.currentRow, response.data);
-                            this.$message.success('更新成功');
+                            if (response.httpCode == 200){
+                                copyProperties(this.currentRow, response.data);
+                                this.$message.success('更新成功');
+                            } else {
+                                this.$message.error(response.msg);
+                            }
                             this.listDictIndexLoading = false;
                         })
                     } else {
@@ -332,8 +341,12 @@
                         this.dialogDictFormVisible = false;
                         this.listDictLoading = true;
                         createDict(this.sysDict).then(response => {
-                            this.dictlist.unshift(response.data);
-                            this.$message.success('更新成功');
+                            if (response.httpCode == 200){
+                                this.dictlist.unshift(response.data);
+                                this.$message.success('更新成功');
+                            } else {
+                                this.$message.error(response.msg);
+                            }
                             this.listDictLoading = false;
                         })
                     } else {
@@ -342,7 +355,7 @@
                 })
             },
             handleDictUpdate(row) {
-                this.currentDictRow = row;
+                this.currentRow = row;
                 this.resetDictTemp();
                 this.sysDict = copyProperties(this.sysDict, row);
                 this.dialogDictFormStatus = 'update';
@@ -354,8 +367,12 @@
                         this.dialogDictFormVisible = false;
                         this.listDictLoading = true;
                         updateDict(this.sysDict).then(response => {
-                            copyProperties(this.currentDictRow, response.data);
-                            this.$message.success('更新成功');
+                            if (response.httpCode == 200){
+                                copyProperties(this.currentRow, response.data);
+                                this.$message.success('更新成功');
+                            } else {
+                                this.$message.error(response.msg);
+                            }
                             this.listDictLoading = false;
                         })
                     } else {

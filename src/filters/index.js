@@ -25,3 +25,11 @@ export function enums(value, type) {
     });
     return result[0].value || value;
 }
+
+export function dicts(value, type) {
+    var array = app.state.dicts[type];
+    var result = array.filter(function(item){
+        return item.code === value;
+    });
+    return result[0].value || value;
+}

@@ -1,6 +1,7 @@
 const getters = {
     sidebar: state => state.app.sidebar,
     enums: state => state.app.enums,
+    dicts: state => state.app.dicts,
     textMap: state => state.app.textMap,
     token: state => state.user.token,
     avatar: state => state.user.avatar,

@@ -50,6 +50,10 @@ router.beforeEach((to, from, next) => {
                 store.dispatch('SetEnums');
                 next();
             }
+            if(store.getters.dicts.length === 0){
+                store.dispatch('SetDicts');
+                next();
+            }
             if (store.getters.permissions.length === 0) { // 判断当前用户是否已拉取完user_info信息
                 store.dispatch('GetInfo').then(res => { // 拉取user_info
                     const permissions = res.data.permissions;

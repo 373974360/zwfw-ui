@@ -5,4 +5,9 @@ export function getEnums() {
         url: '/base/enums',
         method: 'get'
     });
+}export function getDicts() {
+    return fetchSys({
+        url: '/base/dicts',
+        method: 'get'
+    });
 }

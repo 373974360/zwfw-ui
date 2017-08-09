@@ -44,6 +44,9 @@ const SplitPane = () => import('../views/components/splitpane');
 const CountTo = () => import('../views/components/countTo');
 const Mixin = () => import('../views/components/mixin');
 
+/* Personal */
+const MemberPersonal = () => import('../views/job/member/personal');
+const MemberOrgan = () => import('../views/job/member/organ');
 
 /* charts */
 const chartIndex = () => import('../views/charts/index');
@@ -108,6 +111,17 @@ export default new Router({
 });
 
 export const asyncRouterMap = [
+    {
+        path: '/member',
+        component: Layout,
+        redirect: 'noredirect',
+        name: '会员管理',
+        icon: 'huiyuan',
+        children: [
+            {path: 'personal', component: MemberPersonal, name: '个人会员管理'},
+            {path: 'organ', component: MemberOrgan, name: '企业会员管理'}
+        ]
+    },
     {
         path: '/org',
         component: Layout,
