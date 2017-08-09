@@ -83,7 +83,8 @@
                     {
                         text: '菜单类型',
                         dataIndex: 'type',
-                        enums: 'MenuType'
+                        enums: 'MenuType',
+                        width: '170'
                     },
                     {
                         text: '请求地址',
