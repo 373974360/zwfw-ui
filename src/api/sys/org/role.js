@@ -29,7 +29,7 @@ export function updateRole(sysRoleVo) {
 export function delRole(ids) {
     const data = {ids};
     return fetchSys({
-        url: '/sysRole/del',
+        url: '/sysRole/dels',
         method: 'post',
         data
     })
