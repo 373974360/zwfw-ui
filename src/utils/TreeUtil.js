@@ -42,10 +42,12 @@ TreeUtil.addRow = function (data, treeData) {
     if (data.parentId != 0) {
         const parent = TreeUtil.getRowById(data.parentId, treeData);
         Vue.set(data, '_parent', parent);
-        if (parent.children) {
-            parent.children.push(data);
-        } else {
-            parent.children = [data];
+        if(parent){
+            if (parent.children) {
+                parent.children.push(data);
+            } else {
+                parent.children = [data];
+            }
         }
     } else {
         treeData.push(data);
