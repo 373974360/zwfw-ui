@@ -2,7 +2,7 @@
     <div class="app-container calendar-list-container">
         <div class="filter-container">
             <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="姓名"
-                      v-model="listQuery.userName"></el-input>
+                      v-model="listQuery.name"></el-input>
             <el-cascader :options="cascader" class="filter-item" @change="handleChange"
                          :show-all-levels="true" clearable filterable expand-trigger="hover"
                          :change-on-select="true" style="width: 180px" placeholder="选择部门">
@@ -298,10 +298,8 @@
                     this.listLoading = false;
                 })
             },
-            resetForm(userForm1) {
-                this.$refs[userForm1].resetFields();
-            },
             handleDelete() {
+                this.listLoading = true;
                 var selectCounts = this.selectedRows.length;
                 if (this.selectedRows == 0) {
                     this.$message.warning('请选择需要操作的记录');
