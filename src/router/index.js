@@ -154,7 +154,7 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: 'noredirect',
         name: '业务管理',
-        icon: 'yewu',
+        icon: 'yewuguanli',
         children: [
             {path: 'itemCategory', component: ItemCategory, name: '事项分类管理'},
             {path: 'window', component: Window, name: '窗口管理'}
