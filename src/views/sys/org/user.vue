@@ -102,10 +102,10 @@
                     <el-input v-model="sysUser.account"/>
                 </el-form-item>
                 <el-form-item label="密码" prop="password">
-                    <el-input v-model="sysUser.password" type="password"/>
+                    <el-input v-model="sysUser.password" type="password" placeholder="修改密码时填入新密码，若不需要则无需输入"/>
                 </el-form-item>
                 <el-form-item label="确认密码" prop="passwordConfirm">
-                    <el-input v-model="sysUser.passwordConfirm" type="password"/>
+                    <el-input v-model="sysUser.passwordConfirm" type="password" placeholder="修改密码时填入新密码，若不需要则无需输入"/>
                 </el-form-item>
                 <el-form-item label="状态" prop="enable">
                     <el-radio-group v-model="sysUser.enable">
@@ -154,12 +154,16 @@
                 }
             };
             const validatePass2 = (rule, value, callback) => {
-                if (value === '') {
-                    callback(new Error('请再次输入密码'));
-                } else if (value !== this.sysUser.password) {
-                    callback(new Error('两次输入密码不一致!'));
-                } else {
+                if (this.sysUser.password === '') {
                     callback();
+                } else {
+                    if (value === '') {
+                        callback(new Error('请再次输入密码'));
+                    } else if (value !== this.sysUser.password) {
+                        callback(new Error('两次输入密码不一致!'));
+                    } else {
+                        callback();
+                    }
                 }
             };
             return {
@@ -173,7 +177,7 @@
                     deptId: undefined
                 },
                 sysUser: {
-                    id: '',
+                    id: undefined,
                     deptId: '',
                     name: '',
                     sysDeptVo: {},
@@ -188,22 +192,19 @@
                 },
                 sysUserRules1: {
                     deptId: [
-                        {required: false, message: '请选择部门'}
-                    ],
-                    sex: [
-                        {required: true, message: '请选择性别'}
+                        {required: true, message: '请选择部门'}
                     ],
                     name: [
                         {required: true, message: '请输入姓名', trigger: 'blur'}
                     ],
                     phone: [
-                        {required: true, validator: validatMobiles}
+                        {required: true, validator: validatMobiles, trigger: 'blur'}
                     ],
                     avatar: [
                         {type: 'url', required: true, message: '头像地址不正确', trigger: 'blur'}
                     ],
                     account: [
-                        {type: 'email', required: true, message: '请输入合法的邮箱'}
+                        {type: 'email', required: true, message: '请输入合法的邮箱', trigger: 'blur'}
                     ],
                     password: [
                         {required: true, message: '请输入密码', trigger: 'blur'},
@@ -283,6 +284,8 @@
                 this.currentRow = row;
                 this.resetTemp();
                 this.sysUser.deptId = row.id;
+                this.sysUserRules1.password[0].required = true;
+                this.sysUserRules1.passwordConfirm[0].required = true;
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
             },
@@ -291,6 +294,8 @@
                 this.resetTemp();
                 this.sysUser = copyProperties(this.sysUser, row);
                 this.sysUser.password = '';
+                this.sysUserRules1.password[0].required = false;
+                this.sysUserRules1.passwordConfirm[0].required = false;
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
@@ -339,7 +344,6 @@
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
-                        console.log(this.sysUser);
                         createUser(this.sysUser).then(response => {
                             this.list.unshift(response.data);
                             this.total += 1;
@@ -369,7 +373,7 @@
             },
             resetTemp() {
                 this.sysUser = {
-                    id: '',
+                    id: undefined,
                     deptId: '',
                     name: '',
                     sysDeptVo: {},
