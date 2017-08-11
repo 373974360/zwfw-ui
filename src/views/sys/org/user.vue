@@ -83,13 +83,14 @@
                     <el-input v-model="sysUser.name"/>
                 </el-form-item>
                 <el-form-item label="性别" prop="sex">
-                    <el-select v-model="sysUser.sex" placeholder="请选择" style="width:100%">
-                        <el-option
-                                v-for="item in enums['Gender']"
-                                :key="item.code"
-                                :label="item.value"
-                                :value="item.code"/>
-                    </el-select>
+                    <el-radio-group v-model="sysUser.sex">
+                        <el-radio v-for="item in enums['Gender']"
+                                  :key="item.code"
+                                  :label="item.code"
+                                  :value="item.code">
+                            <span style="font-weight:normal;">{{item.value}}</span>
+                        </el-radio>
+                    </el-radio-group>
                 </el-form-item>
                 <el-form-item label="电话" prop="phone">
                     <el-input v-model="sysUser.phone"/>
@@ -107,13 +108,14 @@
                     <el-input v-model="sysUser.passwordConfirm" type="password"/>
                 </el-form-item>
                 <el-form-item label="状态" prop="enable">
-                    <el-select v-model="sysUser.enable" placeholder="请选择" style="width:100%">
-                        <el-option
-                                v-for="item in enums['Enable']"
-                                :key="item.code"
-                                :label="item.value"
-                                :value="item.code"/>
-                    </el-select>
+                    <el-radio-group v-model="sysUser.enable">
+                        <el-radio v-for="item in enums['Enable']"
+                                  :key="item.code"
+                                  :label="item.code"
+                                  :value="item.code">
+                            <span style="font-weight:normal;">{{item.value}}</span>
+                        </el-radio>
+                    </el-radio-group>
                 </el-form-item>
                 <el-form-item label="备注">
                     <el-input type="textarea" v-model="sysUser.remark" :rows="3"/>
@@ -138,8 +140,10 @@
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import {delWindowUser} from 'api/sys/operate/window';
+    import ElRadio from "../../../../node_modules/element-ui/packages/radio/src/radio";
 
     export default {
+        components: {ElRadio},
         name: 'table_demo',
         data() {
             const validatMobiles = (rule, value, callback) => {
@@ -335,6 +339,7 @@
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
+                        console.log(this.sysUser);
                         createUser(this.sysUser).then(response => {
                             this.list.unshift(response.data);
                             this.total += 1;

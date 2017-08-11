@@ -22,13 +22,14 @@
                     <el-input v-model="sysMenu.name"/>
                 </el-form-item>
                 <el-form-item label="菜单类型">
-                    <el-select v-model="sysMenu.type" placeholder="请选择" style="width:100%">
-                        <el-option
-                                v-for="item in enums['MenuType']"
-                                :key="item.code"
-                                :label="item.value"
-                                :value="item.code"/>
-                    </el-select>
+                    <el-radio-group v-model="sysMenu.type">
+                        <el-radio  v-for="item in enums['MenuType']"
+                                   :key="item.code"
+                                   :label="item.code"
+                                   :value="item.code">
+                            <span style="font-weight:normal;">{{item.value}}</span>
+                        </el-radio>
+                    </el-radio-group>
                 </el-form-item>
                 <el-form-item label="菜单图标"  prop="iconcls">
                     <el-input v-model="sysMenu.iconcls"/>

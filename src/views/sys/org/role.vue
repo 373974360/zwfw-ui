@@ -68,13 +68,14 @@
                     <el-input v-model="sysRole.name"/>
                 </el-form-item>
                 <el-form-item label="角色类型" prop="enable">
-                    <el-select v-model="sysRole.type" placeholder="请选择" style="width:100%">
-                        <el-option
-                                v-for="item in enums['RoleType']"
-                                :key="item.code"
-                                :label="item.value"
-                                :value="item.code"/>
-                    </el-select>
+                    <el-radio-group v-model="sysRole.type">
+                        <el-radio  v-for="item in enums['RoleType']"
+                                   :key="item.code"
+                                   :label="item.code"
+                                   :value="item.code">
+                            <span style="font-weight:normal;">{{item.value}}</span>
+                        </el-radio>
+                    </el-radio-group>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
