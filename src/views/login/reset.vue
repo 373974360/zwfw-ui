@@ -26,7 +26,7 @@
                 <el-input name="checkPass" :type="passwordType"
                           v-model="resetForm.checkPass"
                           placeholder="确认密码"></el-input>
-                <i @click="togglePasswordType" class="el-icon-information"></i>
+                <span class="svg-container"  @click="togglePasswordType"><wscn-icon-svg icon-class="yanjing"/></span>
             </el-form-item>
 
             <el-form-item style="width:100%;">
@@ -155,10 +155,10 @@
             margin-top: 5px;
         }
 
-        .el-icon-information {
+        .svg-container {
             position: absolute;
             right: -18px;
-            top: 10px;
+            top: 3px;
         }
 
         .reset-form {
