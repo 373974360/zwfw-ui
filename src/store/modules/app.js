@@ -50,7 +50,6 @@ const app = {
                     } else {
                         let enums = {};
                         let result = response.data;
-                        console.log(result);
                         for(let obj of result){
                             enums[obj.name] = obj.value;
                         }
@@ -70,7 +69,6 @@ const app = {
                     } else {
                         let dicts = {};
                         let result = response.data;
-                        console.log(result);
                         for(let obj of result){
                             dicts[obj.name] = obj.value;
                         }

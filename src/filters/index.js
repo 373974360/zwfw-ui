@@ -25,7 +25,11 @@ export function enums(value, type) {
     var result = array.filter(function (item) {
         return item.code === value;
     });
-    return result[0].value || value;
+    if(result[0]){
+        return result[0].value || value;
+    }else{
+        return '';
+    }
 }
 
 export function dicts(value, type) {
@@ -33,5 +37,9 @@ export function dicts(value, type) {
     var result = array.filter(function(item){
         return item.code === value;
     });
-    return result[0].value || value;
+    if(result[0]){
+        return result[0].value || value;
+    }else{
+        return '';
+    }
 }

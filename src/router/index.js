@@ -44,9 +44,14 @@ const SplitPane = () => import('../views/components/splitpane');
 const CountTo = () => import('../views/components/countTo');
 const Mixin = () => import('../views/components/mixin');
 
-/* Personal */
+/* Member */
 const MemberPersonal = () => import('../views/job/member/personal');
 const MemberOrgan = () => import('../views/job/member/organ');
+
+/* 分类信息 */
+const Zyfl = () => import('../views/job/flxx/zyfl');
+const Hyfl = () => import('../views/job/flxx/hyfl');
+const Znfl = () => import('../views/job/flxx/znfl');
 
 /* charts */
 const chartIndex = () => import('../views/charts/index');
@@ -120,6 +125,18 @@ export const asyncRouterMap = [
         children: [
             {path: 'personal', component: MemberPersonal, name: '个人会员管理'},
             {path: 'organ', component: MemberOrgan, name: '企业会员管理'}
+        ]
+    },
+    {
+        path: '/flxx',
+        component: Layout,
+        redirect: 'noredirect',
+        name: '分类设置',
+        icon: 'fenlei',
+        children: [
+            {path: 'zyfl', component: Zyfl, name: '专业分类'},
+            {path: 'hyfl', component: Hyfl, name: '行业分类'},
+            {path: 'znfl', component: Znfl, name: '职能分类'}
         ]
     },
     {
