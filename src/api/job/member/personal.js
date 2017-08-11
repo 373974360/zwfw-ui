@@ -8,6 +8,15 @@ export function getPersonalList(query) {
     });
 }
 
+export function delMember(ids) {
+    const data = {ids};
+    return fetchJob({
+        url: '/jobMember/dels',
+        method: 'post',
+        data
+    })
+}
+
 
 
 

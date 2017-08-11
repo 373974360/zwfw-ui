@@ -219,7 +219,11 @@
             getDictIndexList() {
                 this.listDictIndexLoading = true;
                 getDictIndexList(this.listDictIndexQuery).then(response => {
-                    this.dictIndexlist = response.data;
+                    if (response.httpCode == 200) {
+                        this.dictIndexlist = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.listDictIndexLoading = false;
                 })
             },
@@ -326,7 +330,11 @@
             getDictList() {
                 this.listDictLoading = true;
                 getDictList(this.listDictQuery).then(response => {
-                    this.dictlist = response.data;
+                    if (response.httpCode == 200) {
+                        this.dictlist = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.listDictLoading = false;
                 })
             },
