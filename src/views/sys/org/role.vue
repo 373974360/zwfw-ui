@@ -2,7 +2,7 @@
     <div class="app-container calendar-list-container">
         <div class="filter-container">
             <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="角色名称"
-                      v-model="listQuery.roleName" no-match-text="没有找到哦">
+                      v-model="listQuery.name" no-match-text="没有找到哦">
             </el-input>
 
             <el-button style="margin-left: 10px;" class="filter-item" type="primary" v-waves icon="search"

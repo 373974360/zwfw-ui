@@ -5,7 +5,7 @@
                       v-model="listQuery.notes">
             </el-input>
             <el-select v-model="listQuery.userIds" class="filter-item" multiple filterable placeholder="请求用户">
-                <el-option :key="item.id" v-for="item in userList" :label="item.userName" :value="item.id"/>
+                <el-option :key="item.id" v-for="item in userList" :label="item.name" :value="item.id"/>
             </el-select>
             <el-date-picker style="top: -5px;" v-model="listQuery.selectDateTime" type="datetimerange"
                             placeholder="选择时间范围" format="yyyy-MM-dd HH:mm:ss" @change="changeDate">
