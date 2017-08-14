@@ -18,4 +18,12 @@ export function delMember(ids) {
     })
 }
 
+export function getMember(query) {
+    return fetchJob({
+        url: '/jobOrgan/get',
+        method: 'get',
+        params: query
+    });
+}
+
 

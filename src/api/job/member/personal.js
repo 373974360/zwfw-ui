@@ -15,6 +15,54 @@ export function delMember(ids) {
         method: 'post',
         data
     })
+}getPersonalQzyx
+
+export function getPersonal(query) {
+    return fetchJob({
+        url: '/jobPersonal/get',
+        method: 'get',
+        params: query
+    });
+}
+
+export function getPersonalQzyx(query) {
+    return fetchJob({
+        url: '/jobPersonalQzyx/get',
+        method: 'get',
+        params: query
+    });
+}
+
+export function getPersonalGzjl(query) {
+    return fetchJob({
+        url: '/jobPersonalGzjl/getAll',
+        method: 'get',
+        params: query
+    });
+}
+
+export function getPersonalItem(query) {
+    return fetchJob({
+        url: '/jobPersonalItem/getAll',
+        method: 'get',
+        params: query
+    });
+}
+
+export function getPersonalJyjl(query) {
+    return fetchJob({
+        url: '/jobPersonalJyjl/getAll',
+        method: 'get',
+        params: query
+    });
+}
+
+export function getPersonalZs(query) {
+    return fetchJob({
+        url: '/jobPersonalZs/getAll',
+        method: 'get',
+        params: query
+    });
 }
 
 
