@@ -17,13 +17,6 @@
                         :label="item.value"
                         :value="item.code"/>
             </el-select>
-            <el-select v-model="listQuery.status" placeholder="帐号状态" class="filter-item" style="width: 180px">
-                <el-option
-                        v-for="item in enums['Enable']"
-                        :key="item.code"
-                        :label="item.value"
-                        :value="item.code"/>
-            </el-select>
             <el-select v-model="listQuery.zzmm" placeholder="政治面貌" class="filter-item" style="width: 180px">
                 <el-option
                         v-for="item in dicts['zzmm']"
@@ -45,19 +38,14 @@
         <el-table :data="list" v-loading.body="listLoading" border fit style="width: 100%"
                   @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"/>
-            <el-table-column align="center" label="序号" width="165">
-                <template scope="scope">
-                    <nobr>{{scope.row.id}}</nobr>
-                </template>
-            </el-table-column>
             <el-table-column align="center" label="联系电话" width="125">
                 <template scope="scope">
-                    <nobr class="link-type" @click="handleView">{{scope.row.phone}}</nobr>
+                    <nobr>{{scope.row.phone}}</nobr>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="电子邮箱" width="170">
                 <template scope="scope">
-                    <nobr>{{scope.row.email}}</nobr>
+                    <nobr class="link-type" @click="handleView(scope.row)">{{scope.row.email}}</nobr>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="注册时间" width="180">
@@ -70,7 +58,7 @@
                     <nobr>{{scope.row.username}}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="性别" width="80">
+            <el-table-column align="center" label="性别" width="70">
                 <template scope="scope">
                     <nobr>{{scope.row.sex | enums('Gender')}}</nobr>
                 </template>
@@ -85,19 +73,29 @@
                     <nobr>{{scope.row.hyzk | dicts('hyzk') }}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="求职状态" width="150">
+            <el-table-column align="center" label="政治面貌" width="150">
+                <template scope="scope">
+                    <nobr>{{scope.row.zzmm | dicts('zzmm') }}</nobr>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="工作年份" width="100">
+                <template scope="scope">
+                    <nobr>{{scope.row.ksgznf}}</nobr>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="求职状态" width="140">
                 <template scope="scope">
                     <nobr>{{scope.row.qzzt | dicts('qzzt')}}</nobr>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="帐号状态" width="100">
                 <template scope="scope">
-                    <el-tag :type="scope.row.status | enums('Enable') | statusFilter">
-                        {{scope.row.status | enums('Enable')}}
+                    <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
+                        {{scope.row.enable | enums('Enable')}}
                     </el-tag>
                 </template>
             </el-table-column>
-            <el-table-column align="left" label="家庭住址" width="359">
+            <el-table-column align="left" label="家庭住址" width="294">
                 <template scope="scope">
                     <nobr>{{scope.row.jtzz}}</nobr>
                 </template>
@@ -110,27 +108,200 @@
             </el-pagination>
         </div>
 
-        <!-- 会员添加弹出框  开始 -->
+        <!-- 会员查看弹出框  开始 -->
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogVisible">
             <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
                 <el-tab-pane label="基本信息" name="member">
-                    基本信息
+                    <table class="member_view" width="100%">
+                        <tr>
+                            <th>姓　　名:</th>
+                            <td>{{member.username}}</td>
+                            <th>联系电话:</th>
+                            <td>{{member.phone}}</td>
+                            <th>电子邮箱:</th>
+                            <td>{{member.email}}</td>
+                        </tr>
+                        <tr>
+                            <th>出生日期:</th>
+                            <td>{{member.csrq}}</td>
+                            <th>工作年份:</th>
+                            <td>{{member.ksgznf}}</td>
+                            <th>户口/国籍:</th>
+                            <td>{{member.hkgj}}</td>
+                        </tr>
+                        <tr>
+                            <th>婚姻状况:</th>
+                            <td>{{member.hyzk | dicts('hyzk')}}</td>
+                            <th>求职状态:</th>
+                            <td>{{member.qzzt | dicts('qzzt')}}</td>
+                            <th>政治面貌:</th>
+                            <td>{{member.zzmm | dicts('zzmm')}}</td>
+                        </tr>
+                        <tr>
+                            <th>证件类型:</th>
+                            <td>{{member.zjlx | dicts('zjlx')}}</td>
+                            <th>证件号码:</th>
+                            <td>{{member.zjhm}}</td>
+                            <th>{{member.qtlxfslx | dicts('lxfs')}}:</th>
+                            <td>{{member.qtlxfs }}</td>
+                        </tr>
+                        <tr>
+                            <th>身　　高:</th>
+                            <td>{{member.sg}}</td>
+                            <th>邮　　编:</th>
+                            <td>{{member.yb}}</td>
+                            <th>目前收入:</th>
+                            <td>{{member.mqnsr | dicts('xzfw')}}</td>
+                        </tr>
+                        <tr>
+                            <th>个人主页:</th>
+                            <td colspan="5">{{member.grzy}}</td>
+                        </tr>
+                        <tr>
+                            <th>目前住址:</th>
+                            <td colspan="5">{{member.jzd}}</td>
+                        </tr>
+                        <tr>
+                            <th>家庭住址:</th>
+                            <td colspan="5">{{member.jtzz}}</td>
+                        </tr>
+                    </table>
                 </el-tab-pane>
-                <el-tab-pane label="详细信息" name="personal">
-                    详细信息
+                <el-tab-pane label="求职意向" name="qzyx">
+                    <table class="member_view" width="100%">
+                        <tr>
+                            <th>期望薪资:</th>
+                            <td>{{qzyx.qwxz | dicts('xzfw')}}</td>
+                            <th>工作地点:</th>
+                            <td>{{qzyx.gzdd}}</td>
+                            <th>职　　能:</th>
+                            <td>{{qzyx.znName}}</td>
+                        </tr>
+                        <tr>
+                            <th>行　　业:</th>
+                            <td>{{qzyx.hyName}}</td>
+                            <th>个人标签:</th>
+                            <td>{{qzyx.grbq}}</td>
+                            <th>到岗时间:</th>
+                            <td>{{qzyx.dgsj | dicts('dgsj')}}</td>
+                        </tr>
+                        <tr>
+                            <th>工作类型:</th>
+                            <td colspan="5">{{qzyx.gzlx | dicts('gzxz')}}</td>
+                        </tr>
+                        <tr>
+                            <th>自我评价:</th>
+                            <td colspan="5">{{qzyx.zwpj}}</td>
+                        </tr>
+                    </table>
                 </el-tab-pane>
-                <el-tab-pane label="求职意向" name="qzyx">求职意向</el-tab-pane>
-                <el-tab-pane label="工作经历" name="gzjl">工作经历</el-tab-pane>
-                <el-tab-pane label="项目经验" name="xmjy">项目经验</el-tab-pane>
-                <el-tab-pane label="教育经历" name="jyjl">教育经历</el-tab-pane>
-                <el-tab-pane label="荣誉证书" name="ryzs">荣誉证书</el-tab-pane>
+                <el-tab-pane label="工作经历" name="gzjl">
+                    <table v-for="gzjl in gzjlList" class="member_view" style="width: 100%" >
+                        <tr>
+                            <th>公司名称:</th>
+                            <td>
+                                <nobr>{{gzjl.gsmc}}　{{gzjl.ksrq}} 至 {{gzjl.jsrq}}　［{{gzjl.gsgm | dicts('gsgm')}}］</nobr>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>任职部门:</th>
+                            <td>
+                                <nobr>{{gzjl.rzbm}}　｜　{{gzjl.znName}}　｜　{{gzjl.zw}}</nobr>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>公司性质:</th>
+                            <td>
+                                <nobr>{{gzjl.gsxz | dicts('gsxz')}}　｜　{{gzjl.gzlx |  dicts('gzxz')}}</nobr>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>责任描述:</th>
+                            <td>
+                                <nobr>{{gzjl.zrms}}</nobr>
+                            </td>
+                        </tr>
+                    </table>
+                </el-tab-pane>
+                <el-tab-pane label="项目经验" name="xmjy">
+                    <table v-for="xmjy in xmjyList" class="member_view" style="width: 100%" >
+                        <tr>
+                            <th>项目名称:</th>
+                            <td>
+                                <nobr>{{xmjy.xmmc}}　{{xmjy.kssj}} 至 {{xmjy.jssj}}</nobr>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>责任描述:</th>
+                            <td>
+                                <nobr>{{xmjy.zrms}}</nobr>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>项目描述:</th>
+                            <td>
+                                <nobr>{{xmjy.xmms}}</nobr>
+                            </td>
+                        </tr>
+                    </table>
+                </el-tab-pane>
+                <el-tab-pane label="教育经历" name="jyjl">
+                    <table v-for="jyjl in jyjlList" class="member_view" style="width: 100%" >
+                        <tr>
+                            <th>学校名称:</th>
+                            <td>
+                                <nobr>{{jyjl.xxmc}}　 | 　{{jyjl.xlxw | dicts('xueli')}}　 | 　{{jyjl.zyName}}</nobr>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>起止日期:</th>
+                            <td>
+                                <nobr>
+                                    {{jyjl.ksrq}} 至 {{jyjl.jsrq}}　 | 　
+                                    <span v-if="jyjl.sfqrz==1">全日制</span>
+                                    <span v-else>非全日制</span>
+                                </nobr>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>专业描述:</th>
+                            <td>
+                                <nobr>{{jyjl.zyms}}</nobr>
+                            </td>
+                        </tr>
+                    </table>
+                </el-tab-pane>
+                <el-tab-pane label="荣誉证书" name="ryzs">
+                    <el-table :data="ryzsList" border fit style="width: 100%">
+                        <el-table-column align="center" label="证书名称">
+                            <template scope="scope">
+                                <nobr>{{scope.row.zsmc}}</nobr>
+                            </template>
+                        </el-table-column>
+                        <el-table-column align="center" label="获得日期">
+                            <template scope="scope">
+                                <nobr>{{scope.row.hdrq}}</nobr>
+                            </template>
+                        </el-table-column>
+                        <el-table-column align="center" label="获得成绩">
+                            <template scope="scope">
+                                <nobr>{{scope.row.cj}}</nobr>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-tab-pane>
             </el-tabs>
         </el-dialog>
-        <!-- 会员添加弹出框  结束 -->
+        <!-- 会员查看弹出框  结束 -->
     </div>
 </template>
+<style>
+    .member_view td,th{line-height:45px;}
+    .member_view th{text-align:right;width:100px;}
+    .member_view td{text-align:left;padding-left:10px;}
+</style>
 <script>
-    import {getPersonalList,delMember} from "api/job/member/personal";
+    import {getPersonalList,delMember,getPersonal,getPersonalQzyx,getPersonalGzjl,getPersonalItem,getPersonalJyjl,getPersonalZs} from "api/job/member/personal";
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     export default{
@@ -142,18 +313,54 @@
                 listLoading: true,
                 dialogVisible: false,
                 activeName: 'member',
-                tabName: 'member',
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     username: '',
                     qzzt: '',
                     hyzk: '',
-                    status: '',
                     zzmm: ''
                 },
                 selectedRows: [],
-                dialogStatus: ''
+                dialogStatus: '',
+                member: {
+                    csrq: '',
+                    email:'',
+                    grzy: '',
+                    hkgj: '',
+                    hyzk: '',
+                    jtzz: '',
+                    jzd: '',
+                    ksgznf: '',
+                    mqnsr: '',
+                    phone: '',
+                    qtlxfs: '',
+                    qtlxfslx: '',
+                    qzzt: '',
+                    registerdatec: '',
+                    sex: '',
+                    sg: '',
+                    status: '',
+                    username: '',
+                    yb: '',
+                    zjhm: '',
+                    zjlx: '',
+                    zzmm: ''
+                },
+                qzyx: {
+                    qwxz: '',
+                    gzdd: '',
+                    znName: '',
+                    hyName: '',
+                    grbq: '',
+                    zwpj: '',
+                    dgsj: '',
+                    gzlx: ''
+                },
+                gzjlList: null,
+                xmjyList: null,
+                jyjlList: null,
+                ryzsList: null
             }
         },
         computed: {
@@ -189,12 +396,65 @@
                 this.listQuery.page = val;
                 this.getList();
             },
-            handleView() {
+            handleView(row) {
+                this.resetTemp();
                 this.dialogVisible = true;
                 this.dialogStatus = 'view';
+                this.member.id = row.id;
+                getPersonal({'id':this.member.id}).then(response => {
+                    if (response.httpCode == 200) {
+                        this.member = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                })
             },
             handleClick(tab) {
-                this.tabName = tab.name;
+                if(tab.name=='qzyx'){
+                    getPersonalQzyx({'memberId':this.member.id}).then(response => {
+                        if (response.httpCode == 200) {
+                            this.qzyx = response.data;
+                        } else {
+                            this.$message.error(response.msg);
+                        }
+                    })
+                }else if(tab.name=='gzjl'){
+                    getPersonalGzjl({'memberId':this.member.id}).then(response => {
+                        if (response.httpCode == 200) {
+                            this.gzjlList = response.data;
+                        } else {
+                            this.$message.error(response.msg);
+                        }
+                        this.listLoading = false;
+                    })
+                }else if(tab.name=='xmjy'){
+                    getPersonalItem({'memberId':this.member.id}).then(response => {
+                        if (response.httpCode == 200) {
+                            this.xmjyList = response.data;
+                        } else {
+                            this.$message.error(response.msg);
+                        }
+                        this.listLoading = false;
+                    })
+                }else if(tab.name=='jyjl'){
+                    getPersonalJyjl({'memberId':this.member.id}).then(response => {
+                        if (response.httpCode == 200) {
+                            this.jyjlList = response.data;
+                        } else {
+                            this.$message.error(response.msg);
+                        }
+                        this.listLoading = false;
+                    })
+                }else if(tab.name=='ryzs'){
+                    getPersonalZs({'memberId':this.member.id}).then(response => {
+                        if (response.httpCode == 200) {
+                            this.ryzsList = response.data;
+                        } else {
+                            this.$message.error(response.msg);
+                        }
+                        this.listLoading = false;
+                    })
+                }
             },
             handleDelete() {
                 var selectCounts = this.selectedRows.length;
@@ -229,6 +489,46 @@
                         console.dir('取消');
                     });
                 }
+            },
+            resetTemp() {
+                this.gzjlList = null,
+                this.mjyList = null,
+                this.jyjlList = null,
+                this.ryzsList = null
+                this.member = {
+                    csrq: '',
+                    email:'',
+                    grzy: '',
+                    hkgj: '',
+                    hyzk: '',
+                    jtzz: '',
+                    jzd: '',
+                    ksgznf: '',
+                    mqnsr: '',
+                    phone: '',
+                    qtlxfs: '',
+                    qtlxfslx: '',
+                    qzzt: '',
+                    registerdatec: '',
+                    sex: '',
+                    sg: '',
+                    status: '',
+                    username: '',
+                    yb: '',
+                    zjhm: '',
+                    zjlx: '',
+                    zzmm: ''
+                };
+                this.qzyx = {
+                    qwxz: '',
+                    gzdd: '',
+                    znName: '',
+                    hyName: '',
+                    grbq: '',
+                    zwpj: '',
+                    dgsj: '',
+                    gzlx: ''
+                };
             }
         }
     }
