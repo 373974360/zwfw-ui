@@ -135,7 +135,7 @@
 </template>
 
 <script>
-    import {getWindowList, createWindow, updateWindow, createUserWindow, getAllUserWindow, delWindow} from 'api/sys/operate/window';
+    import {getWindowList, createWindow, updateWindow, createUserWindow, getAllUserWindow, delWindow} from 'api/zwfw/window';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import {getDeptNameAndUsers} from 'api/sys/org/user';

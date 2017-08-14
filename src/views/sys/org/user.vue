@@ -139,7 +139,7 @@
     import {getUserList, updateUser, createUser, delUser} from 'api/sys/org/user';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
-    import {delWindowUser} from 'api/sys/operate/window';
+    import {delWindowUser} from 'api/zwfw/window';
     import ElRadio from "../../../../node_modules/element-ui/packages/radio/src/radio";
 
     export default {

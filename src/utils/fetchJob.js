@@ -67,6 +67,13 @@ service.interceptors.response.use(
                     router.push({ path: '/login' })
                 });
             }
+            if(code === 403){
+                Message({
+                    message: "当前登录用户没有此权限",
+                    type: 'error',
+                    duration: 5 * 1000
+                });
+            }
         }
         return response.data;
     },

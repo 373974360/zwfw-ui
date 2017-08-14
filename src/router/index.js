@@ -26,9 +26,9 @@ const Cache = () => import('../views/sys/system/cache');
 const Dict = () => import('../views/sys/system/dict');
 const MetadataType = () => import('../views/sys/system/metadataType');
 
-/* operate */
-const ItemCategory = () => import('../views/sys/operate/itemCategory');
-const Window = () => import('../views/sys/operate/window');
+/* zwfw */
+const Category = () => import('../views/zwfw/category');
+const Window = () => import('../views/zwfw/window');
 
 
 /* components */
@@ -173,7 +173,7 @@ export const asyncRouterMap = [
         name: '业务管理',
         icon: 'yewuguanli',
         children: [
-            {path: 'itemCategory', component: ItemCategory, name: '事项分类管理'},
+            {path: 'category', component: Category, name: '事项分类管理'},
             {path: 'window', component: Window, name: '窗口管理'}
         ]
     },

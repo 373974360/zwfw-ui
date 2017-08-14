@@ -8,7 +8,7 @@
         </div>
         <tree-grid :columns="columns" :tree-structure="true" :data-source="deptList" :list-loading="listLoading"
                    :handle-toggle="handleToggle" :handle-create="handleCreate"
-                   :handle-update="handleUpdate" :handle-delete="handleDelete">
+                   :handle-update="handleUpdate" :handle-delete="handleDelete" :defaultExpandAll="false">
         </tree-grid>
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
