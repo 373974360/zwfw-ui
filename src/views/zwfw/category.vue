@@ -88,7 +88,6 @@
                     treePosition: '',
                     enable: '',
                     remark: '',
-                    createTime: ''
                 },
                 cascader: [],
                 dialogFormVisible: false,
@@ -225,7 +224,6 @@
                     treePosition: '',
                     remark: '',
                     enable: '',
-                    createTime: ''
                 };
             }
         }

@@ -158,8 +158,7 @@
                     callerKey: '',
                     judgeKey: '',
                     cameraKey: '',
-                    ledKey: '',
-                    createTime: ''
+                    ledKey: ''
                 },
                 windowRules: {
                     name: [
