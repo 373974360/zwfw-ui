@@ -87,8 +87,7 @@
                     sortNo: 1,
                     treePosition: '',
                     enable: '',
-                    remark: '',
-                    createTime: ''
+                    remark: ''
                 },
                 cascader: [],
                 dialogFormVisible: false,
@@ -225,7 +224,6 @@
                     treePosition: '',
                     remark: '',
                     enable: '',
-                    createTime: ''
                 };
             }
         }
