@@ -474,10 +474,13 @@
                         delMember(ids).then(response => {
                             if (response.httpCode == 200) {
                                 this.total -= selectCounts;
+                                for (const deleteRow of this.selectedRows) {
+                                    const index = this.list.indexOf(deleteRow);
+                                    this.list.splice(index, 1);
+                                }
                                 this.$message.success('删除成功');
-                                this.getList();
                             } else {
-                                this.$message.error('删除失败');
+                                this.$message.error(response.msg);
                             }
                             this.listLoading = false;
                         })

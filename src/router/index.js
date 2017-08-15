@@ -48,6 +48,11 @@ const Mixin = () => import('../views/components/mixin');
 const MemberPersonal = () => import('../views/job/member/personal');
 const MemberOrgan = () => import('../views/job/member/organ');
 
+/* 内容管理 */
+const Zpxx = () => import('../views/job/nrgl/zpxx');
+const Tzgg = () => import('../views/job/nrgl/jobTzgg');
+const Tjqy = () => import('../views/job/nrgl/tjqy');
+
 /* 分类信息 */
 const Zyfl = () => import('../views/job/flxx/zyfl');
 const Hyfl = () => import('../views/job/flxx/hyfl');
@@ -125,6 +130,18 @@ export const asyncRouterMap = [
         children: [
             {path: 'personal', component: MemberPersonal, name: '个人会员管理'},
             {path: 'organ', component: MemberOrgan, name: '企业会员管理'}
+        ]
+    },
+    {
+        path: '/nrgl',
+        component: Layout,
+        redirect: 'noredirect',
+        name: '内容管理',
+        icon: 'neirongguanli',
+        children: [
+            {path: 'zpxx', component: Zpxx, name: '招聘信息'},
+            {path: 'tzgg', component: Tzgg, name: '通知公告'},
+            {path: 'tjqy', component: Tjqy, name: '推荐企业'}
         ]
     },
     {

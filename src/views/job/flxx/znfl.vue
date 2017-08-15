@@ -167,8 +167,12 @@
                     type: 'warning'
                 }).then(() => {
                     delZnfl(row.id).then(response => {
-                        this.$message.success('删除成功');
-                        TreeUtil.delRow(response.data, this.list);
+                        if (response.httpCode == 200) {
+                            this.$message.success('删除成功');
+                            TreeUtil.delRow(response.data, this.list);
+                        } else {
+                            this.$message.error(response.msg);
+                        }
                     })
                 }).catch(() => {
                     console.dir("取消");

@@ -1,25 +1,32 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input v-model="listQuery.name" style="width: 180px;" class="filter-item"
-                      placeholder="登录名/公司名称"></el-input>
-            <el-select v-model="listQuery.gsxz" placeholder="公司性质" class="filter-item" style="width: 180px">
+            <el-input v-model="listQuery.zwmc" style="width: 180px;" class="filter-item"
+                      placeholder="职位/公司/关键字"></el-input>
+            <el-select v-model="listQuery.zdxl" placeholder="学历学位" class="filter-item" style="width: 180px">
                 <el-option
-                        v-for="item in dicts['gsxz']"
+                        v-for="item in dicts['xueli']"
                         :key="item.code"
                         :label="item.value"
                         :value="item.code"/>
             </el-select>
-            <el-select v-model="listQuery.gsgm" placeholder="公司规模" class="filter-item" style="width: 180px">
+            <el-select v-model="listQuery.gzxz" placeholder="工作性质" class="filter-item" style="width: 180px">
                 <el-option
-                        v-for="item in dicts['gsgm']"
+                        v-for="item in dicts['gzxz']"
+                        :key="item.code"
+                        :label="item.value"
+                        :value="item.code"/>
+            </el-select>
+            <el-select v-model="listQuery.xzlx" placeholder="薪资范围" class="filter-item" style="width: 180px">
+                <el-option
+                        v-for="item in dicts['xzfw']"
                         :key="item.code"
                         :label="item.value"
                         :value="item.code"/>
             </el-select>
             <el-cascader :options="cascader" class="filter-item" @change="handleChange"
                          :show-all-levels="true" clearable filterable expand-trigger="hover"
-                         :change-on-select="true" style="width: 180px" placeholder="选择行业">
+                         :change-on-select="true" style="width: 180px" placeholder="选择职能">
             </el-cascader>
             <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="搜索" placement="top-start">
                 <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
@@ -27,64 +34,71 @@
                 </el-button>
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
-                <el-button class="filter-item" style="margin-left: 10px;" type="danger" @click="handleDelete" icon="delete">
+                <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="delete" @click="handleDelete">
                     删除
                 </el-button>
             </el-tooltip>
         </div>
-        <el-table :data="list" v-loading.body="listLoading" border fit style="width: 100%"
-                  @selection-change="handleSelectionChange">
+        <el-table :data="list" v-loading.body="listLoading" border fit style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"/>
-            <el-table-column align="center" label="联系电话" width="125">
+            <el-table-column align="center" label="职位名称" width="180">
                 <template scope="scope">
-                    <nobr>{{scope.row.phone}}</nobr>
+                    <nobr class="link-type" @click="handleView(scope.row)">{{scope.row.zwmc}}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="电子邮箱" width="170">
+            <el-table-column align="center" label="公司名称" width="200">
                 <template scope="scope">
-                    <nobr class="link-type" @click="handleView(scope.row)">{{scope.row.email}}</nobr>
+                    <nobr>{{scope.row.organName}}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="注册时间" width="175">
+            <el-table-column align="center" label="职位编号" width="120">
                 <template scope="scope">
-                    <nobr>{{scope.row.registerdate | date('YYYY-MM-DD HH:mm:ss')}}</nobr>
+                    <nobr>{{scope.row.zwbh}}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="left" label="公司名称" width="210">
+            <el-table-column align="center" label="招聘人数" width="100">
                 <template scope="scope">
-                    <nobr>{{scope.row.name}}</nobr>
+                    <nobr>{{scope.row.zprs}}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="公司性质" width="100">
+            <el-table-column align="center" label="最低学历" width="100">
                 <template scope="scope">
-                    <nobr>{{scope.row.gsxz | dicts('gsxz')}}</nobr>
+                    <nobr>{{scope.row.zdxl | dicts('xueli')}}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="公司规模" width="100">
+            <el-table-column align="center" label="年龄" width="100">
                 <template scope="scope">
-                    <nobr>{{scope.row.gsgm | dicts('gsgm')}}</nobr>
+                    <nobr>{{scope.row.nlmin}} 至 {{scope.row.nlmax}}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="行业类别" width="170">
+            <el-table-column align="center" label="职能类别" width="150">
                 <template scope="scope">
-                    <nobr>{{scope.row.hylbname}}</nobr>
+                    <nobr>{{scope.row.znflName}}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="座机号码" width="130">
+            <el-table-column align="center" label="工作年限" width="100">
                 <template scope="scope">
-                    <nobr>{{scope.row.tel}}</nobr>
+                    <nobr>{{scope.row.gznx}}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="帐号状态" width="100">
+            <el-table-column align="center" label="工作性质" width="100">
                 <template scope="scope">
-                    <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
-                        {{scope.row.enable | enums('Enable')}}
-                    </el-tag>
+                    <nobr>{{scope.row.gzxz | dicts('gzxz')}}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="left" label="详细地址" width="364">
+            <el-table-column align="center" label="薪资标准" width="150">
                 <template scope="scope">
-                    <nobr>{{scope.row.province}}{{scope.row.city}}{{scope.row.address}}</nobr>
+                    <nobr>{{scope.row.xzlx | dicts('xzfw')}}</nobr>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="关键字" width="170">
+                <template scope="scope">
+                    <nobr>{{scope.row.zwgjz}}</nobr>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="刷新日期" width="174">
+                <template scope="scope">
+                    <nobr>{{scope.row.reloadtime | date('YYYY-MM-DD HH:mm:ss')}}</nobr>
                 </template>
             </el-table-column>
         </el-table>
@@ -94,43 +108,52 @@
                            :page-size="listQuery.rows" layout="total, sizes, prev, pager, next, jumper" :total="total">
             </el-pagination>
         </div>
-
-        <!-- 会员查看弹出框  开始 -->
+        <!-- 招聘信息查看弹出框  开始 -->
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogVisible">
             <table class="member_view" width="100%">
                 <tr>
                     <th>公司名称:</th>
-                    <td>{{member.name}}</td>
-                    <th>公司性质:</th>
-                    <td>{{member.gsxz | dicts('gsxz')}}</td>
-                    <th>公司规模:</th>
-                    <td>{{member.gsgm | dicts('gsgm')}}</td>
+                    <td>{{zpxx.organName}}</td>
+                    <th>职位名称:</th>
+                    <td>{{zpxx.zwmc}}</td>
+                    <th>职位编号:</th>
+                    <td>{{zpxx.zwbh}}</td>
                 </tr>
                 <tr>
-                    <th>行业类别:</th>
-                    <td>{{member.hylbname}}</td>
-                    <th>公司座机:</th>
-                    <td>{{member.tel}}</td>
-                    <th>邮　　编:</th>
-                    <td>{{member.yb}}</td>
+                    <th>招聘人数:</th>
+                    <td>{{zpxx.zprs}}</td>
+                    <th>最低学历:</th>
+                    <td>{{zpxx.zdxl | dicts('xueli')}}</td>
+                    <th>年龄要求:</th>
+                    <td>{{zpxx.nlmin}} 至 {{zpxx.nlmax}}</td>
                 </tr>
                 <tr>
-                    <th>公司官网:</th>
-                    <td>{{member.gsgw}}</td>
-                    <th>公司邮箱:</th>
-                    <td>{{member.email}}</td>
+                    <th>职能类别:</th>
+                    <td>{{zpxx.znflName}}</td>
+                    <th>工作年限:</th>
+                    <td>{{zpxx.gznx}}</td>
+                    <th>工作性质:</th>
+                    <td>{{zpxx.gzxz | dicts('gzxz')}}</td>
                 </tr>
                 <tr>
-                    <th>地　　址:</th>
-                    <td colspan="5">{{member.province}}{{member.city}}{{member.address}}</td>
+                    <th>关 键 字:</th>
+                    <td>{{zpxx.zwgjz}}</td>
+                    <th>刷新日期:</th>
+                    <td>{{zpxx.reloadtime | date("YYYY-MM-DD HH:mm:ss")}}</td>
+                    <th>薪资标准:</th>
+                    <td>{{zpxx.xzlx | dicts('xzfw')}}</td>
                 </tr>
                 <tr>
-                    <th>公司简介:</th>
-                    <td colspan="5">{{member.gsjj}}</td>
+                    <th>工作地点:</th>
+                    <td colspan="5">{{zpxx.sbdz}}</td>
+                </tr>
+                <tr>
+                    <th>要求/描述:</th>
+                    <td colspan="5">{{zpxx.zwms}}</td>
                 </tr>
             </table>
         </el-dialog>
-        <!-- 会员查看弹出框  结束 -->
+        <!-- 招聘信息查看弹出框  结束 -->
     </div>
 </template>
 <style>
@@ -139,8 +162,8 @@
     .member_view td{text-align:left;padding-left:10px;}
 </style>
 <script>
-    import {getHyflCascader} from 'api/job/flxx/hyfl';
-    import {getOrganList,delMember,getMember} from "api/job/member/organ";
+    import {getZnflCascader} from 'api/job/flxx/znfl';
+    import {getOrganZpxxList,delOrganZpxx} from "api/job/nrgl/zpxx";
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     export default{
@@ -154,30 +177,32 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
-                    name: '',
-                    gsxz:'',
-                    gsgm:'',
-                    hylb:''
+                    zwmc: '',
+                    zdxl: '',
+                    gzxz: '',
+                    xzlx: '',
+                    znlb: ''
                 },
                 selectedRows: [],
                 dialogVisible: false,
                 dialogStatus: '',
-                member: {
-                    id:'',
-                    name:'',
-                    gsxz:'',
-                    gsgm:'',
-                    hylb:'',
-                    province:'',
-                    city:'',
-                    address:'',
-                    gsgw:'',
-                    yb:'',
-                    email:'',
-                    gsjj:'',
-                    logo:'',
-                    photo:'',
-                    hylbname:''
+                zpxx: {
+                    organName: '',
+                    znflName: '',
+                    zwmc: '',
+                    zwbh: '',
+                    zprs: '',
+                    sbdz: '',
+                    zdxl: '',
+                    nlmax: '',
+                    nlmin: '',
+                    znlb: '',
+                    gznx: '',
+                    gzxz: '',
+                    xzlx: '',
+                    zwgjz: '',
+                    zwms: '',
+                    reloadtime: ''
                 }
             }
         },
@@ -195,7 +220,7 @@
         methods: {
             getOptions(id) {
                 this.dialogLoading = true;
-                getHyflCascader(id).then(response => {
+                getZnflCascader(id).then(response => {
                     if (response.httpCode == 200) {
                         this.cascader = response.data;
                     } else {
@@ -205,14 +230,14 @@
                 })
             },
             handleChange(value) {
-                this.listQuery.hylb = null;
+                this.listQuery.znlb = null;
                 if (value.length > 0) {
-                    this.listQuery.hylb = value[value.length - 1];
+                    this.listQuery.znlb = value[value.length - 1];
                 }
             },
             getList() {
                 this.listLoading = true;
-                getOrganList(this.listQuery).then(response => {
+                getOrganZpxxList(this.listQuery).then(response => {
                     if (response.httpCode == 200) {
                         this.list = response.data.list;
                     } else {
@@ -234,16 +259,9 @@
             },
             handleView(row) {
                 this.resetTemp();
+                this.zpxx = copyProperties(this.zpxx, row);
                 this.dialogVisible = true;
                 this.dialogStatus = 'view';
-                this.member.id = row.id;
-                getMember({'id':this.member.id}).then(response => {
-                    if (response.httpCode == 200) {
-                        this.member = response.data;
-                    } else {
-                        this.$message.error(response.msg);
-                    }
-                })
             },
             handleDelete() {
                 var selectCounts = this.selectedRows.length;
@@ -260,7 +278,7 @@
                             ids.push(deleteRow.id);
                         }
                         this.listLoading = true;
-                        delMember(ids).then(response => {
+                        delOrganZpxx(ids).then(response => {
                             if (response.httpCode == 200) {
                                 this.total -= selectCounts;
                                 for (const deleteRow of this.selectedRows) {
@@ -283,22 +301,23 @@
                 }
             },
             resetTemp() {
-                this.member = {
-                    id:'',
-                    name:'',
-                    gsxz:'',
-                    gsgm:'',
-                    hylb:'',
-                    province:'',
-                    city:'',
-                    address:'',
-                    gsgw:'',
-                    yb:'',
-                    email:'',
-                    gsjj:'',
-                    logo:'',
-                    photo:'',
-                    hylbname:''
+                this.zpxx = {
+                    organName: '',
+                    znflName: '',
+                    zwmc: '',
+                    zwbh: '',
+                    zprs: '',
+                    sbdz: '',
+                    zdxl: '',
+                    nlmax: '',
+                    nlmin: '',
+                    znlb: '',
+                    gznx: '',
+                    gzxz: '',
+                    xzlx: '',
+                    zwgjz: '',
+                    zwms: '',
+                    reloadtime: ''
                 };
             }
         }
