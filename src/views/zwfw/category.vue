@@ -87,7 +87,7 @@
                     sortNo: 1,
                     treePosition: '',
                     enable: '',
-                    remark: '',
+                    remark: ''
                 },
                 cascader: [],
                 dialogFormVisible: false,
