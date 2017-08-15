@@ -29,6 +29,7 @@ const MetadataType = () => import('../views/sys/system/metadataType');
 /* zwfw */
 const Category = () => import('../views/zwfw/category');
 const Window = () => import('../views/zwfw/window');
+const FormEditor = () => import('../views/zwfw/formEditor/editor');
 
 
 /* components */
@@ -174,7 +175,9 @@ export const asyncRouterMap = [
         icon: 'yewuguanli',
         children: [
             {path: 'category', component: Category, name: '事项分类管理'},
-            {path: 'window', component: Window, name: '窗口管理'}
+            {path: 'window', component: Window, name: '窗口管理'},
+            {path: 'formEditor', component: FormEditor, name: '表单编辑器'}
+
         ]
     },
     {
