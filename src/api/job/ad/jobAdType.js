@@ -1,42 +1,42 @@
 import fetchJob from 'utils/fetchJob';
 
-export function getJobTzggList(query) {
+export function getJobAdTypeList(query) {
     return fetchJob({
-        url: '/jobTzgg/list',
+        url: '/jobAdType/list',
         method: 'get',
         params: query
     });
 }
 
-export function createJobTzgg(jobTzggVo){
-    const data = jobTzggVo;
+export function createJobAdType(jobAdTypeVo){
+    const data = jobAdTypeVo;
     return fetchJob({
-        url: '/jobTzgg/add',
+        url: '/jobAdType/add',
         method: 'post',
         data
     })
 }
 
-export function updateJobTzgg(jobTzggVo){
-    const data = jobTzggVo;
+export function updateJobAdType(jobAdTypeVo){
+    const data = jobAdTypeVo;
     return fetchJob({
-        url: '/jobTzgg/edit',
+        url: '/jobAdType/edit',
         method: 'post',
         data
     })
 }
-export function delJobTzggs(ids) {
+export function delJobAdTypes(ids) {
     const data = {ids};
     return fetchJob({
-        url: '/jobTzgg/dels',
+        url: '/jobAdType/dels',
         method: 'post',
         data
     })
 }
-export function deleteJobTzgg(id) {
+export function deleteJobAdType(id) {
     const data = {id};
     return fetchJob({
-        url: '/jobTzgg/delete',
+        url: '/jobAdType/delete',
         method: 'post',
         data
     })

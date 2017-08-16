@@ -48,11 +48,16 @@ const Mixin = () => import('../views/components/mixin');
 /* Member */
 const MemberPersonal = () => import('../views/job/member/personal');
 const MemberOrgan = () => import('../views/job/member/organ');
+const Zpxx = () => import('../views/job/member/zpxx');
 
-/* 内容管理 */
-const Zpxx = () => import('../views/job/nrgl/zpxx');
-const Tzgg = () => import('../views/job/nrgl/jobTzgg');
-const Tjqy = () => import('../views/job/nrgl/tjqy');
+
+/* 广告位管理 */
+const JobAd = () => import('../views/job/ad/jobAd');
+const JobAdType = () => import('../views/job/ad/jobAdType');
+
+/* 友情链接 */
+const JobLink = () => import('../views/job/link/jobLink');
+const JobLinkType = () => import('../views/job/link/jobLinkType');
 
 /* 分类信息 */
 const Zyfl = () => import('../views/job/flxx/zyfl');
@@ -129,20 +134,31 @@ export const asyncRouterMap = [
         name: '会员管理',
         icon: 'huiyuan',
         children: [
-            {path: 'personal', component: MemberPersonal, name: '个人会员管理'},
-            {path: 'organ', component: MemberOrgan, name: '企业会员管理'}
+            {path: 'personal', component: MemberPersonal, name: '个人会员'},
+            {path: 'organ', component: MemberOrgan, name: '企业会员'},
+            {path: 'zpxx', component: Zpxx, name: '招聘信息'}
         ]
     },
     {
-        path: '/nrgl',
+        path: '/ad',
         component: Layout,
         redirect: 'noredirect',
-        name: '内容管理',
-        icon: 'neirongguanli',
+        name: '广告管理',
+        icon: 'msnui-ad',
         children: [
-            {path: 'zpxx', component: Zpxx, name: '招聘信息'},
-            {path: 'tzgg', component: Tzgg, name: '通知公告'},
-            {path: 'tjqy', component: Tjqy, name: '推荐企业'}
+            {path: 'jobad', component: JobAd, name: '广告内容'},
+            {path: 'jobadtype', component: JobAdType, name: '广告位'}
+        ]
+    },
+    {
+        path: '/link',
+        component: Layout,
+        redirect: 'noredirect',
+        name: '友情链接',
+        icon: 'lianjie',
+        children: [
+            {path: 'joblink', component: JobLink, name: '友情链接'},
+            {path: 'joblinktype', component: JobLinkType, name: '链接分类'}
         ]
     },
     {

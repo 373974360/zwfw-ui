@@ -163,7 +163,7 @@
 </style>
 <script>
     import {getZnflCascader} from 'api/job/flxx/znfl';
-    import {getOrganZpxxList,delOrganZpxx} from "api/job/nrgl/zpxx";
+    import {getOrganZpxxList,delOrganZpxx} from "api/job/member/zpxx";
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     export default{

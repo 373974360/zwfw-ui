@@ -59,11 +59,11 @@
                 <el-form-item label="字典名称" prop="name">
                     <el-input v-model="sysDictIndex.name"/>
                 </el-form-item>
-                <el-form-item label="索引" prop="key">
+                <el-form-item label="索　　引" prop="key">
                     <span v-if="dialogDictIndexStatus == 'update'"><el-input v-model="sysDictIndex.key" disabled="disabled"/></span>
                     <span v-else><el-input v-model="sysDictIndex.key"/></span>
                 </el-form-item>
-                <el-form-item label="备注">
+                <el-form-item label="备　　注">
                     <el-input type="textarea" v-model="sysDictIndex.remark" :rows="3"/>
                 </el-form-item>
             </el-form>
@@ -131,7 +131,7 @@
                 <el-form-item label="排列顺序" prop="sortNo">
                     <el-input-number v-model="sysDict.sortNo" :min="1" :max="100"/>
                 </el-form-item>
-                <el-form-item label="备注">
+                <el-form-item label="备　　注">
                     <el-input type="textarea" v-model="sysDictIndex.remark" :rows="3"/>
                 </el-form-item>
             </el-form>
