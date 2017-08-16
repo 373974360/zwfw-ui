@@ -16,19 +16,16 @@
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column type="selection" width="55"/>
-            <el-table-column align="center" label="序号">
+            <el-table-column align="center" label="序号" width="200px">
                 <template scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="统一社会信用代码" prop="companyCode">
+            <el-table-column align="center" label="统一社会信用代码" prop="companyCode" width="200px">
                 <template scope="scope">
-                    <span>{{scope.row.companyCode}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="登录密码" prop="password">
-                <template scope="scope">
-                    <span>{{scope.row.password}}</span>
+                    <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
+                        <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.companyCode}}</span>
+                    </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="注册地址" prop="registerPlace">
@@ -51,24 +48,14 @@
                     <span>{{scope.row.legalPerson}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="备注" prop="remark">
-                <template scope="scope">
-                    <span>{{scope.row.remark}}</span>
-                </template>
-            </el-table-column>
             <el-table-column align="center" label="机构代码" prop="agencyCode">
                 <template scope="scope">
                     <span>{{scope.row.agencyCode}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="密码加密盐" prop="passwordSalt">
-                <template scope="scope">
-                    <span>{{scope.row.passwordSalt}}</span>
-                </template>
-            </el-table-column>
             <el-table-column align="center" label="注册日期" prop="registerDate">
                 <template scope="scope">
-                    <span>{{scope.row.registerDate}}</span>
+                    <span>{{scope.row.registerDate | date('YYYY-MM-DD')}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="enable" class-name="status-col" label="状态">
@@ -94,9 +81,6 @@
                 <el-form-item label="统一社会信用代码" prop="companyCode">
                     <el-input v-model="zwfwLegalPerson.companyCode"></el-input>
                 </el-form-item>
-                <el-form-item label="登录密码" prop="password">
-                    <el-input v-model="zwfwLegalPerson.password"></el-input>
-                </el-form-item>
                 <el-form-item label="注册地址" prop="registerPlace">
                     <el-input v-model="zwfwLegalPerson.registerPlace"></el-input>
                 </el-form-item>
@@ -109,17 +93,28 @@
                 <el-form-item label="法定代表人" prop="legalPerson">
                     <el-input v-model="zwfwLegalPerson.legalPerson"></el-input>
                 </el-form-item>
-                <el-form-item label="备注" prop="remark">
-                    <el-input v-model="zwfwLegalPerson.remark"></el-input>
-                </el-form-item>
                 <el-form-item label="机构代码" prop="agencyCode">
                     <el-input v-model="zwfwLegalPerson.agencyCode"></el-input>
                 </el-form-item>
-                <el-form-item label="密码加密盐" prop="passwordSalt">
-                    <el-input v-model="zwfwLegalPerson.passwordSalt"></el-input>
+                <el-form-item label="密码" prop="password">
+                    <el-input v-model="zwfwLegalPerson.password" type="password" placeholder="修改密码时填入新密码，若不需要则无需输入"/>
                 </el-form-item>
-                <el-form-item label="注册日期" prop="registerDate">
-                    <el-input v-model="zwfwLegalPerson.registerDate"></el-input>
+                <el-form-item label="确认密码" prop="passwordConfirm">
+                    <el-input v-model="zwfwLegalPerson.passwordConfirm" type="password"
+                              placeholder="修改密码时填入新密码，若不需要则无需输入"/>
+                </el-form-item>
+                <el-form-item label="状态" prop="enable">
+                    <el-radio-group v-model="zwfwLegalPerson.enable">
+                        <el-radio v-for="item in enums['Enable']"
+                                  :key="item.code"
+                                  :label="item.code"
+                                  :value="item.code">
+                            <span style="font-weight:normal;">{{item.value}}</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="备注" prop="remark">
+                    <el-input v-model="zwfwLegalPerson.remark"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -146,6 +141,26 @@
     export default {
         name: 'zwfwLegalPerson_table',
         data() {
+            const validatCompanyCode = (rule, value, callback) => {
+                if (!/[0-9A-HJ-NPQRTUWXY]{2}\d{6}[0-9A-HJ-NPQRTUWXY]{10}/.test(value) || value.length !== 18) {
+                    return callback(new Error('统一代码由十八位的数字或大写英文字母（不适用I、O、Z、S、V）组成,且第3-8位为数字'));
+                } else {
+                    callback();
+                }
+            };
+            const validatePass2 = (rule, value, callback) => {
+                if (this.zwfwLegalPerson.password === '') {
+                    callback();
+                } else {
+                    if (value === '') {
+                        callback(new Error('请再次输入密码'));
+                    } else if (value !== this.zwfwLegalPerson.password) {
+                        callback(new Error('两次输入密码不一致!'));
+                    } else {
+                        callback();
+                    }
+                }
+            };
             return {
                 zwfwLegalPersonList: [],
                 total: null,
@@ -153,20 +168,20 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
-                    name: undefined,
+                    name: undefined
                 },
                 zwfwLegalPerson: {
                     id: undefined,
-                    companyCode: undefined,
-                    password: undefined,
-                    registerPlace: undefined,
-                    companyType: undefined,
-                    companyName: undefined,
-                    legalPerson: undefined,
-                    remark: undefined,
-                    agencyCode: undefined,
-                    passwordSalt: undefined,
-                    registerDate: undefined
+                    companyCode: '',
+                    password: '',
+                    passwordConfirm: '',
+                    registerPlace: '',
+                    companyType: '',
+                    companyName: '',
+                    legalPerson: '',
+                    remark: '',
+                    enable: 1,
+                    agencyCode: ''
                 },
                 currentRow: null,
                 selectedRows: [],
@@ -175,10 +190,14 @@
                 dialogLoading: false,
                 zwfwLegalPersonRules: {
                     companyCode: [
-                        {required: true, message: '请输入统一社会信用代码', trigger: 'blur'}
+                        {required: true, validator: validatCompanyCode}
                     ],
                     password: [
-                        {required: true, message: '请输入登录密码', trigger: 'blur'}
+                        {required: true, message: '请输入密码', trigger: 'blur'},
+                        {min: 6, max: 18, message: '长度在 6 到 18 个字符', trigger: 'blur'}
+                    ],
+                    passwordConfirm: [
+                        {required: true, validator: validatePass2}
                     ],
                     registerPlace: [
                         {required: true, message: '请输入注册地址', trigger: 'blur'}
@@ -192,17 +211,8 @@
                     legalPerson: [
                         {required: true, message: '请输入法定代表人', trigger: 'blur'}
                     ],
-                    remark: [
-                        {required: true, message: '请输入备注', trigger: 'blur'}
-                    ],
                     agencyCode: [
                         {required: true, message: '请输入机构代码', trigger: 'blur'}
-                    ],
-                    passwordSalt: [
-                        {required: true, message: '请输入密码加密盐', trigger: 'blur'}
-                    ],
-                    registerDate: [
-                        {required: true, message: '请输入注册日期', trigger: 'blur'}
                     ]
                 }
             }
@@ -243,6 +253,8 @@
             handleCreate(row) {
                 this.currentRow = row;
                 this.resetTemp();
+                this.zwfwLegalPersonRules.password[0].required = true;
+                this.zwfwLegalPersonRules.passwordConfirm[0].required = true;
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
             },
@@ -250,6 +262,9 @@
                 this.currentRow = row;
                 this.resetTemp();
                 this.zwfwLegalPerson = copyProperties(this.zwfwLegalPerson, row);
+                this.zwfwLegalPerson.password = '';
+                this.zwfwLegalPersonRules.password[0].required = false;
+                this.zwfwLegalPersonRules.passwordConfirm[0].required = false;
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
@@ -316,16 +331,16 @@
             resetTemp() {
                 this.zwfwLegalPerson = {
                     id: undefined,
-                    companyCode: undefined,
-                    password: undefined,
-                    registerPlace: undefined,
-                    companyType: undefined,
-                    companyName: undefined,
-                    legalPerson: undefined,
-                    remark: undefined,
-                    agencyCode: undefined,
-                    passwordSalt: undefined,
-                    registerDate: undefined
+                    companyCode: '',
+                    password: '',
+                    passwordConfirm: '',
+                    registerPlace: '',
+                    companyType: '',
+                    companyName: '',
+                    legalPerson: '',
+                    remark: '',
+                    enable: 1,
+                    agencyCode: ''
                 };
             }
         }

@@ -16,29 +16,36 @@
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column type="selection" width="55"/>
-            <el-table-column align="center" label="序号">
+            <el-table-column align="center" label="序号" width="200px">
                 <template scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="出生日期" prop="birthday">
+            <el-table-column align="center" label="姓名" prop="name">
                 <template scope="scope">
-                    <span>{{scope.row.birthday}}</span>
+                    <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
+                        <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
+                    </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="登录密码" prop="password">
+            <el-table-column align="center" label="身份证号" prop="idcard" width="250px">
                 <template scope="scope">
-                    <span>{{scope.row.password}}</span>
+                    <span>{{scope.row.idcard}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="性别" prop="gender">
+                <template scope="scope">
+                    <span>{{scope.row.gender | enums('Gender')}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="出生日期" prop="birthday">
+                <template scope="scope">
+                    <span>{{scope.row.birthday | date('YYYY-MM-DD')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="住址" prop="address">
                 <template scope="scope">
                     <span>{{scope.row.address}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="性别" prop="gender">
-                <template scope="scope">
-                    <span>{{scope.row.gender}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="民族" prop="nation">
@@ -49,28 +56,6 @@
             <el-table-column align="center" label="联系电话" prop="phone">
                 <template scope="scope">
                     <span>{{scope.row.phone}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="姓名" prop="name">
-                <template scope="scope">
-                    <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
-                        <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
-                    </el-tooltip>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="照片" prop="photo">
-                <template scope="scope">
-                    <span>{{scope.row.photo}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="备注" prop="remark">
-                <template scope="scope">
-                    <span>{{scope.row.remark}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="密码加密盐" prop="passwordSalt">
-                <template scope="scope">
-                    <span>{{scope.row.passwordSalt}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="enable" class-name="status-col" label="状态">
@@ -93,17 +78,27 @@
             <el-form ref="zwfwNaturePersonForm" class="small-space" :model="zwfwNaturePerson" label-position="right"
                      label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="zwfwNaturePersonRules">
-                <el-form-item label="出生日期" prop="birthday">
-                    <el-input v-model="zwfwNaturePerson.birthday"></el-input>
+                <el-form-item label="姓名" prop="name">
+                    <el-input v-model="zwfwNaturePerson.name"></el-input>
                 </el-form-item>
-                <el-form-item label="登录密码" prop="password">
-                    <el-input v-model="zwfwNaturePerson.password"></el-input>
+                <el-form-item label="身份证号" prop="idcard">
+                    <el-input v-model="zwfwNaturePerson.idcard"></el-input>
+                </el-form-item>
+                <el-form-item label="性别" prop="gender">
+                    <el-radio-group v-model="zwfwNaturePerson.gender">
+                        <el-radio v-for="item in enums['Gender']"
+                                  :key="item.code"
+                                  :label="item.code"
+                                  :value="item.code">
+                            <span style="font-weight:normal;">{{item.value}}</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="出生日期" prop="birthday">
+                    <el-date-picker v-model="zwfwNaturePerson.birthday" type="date" placeholder="选择日期" format="yyyy-MM-dd" @change="changeDate"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="住址" prop="address">
                     <el-input v-model="zwfwNaturePerson.address"></el-input>
-                </el-form-item>
-                <el-form-item label="性别" prop="gender">
-                    <el-input v-model="zwfwNaturePerson.gender"></el-input>
                 </el-form-item>
                 <el-form-item label="民族" prop="nation">
                     <el-input v-model="zwfwNaturePerson.nation"></el-input>
@@ -111,17 +106,32 @@
                 <el-form-item label="联系电话" prop="phone">
                     <el-input v-model="zwfwNaturePerson.phone"></el-input>
                 </el-form-item>
-                <el-form-item label="姓名" prop="name">
-                    <el-input v-model="zwfwNaturePerson.name"></el-input>
-                </el-form-item>
                 <el-form-item label="照片" prop="photo">
-                    <el-input v-model="zwfwNaturePerson.photo"></el-input>
+                    <el-upload  class="avatar-uploader" action="" :show-file-list="false"
+                            :on-success="handleAvatarSuccess"
+                            :before-upload="beforeAvatarUpload">
+                        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
+                </el-form-item>
+                <el-form-item label="密码" prop="password">
+                    <el-input v-model="zwfwNaturePerson.password" type="password" placeholder="修改密码时填入新密码，若不需要则无需输入"/>
+                </el-form-item>
+                <el-form-item label="确认密码" prop="passwordConfirm">
+                    <el-input v-model="zwfwNaturePerson.passwordConfirm" type="password" placeholder="修改密码时填入新密码，若不需要则无需输入"/>
+                </el-form-item>
+                <el-form-item label="状态" prop="enable">
+                    <el-radio-group v-model="zwfwNaturePerson.enable">
+                        <el-radio v-for="item in enums['Enable']"
+                                  :key="item.code"
+                                  :label="item.code"
+                                  :value="item.code">
+                            <span style="font-weight:normal;">{{item.value}}</span>
+                        </el-radio>
+                    </el-radio-group>
                 </el-form-item>
                 <el-form-item label="备注" prop="remark">
                     <el-input v-model="zwfwNaturePerson.remark"></el-input>
-                </el-form-item>
-                <el-form-item label="密码加密盐" prop="passwordSalt">
-                    <el-input v-model="zwfwNaturePerson.passwordSalt"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -137,6 +147,7 @@
 
 <script>
     import {copyProperties} from 'utils';
+    import moment from 'moment';
     import {mapGetters} from 'vuex';
     import {
         getZwfwNaturePersonList,
@@ -148,6 +159,34 @@
     export default {
         name: 'zwfwNaturePerson_table',
         data() {
+            const validatMobiles = (rule, value, callback) => {
+                if (!/^((13|15|18|14|17)+\d{9})$/.test(value)) {
+                    return callback(new Error('电话号码格式不正确'));
+                } else {
+                    callback();
+                }
+            };
+            //身份证验证不完善，同时输入身份证的日期显示在出生日期中
+            const validateIdcard = (rule, value, callback) => {
+                if (!/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/.test(value)) {
+                    return callback(new Error('身份证号码不合法'));
+                } else {
+                    callback();
+                }
+            };
+            const validatePass2 = (rule, value, callback) => {
+                if (this.zwfwNaturePerson.password === '') {
+                    callback();
+                } else {
+                    if (value === '') {
+                        callback(new Error('请再次输入密码'));
+                    } else if (value !== this.zwfwNaturePerson.password) {
+                        callback(new Error('两次输入密码不一致!'));
+                    } else {
+                        callback();
+                    }
+                }
+            };
             return {
                 zwfwNaturePersonList: [],
                 total: null,
@@ -155,21 +194,23 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
-                    name: undefined,
+                    name: undefined
                 },
                 zwfwNaturePerson: {
                     id: undefined,
-                    birthday: undefined,
-                    password: undefined,
-                    address: undefined,
-                    gender: undefined,
-                    nation: undefined,
-                    phone: undefined,
-                    name: undefined,
-                    photo: undefined,
-                    remark: undefined,
-                    passwordSalt: undefined
+                    birthday: '',
+                    password: '',
+                    address: '',
+                    gender: 1,
+                    idcard: '',
+                    nation: '',
+                    phone: '',
+                    name: '',
+                    photo: '',
+                    remark: '',
+                    enable: 1
                 },
+                imageUrl: '',
                 currentRow: null,
                 selectedRows: [],
                 dialogFormVisible: false,
@@ -177,34 +218,29 @@
                 dialogLoading: false,
                 zwfwNaturePersonRules: {
                     birthday: [
-                        {required: true, message: '请输入出生日期', trigger: 'blur'}
+                        {required: true, message: '请输入出生日期'}
                     ],
-                    password: [
-                        {required: true, message: '请输入登录密码', trigger: 'blur'}
+                    idcard: [
+                        {required: true, validator: validateIdcard}
                     ],
                     address: [
                         {required: true, message: '请输入住址', trigger: 'blur'}
-                    ],
-                    gender: [
-                        {required: true, message: '请输入性别', trigger: 'blur'}
                     ],
                     nation: [
                         {required: true, message: '请输入民族', trigger: 'blur'}
                     ],
                     phone: [
-                        {required: true, message: '请输入联系电话', trigger: 'blur'}
+                        {required: true, validator: validatMobiles, trigger: 'blur'}
                     ],
                     name: [
                         {required: true, message: '请输入姓名', trigger: 'blur'}
                     ],
-                    photo: [
-                        {required: true, message: '请输入照片', trigger: 'blur'}
+                    password: [
+                        {required: true, message: '请输入密码', trigger: 'blur'},
+                        {min: 6, max: 18, message: '长度在 6 到 18 个字符', trigger: 'blur'}
                     ],
-                    remark: [
-                        {required: true, message: '请输入备注', trigger: 'blur'}
-                    ],
-                    passwordSalt: [
-                        {required: true, message: '请输入密码加密盐', trigger: 'blur'}
+                    passwordConfirm: [
+                        {required: true, validator: validatePass2}
                     ]
                 }
             }
@@ -219,6 +255,21 @@
             ])
         },
         methods: {
+            handleAvatarSuccess(res, file) {
+                this.imageUrl = URL.createObjectURL(file.raw);
+            },
+            beforeAvatarUpload(file) {
+                const isJPG = file.type === 'image/jpeg';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isJPG) {
+                    this.$message.error('上传头像图片只能是 JPG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isJPG && isLt2M;
+            },
             getList() {
                 this.listLoading = true;
                 getZwfwNaturePersonList(this.listQuery).then(response => {
@@ -242,9 +293,14 @@
             toggleSelection(row) {
                 this.$refs.zwfwNaturePersonTable.toggleRowSelection(row);
             },
+            changeDate() {
+                this.zwfwNaturePerson.birthday = moment(this.zwfwNaturePerson.birthday).format("YYYY-MM-DD");
+            },
             handleCreate(row) {
                 this.currentRow = row;
                 this.resetTemp();
+                this.zwfwNaturePersonRules.password[0].required = true;
+                this.zwfwNaturePersonRules.passwordConfirm[0].required = true;
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
             },
@@ -252,6 +308,10 @@
                 this.currentRow = row;
                 this.resetTemp();
                 this.zwfwNaturePerson = copyProperties(this.zwfwNaturePerson, row);
+                this.zwfwNaturePerson.birthday = new Date(row.birthday).toLocaleDateString().replace(/\//g, "-");
+                this.zwfwNaturePerson.password = '';
+                this.zwfwNaturePersonRules.password[0].required = false;
+                this.zwfwNaturePersonRules.passwordConfirm[0].required = false;
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
@@ -318,18 +378,44 @@
             resetTemp() {
                 this.zwfwNaturePerson = {
                     id: undefined,
-                    birthday: undefined,
-                    password: undefined,
-                    address: undefined,
-                    gender: undefined,
-                    nation: undefined,
-                    phone: undefined,
-                    name: undefined,
-                    photo: undefined,
-                    remark: undefined,
-                    passwordSalt: undefined
+                    birthday: '',
+                    password: '',
+                    address: '',
+                    gender: 1,
+                    idcard: '',
+                    nation: '',
+                    phone: '',
+                    name: '',
+                    photo: '',
+                    remark: '',
+                    enable: 1
                 };
             }
         }
     }
 </script>
+<style>
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+    .avatar-uploader .el-upload:hover {
+        border-color: #20a0ff;
+    }
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 178px;
+        height: 178px;
+        line-height: 178px;
+        text-align: center;
+    }
+    .avatar {
+        width: 178px;
+        height: 178px;
+        display: block;
+    }
+</style>

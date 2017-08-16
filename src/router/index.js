@@ -28,8 +28,11 @@ const MetadataType = () => import('../views/sys/system/metadataType');
 
 /* zwfw */
 const Category = () => import('../views/zwfw/category');
+const Item = () => import('../views/zwfw/zwfwItem');
 const Window = () => import('../views/zwfw/window');
 const FormEditor = () => import('../views/zwfw/formEditor/editor');
+const LegalPerson = () => import('../views/zwfw/zwfwLegalPerson');
+const NaturePerson = () => import('../views/zwfw/zwfwNaturePerson');
 
 
 /* components */
@@ -193,8 +196,11 @@ export const asyncRouterMap = [
         children: [
             {path: 'category', component: Category, name: '事项分类管理'},
             {path: 'window', component: Window, name: '窗口管理'},
-            {path: 'formEditor', component: FormEditor, name: '表单编辑器'}
-
+            {path: 'formEditor', component: FormEditor, name: '表单编辑器'},
+            {path: 'zwfwItem', component: Item, name: '事项管理'},
+            {path: 'window', component: Window, name: '窗口管理'},
+            {path: 'zwfwLegalPerson', component: LegalPerson, name: '法人管理'},
+            {path: 'zwfwNaturePerson', component: NaturePerson, name: '自然人管理'}
         ]
     },
     {
