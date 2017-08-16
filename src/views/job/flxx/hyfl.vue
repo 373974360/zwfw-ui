@@ -7,7 +7,7 @@
         </div>
         <tree-grid :columns="columns" :tree-structure="true" :data-source="list" :list-loading="listLoading"
                    :handle-toggle="handleToggle" :handle-create="handleCreate"
-                   :handle-update="handleUpdate" :handle-delete="handleDelete">
+                   :handle-update="handleUpdate" :handle-delete="handleDelete" :defaultExpandAll="false">
         </tree-grid>
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
             <el-form ref="hyflForm" class="small-space" :model="jobHyfl" label-position="right" label-width="80px"
@@ -21,7 +21,7 @@
                 <el-form-item label="分类名称" prop="name">
                     <el-input v-model="jobHyfl.name"/>
                 </el-form-item>
-                <el-form-item label="排序">
+                <el-form-item label="排　　序">
                     <el-input-number v-model="jobHyfl.sortNo" :min="1" :max="100"/>
                 </el-form-item>
             </el-form>
