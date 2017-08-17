@@ -1,5 +1,6 @@
 <template>
     <div class="app-container calendar-list-container">
+        <!--搜索区-->
         <div class="filter-container">
             <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="流程模型名称"
                       v-model="listQuery.name" no-match-text="没有找到哦">
@@ -15,6 +16,7 @@
                 删除
             </el-button>
         </div>
+        <!--表格-->
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"/>
@@ -30,29 +32,44 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="创建时间" >
-            <template scope="scope">
-                <span>{{scope.row.createTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
-            </template>
-        </el-table-column>
-            <el-table-column align="center" label="操作" width="350">
+            <el-table-column align="center" label="创建时间"  >
                 <template scope="scope">
-
+                    <span>{{scope.row.createTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
-        </el-table>
 
+        </el-table>
+        <!--列表分页-->
         <div v-show="!listLoading" class="pagination-container">
             <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
                            :current-page.sync="listQuery.page" :page-sizes="this.$store.state.app.pageSize"
-                           :page-size="listQuery.rows" layout="total, sizes, prev, pager, next, jumper" :total="total">
+                           :page-size="listQuery.pageSize" layout="total, sizes, prev, pager, next, jumper"
+                           :total="total">
             </el-pagination>
         </div>
+
+        <!--弹出层-->
+        <el-dialog title="创建流程模型" :visible.sync="addDialogFormVisible">
+            <el-form ref="activitiModelForm" :model="activitiModel" label-position="right" label-width="110px" :rules="rules">
+                <el-form-item label="名称" prop="name">
+                    <el-input v-model="activitiModel.name" auto-complete="off"></el-input>
+                </el-form-item>
+
+                <el-form-item label="描述" prop="description">
+                    <el-input type="textarea" v-model="activitiModel.description"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="create">创建</el-button>
+                <el-button @click="dialogFormVisible = false">取 消</el-button>
+            </div>
+        </el-dialog>
+
     </div>
 </template>
 
 <script>
-    import {getZwfwActivitiModelList,getZwfwActivitiModelEditUrl} from 'api/zwfw/zwfwActiviti';
+    import {getZwfwActivitiModelList, getZwfwActivitiModelEditUrl,createZwfwActivitiModel,deleteZwfwActivitiModel} from 'api/zwfw/zwfwActiviti';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
 
@@ -67,20 +84,23 @@
                     id: '',
                     name: '',
                     page: this.$store.state.app.page,
-                    rows: this.$store.state.app.rows
+                    pageSize: this.$store.state.app.rows
                 },
                 activitiModel: {
                     id: undefined,
                     name: '',
-                    callerKey: '',
-                    judgeKey: '',
-                    cameraKey: '',
-                    ledKey: ''
+                    category: '',
+                    description: ''
                 },
                 dialogStatus: '',
                 checked: true,
                 addDialogFormVisible: false,
-                selectedRows: []
+                selectedRows: [],
+                rules: {
+                    name: [{
+                        required: true, message: '请输入模型名称', trigger: 'blur'
+                    }]
+                }
             }
         },
         created() {
@@ -106,7 +126,7 @@
                 console.log(this.selectedRows);
             },
             handleSizeChange(val) {
-                this.listQuery.rows = val;
+                this.listQuery.pageSize = val;
                 this.getList();
             },
             handleCurrentChange(val) {
@@ -122,11 +142,11 @@
                 this.addDialogFormVisible = true;
             },
             handleUpdate(row) {
-                this.currentRow = row;
-                this.resetTemp();
-                this.activitiModel = copyProperties(this.activitiModel, row);
-                this.dialogStatus = 'update';
-                this.addDialogFormVisible = true;
+//                this.currentRow = row;
+//                this.resetTemp();
+//                this.activitiModel = copyProperties(this.activitiModel, row);
+//                this.dialogStatus = 'update';
+//                this.addDialogFormVisible = true;
                 getZwfwActivitiModelEditUrl(row.id).then(response => {
                     window.open(response.data);
                 });
@@ -145,7 +165,7 @@
                         for (const deleteRow of this.selectedRows) {
                             ids.push(deleteRow.id);
                         }
-                        delactivitiModel(ids).then(response => {
+                        deleteZwfwActivitiModel(ids).then(response => {
                             this.listLoading = false;
                             this.total -= selectCounts;
                             this.$message.success('删除成功');
@@ -164,20 +184,14 @@
                     if (valid) {
                         this.addDialogFormVisible = false;
                         this.listLoading = true;
-
-                    } else {
-                        return false;
-                    }
-                });
-            },
-            update() {
-                this.$refs['activitiModelForm'].validate(valid => {
-                    if (valid) {
-                        this.addDialogFormVisible = false;
-                        updateactivitiModel(this.activitiModel).then(response => {
-                            copyProperties(this.currentRow, response.data);
-                            this.$message.success('更新成功');
-                        })
+                        createZwfwActivitiModel(this.activitiModel).then(response => {
+                            if (response.httpCode === 200) {
+                                this.listLoading = false;
+                                this.$message.success('创建成功');
+                                this.getList();
+                                window.open(response.data.editUrl);
+                            }
+                        });
                     } else {
                         return false;
                     }
@@ -187,10 +201,8 @@
                 this.activitiModel = {
                     id: undefined,
                     name: '',
-                    callerKey: '',
-                    judgeKey: '',
-                    cameraKey: '',
-                    ledKey: ''
+                    description: '',
+                    category: ''
                 };
             }
         }

@@ -1,4 +1,5 @@
 import fetchZwfwActiviti from 'utils/fetchZwfwActiviti';
+import _ from 'lodash'
 
 /**
  * 流程模型列表接口
@@ -24,39 +25,28 @@ export function getZwfwActivitiModelEditUrl(id) {
         params: data
     });
 }
-//
-// export function createZwfwItem(zwfwItemVo){
-//     const data = zwfwItemVo;
-//     return fetchZwfwActiviti({
-//         url: '/zwfwItem/add',
-//         method: 'post',
-//         data
-//     })
-// }
-//
-// export function updateZwfwItem(zwfwItemVo){
-//     const data = zwfwItemVo;
-//     return fetchZwfwActiviti({
-//         url: '/zwfwItem/edit',
-//         method: 'post',
-//         data
-//     })
-// }
-// export function delZwfwItems(ids) {
-//     const data = {ids};
-//     return fetchZwfwActiviti({
-//         url: '/zwfwItem/dels',
-//         method: 'post',
-//         data
-//     })
-// }
-// export function deleteZwfwItem(id) {
-//     const data = {id};
-//     return fetchZwfwActiviti({
-//         url: '/zwfwItem/delete',
-//         method: 'post',
-//         data
-//     })
-// }
 
+/**
+ * 创建新的流程模型
+ * @param data
+ */
+export function createZwfwActivitiModel(data) {
+    return fetchZwfwActiviti({
+        url: '/zwfw/activiti/model/add',
+        method: 'post',
+        params: data
+    });
+}
 
+/**
+ * 删除流程模型
+ * @param id
+ */
+export function deleteZwfwActivitiModel(id) {
+    const data = {id:_.isArray(id) ? id.join('#') : id};
+    return fetchZwfwActiviti({
+        url: '/zwfw/activiti/model/delete',
+        method: 'post',
+        params: data
+    });
+}
