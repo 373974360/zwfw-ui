@@ -32,7 +32,7 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="创建时间"  >
+            <el-table-column align="center" label="创建时间" width="200" >
                 <template scope="scope">
                     <span>{{scope.row.createTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
