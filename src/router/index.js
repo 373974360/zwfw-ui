@@ -33,6 +33,7 @@ const Window = () => import('../views/zwfw/window');
 const FormEditor = () => import('../views/zwfw/formEditor/editor');
 const LegalPerson = () => import('../views/zwfw/zwfwLegalPerson');
 const NaturePerson = () => import('../views/zwfw/zwfwNaturePerson');
+const ZwfwProcessDefinitionModel = () => import('../views/zwfw/activiti/zwfwProcessDefinitionModel');
 
 
 /* components */
@@ -216,7 +217,9 @@ export const asyncRouterMap = [
             {path: 'zwfwItem', component: Item, name: '事项管理'},
             {path: 'window', component: Window, name: '窗口管理'},
             {path: 'zwfwLegalPerson', component: LegalPerson, name: '法人管理'},
-            {path: 'zwfwNaturePerson', component: NaturePerson, name: '自然人管理'}
+            {path: 'zwfwNaturePerson', component: NaturePerson, name: '自然人管理'},
+            {path: 'activitiModel', component: ZwfwProcessDefinitionModel, name: '流程模型编辑'}
+
         ]
     },
     {
