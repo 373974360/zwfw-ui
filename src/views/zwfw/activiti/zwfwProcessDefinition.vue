@@ -9,40 +9,63 @@
             <el-button style="margin-left: 10px;" class="filter-item" type="primary" v-waves icon="search"
                        @click="getList">搜索
             </el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">
-                添加
+
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleSuspend" type="danger" icon="check">
+                挂起
             </el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleDelete" type="danger" icon="delete">
-                删除
-            </el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleDeploy" type="danger" icon="check">
-                发布
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleActive" type="danger" icon="check">
+                激活
             </el-button>
         </div>
         <!--表格-->
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"/>
-            <el-table-column align="center" label="模型ID" width="200">
+            <el-table-column align="center" label="流程定义ID" width="200">
                 <template scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
-            <el-table-column min-width="50px" align="center" label="流程模型名称">
+            <el-table-column min-width="50px" align="center" label="流程定义名称">
                 <template scope="scope">
-                    <el-tooltip content="点击编辑" placement="right" effect="dark">
-                        <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
-                    </el-tooltip>
+                    <span>{{scope.row.name}}</span>
                 </template>
             </el-table-column>
-            <el-table-column min-width="50px" align="center" label="发布的流程定义">
+            <el-table-column min-width="50px" align="center" label="流程版本">
                 <template scope="scope">
-                    {{scope.row.deploymentId}}
+                    {{scope.row.version}}
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="创建时间" width="200">
+            <el-table-column min-width="50px" align="center" label="是否挂起">
                 <template scope="scope">
-                    <span>{{scope.row.createTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
+                    <i v-if="scope.row.suspended" class="el-icon-circle-check"></i>
+                    <i v-else class="el-icon-circle-cross"></i>
+                </template>
+            </el-table-column>
+            <el-table-column min-width="50px" align="center" label="启动步骤是自定义表单">
+                <template scope="scope" >
+                    <i v-if="scope.row.hasStartFormKey" class="el-icon-circle-check"></i>
+                    <i v-else class="el-icon-circle-cross"></i>
+                </template>
+            </el-table-column>
+            <el-table-column min-width="50px" align="center" label="是否有绘图">
+                <template scope="scope">
+                    <i v-if="scope.row.hasGraphicalNotation" class="el-icon-circle-check"></i>
+                    <i v-else class="el-icon-circle-cross"></i>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="描述" width="200">
+                <template scope="scope">
+                    <span>{{scope.row.description}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    fixed="right"
+                    label="操作"
+                    width="100">
+                <template scope="scope">
+                    <el-button @click="handleView" type="text" size="small">查看</el-button>
+                    <el-button @click="handleCreateInstance" type="text" size="small">创建</el-button>
                 </template>
             </el-table-column>
 
@@ -57,19 +80,20 @@
         </div>
 
         <!--弹出层-->
-        <el-dialog title="创建流程模型" :visible.sync="addDialogFormVisible">
-            <el-form ref="activitiModelForm" :model="activitiModel" label-position="right" label-width="110px"
+        <el-dialog title="创建流程实例" :visible.sync="addDialogFormVisible">
+            <el-form ref="zwfwProcessDefinitionForm" :model="zwfwProcessDefinition" label-position="right"
+                     label-width="110px"
                      :rules="rules">
                 <el-form-item label="名称" prop="name">
-                    <el-input v-model="activitiModel.name" auto-complete="off"></el-input>
+                    <el-input v-model="zwfwProcessDefinition.name" auto-complete="off"></el-input>
                 </el-form-item>
 
                 <el-form-item label="描述" prop="description">
-                    <el-input type="textarea" v-model="activitiModel.description"></el-input>
+                    <el-input type="textarea" v-model="zwfwProcessDefinition.description"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="create">创建</el-button>
+                <el-button type="primary" @click="createInstance">创建</el-button>
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
             </div>
         </el-dialog>
@@ -79,8 +103,8 @@
 
 <script>
     import {
-        getZwfwActivitiModelList, getZwfwActivitiModelEditUrl, createZwfwActivitiModel, deleteZwfwActivitiModel,
-        deployZwfwActivitiModel
+        getZwfwProcessDefinitionList,
+        createZwfwProcessDefinition,
     } from 'api/zwfw/zwfwActiviti';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
@@ -98,7 +122,7 @@
                     page: this.$store.state.app.page,
                     pageSize: this.$store.state.app.rows
                 },
-                activitiModel: {
+                zwfwProcessDefinition: {
                     id: undefined,
                     name: '',
                     category: '',
@@ -127,7 +151,7 @@
         methods: {
             getList() {
                 this.listLoading = true;
-                getZwfwActivitiModelList(this.listQuery).then(response => {
+                getZwfwProcessDefinitionList(this.listQuery).then(response => {
                     this.list = response.data.list;
                     this.total = response.data.total;
                     this.listLoading = false;
@@ -145,52 +169,26 @@
                 this.listQuery.page = val;
                 this.getList();
             },
-            resetForm(activitiModelForm) {
-                this.$refs[activitiModelForm].resetFields();
+            resetForm(zwfwProcessDefinitionForm) {
+                this.$refs[zwfwProcessDefinitionForm].resetFields();
             },
-            handleCreate() {
-                this.resetTemp();
-                this.dialogStatus = 'create';
-                this.addDialogFormVisible = true;
-            },
-            handleUpdate(row) {
-                getZwfwActivitiModelEditUrl(row.id).then(response => {
-                    window.open(response.data);
-                });
-            },
-            handleDelete() {
-                const selectCounts = this.selectedRows.length;
-                if (this.selectedRows.length === 0) {
-                    this.$message.warning('请选择需要操作的记录');
-                } else {
-                    this.$confirm('此操作将删除关联信息, 是否继续?', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-                        const ids = new Array();
-                        for (const deleteRow of this.selectedRows) {
-                            ids.push(deleteRow.id);
-                        }
-                        deleteZwfwActivitiModel(ids).then(response => {
-                            this.listLoading = false;
-                            console.log(response);
-                            this.total -= selectCounts;
-                            this.$message.success('删除成功');
+            /**
+             * 查看流程定义
+             */
+            handleView() {
 
-                        });
-                        this.getList();
-                    }).catch((e) => {
-                        console.log('发生错误', e);
-                    });
-                }
             },
-            handleDeploy() {
-                const selectCounts = this.selectedRows.length;
+            /**
+             * 点击创建实例
+             */
+            handleCreateInstance() {
+
+            },
+            handleSuspend() {
                 if (this.selectedRows.length === 0) {
                     this.$message.warning('请选择需要操作的记录');
                 } else {
-                    this.$confirm('此操作将模型发布为流程定义, 是否继续?', '提示', {
+                    this.$confirm('此操作将模挂起流程定义, 是否继续?', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning'
@@ -199,10 +197,10 @@
                         for (const deployRow of this.selectedRows) {
                             ids.push(deployRow.id);
                         }
-                        deployZwfwActivitiModel(ids).then(response => {
+                        suspendZwfwProcessDefinition(ids).then(response => {
                             console.log(response);
                             this.listLoading = false;
-                            this.$message.success('发布成功');
+                            this.$message.success('挂起成功');
                             this.getList();
                         });
                     }).catch((e) => {
@@ -210,18 +208,41 @@
                     });
                 }
             },
-            create() {
-                this.$refs['activitiModelForm'].validate(valid => {
+            handleActive() {
+                const selectCounts = this.selectedRows.length;
+                if (this.selectedRows.length === 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将重新激活流程定义, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        const ids = new Array();
+                        for (const deployRow of this.selectedRows) {
+                            ids.push(deployRow.id);
+                        }
+                        activeZwfwProcessDefinition(ids).then(response => {
+                            console.log(response);
+                            this.listLoading = false;
+                            this.$message.success('激活成功');
+                            this.getList();
+                        });
+                    }).catch((e) => {
+                        console.log('发生错误', e);
+                    });
+                }
+            },
+            createInstance() {
+                this.$refs['zwfwProcessDefinitionForm'].validate(valid => {
                     if (valid) {
                         this.addDialogFormVisible = false;
                         this.listLoading = true;
-                        createZwfwActivitiModel(this.activitiModel).then(response => {
-                            if (response.httpCode === 200) {
-                                this.listLoading = false;
-                                this.$message.success('创建成功');
-                                this.getList();
-                                window.open(response.data.editUrl);
-                            }
+                        createZwfwProcessDefinition(this.zwfwProcessDefinition).then(response => {
+                            this.listLoading = false;
+                            this.$message.success('创建成功');
+                            this.getList();
+                            window.open(response.data.editUrl);
                         });
                     } else {
                         return false;
@@ -229,7 +250,7 @@
                 });
             },
             resetTemp() {
-                this.activitiModel = {
+                this.zwfwProcessDefinition = {
                     id: undefined,
                     name: '',
                     description: '',

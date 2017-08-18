@@ -43,10 +43,35 @@ export function createZwfwActivitiModel(data) {
  * @param id
  */
 export function deleteZwfwActivitiModel(id) {
-    const data = {id:_.isArray(id) ? id.join('#') : id};
+    const data = {id: _.isArray(id) ? id.join('#') : id};
     return fetchZwfwActiviti({
         url: '/zwfw/activiti/model/delete',
         method: 'post',
         params: data
+    });
+}
+
+/**
+ * 发布流程模型位流程定义
+ * @param id
+ */
+export function deployZwfwActivitiModel(id) {
+    const data = {id: _.isArray(id) ? id.join('#') : id};
+    return fetchZwfwActiviti({
+        url: '/zwfw/activiti/model/deploy',
+        method: 'post',
+        params: data
+    });
+}
+
+/**
+ * 流程定义分页列表接口
+ * @param listQuery
+ */
+export function getZwfwProcessDefinitionList(query) {
+    return fetchZwfwActiviti({
+        url: '/zwfw/activiti/pd/list',
+        method: 'get',
+        params: query
     });
 }
