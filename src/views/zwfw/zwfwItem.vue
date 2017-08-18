@@ -39,7 +39,9 @@
             </el-table-column>
             <el-table-column align="center" label="办件类型" prop="processType">
                 <template scope="scope">
-                    <span>{{scope.row.processType}}</span>
+                    <el-tag :type="scope.row.processType | dicts('bjlx')">
+                        {{scope.row.processType | dicts('bjlx')}}
+                    </el-tag>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="承诺办结时间" prop="promiseEndTime">
@@ -54,7 +56,9 @@
             </el-table-column>
             <el-table-column align="center" label="办理形式" prop="handleType">
                 <template scope="scope">
-                    <span>{{scope.row.handleType}}</span>
+                    <el-tag :type="scope.row.handleType | dicts('blxs')">
+                        {{scope.row.handleType | dicts('blxs')}}
+                    </el-tag>
                 </template>
             </el-table-column>
             <el-table-column prop="enable" class-name="status-col" label="状态">
@@ -73,11 +77,12 @@
             </el-pagination>
         </div>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-            <el-tabs v-model="activeName">
+        <el-dialog  :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+            <el-tabs v-model="activeName" @tab-click="handleClick">
                 <el-tab-pane label="基本信息" name="first">
                     <div>
-                        <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem" label-position="right" label-width="80px"
+                        <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem" label-position="right"
+                                 label-width="134px"
                                  style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="zwfwItemRules">
                             <el-form-item label="事项名称" prop="name">
                                 <el-input v-model="zwfwItem.name"></el-input>
@@ -85,44 +90,109 @@
                             <el-form-item label="基本编码" prop="basicCode">
                                 <el-input v-model="zwfwItem.basicCode"></el-input>
                             </el-form-item>
+                            <el-form-item label="实施编码" prop="implCode">
+                                <el-input v-model="zwfwItem.implCode"></el-input>
+                            </el-form-item>
                             <el-form-item label="设定依据" prop="setBasis">
-                                <el-input v-model="zwfwItem.setBasis"></el-input>
+                                <el-input v-model="zwfwItem.setBasis" type="textarea"></el-input>
                             </el-form-item>
-                            <el-form-item label="是否收费" prop="chargeable">
-                                <el-input v-model="zwfwItem.chargeable"></el-input>
-                            </el-form-item>
-                            <el-form-item label="是否支持预约办理" prop="orderable">
-                                <el-input v-model="zwfwItem.orderable"></el-input>
-                            </el-form-item>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <el-form-item label="是否支持预约办理" prop="orderable">
+                                            <el-radio-group v-model="zwfwItem.orderable">
+                                                <el-radio v-for="item in enums['YesNo']"
+                                                          :key="item.code"
+                                                          :label="item.code"
+                                                          :value="item.code">
+                                                    <span style="font-weight:normal;">{{item.value}}</span>
+                                                </el-radio>
+                                            </el-radio-group>
+                                        </el-form-item>
+                                    </td>
+                                    <td width="100"></td>
+                                    <td>
+                                        <el-form-item label="是否收费" prop="chargeable">
+                                            <el-radio-group v-model="zwfwItem.chargeable">
+                                                <el-radio v-for="item in enums['YesNo']"
+                                                          :key="item.code"
+                                                          :label="item.code"
+                                                          :value="item.code">
+                                                    <span style="font-weight:normal;">{{item.value}}</span>
+                                                </el-radio>
+                                            </el-radio-group>
+                                        </el-form-item>
+                                    </td>
+                                </tr>
+                            </table>
                             <el-form-item label="实施主体性质" prop="implObjectType">
-                                <el-input v-model="zwfwItem.implObjectType"></el-input>
+                                <el-radio-group v-model="zwfwItem.implObjectType">
+                                    <el-radio v-for="item in dicts['ssztxz']"
+                                              :key="item.code"
+                                              :label="item.code"
+                                              :value="item.code">
+                                        <span style="font-weight:normal;">{{item.value}}</span>
+                                    </el-radio>
+                                </el-radio-group>
                             </el-form-item>
                             <el-form-item label="是否支持网上支付" prop="payOnlineAble">
-                                <el-input v-model="zwfwItem.payOnlineAble"></el-input>
+                                <el-radio-group v-model="zwfwItem.payOnlineAble">
+                                    <el-radio v-for="item in enums['YesNo']"
+                                              :key="item.code"
+                                              :label="item.code"
+                                              :value="item.code">
+                                        <span style="font-weight:normal;">{{item.value}}</span>
+                                    </el-radio>
+                                </el-radio-group>
                             </el-form-item>
                             <el-form-item label="承诺办结时间" prop="promiseEndTime">
                                 <el-input v-model="zwfwItem.promiseEndTime"></el-input>
                             </el-form-item>
-                            <el-form-item label="备注" prop="remark">
-                                <el-input v-model="zwfwItem.remark"></el-input>
-                            </el-form-item>
                             <el-form-item label="运行系统" prop="runSystem">
-                                <el-input v-model="zwfwItem.runSystem"></el-input>
+                                <el-radio-group v-model="zwfwItem.runSystem">
+                                    <el-radio v-for="item in dicts['yxxt']"
+                                              :key="item.code"
+                                              :label="item.code"
+                                              :value="item.code">
+                                        <span style="font-weight:normal;">{{item.value}}</span>
+                                    </el-radio>
+                                </el-radio-group>
                             </el-form-item>
                             <el-form-item label="事项类型" prop="type">
-                                <el-input v-model="zwfwItem.type"></el-input>
+                                <el-select v-model="zwfwItem.type" placeholder="请选择事项类型">
+                                    <el-option
+                                            v-for="item in dicts['sslx']"
+                                            :key="item.code"
+                                            :label="item.value"
+                                            :value="item.value">
+                                    </el-option>
+                                </el-select>
                             </el-form-item>
                             <el-form-item label="结果样本" prop="resultExample">
                                 <el-input v-model="zwfwItem.resultExample"></el-input>
                             </el-form-item>
                             <el-form-item label="行使层级" prop="handleLevel">
-                                <el-input v-model="zwfwItem.handleLevel"></el-input>
+                                <el-radio-group v-model="zwfwItem.handleLevel">
+                                    <el-radio v-for="item in dicts['xscj']"
+                                              :key="item.code"
+                                              :label="item.code"
+                                              :value="item.code">
+                                        <span style="font-weight:normal;">{{item.value}}</span>
+                                    </el-radio>
+                                </el-radio-group>
                             </el-form-item>
                             <el-form-item label="联办机构" prop="unionAgency">
                                 <el-input v-model="zwfwItem.unionAgency"></el-input>
                             </el-form-item>
                             <el-form-item label="服务对象" prop="serviceObject">
-                                <el-input v-model="zwfwItem.serviceObject"></el-input>
+                                <el-radio-group v-model="zwfwItem.serviceObject">
+                                    <el-radio v-for="item in dicts['fwdx']"
+                                              :key="item.code"
+                                              :label="item.code"
+                                              :value="item.code">
+                                        <span style="font-weight:normal;">{{item.value}}</span>
+                                    </el-radio>
+                                </el-radio-group>
                             </el-form-item>
                             <el-form-item label="办理地点" prop="handlePlace">
                                 <el-input v-model="zwfwItem.handlePlace"></el-input>
@@ -130,35 +200,54 @@
                             <el-form-item label="行使内容" prop="handleContent">
                                 <el-input v-model="zwfwItem.handleContent"></el-input>
                             </el-form-item>
-                            <el-form-item label="申请材料" prop="applyMaterial">
-                                <el-input v-model="zwfwItem.applyMaterial"></el-input>
-                            </el-form-item>
                             <el-form-item label="数量限制" prop="numberLimit">
                                 <el-input v-model="zwfwItem.numberLimit"></el-input>
                             </el-form-item>
                             <el-form-item label="通办范围" prop="handleScope">
-                                <el-input v-model="zwfwItem.handleScope"></el-input>
+                                <el-radio-group v-model="zwfwItem.handleScope">
+                                    <el-radio v-for="item in dicts['tbfw']"
+                                              :key="item.code"
+                                              :label="item.code"
+                                              :value="item.code">
+                                        <span style="font-weight:normal;">{{item.value}}</span>
+                                    </el-radio>
+                                </el-radio-group>
                             </el-form-item>
                             <el-form-item label="咨询电话" prop="askPhone">
                                 <el-input v-model="zwfwItem.askPhone"></el-input>
                             </el-form-item>
-                            <el-form-item label="办理流程id" prop="handleWorkflow">
-                                <el-input v-model="zwfwItem.handleWorkflow"></el-input>
-                            </el-form-item>
+                            <!--<el-form-item label="办理流程id" prop="handleWorkflow">-->
+                            <!--<el-input v-model="zwfwItem.handleWorkflow"></el-input>-->
+                            <!--</el-form-item>-->
                             <el-form-item label="收费标准" prop="chargeStandard">
-                                <el-input v-model="zwfwItem.chargeStandard"></el-input>
+                                <el-input v-model="zwfwItem.chargeStandard" type="textarea"></el-input>
                             </el-form-item>
                             <el-form-item label="办件类型" prop="processType">
-                                <el-input v-model="zwfwItem.processType"></el-input>
+                                <el-radio-group v-model="zwfwItem.processType">
+                                    <el-radio v-for="item in dicts['bjlx']"
+                                              :key="item.code"
+                                              :label="item.code"
+                                              :value="item.code">
+                                        <span style="font-weight:normal;">{{item.value}}</span>
+                                    </el-radio>
+                                </el-radio-group>
                             </el-form-item>
                             <el-form-item label="法定办结时限" prop="legalEndTime">
                                 <el-input v-model="zwfwItem.legalEndTime"></el-input>
                             </el-form-item>
                             <el-form-item label="是否支持物流快递" prop="postable">
-                                <el-input v-model="zwfwItem.postable"></el-input>
+                                <el-radio-group v-model="zwfwItem.postable">
+                                    <el-radio v-for="item in enums['YesNo']"
+                                              :key="item.code"
+                                              :label="item.code"
+                                              :value="item.code">
+                                        <span style="font-weight:normal;">{{item.value}}</span>
+                                    </el-radio>
+                                </el-radio-group>
                             </el-form-item>
                             <el-form-item label="版本生效时间" prop="versionAvailableTime">
-                                <el-input v-model="zwfwItem.versionAvailableTime"></el-input>
+                                <el-date-picker v-model="zwfwItem.versionAvailableTime" type="datetime"
+                                                placeholder="选择日期"></el-date-picker>
                             </el-form-item>
                             <el-form-item label="监督电话" prop="supervisePhone">
                                 <el-input v-model="zwfwItem.supervisePhone"></el-input>
@@ -167,13 +256,13 @@
                                 <el-input v-model="zwfwItem.implAgency"></el-input>
                             </el-form-item>
                             <el-form-item label="受理条件" prop="acceptCondition">
-                                <el-input v-model="zwfwItem.acceptCondition"></el-input>
+                                <el-input v-model="zwfwItem.acceptCondition" type="textarea"></el-input>
                             </el-form-item>
                             <el-form-item label="收费依据" prop="chargeBasis">
-                                <el-input v-model="zwfwItem.chargeBasis"></el-input>
+                                <el-input v-model="zwfwItem.chargeBasis" type="textarea"></el-input>
                             </el-form-item>
                             <el-form-item label="内部流程描述" prop="workflowDescription">
-                                <el-input v-model="zwfwItem.workflowDescription"></el-input>
+                                <el-input v-model="zwfwItem.workflowDescription" type="textarea"></el-input>
                             </el-form-item>
                             <el-form-item label="权限划分" prop="authorityDivision">
                                 <el-input v-model="zwfwItem.authorityDivision"></el-input>
@@ -185,7 +274,14 @@
                                 <el-input v-model="zwfwItem.resultName"></el-input>
                             </el-form-item>
                             <el-form-item label="办理形式" prop="handleType">
-                                <el-input v-model="zwfwItem.handleType"></el-input>
+                                <el-radio-group v-model="zwfwItem.handleType">
+                                    <el-radio v-for="item in dicts['blxs']"
+                                              :key="item.code"
+                                              :label="item.code"
+                                              :value="item.code">
+                                        <span style="font-weight:normal;">{{item.value}}</span>
+                                    </el-radio>
+                                </el-radio-group>
                             </el-form-item>
                             <el-form-item label="中介服务" prop="mediumService">
                                 <el-input v-model="zwfwItem.mediumService"></el-input>
@@ -193,23 +289,131 @@
                             <el-form-item label="常见问题" prop="commonRequestion">
                                 <el-input v-model="zwfwItem.commonRequestion"></el-input>
                             </el-form-item>
-                            <el-form-item label="实施编码" prop="implCode">
-                                <el-input v-model="zwfwItem.implCode"></el-input>
-                            </el-form-item>
-                            <el-form-item label="权利更新类型" prop="updateType">
-                                <el-input v-model="zwfwItem.updateType"></el-input>
+                            <!--<el-form-item label="权利更新类型" prop="updateType">-->
+                            <!--<el-input v-model="zwfwItem.updateType"></el-input>-->
+                            <!--</el-form-item>-->
+                            <el-form-item label="备注" prop="remark">
+                                <el-input v-model="zwfwItem.remark"></el-input>
                             </el-form-item>
                         </el-form>
                         <div slot="footer" class="dialog-footer" style="text-align: center;">
-                            <el-button icon="circle-cross" type="danger" @click="dialogFormVisible = false">取 消</el-button>
-                            <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
+                            <el-button icon="circle-cross" type="danger" @click="dialogFormVisible = false">取 消
                             </el-button>
-                            <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
+                            <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">
+                                确 定
+                            </el-button>
+                            <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">
+                                确 定
                             </el-button>
                         </div>
                     </div>
                 </el-tab-pane>
-                <el-tab-pane label="办理材料" name="second"></el-tab-pane>
+                <el-tab-pane id="second" label="办理材料" name="second" :disabled="false">
+                    <div>
+                    <el-table ref="zwfwItemMaterialForm" :data="zwfwItemMaterialList" v-loading.body="listLoading" border fit
+                              highlight-current-row
+                              style="width: 100%" @selection-change="handleSelectionChange"
+                              @row-click="toggleSelection">
+                        <el-table-column align="center" label="序号" width="150">
+                            <template scope="scope">
+                                <span>{{scope.row.id}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="name" align="center" label="材料名称" width="100">
+                            <template scope="scope">
+                                <span>{{scope.row.name}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="type" align="center" label="材料类型" width="100">
+                            <template scope="scope">
+                                <span>{{scope.row.type}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="source" align="center" label="来源渠道">
+                            <template scope="scope">
+                                <span>{{scope.row.source}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="electronicMaterial" align="center" label="是否需要电子材料">
+                            <template scope="scope">
+                                <span>{{scope.row.electronicMaterial | enums('YesNo')}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="操作"  align="center">
+                            <template scope="scope">
+                                <el-button  size="small" @click="handleUpdateClick(scope.row)">编辑</el-button>
+                                <el-button size="small"type="danger">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <el-form ref="zwfwItemMaterialForm" class="small-space" :model="zwfwItemMaterial"
+                             label-position="right"
+                             label-width="80px"
+                             style='width: 80%; margin-left:10%; margin-top: 5%;'
+                             :rules="zwfwItemMaterialRules">
+                        <el-form-item label="材料名称" prop="name">
+                            <el-select v-model="zwfwItemMaterial.name" multiple filterable remote placeholder="请输入关键词" :remote-method="remoteMethod"
+                                    >
+                                <el-option
+                                        v-for="item in optionsName"
+                                        :key="item.id"
+                                        :label="item.name"
+                                        :value="item.name">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="材料类型" prop="type">
+                            <el-input v-model="zwfwItemMaterial.type"></el-input>
+                        </el-form-item>
+                        <el-form-item label="是否需要电子材料" prop="electronicMaterial">
+                            <el-radio-group v-model="zwfwItemMaterial.electronicMaterial">
+                                <el-radio v-for="item in enums['YesNo']"
+                                          :key="item.code"
+                                          :label="item.code"
+                                          :value="item.code">
+                                    <span style="font-weight:normal;">{{item.value}}</span>
+                                </el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                        <el-form-item label="纸质材料说明（数量和规格）" prop="paperDescription">
+                            <el-input v-model="zwfwItemMaterial.paperDescription"></el-input>
+                        </el-form-item>
+                        <el-form-item label="受理标准" prop="acceptStandard">
+                            <el-input v-model="zwfwItemMaterial.acceptStandard"></el-input>
+                        </el-form-item>
+                        <el-form-item label="来源渠道" prop="source">
+                            <el-input v-model="zwfwItemMaterial.source"></el-input>
+                        </el-form-item>
+                        <el-form-item label="材料样本" prop="example">
+                            <el-upload
+                                    class="upload-demo"
+                                    action="https://jsonplaceholder.typicode.com/posts/">
+                                <el-button size="small" type="primary">点击上传</el-button>
+                            </el-upload>
+                        </el-form-item>
+                        <el-form-item label="电子表单" prop="eform">
+                            <el-upload
+                                    class="upload-demo"
+                                    action="https://jsonplaceholder.typicode.com/posts/">
+                                <el-button size="small" type="primary">点击上传</el-button>
+                            </el-upload>
+                        </el-form-item>
+                        <el-form-item label="填报须知" prop="notice">
+                            <el-input v-model="zwfwItemMaterial.notice"></el-input>
+                        </el-form-item>
+                        <el-form-item label="备注" prop="remark">
+                            <el-input v-model="zwfwItemMaterial.remark"></el-input>
+                        </el-form-item>
+                    </el-form>
+                    <div style="text-align: center" slot="footer" class="dialog-footer">
+                        <el-button icon="circle-cross" type="danger" @click="dialogFormVisible = false">取 消</el-button>
+                        <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="createMaterial">确 定
+                        </el-button>
+                        <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
+                        </el-button>
+                    </div>
+                    </div>
+                </el-tab-pane>
             </el-tabs>
 
 
@@ -221,14 +425,21 @@
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import {getZwfwItemList, createZwfwItem, updateZwfwItem, delZwfwItems} from 'api/zwfw/zwfwItem';
+    import {getZwfwItemMaterialById, createZwfwItemMaterial, getZwfwItemMaterialList} from 'api/zwfw/zwfwItemMaterial';
+
 
     export default {
         name: 'zwfwItem_table',
         data() {
             return {
                 zwfwItemList: [],
+                zwfwItemMaterialList: [],
+                ItemMaterial: [],
+                optionsName: [],
+                list: [],
                 total: null,
                 listLoading: true,
+                changeTable: false,
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
@@ -237,106 +448,90 @@
                 activeName: 'first',
                 zwfwItem: {
                     id: undefined,
-                    setBasis: undefined,
-                    chargeable: undefined,
-                    orderable: undefined,
-                    implObjectType: undefined,
-                    payOnlineAble: undefined,
-                    basicCode: undefined,
-                    promiseEndTime: undefined,
-                    remark: undefined,
-                    runSystem: undefined,
-                    type: undefined,
-                    resultExample: undefined,
-                    handleLevel: undefined,
-                    unionAgency: undefined,
-                    serviceObject: undefined,
-                    handlePlace: undefined,
-                    handleContent: undefined,
-                    applyMaterial: undefined,
-                    numberLimit: undefined,
-                    handleScope: undefined,
-                    askPhone: undefined,
-                    handleWorkflow: undefined,
-                    chargeStandard: undefined,
-                    processType: undefined,
-                    legalEndTime: undefined,
-                    postable: undefined,
-                    versionAvailableTime: undefined,
-                    supervisePhone: undefined,
-                    implAgency: undefined,
-                    acceptCondition: undefined,
-                    chargeBasis: undefined,
-                    workflowDescription: undefined,
-                    authorityDivision: undefined,
-                    version: undefined,
-                    resultName: undefined,
-                    handleType: undefined,
-                    name: undefined,
-                    mediumService: undefined,
-                    commonRequestion: undefined,
-                    implCode: undefined,
-                    updateType: undefined
+                    setBasis: '',
+                    chargeable: true,
+                    orderable: true,
+                    implObjectType: 'ssztxz_swtzz',
+                    payOnlineAble: true,
+                    basicCode: '',
+                    promiseEndTime: '',
+                    remark: '',
+                    runSystem: 'yxxt_guojiaji',
+                    type: '',
+                    resultExample: '',
+                    handleLevel: 'xscj_guojiaji',
+                    unionAgency: '',
+                    serviceObject: 'fwdx_ziranren',
+                    handlePlace: '',
+                    handleContent: '',
+                    applyMaterial: '',
+                    numberLimit: '',
+                    handleScope: 'tbfw_quanguo',
+                    askPhone: '',
+                    handleWorkflow: '',
+                    chargeStandard: '',
+                    processType: 'bjlx_cnj',
+                    legalEndTime: '',
+                    postable: true,
+                    versionAvailableTime: '',
+                    supervisePhone: '',
+                    implAgency: '',
+                    acceptCondition: '',
+                    chargeBasis: '',
+                    workflowDescription: '',
+                    authorityDivision: '',
+                    version: '',
+                    resultName: '',
+                    handleType: 'blxs_ckbl',
+                    name: '',
+                    mediumService: '',
+                    commonRequestion: '',
+                    implCode: '',
+                    updateType: ''
                 },
+                zwfwItemMaterial: {
+                    id: undefined,
+                    electronicMaterial: true,
+                    eform: '',
+                    name: '',
+                    paperDescription: '',
+                    acceptStandard: '',
+                    remark: '',
+                    source: '',
+                    type: '',
+                    example: '',
+                    notice: '',
+                    itemId: ''
+                },
+                applyMaterials: '',
                 currentRow: null,
                 selectedRows: [],
                 dialogFormVisible: false,
                 dialogStatus: '',
                 dialogLoading: false,
                 zwfwItemRules: {
-                    setBasis: [
-                        {required: true, message: '请输入设定依据', trigger: 'blur'}
-                    ],
-                    chargeable: [
-                        {required: true, message: '请输入是否收费', trigger: 'blur'}
-                    ],
-                    orderable: [
-                        {required: true, message: '请输入是否支持预约办理', trigger: 'blur'}
-                    ],
-                    implObjectType: [
-                        {required: true, message: '请输入实施主体性质', trigger: 'blur'}
-                    ],
-                    payOnlineAble: [
-                        {required: true, message: '请输入是否支持网上支付', trigger: 'blur'}
+                    name: [
+                        {required: true, message: '请输入事项名称', trigger: 'blur'}
                     ],
                     basicCode: [
-                        {required: true, message: '请输入基本编码', trigger: 'blur'}
+                        {required: false, message: '请输入基本编码', trigger: 'blur'},
+                        {min: 10, max: 10, message: '基本编码长度是10位', trigger: 'blur'}
                     ],
-                    promiseEndTime: [
-                        {required: true, message: '请输入承诺办结时间', trigger: 'blur'}
+                    implCode: [
+                        {required: false, message: '请输入实施编码'},
+                        {min: 24, max: 24, message: '实施编码长度是24位'}
                     ],
-                    remark: [
-                        {required: true, message: '请输入备注', trigger: 'blur'}
-                    ],
-                    runSystem: [
-                        {required: true, message: '请输入运行系统', trigger: 'blur'}
+                    setBasis: [
+                        {required: true, message: '请输入设定依据', trigger: 'blur'}
                     ],
                     type: [
                         {required: true, message: '请输入事项类型', trigger: 'blur'}
                     ],
-                    resultExample: [
-                        {required: true, message: '请输入结果样本', trigger: 'blur'}
-                    ],
-                    handleLevel: [
-                        {required: true, message: '请输入行使层级', trigger: 'blur'}
-                    ],
                     unionAgency: [
                         {required: true, message: '请输入联办机构', trigger: 'blur'}
                     ],
-                    serviceObject: [
-                        {required: true, message: '请输入服务对象', trigger: 'blur'}
-                    ],
                     handlePlace: [
                         {required: true, message: '请输入办理地点', trigger: 'blur'}
-                    ],
-                    handleContent: [
-                        {required: true, message: '请输入行使内容', trigger: 'blur'}
-                    ],
-                    applyMaterial: [
-                        {required: true, message: '请输入申请材料', trigger: 'blur'}
-                    ],
-                    numberLimit: [
-                        {required: true, message: '请输入数量限制', trigger: 'blur'}
                     ],
                     handleScope: [
                         {required: true, message: '请输入通办范围', trigger: 'blur'}
@@ -344,76 +539,41 @@
                     askPhone: [
                         {required: true, message: '请输入咨询电话', trigger: 'blur'}
                     ],
-                    handleWorkflow: [
-                        {required: true, message: '请输入办理流程id', trigger: 'blur'}
-                    ],
                     chargeStandard: [
                         {required: true, message: '请输入收费标准', trigger: 'blur'}
                     ],
                     processType: [
                         {required: true, message: '请输入办件类型', trigger: 'blur'}
                     ],
-                    legalEndTime: [
-                        {required: true, message: '请输入法定办结时限', trigger: 'blur'}
-                    ],
-                    postable: [
-                        {required: true, message: '请输入是否支持物流快递', trigger: 'blur'}
-                    ],
-                    versionAvailableTime: [
-                        {required: true, message: '请输入版本生效时间', trigger: 'blur'}
-                    ],
                     supervisePhone: [
                         {required: true, message: '请输入监督电话', trigger: 'blur'}
                     ],
                     implAgency: [
                         {required: true, message: '请输入实施机构', trigger: 'blur'}
-                    ],
-                    acceptCondition: [
-                        {required: true, message: '请输入受理条件', trigger: 'blur'}
-                    ],
-                    chargeBasis: [
-                        {required: true, message: '请输入收费依据', trigger: 'blur'}
-                    ],
-                    workflowDescription: [
-                        {required: true, message: '请输入内部流程描述', trigger: 'blur'}
-                    ],
-                    authorityDivision: [
-                        {required: true, message: '请输入权限划分', trigger: 'blur'}
-                    ],
-                    version: [
-                        {required: true, message: '请输入版本号', trigger: 'blur'}
-                    ],
-                    resultName: [
-                        {required: true, message: '请输入结果名称', trigger: 'blur'}
-                    ],
-                    handleType: [
-                        {required: true, message: '请输入办理形式', trigger: 'blur'}
-                    ],
+                    ]
+                },
+                zwfwItemMaterialRules: {
                     name: [
-                        {required: true, message: '请输入事项名称', trigger: 'blur'}
+                        {required: true, message: '请输入材料名称', trigger: 'blur'}
                     ],
-                    mediumService: [
-                        {required: true, message: '请输入中介服务', trigger: 'blur'}
+                    source: [
+                        {required: true, message: '请输入来源渠道', trigger: 'blur'}
                     ],
-                    commonRequestion: [
-                        {required: true, message: '请输入常见问题', trigger: 'blur'}
-                    ],
-                    implCode: [
-                        {required: true, message: '请输入实施编码', trigger: 'blur'}
-                    ],
-                    updateType: [
-                        {required: true, message: '请输入权利更新类型', trigger: 'blur'}
+                    type: [
+                        {required: true, message: '请输入材料类型', trigger: 'blur'}
                     ]
                 }
             }
         },
         created() {
             this.getList();
+            this.getMaterialByName();
         },
         computed: {
             ...mapGetters([
                 'textMap',
-                'enums'
+                'enums',
+                'dicts'
             ])
         },
         methods: {
@@ -421,9 +581,46 @@
                 this.listLoading = true;
                 getZwfwItemList(this.listQuery).then(response => {
                     this.zwfwItemList = response.data.list;
+                    this.zwfwItemMaterialList = [];
                     this.total = response.data.total;
                     this.listLoading = false;
                 })
+            },
+            getMaterialByName() {
+                getZwfwItemMaterialList(this.listQuery).then(response => {
+                    this.list = response.data.list;
+                })
+            },
+            remoteMethod(query) {
+                if (query !== '') {
+                    let arr = [];
+                    for (let obj of this.list) {
+                        if (query == obj.name) {
+                            arr.push(obj);
+                        }
+                    }
+                    this.optionsName = arr;
+                    this.zwfwItemMaterial.name = query;
+                } else {
+                    this.optionsName = [];
+                }
+            },
+            handleUpdateClick(row) {
+                this.zwfwItemMaterial = row
+            },
+            materialList() {
+                //获取到申请材料，与材料Id匹配
+                this.applyMaterials = this.zwfwItem.applyMaterial;
+                if (this.zwfwItem.applyMaterial.indexOf('&')) {
+                    let split = this.zwfwItem.applyMaterial.split('&');
+                    let list = [];
+                    for (let obj of split) {
+                        getZwfwItemMaterialById(obj).then(response => {
+                            list.push(response.data);
+                        })
+                    }
+                    this.zwfwItemMaterialList = list;
+                }
             },
             handleSizeChange(val) {
                 this.listQuery.rows = val;
@@ -439,6 +636,12 @@
             },
             toggleSelection(row) {
                 this.$refs.zwfwItemTable.toggleRowSelection(row);
+            },
+            handleClick(tab) {
+                if (tab.name == 'first') {
+                } else if (tab.name == 'second') {
+                    this.materialList();
+                }
             },
             handleCreate(row) {
                 this.currentRow = row;
@@ -485,13 +688,26 @@
             create() {
                 this.$refs['zwfwItemForm'].validate((valid) => {
                     if (valid) {
-                        this.dialogFormVisible = false;
-                        this.listLoading = true;
                         createZwfwItem(this.zwfwItem).then(response => {
                             this.zwfwItemList.unshift(response.data);
                             this.total += 1;
                             this.$message.success('创建成功');
-                            this.listLoading = false;
+                            this.zwfwItemMaterialList.itemId = this.zwfwItem.id;
+                        })
+                    } else {
+                        return false;
+                    }
+                });
+            },
+            createMaterial() {
+                this.$refs['zwfwItemMaterialForm'].validate((valid) => {
+                    if (valid) {
+                        createZwfwItemMaterial(this.zwfwItemMaterial).then(response => {
+                            updateZwfwItem(this.zwfwItemList).then(response => {
+                                this.zwfwItemList.unshift(response.data);
+                                this.total += 1;
+                                this.$message.success('创建成功');
+                            })
                         })
                     } else {
                         return false;
@@ -501,12 +717,10 @@
             update() {
                 this.$refs['zwfwItemForm'].validate((valid) => {
                     if (valid) {
-                        this.dialogFormVisible = false;
-                        this.listLoading = true;
                         updateZwfwItem(this.zwfwItem).then(response => {
                             copyProperties(this.currentRow, response.data);
                             this.$message.success('更新成功');
-                            this.listLoading = false;
+                            this.dialogFormVisible = true;
                         })
                     } else {
                         return false;
@@ -514,48 +728,61 @@
                 });
             },
             resetTemp() {
+                this.zwfwItemMaterial = {
+                    id: undefined,
+                    electronicMaterial: true,
+                    eform: '',
+                    name: '',
+                    paperDescription: '',
+                    acceptStandard: '',
+                    remark: '',
+                    source: '',
+                    type: '',
+                    example: '',
+                    notice: ''
+                };
                 this.zwfwItem = {
                     id: undefined,
-                    setBasis: undefined,
-                    chargeable: undefined,
-                    orderable: undefined,
-                    implObjectType: undefined,
-                    payOnlineAble: undefined,
-                    basicCode: undefined,
-                    promiseEndTime: undefined,
-                    remark: undefined,
-                    runSystem: undefined,
-                    type: undefined,
-                    resultExample: undefined,
-                    handleLevel: undefined,
-                    unionAgency: undefined,
-                    serviceObject: undefined,
-                    handlePlace: undefined,
-                    handleContent: undefined,
-                    applyMaterial: undefined,
-                    numberLimit: undefined,
-                    handleScope: undefined,
-                    askPhone: undefined,
-                    handleWorkflow: undefined,
-                    chargeStandard: undefined,
-                    processType: undefined,
-                    legalEndTime: undefined,
-                    postable: undefined,
-                    versionAvailableTime: undefined,
-                    supervisePhone: undefined,
-                    implAgency: undefined,
-                    acceptCondition: undefined,
-                    chargeBasis: undefined,
-                    workflowDescription: undefined,
-                    authorityDivision: undefined,
-                    version: undefined,
-                    resultName: undefined,
-                    handleType: undefined,
-                    name: undefined,
-                    mediumService: undefined,
-                    commonRequestion: undefined,
-                    implCode: undefined,
-                    updateType: undefined
+                    setBasis: '',
+                    chargeable: true,
+                    orderable: true,
+                    implObjectType: 'ssztxz_swtzz',
+                    payOnlineAble: true,
+                    basicCode: '',
+                    promiseEndTime: '',
+                    remark: '',
+                    runSystem: 'yxxt_guojiaji',
+                    type: '',
+                    resultExample: '',
+                    handleLevel: 'xscj_guojiaji',
+                    unionAgency: '',
+                    serviceObject: 'fwdx_ziranren',
+                    handlePlace: '',
+                    handleContent: '',
+                    applyMaterial: '',
+                    numberLimit: '',
+                    handleScope: 'tbfw_quanguo',
+                    askPhone: '',
+                    handleWorkflow: '',
+                    chargeStandard: '',
+                    processType: 'bjlx_cnj',
+                    legalEndTime: '',
+                    postable: true,
+                    versionAvailableTime: '',
+                    supervisePhone: '',
+                    implAgency: '',
+                    acceptCondition: '',
+                    chargeBasis: '',
+                    workflowDescription: '',
+                    authorityDivision: '',
+                    version: '',
+                    resultName: '',
+                    handleType: 'blxs_ckbl',
+                    name: '',
+                    mediumService: '',
+                    commonRequestion: '',
+                    implCode: '',
+                    updateType: ''
                 };
             }
         }

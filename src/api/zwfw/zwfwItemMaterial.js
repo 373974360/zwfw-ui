@@ -8,6 +8,15 @@ export function getZwfwItemMaterialList(query) {
     });
 }
 
+
+export function getZwfwItemMaterialById(id) {
+    return fetchZwfw({
+        url: '/zwfwItemMaterial/get',
+        method: 'get',
+        params: {id}
+    });
+}
+
 export function createZwfwItemMaterial(zwfwItemMaterialVo){
     const data = zwfwItemMaterialVo;
     return fetchZwfw({
