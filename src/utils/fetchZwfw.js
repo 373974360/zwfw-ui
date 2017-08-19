@@ -21,9 +21,10 @@ const service = axios.create({
 
 // request拦截器
 service.interceptors.request.use(config => {
-    // if (store.getters.token) {
-    //     config.headers['Base4j-Token'] = store.getters.token; // 让每个请求携带token--['Base4j-Token']为自定义key 请根据实际情况自行修改
-    // }
+    console.log(store);
+    if (store.getters.token) {
+        config.headers['Base4j-Token'] = store.getters.token; // 让每个请求携带token--['Base4j-Token']为自定义key 请根据实际情况自行修改
+    }
     return config;
 }, error => {
     // Do something with request error

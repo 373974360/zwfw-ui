@@ -9,12 +9,10 @@ export function loginByEmail(userInfo) {
     });
 }
 
-export function getInfo(token) {
-    const data = {id: token};
+export function getInfo() {
     return fetchSys({
-        url: '/sysUser/get',
-        method: 'get',
-        params: data
+        url: '/sysUser/getMyProfile',
+        method: 'get'
     });
 }
 
