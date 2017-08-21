@@ -168,9 +168,6 @@
                     downtime: [
                         {required: true, message: '请输入过期时间', trigger: 'change'}
                     ],
-                    img: [
-                        {required: true, message: '请上传链接图标', trigger: 'blur'}
-                    ],
                     linkurl: [
                         {required: true, message: '请输入链接地址', trigger: 'blur'}
                     ],

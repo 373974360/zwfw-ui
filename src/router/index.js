@@ -64,6 +64,10 @@ const JobAdType = () => import('../views/job/ad/jobAdType');
 const JobLink = () => import('../views/job/link/jobLink');
 const JobLinkType = () => import('../views/job/link/jobLinkType');
 
+/* 内容管理 */
+const JobInfo = () => import('../views/job/info/jobInfo');
+const JobInfoCatalog = () => import('../views/job/info/jobInfoCatalog');
+
 /* 分类信息 */
 const Zyfl = () => import('../views/job/flxx/zyfl');
 const Hyfl = () => import('../views/job/flxx/hyfl');
@@ -142,6 +146,17 @@ export const asyncRouterMap = [
             {path: 'personal', component: MemberPersonal, name: '个人会员'},
             {path: 'organ', component: MemberOrgan, name: '企业会员'},
             {path: 'zpxx', component: Zpxx, name: '招聘信息'}
+        ]
+    },
+    {
+        path: '/info',
+        component: Layout,
+        redirect: 'noredirect',
+        name: '内容管理',
+        icon: 'neirongguanli',
+        children: [
+            {path: 'jobInfo', component: JobInfo, name: '内容管理'},
+            {path: 'jobInfoCatalog', component: JobInfoCatalog, name: '目录管理'}
         ]
     },
     {

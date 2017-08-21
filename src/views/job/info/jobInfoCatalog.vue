@@ -10,19 +10,18 @@
                    :handle-update="handleUpdate" :handle-delete="handleDelete" :defaultExpandAll="false">
         </tree-grid>
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-            <el-form ref="zyflForm" class="small-space" :model="jobZyfl" label-position="right" label-width="80px"
-                     style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="jobZyflRules">
-
-                <el-form-item label="上级分类">
+            <el-form ref="jobInfoCatalogForm" class="small-space" :model="jobInfoCatalog" label-position="right" label-width="80px"
+                     style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="jobInfoCatalogRules">
+                <el-form-item label="上级目录">
                     <el-cascader :options="cascader" v-model="cascaderModel" :show-all-levels="true"
                                  :change-on-select="true" expand-trigger="hover"  style="width:100%" :disabled="false" :clearable="true"
                                  @change="handleChange"></el-cascader>
                 </el-form-item>
-                <el-form-item label="分类名称" prop="name">
-                    <el-input v-model="jobZyfl.name"/>
+                <el-form-item label="目录名称" prop="name">
+                    <el-input v-model="jobInfoCatalog.name"/>
                 </el-form-item>
                 <el-form-item label="排　　序">
-                    <el-input-number v-model="jobZyfl.sortNo" :min="1" :max="100"/>
+                    <el-input-number v-model="jobInfoCatalog.sortNo" :min="1" :max="100"/>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -37,13 +36,13 @@
 </template>
 <script>
     import TreeGrid from 'components/TreeGrid'
-    import {getZyflTree,getZyflCascader,delZyfl,createZyfl, updateZyfl} from 'api/job/flxx/zyfl';
+    import {getJobInfoCatalogTree, getJobInfoCatalogCascader, createJobInfoCatalog, updateJobInfoCatalog, delJobInfoCatalog} from 'api/job/info/jobInfoCatalog';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import TreeUtil from 'utils/TreeUtil.js';
 
     export default {
-        name: 'zyfl_table',
+        name: 'hyfl_table',
         data() {
             return {
                 list: [],
@@ -54,7 +53,7 @@
                         dataIndex: 'id'
                     },
                     {
-                        text: '分类名称',
+                        text: '目录名称',
                         dataIndex: 'name',
                         editAble: true
                     },
@@ -63,16 +62,16 @@
                         dataIndex: 'sortNo'
                     }
                 ],
-                jobZyfl: {
+                jobInfoCatalog: {
                     id: undefined,
                     parentId: 0,
                     name: '',
                     treePosition: '',
                     sortNo: 1
                 },
-                jobZyflRules: {
+                jobInfoCatalogRules: {
                     name: [
-                        {required: true, message: '请输入分类名称', trigger: 'blur'}
+                        {required: true, message: '请输入目录名称', trigger: 'blur'}
                     ]
                 },
                 dialogFormVisible: false,
@@ -83,8 +82,8 @@
         },
         computed: {
             cascaderModel: function () {
-                if (this.jobZyfl.treePosition) {
-                    const arr = this.jobZyfl.treePosition.split('&');
+                if (this.jobInfoCatalog.treePosition) {
+                    const arr = this.jobInfoCatalog.treePosition.split('&');
                     return arr;
                 }
             },
@@ -102,7 +101,7 @@
         methods: {
             getList() {
                 this.listLoading = true;
-                getZyflTree().then(response => {
+                getJobInfoCatalogTree().then(response => {
                     if (response.httpCode == 200) {
                         this.list = response.data;
                     } else {
@@ -113,7 +112,7 @@
             },
             getOptions(id) {
                 this.dialogLoading = true;
-                getZyflCascader(id).then(response => {
+                getJobInfoCatalogCascader(id).then(response => {
                     if (response.httpCode == 200) {
                         this.cascader = response.data;
                     } else {
@@ -124,11 +123,11 @@
             },
             handleChange(value) {
                 if (value.length > 0) {
-                    this.jobZyfl.parentId = value[value.length - 1];
-                    this.jobZyfl.treePosition = value.join('&');
+                    this.jobInfoCatalog.parentId = value[value.length - 1];
+                    this.jobInfoCatalog.treePosition = value.join('&');
                 } else {
-                    this.jobZyfl.parentId = 0;
-                    this.jobZyfl.treePosition = undefined;
+                    this.jobInfoCatalog.parentId = 0;
+                    this.jobInfoCatalog.treePosition = undefined;
                 }
             },
             handleToggle(row) {
@@ -137,12 +136,12 @@
             handleCreate(row) {
                 this.resetTemp();
                 if (row.treePosition) {
-                    this.jobZyfl.treePosition = row.treePosition;
+                    this.jobInfoCatalog.treePosition = row.treePosition;
                 }
                 if (row.id) {
-                    this.jobZyfl.parentId = row.id;
+                    this.jobInfoCatalog.parentId = row.id;
                 } else {
-                    this.jobZyfl.parentId = 0;
+                    this.jobInfoCatalog.parentId = 0;
                 }
                 this.getOptions(null);
                 this.dialogStatus = 'create';
@@ -150,13 +149,13 @@
             },
             handleUpdate(row) {
                 this.resetTemp();
-                this.jobZyfl = copyProperties(this.jobZyfl, row);
+                this.jobInfoCatalog = copyProperties(this.jobInfoCatalog, row);
                 if (row._parent) {
-                    this.jobZyfl.treePosition = row._parent.treePosition;
+                    this.jobInfoCatalog.treePosition = row._parent.treePosition;
                 } else {
-                    this.jobZyfl.treePosition = undefined;
+                    this.jobInfoCatalog.treePosition = undefined;
                 }
-                this.getOptions(this.jobZyfl.id);
+                this.getOptions(this.jobInfoCatalog.id);
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
@@ -167,7 +166,7 @@
                     type: 'warning'
                 }).then(() => {
                     this.listLoading = true;
-                    delZyfl(row.id).then(response => {
+                    delJobInfoCatalog(row.id).then(response => {
                         if (response.httpCode == 200) {
                             this.$message.success('删除成功');
                             TreeUtil.delRow(response.data, this.list);
@@ -181,11 +180,11 @@
                 });
             },
             create() {
-                this.$refs['zyflForm'].validate((valid) => {
+                this.$refs['jobInfoCatalogForm'].validate((valid) => {
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
-                        createZyfl(this.jobZyfl).then(response => {
+                        createJobInfoCatalog(this.jobInfoCatalog).then(response => {
                             if (response.httpCode == 200) {
                                 this.$message.success('创建成功');
                                 TreeUtil.addRow(response.data, this.list);
@@ -200,11 +199,11 @@
                 });
             },
             update() {
-                this.$refs['zyflForm'].validate((valid) => {
+                this.$refs['jobInfoCatalogForm'].validate((valid) => {
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
-                        updateZyfl(this.jobZyfl).then(response => {
+                        updateJobInfoCatalog(this.jobInfoCatalog).then(response => {
                             if (response.httpCode == 200) {
                                 this.$message.success('更新成功');
                                 TreeUtil.editRow(response.data, this.list);
@@ -219,7 +218,7 @@
                 });
             },
             resetTemp() {
-                this.jobZyfl = {
+                this.jobInfoCatalog = {
                     id: undefined,
                     parentId: 0,
                     name: '',

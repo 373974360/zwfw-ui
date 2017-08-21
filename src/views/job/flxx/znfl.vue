@@ -166,6 +166,7 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
+                    this.listLoading = true;
                     delZnfl(row.id).then(response => {
                         if (response.httpCode == 200) {
                             this.$message.success('删除成功');
@@ -173,6 +174,7 @@
                         } else {
                             this.$message.error(response.msg);
                         }
+                        this.listLoading = false;
                     })
                 }).catch(() => {
                     console.dir("取消");

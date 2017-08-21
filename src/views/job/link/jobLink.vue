@@ -82,7 +82,7 @@
                         <td>
                             <el-form-item label="链接类型" prop="linktype">
                                 <el-select v-model="jobLink.linktype" placeholder="链接类型">
-                                    <el-option v-for="item in selectOptions" :label="item.name" :value="item.id" @change="changeType"></el-option>
+                                    <el-option v-for="item in selectOptions" :key="item.id" :label="item.name" :value="item.id" @change="changeType"></el-option>
                                 </el-select>
                             </el-form-item>
                         </td>
@@ -156,9 +156,6 @@
                     ],
                     linktype: [
                         {required: true, message: '请选择链接类型', type: 'number', trigger: 'change'}
-                    ],
-                    img: [
-                        {required: true, message: '请上传图标', trigger: 'blur'}
                     ]
                 }
             }
