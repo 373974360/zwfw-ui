@@ -11,7 +11,8 @@ const app = {
             update: '编辑',
             view: '查看',
             associateMenu: '关联权限',
-            associateUser: '关联用户'
+            associateUser: '关联用户',
+            associateMaterial: '关联资料'
         },
         sidebar: {
             opened: !+Cookies.get('sidebarStatus')

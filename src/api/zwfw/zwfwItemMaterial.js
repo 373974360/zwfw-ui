@@ -8,15 +8,6 @@ export function getZwfwItemMaterialList(query) {
     });
 }
 
-
-export function getZwfwItemMaterialById(id) {
-    return fetchZwfw({
-        url: '/zwfwItemMaterial/get',
-        method: 'get',
-        params: {id}
-    });
-}
-
 export function createZwfwItemMaterial(zwfwItemMaterialVo){
     const data = zwfwItemMaterialVo;
     return fetchZwfw({
@@ -26,15 +17,15 @@ export function createZwfwItemMaterial(zwfwItemMaterialVo){
     })
 }
 
-export function updateZwfwItemMaterial(zwfwItemMaterialVo){
-    const data = zwfwItemMaterialVo;
+export function updateZwfwItemMaterial(zwfwCategoryItemVo){
+    const data = zwfwCategoryItemVo;
     return fetchZwfw({
         url: '/zwfwItemMaterial/edit',
         method: 'post',
         data
     })
 }
-export function delZwfwItemMaterials(ids) {
+export function delZwfwItemMaterial(ids) {
     const data = {ids};
     return fetchZwfw({
         url: '/zwfwItemMaterial/dels',
@@ -48,6 +39,13 @@ export function deleteZwfwItemMaterial(id) {
         url: '/zwfwItemMaterial/delete',
         method: 'post',
         data
+    })
+}
+export function getAllItemMaterial(itemId) {
+    return fetchZwfw({
+        url: '/zwfwItemMaterial/getAll',
+        method: 'get',
+        params: {itemId}
     })
 }
 
