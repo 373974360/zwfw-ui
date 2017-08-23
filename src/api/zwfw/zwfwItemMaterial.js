@@ -33,8 +33,8 @@ export function delZwfwItemMaterial(ids) {
         data
     })
 }
-export function deleteZwfwItemMaterial(id) {
-    const data = {id};
+export function deleteZwfwItemMaterial(itemId, ids) {
+    const data = {itemId, ids};
     return fetchZwfw({
         url: '/zwfwItemMaterial/delete',
         method: 'post',

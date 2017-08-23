@@ -41,5 +41,12 @@ export function deleteZwfwMaterial(id) {
         data
     })
 }
+export function getAllMaterial(query) {
+    return fetchZwfw({
+        url: '/zwfwMaterial/getAll',
+        method: 'get',
+        params: query
+    })
+}
 
 

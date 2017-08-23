@@ -306,11 +306,20 @@
                 </el-button>
             </div>
         </el-dialog>
+
+
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible1">
+            <div class="filter-container">
+                <el-button class="filter-item" style="margin-left: 10px;" @click="handleDeleteOne" type="danger"
+                           icon="delete">
+                    删除
+                </el-button>
+            </div>
             <el-table ref="zwfwItemMaterialForm" :data="zwfwItemMaterialList" v-loading.body="listLoading"
                       border fit
                       highlight-current-row
-                      style="width: 100%" >
+                      style="width: 100%" @selection-change="handleSelectionChange">
+                <el-table-column type="selection" width="55"/>
                 <el-table-column align="center" label="序号" width="150">
                     <template scope="scope">
                         <span>{{scope.row.id}}</span>
@@ -318,7 +327,9 @@
                 </el-table-column>
                 <el-table-column prop="name" align="center" label="材料名称" width="100">
                     <template scope="scope">
-                        <span>{{scope.row.name}}</span>
+                        <el-tooltip content="点击编辑" placement="right" effect="dark">
+                            <span class="link-type" @click='handleUpdateClick(scope.row)'>{{scope.row.name}}</span>
+                        </el-tooltip>
                     </template>
                 </el-table-column>
                 <el-table-column prop="type" align="center" label="材料类型" width="100">
@@ -326,7 +337,7 @@
                         <span>{{scope.row.type}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="source" align="center" label="来源渠道">
+                <el-table-column v-once prop="source" align="center" label="来源渠道">
                     <template scope="scope">
                         <span>{{scope.row.source}}</span>
                     </template>
@@ -334,12 +345,6 @@
                 <el-table-column prop="electronicMaterial" align="center" label="是否需要电子材料">
                     <template scope="scope">
                         <span>{{scope.row.electronicMaterial | enums('YesNo')}}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column label="操作" align="center">
-                    <template scope="scope">
-                        <el-button size="small" @click="handleUpdateClick(scope.row)">编辑</el-button>
-                        <el-button size="small" type="danger"  @click="handleDeleteOne(scope.row)" >删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -358,13 +363,13 @@
                             @change="changeMaterial">
                         <el-option
                                 v-for="item in optionsName"
-                                :key="item.value"
+                                :key="item.id"
                                 :label="item.name"
                                 :value="item.name">
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="材料类型" prop="types">
+                <el-form-item label="材料类型" prop="type">
                     <el-input v-model="zwfwItemMaterial.type"></el-input>
                 </el-form-item>
                 <el-form-item label="是否需要电子材料" prop="electronicMaterial">
@@ -421,8 +426,12 @@
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import {getZwfwItemList, createZwfwItem, updateZwfwItem, delZwfwItems} from 'api/zwfw/zwfwItem';
-    import {createZwfwItemMaterial, getAllItemMaterial, delZwfwItemMaterial} from 'api/zwfw/zwfwItemMaterial';
-    import {getZwfwMaterialList, updateZwfwMaterial} from 'api/zwfw/zwfwMaterial';
+    import {
+        createZwfwItemMaterial,
+        getAllItemMaterial,
+        deleteZwfwItemMaterial
+    } from 'api/zwfw/zwfwItemMaterial';
+    import {getAllMaterial, updateZwfwMaterial} from 'api/zwfw/zwfwMaterial';
     import ElDialog from "../../../node_modules/element-ui/packages/dialog/src/component";
 
 
@@ -515,62 +524,42 @@
                 dialogLoading: false,
                 zwfwItemRules: {
                     name: [
-                        {required: true, message: '请输入事项名称', trigger: 'blur'}
+                        {required: true, message: '请输入事项名称'}
                     ],
                     basicCode: [
-                        {required: false, message: '请输入基本编码', trigger: 'blur'},
-                        {min: 10, max: 10, message: '基本编码长度是10位', trigger: 'blur'}
+                        {required: true, message: '请输入基本编码'},
+                        {min: 10, max: 10, message: '基本编码长度是10位'}
                     ],
                     implCode: [
-                        {required: false, message: '请输入实施编码'},
+                        {required: true, message: '请输入实施编码'},
                         {min: 24, max: 24, message: '实施编码长度是24位'}
                     ],
-                    setBasis: [
-                        {required: true, message: '请输入设定依据', trigger: 'blur'}
-                    ],
                     type: [
-                        {required: true, message: '请输入事项类型', trigger: 'blur'}
-                    ],
-                    unionAgency: [
-                        {required: true, message: '请输入联办机构', trigger: 'blur'}
-                    ],
-                    handlePlace: [
-                        {required: true, message: '请输入办理地点', trigger: 'blur'}
-                    ],
-                    handleScope: [
-                        {required: true, message: '请输入通办范围', trigger: 'blur'}
+                        {required: true, message: '请输入事项类型'}
                     ],
                     askPhone: [
-                        {required: true, message: '请输入咨询电话', trigger: 'blur'}
-                    ],
-                    chargeStandard: [
-                        {required: true, message: '请输入收费标准', trigger: 'blur'}
-                    ],
-                    processType: [
-                        {required: true, message: '请输入办件类型', trigger: 'blur'}
+                        {required: true, message: '请输入咨询电话'}
                     ],
                     supervisePhone: [
-                        {required: true, message: '请输入监督电话', trigger: 'blur'}
-                    ],
-                    implAgency: [
-                        {required: true, message: '请输入实施机构', trigger: 'blur'}
+                        {required: true, message: '请输入监督电话'}
                     ]
                 },
                 zwfwItemMaterialRules: {
                     name: [
-                        {required: true, message: '请输入材料名称', trigger: 'blur'}
+                        {required: true, message: '请输入材料名称'}
                     ],
                     source: [
-                        {required: true, message: '请输入来源渠道', trigger: 'blur'}
+                        {required: true, message: '请输入来源渠道'}
                     ],
-                    types: [
-                        {required: false, message: '请输入材料类型', trigger: 'blur'}
+                    type: [
+                        {required: true, message: '请输入材料类型'}
                     ]
                 }
             }
         },
         created() {
             this.getList();
+            this.getMaterialList();
         },
         computed: {
             ...mapGetters([
@@ -599,14 +588,8 @@
             getItemMaterialListByItemId() {
                 getAllItemMaterial(this.currentItem.id).then(response => {
                     this.getMaterialIds = response.data;
-                    this.getMaterialList();
-                })
-            },
-            getMaterialList() {
-                getZwfwMaterialList(this.listQuery).then(response => {
-                    this.materialList = response.data.list;
                     const arr = [];
-                    for (const ids of this.getMaterialIds) {
+                    for (const ids of response.data) {
                         for (const idList of this.materialList) {
                             if (idList.id == ids.materialId) {
                                 arr.push(idList);
@@ -616,30 +599,33 @@
                     this.zwfwItemMaterialList = arr;
                 })
             },
+            getMaterialList() {
+                const query = {}
+                getAllMaterial(query).then(response => {
+                    this.materialList = response.data;
+                })
+            },
             remoteMethod(query) {
                 if (query !== '') {
-                    let arr = [];
-                    for (let obj of this.materialList) {
-                        if (obj.name.indexOf(query) >= 0) {
-                            arr.push(obj);
-                        }
+                    const listQueryName = {
+                        name: query
                     }
-                    this.optionsName = arr;
+                    getAllMaterial(listQueryName).then(response => {
+                        this.optionsName = response.data;
+                    })
                 } else {
                     this.optionsName = [];
                 }
             },
             changeMaterial(value) {
-                console.log(value);
-                for (let obj of this.materialList) {
+                for (const obj of this.materialList) {
                     if (obj.name == value) {
-                        this.zwfwItemMaterial = obj;
+                        this.zwfwItemMaterial = Object.assign({}, obj);
                     }
                 }
             },
             handleUpdateClick(row) {
-                this.listMaterial = row;
-                this.resetTemp1();
+                this.currentRow = row;
                 this.zwfwItemMaterial = copyProperties(this.zwfwItemMaterial, row);
                 this.$refs.zwfwMaterialForm.$el[0].disabled = true;
             },
@@ -701,18 +687,27 @@
                 }
             },
             handleDeleteOne() {
-                this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    this.listLoading = true;
-                    delZwfwItemMaterial(ids).then(response => {
-                        this.$message.success('删除成功');
-                    })
-                }).catch(() => {
-                    console.dir("取消");
-                });
+                if (this.selectedRows == 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        let ids = new Array();
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        deleteZwfwItemMaterial(this.itemId, ids).then(response => {
+                            const index = this.zwfwItemMaterialList.indexOf(this.selectedRows);
+                            this.zwfwItemMaterialList.splice(index, 1);
+                            this.$message.success('删除成功');
+                        })
+                    }).catch(() => {
+                        console.dir("取消");
+                    });
+                }
             },
             create() {
                 this.$refs['zwfwItemForm'].validate((valid) => {
@@ -738,10 +733,12 @@
                                 itemId: this.itemId,
                                 materialId: this.zwfwItemMaterial.id
                             }
+                            this.listLoading = true;
                             createZwfwItemMaterial(query).then(response => {
                                 this.zwfwItemMaterialList.unshift(this.zwfwItemMaterial);
                                 this.total += 1;
                                 this.$message.success('创建成功');
+                                this.listLoading = false;
                                 this.resetTemp1();
                             })
                         } else {
@@ -763,7 +760,7 @@
                                 notice: this.zwfwItemMaterial.notice
                             }
                             updateZwfwMaterial(zwfwMaterialList).then(response => {
-                                copyProperties(this.listMaterial, response.data);
+                                copyProperties(this.currentRow, response.data);
                                 this.$message.success('更新成功');
                                 this.dialogFormVisible1 = true;
                                 this.resetTemp1();

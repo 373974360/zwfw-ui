@@ -223,6 +223,14 @@ export function copyProperties(source, target) {
     return source;
 }
 
+export function cloneObject(source) {
+    const res = {}
+    for (const key in source) {
+        res[key] = source[key]
+    }
+    return res
+}
+
 export function mergeTree(list, data, isAppend) {
     for (const item of list) {
         if (isAppend) {
