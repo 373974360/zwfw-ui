@@ -36,6 +36,9 @@ const NaturePerson = () => import('../views/zwfw/zwfwNaturePerson');
 const ZwfwProcessDefinitionModel = () => import('../views/zwfw/activiti/zwfwProcessDefinitionModel');
 const ZwfwProcessDefinition = () => import('../views/zwfw/activiti/ZwfwProcessDefinition');
 
+/* 定时任务 */
+const RegistryCenter = () => import('../views/task/registryCenter');
+const Task = () => import('../views/task/task');
 
 /* components */
 const componentsIndex = () => import('../views/components/index');
@@ -218,6 +221,17 @@ export const asyncRouterMap = [
             {path: 'log', component: Log, name: '日志管理'},
             {path: 'dict', component: Dict, name: '数据字典'},
             {path: 'metadataType', component: MetadataType, name: '元数据类型'}
+        ]
+    },
+    {
+        path: '/task',
+        component: Layout,
+        redirect: 'noredirect',
+        name: '任务管理',
+        icon: 'ling',
+        children: [
+            {path: 'registryCenter', component: RegistryCenter, name: '注册中心'},
+            {path: 'task', component: Task, name: '定时任务'}
         ]
     },
     {
