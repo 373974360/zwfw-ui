@@ -15,7 +15,7 @@ export function delMember(ids) {
         method: 'post',
         data
     })
-}getPersonalQzyx
+}
 
 export function getPersonal(query) {
     return fetchJob({

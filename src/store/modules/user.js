@@ -70,8 +70,9 @@ const user = {
                         reject(response.msg);
                     } else {
                         const data = response.data;
-                        Cookies.set('Base4j-Token', data.id);
-                        commit('SET_TOKEN', data.id);
+                        Cookies.set('Base4j-Token', data.token);
+                        commit('SET_TOKEN', data.token);
+                        commit('SET_UID', data.id);
                         commit('SET_EMAIL', data.account);
                         resolve();
                     }
@@ -84,7 +85,7 @@ const user = {
         // 获取用户信息
         GetInfo({commit, state}) {
             return new Promise((resolve, reject) => {
-                getInfo(state.token).then(response => {
+                getInfo().then(response => {
                     const data = response.data;
                     commit('SET_PERMISSINSS', data.permissions);
                     commit('SET_NAME', data.userName);

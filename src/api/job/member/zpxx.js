@@ -6,7 +6,7 @@ export function getOrganZpxxList(query) {
         method: 'get',
         params: query
     });
-}delOrganZpxx
+}
 
 export function delOrganZpxx(ids) {
     const data = {ids};

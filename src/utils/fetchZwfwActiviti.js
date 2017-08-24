@@ -7,7 +7,7 @@ import router from '../router';
 // 创建axios实例
 const service = axios.create({
     // headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-    baseURL: process.env.ZWFW_API, // api的base_url
+    baseURL: process.env.ZWFW_ACTIVITI_API, // api的base_url
     timeout: 1000 * 60 * 5,                  // 请求超时时间  1000 * 60 * 5
     withCredentials: true,  // 跨域允许cookie
     // 请求数据转为json格式 springmvc自动填充
@@ -21,7 +21,6 @@ const service = axios.create({
 
 // request拦截器
 service.interceptors.request.use(config => {
-    console.log(store);
     if (store.getters.token) {
         config.headers['Base4j-Token'] = store.getters.token; // 让每个请求携带token--['Base4j-Token']为自定义key 请根据实际情况自行修改
     }

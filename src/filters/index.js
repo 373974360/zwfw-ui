@@ -20,26 +20,43 @@ export function statusFilter(status) {
     return statusMap[status]
 }
 
+export function taskStatusFilter(status) {
+    const taskStatusMap = {
+        'OK': 'success',
+        'CRASHED': 'danger',
+        'DISABLED': 'gray',
+        'SHARDING_FLAG': 'primary',
+    };
+    return taskStatusMap[status]
+}
+
 export function enums(value, type) {
     var array = app.state.enums[type];
     var result = array.filter(function (item) {
         return item.code === value;
     });
-    if(result[0]){
+    if (result[0]) {
         return result[0].value || value;
-    }else{
+    } else {
         return '';
     }
 }
 
 export function dicts(value, type) {
     var array = app.state.dicts[type];
-    var result = array.filter(function(item){
+    var result = array.filter(function (item) {
         return item.code === value;
     });
-    if(result[0]){
+    if (result[0]) {
         return result[0].value || value;
-    }else{
-        return '';
+    } else {
+        result = array.filter(function (item) {
+            return item.code === type + '_' + value;
+        });
+        if (result[0]) {
+            return result[0].value || value;
+        } else {
+            return '';
+        }
     }
 }

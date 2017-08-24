@@ -33,7 +33,12 @@ const Window = () => import('../views/zwfw/window');
 const FormEditor = () => import('../views/zwfw/formEditor/editor');
 const LegalPerson = () => import('../views/zwfw/zwfwLegalPerson');
 const NaturePerson = () => import('../views/zwfw/zwfwNaturePerson');
+const ZwfwProcessDefinitionModel = () => import('../views/zwfw/activiti/zwfwProcessDefinitionModel');
+const ZwfwProcessDefinition = () => import('../views/zwfw/activiti/ZwfwProcessDefinition');
 
+/* 定时任务 */
+const RegistryCenter = () => import('../views/task/registryCenter');
+const Task = () => import('../views/task/task');
 
 /* components */
 const componentsIndex = () => import('../views/components/index');
@@ -61,6 +66,10 @@ const JobAdType = () => import('../views/job/ad/jobAdType');
 /* 友情链接 */
 const JobLink = () => import('../views/job/link/jobLink');
 const JobLinkType = () => import('../views/job/link/jobLinkType');
+
+/* 内容管理 */
+const JobInfo = () => import('../views/job/info/jobInfo');
+const JobInfoCatalog = () => import('../views/job/info/jobInfoCatalog');
 
 /* 分类信息 */
 const Zyfl = () => import('../views/job/flxx/zyfl');
@@ -143,6 +152,17 @@ export const asyncRouterMap = [
         ]
     },
     {
+        path: '/info',
+        component: Layout,
+        redirect: 'noredirect',
+        name: '内容管理',
+        icon: 'neirongguanli',
+        children: [
+            {path: 'jobInfo', component: JobInfo, name: '内容管理'},
+            {path: 'jobInfoCatalog', component: JobInfoCatalog, name: '目录管理'}
+        ]
+    },
+    {
         path: '/ad',
         component: Layout,
         redirect: 'noredirect',
@@ -204,6 +224,17 @@ export const asyncRouterMap = [
         ]
     },
     {
+        path: '/task',
+        component: Layout,
+        redirect: 'noredirect',
+        name: '任务管理',
+        icon: 'ling',
+        children: [
+            {path: 'registryCenter', component: RegistryCenter, name: '注册中心'},
+            {path: 'task', component: Task, name: '定时任务'}
+        ]
+    },
+    {
         path: '/operate',
         component: Layout,
         redirect: 'noredirect',
@@ -216,7 +247,11 @@ export const asyncRouterMap = [
             {path: 'zwfwItem', component: Item, name: '事项管理'},
             {path: 'window', component: Window, name: '窗口管理'},
             {path: 'zwfwLegalPerson', component: LegalPerson, name: '法人管理'},
-            {path: 'zwfwNaturePerson', component: NaturePerson, name: '自然人管理'}
+            {path: 'zwfwNaturePerson', component: NaturePerson, name: '自然人管理'},
+            {path: 'zwfwProcessDefinitionModel', component: ZwfwProcessDefinitionModel, name: '流程模型编辑'},
+            {path: 'zwfwProcessDefinition', component: ZwfwProcessDefinition, name: '已部署流程管理'},
+            // {path: 'zwfwProcessInstance', component: ZwfwProcessDefinitionModel, name: '已部署流程管理'},
+
         ]
     },
     {
