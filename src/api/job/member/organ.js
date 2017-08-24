@@ -1,4 +1,4 @@
-import fetchJob from 'utils/fetchJob';
+import {fetchJob} from 'utils/fetch';
 
 
 export function getOrganList(query) {

@@ -1,4 +1,4 @@
-import fetchZwfwActiviti from 'utils/fetchZwfwActiviti';
+import {fetchZwfwActiviti} from 'utils/fetch';
 import _ from 'lodash'
 
 /**
