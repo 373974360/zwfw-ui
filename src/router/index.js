@@ -37,6 +37,7 @@ const LegalPerson = () => import('../views/zwfw/zwfwLegalPerson');
 const NaturePerson = () => import('../views/zwfw/zwfwNaturePerson');
 const ZwfwProcessDefinitionModel = () => import('../views/zwfw/activiti/zwfwProcessDefinitionModel');
 const ZwfwProcessDefinition = () => import('../views/zwfw/activiti/ZwfwProcessDefinition');
+const ZwfwTaskSetting = () => import('../views/zwfw/activiti/ZwfwTaskSetting')
 
 /* 定时任务 */
 const RegistryCenter = () => import('../views/task/registryCenter');
@@ -253,6 +254,7 @@ export const asyncRouterMap = [
             {path: 'zwfwNaturePerson', component: NaturePerson, name: '自然人管理'},
             {path: 'zwfwProcessDefinitionModel', component: ZwfwProcessDefinitionModel, name: '流程模型编辑'},
             {path: 'zwfwProcessDefinition', component: ZwfwProcessDefinition, name: '已部署流程管理'},
+            {path: 'zwfwUserTaskSetting', component: ZwfwTaskSetting, name: '审批节点管理'},
             // {path: 'zwfwProcessInstance', component: ZwfwProcessDefinitionModel, name: '已部署流程管理'},
 
         ]
