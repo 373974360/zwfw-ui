@@ -35,11 +35,12 @@
                 </span>
             </template>
         </el-table-column>
-        <el-table-column label="操作" v-if="treeType === 'normal'" width="140" align="center">
+        <el-table-column label="操作" v-if="treeType === 'normal'" width="300" align="center">
             <template scope="scope">
                 <el-button type="primary" size="small" @click="onHandleAdd(scope.row)">添加</el-button>
                 <!--<el-button type="" size="small" @click="onHandleUpdate(scope.row)">编辑</el-button>-->
                 <el-button type="danger" size="small" @click="onHandleDelete(scope.row)">删除</el-button>
+                <el-button type="primary" size="small" @click="onHandleAssoicate(scope.row)">关联事项</el-button>
             </template>
         </el-table-column>
     </el-table>
@@ -107,6 +108,12 @@
                 default: function () {
                     return null
                 }
+            },
+            handleCreate1: {
+                type: Function,
+                default: function () {
+                    return null
+                }
             }
         },
         data() {
@@ -158,6 +165,11 @@
             onHandleDelete(data) {
                 if (this.handleDelete) {
                     this.handleDelete(data);
+                }
+            },
+            onHandleAssoicate(data) {
+                if (this.handleCreate1) {
+                    this.handleCreate1(data);
                 }
             }
         }

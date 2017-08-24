@@ -33,12 +33,19 @@ export function delZwfwCategoryItems(ids) {
         data
     })
 }
-export function deleteZwfwCategoryItem(id) {
-    const data = {id};
+export function deleteZwfwCategoryItem(categoryId, ids) {
+    const data = {categoryId, ids};
     return fetchZwfw({
         url: '/zwfwCategoryItem/delete',
         method: 'post',
         data
+    })
+}
+export function getAllCategoeyItem(categoryId) {
+    return fetchZwfw({
+        url: '/zwfwCategoryItem/getAll',
+        method: 'get',
+        params: {categoryId}
     })
 }
 
