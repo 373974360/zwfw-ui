@@ -91,7 +91,7 @@
 
 <script>
     import {
-        getZwfwActivitiModelList, getZwfwActivitiModelEditUrl,getZwfwActivitiModelUploadUrl, createZwfwActivitiModel, deleteZwfwActivitiModel,
+        getZwfwActivitiModelList, getZwfwActivitiModelEditUrl, getZwfwActivitiModelUploadUrl, createZwfwActivitiModel, deleteZwfwActivitiModel,
         deployZwfwActivitiModel
     } from 'api/zwfw/zwfwActiviti';
     import {copyProperties} from 'utils';
@@ -169,9 +169,7 @@
                 this.addDialogFormVisible = true;
             },
             handleUpdate(row) {
-                getZwfwActivitiModelEditUrl(row.id).then(response => {
-                    window.open(response.data);
-                });
+                window.open(getZwfwActivitiModelEditUrl(row.id));
             },
             handleDelete() {
                 const selectCounts = this.selectedRows.length;

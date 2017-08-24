@@ -18,12 +18,7 @@ export function getZwfwActivitiModelList(query) {
  * @param id
  */
 export function getZwfwActivitiModelEditUrl(id) {
-    const data = {id};
-    return fetchZwfwActiviti({
-        url: '/zwfw/activiti/model/getEditUrl',
-        method: 'get',
-        params: data
-    });
+    return process.env.ZWFW_ACTIVITI_API + '/modeler.html?modelId=' + id;
 }
 
 /**
@@ -31,12 +26,7 @@ export function getZwfwActivitiModelEditUrl(id) {
  * @param id
  */
 export function getZwfwActivitiModelUploadUrl() {
-    const data = {id};
-    return fetchZwfwActiviti({
-        url: '/zwfw/activiti/model/getUploadUrl',
-        method: 'get',
-        params: data
-    });
+    return process.env.ZWFW_ACTIVITI_API + '/zwfw/activiti/model/upload';
 }
 
 /**
