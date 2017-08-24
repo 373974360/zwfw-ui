@@ -40,11 +40,16 @@
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
-            <el-table-column min-width="50px" align="center" label="流程模型名称">
+            <el-table-column  align="center" label="流程模型名称">
                 <template scope="scope">
                     <el-tooltip content="点击编辑" placement="right" effect="dark">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
                     </el-tooltip>
+                </template>
+            </el-table-column>
+            <el-table-column min-width="50px" align="center" label="修订">
+                <template scope="scope">
+                    {{scope.row.revision}}
                 </template>
             </el-table-column>
             <el-table-column min-width="50px" align="center" label="发布的流程定义">
