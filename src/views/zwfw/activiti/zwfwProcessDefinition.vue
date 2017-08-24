@@ -263,8 +263,5 @@
     }
 </script>
 <style>
-    .item {
-        margin-top: 10px;
-        margin-right: 40px;
-    }
+
 </style>
