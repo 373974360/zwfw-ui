@@ -27,6 +27,19 @@ export function getZwfwActivitiModelEditUrl(id) {
 }
 
 /**
+ * 流程模型上传URL获取
+ * @param id
+ */
+export function getZwfwActivitiModelUploadUrl() {
+    const data = {id};
+    return fetchZwfwActiviti({
+        url: '/zwfw/activiti/model/getUploadUrl',
+        method: 'get',
+        params: data
+    });
+}
+
+/**
  * 创建新的流程模型
  * @param data
  */
@@ -74,4 +87,30 @@ export function getZwfwProcessDefinitionList(query) {
         method: 'get',
         params: query
     });
+}
+
+/**
+ * 挂起流程
+ * @param id
+ */
+export function suspendZwfwProcessDefinition(id) {
+
+    const data = {id: _.isArray(id) ? id.join('#') : id};
+
+    return fetchZwfwActiviti({
+        url: '/zwfw/activiti/pd/suspend',
+        method: 'post',
+        params: data
+    })
+}
+
+export function activeZwfwProcessDefinition(id) {
+
+    const data = {id: _.isArray(id) ? id.join('#') : id};
+
+    return fetchZwfwActiviti({
+        url: '/zwfw/activiti/pd/active',
+        method: 'post',
+        params: data
+    })
 }

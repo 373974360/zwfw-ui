@@ -105,6 +105,8 @@
     import {
         getZwfwProcessDefinitionList,
         createZwfwProcessDefinition,
+        suspendZwfwProcessDefinition,
+        activeZwfwProcessDefinition
     } from 'api/zwfw/zwfwActiviti';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
