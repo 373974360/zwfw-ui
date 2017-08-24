@@ -96,7 +96,13 @@
                     <el-input v-model="sysUser.phone"/>
                 </el-form-item>
                 <el-form-item label="头像" prop="avatar">
-                    <el-input v-model="sysUser.avatar"/>
+                    <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
+                               :action="uploadAction" :file-list="uploadAvatars"
+                               :on-success="handleAvatarSuccess"
+                               :before-upload="beforeAvatarUpload"
+                               :on-remove="handleRemove">
+                        <i class="el-icon-plus"></i>
+                    </el-upload>
                 </el-form-item>
                 <el-form-item label="帐号" prop="account">
                     <el-input v-model="sysUser.account"/>
@@ -218,7 +224,9 @@
                 cascader: [],
                 dialogFormVisible: false,
                 dialogStatus: '',
-                dialogLoading: false
+                dialogLoading: false,
+                uploadAction: process.env.SYS_API + '/sysUpload/',
+                uploadAvatars: []
             }
         },
         computed: {
@@ -296,6 +304,7 @@
                 this.sysUser.password = '';
                 this.sysUserRules1.password[0].required = false;
                 this.sysUserRules1.passwordConfirm[0].required = false;
+                this.uploadAvatars.push({url:this.sysUser.avatar});
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
@@ -306,6 +315,21 @@
                     this.total = response.data.total;
                     this.listLoading = false;
                 })
+            },
+            handleAvatarSuccess(res, file, fileList) {
+                fileList.length = 0;
+                fileList.push(file);
+                this.sysUser.avatar = res.url;
+            },
+            beforeAvatarUpload(file) {
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isLt2M;
+            },
+            handleRemove() {
+                this.sysUser.avatar = '';
             },
             handleDelete() {
                 this.listLoading = true;
@@ -384,8 +408,10 @@
                     password: '',
                     passwordConfirm: '',
                     enable: 1,
-                    remark: ''
+                    remark: '',
+
                 };
+                this.uploadAvatars = []
             },
             handleDownload() {
                 require.ensure([], () => {
@@ -408,3 +434,31 @@
         }
     }
 </script>
+<style>
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+        border-color: #20a0ff;
+    }
+
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 178px;
+        height: 178px;
+        line-height: 178px;
+        text-align: center;
+    }
+
+    .avatar {
+        width: 178px;
+        height: 178px;
+        display: block;
+    }
+</style>

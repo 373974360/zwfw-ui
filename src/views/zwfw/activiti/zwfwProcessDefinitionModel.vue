@@ -12,6 +12,18 @@
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">
                 添加
             </el-button>
+            <el-upload
+                    class="upload-bpmn-file"
+                    :multiple="false"
+                    :show-file-list="false"
+                    :action="getUploadUrl"
+            :on-success="onUploadSuccess"
+            :before-upload="onBeforeUpload"
+            :on-error="onUploadError">
+                <el-button class="filter-item" style="margin-left: 10px;"  type="primary" icon="upload">
+                    上传
+                </el-button>
+            </el-upload>
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleDelete" type="danger" icon="delete">
                 删除
             </el-button>
@@ -28,11 +40,16 @@
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
-            <el-table-column min-width="50px" align="center" label="流程模型名称">
+            <el-table-column  align="center" label="流程模型名称">
                 <template scope="scope">
                     <el-tooltip content="点击编辑" placement="right" effect="dark">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
                     </el-tooltip>
+                </template>
+            </el-table-column>
+            <el-table-column min-width="50px" align="center" label="修订">
+                <template scope="scope">
+                    {{scope.row.revision}}
                 </template>
             </el-table-column>
             <el-table-column min-width="50px" align="center" label="发布的流程定义">
@@ -79,7 +96,7 @@
 
 <script>
     import {
-        getZwfwActivitiModelList, getZwfwActivitiModelEditUrl, createZwfwActivitiModel, deleteZwfwActivitiModel,
+        getZwfwActivitiModelList, getZwfwActivitiModelEditUrl, getZwfwActivitiModelUploadUrl, createZwfwActivitiModel, deleteZwfwActivitiModel,
         deployZwfwActivitiModel
     } from 'api/zwfw/zwfwActiviti';
     import {copyProperties} from 'utils';
@@ -122,7 +139,10 @@
             ...mapGetters([
                 'textMap',
                 'enums'
-            ])
+            ]),
+            getUploadUrl() {
+                return getZwfwActivitiModelUploadUrl();
+            }
         },
         methods: {
             getList() {
@@ -154,9 +174,7 @@
                 this.addDialogFormVisible = true;
             },
             handleUpdate(row) {
-                getZwfwActivitiModelEditUrl(row.id).then(response => {
-                    window.open(response.data);
-                });
+                window.open(getZwfwActivitiModelEditUrl(row.id));
             },
             handleDelete() {
                 const selectCounts = this.selectedRows.length;
@@ -228,6 +246,17 @@
                     }
                 });
             },
+            onBeforeUpload(file){
+                this.listLoading = true;
+
+            },
+            onUploadSuccess(response, file, fileList) {
+                this.listLoading = false;
+                this.getList();
+            },
+            onUploadError(err,file,fileList){
+                this.listLoading = false;
+            },
             resetTemp() {
                 this.activitiModel = {
                     id: undefined,
@@ -240,8 +269,7 @@
     }
 </script>
 <style>
-    .item {
-        margin-top: 10px;
-        margin-right: 40px;
+    .upload-bpmn-file {
+       display:inline-block;
     }
 </style>
