@@ -17,15 +17,15 @@ export function createZwfwItemMaterial(zwfwItemMaterialVo){
     })
 }
 
-export function updateZwfwItemMaterial(zwfwItemMaterialVo){
-    const data = zwfwItemMaterialVo;
+export function updateZwfwItemMaterial(zwfwCategoryItemVo){
+    const data = zwfwCategoryItemVo;
     return fetchZwfw({
         url: '/zwfwItemMaterial/edit',
         method: 'post',
         data
     })
 }
-export function delZwfwItemMaterials(ids) {
+export function delZwfwItemMaterial(ids) {
     const data = {ids};
     return fetchZwfw({
         url: '/zwfwItemMaterial/dels',
@@ -33,12 +33,19 @@ export function delZwfwItemMaterials(ids) {
         data
     })
 }
-export function deleteZwfwItemMaterial(id) {
-    const data = {id};
+export function deleteZwfwItemMaterial(itemId, ids) {
+    const data = {itemId, ids};
     return fetchZwfw({
         url: '/zwfwItemMaterial/delete',
         method: 'post',
         data
+    })
+}
+export function getAllItemMaterial(itemId) {
+    return fetchZwfw({
+        url: '/zwfwItemMaterial/getAll',
+        method: 'get',
+        params: {itemId}
     })
 }
 
