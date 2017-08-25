@@ -1,4 +1,4 @@
-import fetchSys from 'utils/fetchSys';
+import {fetchSys} from 'utils/fetch';
 
 export function getRoleList(query) {
     return fetchSys({

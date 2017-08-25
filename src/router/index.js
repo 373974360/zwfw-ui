@@ -25,6 +25,8 @@ const Log = () => import('../views/sys/system/log');
 const Cache = () => import('../views/sys/system/cache');
 const Dict = () => import('../views/sys/system/dict');
 const MetadataType = () => import('../views/sys/system/metadataType');
+const SysMessageFiled = () => import('../views/sys/system/sysMessageFiled');
+
 
 /* zwfw */
 const Category = () => import('../views/zwfw/category');
@@ -217,11 +219,12 @@ export const asyncRouterMap = [
         name: '系统管理',
         icon: 'system',
         children: [
-            {path: 'date', component: Holiday, name: '节假日管理'},
-            {path: 'cache', component: Cache, name: '缓存管理'},
-            {path: 'log', component: Log, name: '日志管理'},
+            {path: 'metadataType', component: MetadataType, name: '元数据类型'},
             {path: 'dict', component: Dict, name: '数据字典'},
-            {path: 'metadataType', component: MetadataType, name: '元数据类型'}
+            {path: 'cache', component: Cache, name: '缓存管理'},
+            {path: 'sysMessageFiled', component: SysMessageFiled, name: '短信字段管理'},
+            {path: 'date', component: Holiday, name: '节假日管理'},
+            {path: 'log', component: Log, name: '日志管理'}
         ]
     },
     {
