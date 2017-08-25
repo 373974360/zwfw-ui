@@ -1,4 +1,4 @@
-import {fetchSys} from 'utils/fetchSys';
+import {fetchSys} from 'utils/fetch';
 
 export function getSysMessageFiledList(query) {
     return fetchSys({

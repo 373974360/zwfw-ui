@@ -78,21 +78,21 @@ var EXPANDED_SUBPROCESS_CORNER_ROUND = 10;
 // icons
 var ICON_SIZE = 16;
 var ICON_PADDING = 4;
-var USERTASK_IMAGE = 		"images/deployer/user.png";
-var SCRIPTTASK_IMAGE = 		"images/deployer/script.png";
-var SERVICETASK_IMAGE = 	"images/deployer/service.png";
-var RECEIVETASK_IMAGE = 	"images/deployer/receive.png";
-var SENDTASK_IMAGE = 		"images/deployer/send.png";
-var MANUALTASK_IMAGE = 		"images/deployer/manual.png";
-var BUSINESS_RULE_TASK_IMAGE = "images/deployer/business_rule.png";
-var TIMER_IMAGE = 			"images/deployer/timer.png";
-var MESSAGE_CATCH_IMAGE = 	"images/deployer/message_catch.png";
-var MESSAGE_THROW_IMAGE = 	"images/deployer/message_throw.png";
-var ERROR_THROW_IMAGE = 	"images/deployer/error_throw.png";
-var ERROR_CATCH_IMAGE = 	"images/deployer/error_catch.png";
-var SIGNAL_CATCH_IMAGE = 	"images/deployer/signal_catch.png";
-var SIGNAL_THROW_IMAGE = 	"images/deployer/signal_throw.png";
-var MULTIPLE_CATCH_IMAGE = 	"images/deployer/multiple_catch.png";
+var USERTASK_IMAGE = 		"/lib/js/act/diagram-viewer/images/deployer/user.png";
+var SCRIPTTASK_IMAGE = 		"/lib/js/act/diagram-viewer/images/deployer/script.png";
+var SERVICETASK_IMAGE = 	"/lib/js/act/diagram-viewer/images/deployer/service.png";
+var RECEIVETASK_IMAGE = 	"/lib/js/act/diagram-viewer/images/deployer/receive.png";
+var SENDTASK_IMAGE = 		"/lib/js/act/diagram-viewer/images/deployer/send.png";
+var MANUALTASK_IMAGE = 		"/lib/js/act/diagram-viewer/images/deployer/manual.png";
+var BUSINESS_RULE_TASK_IMAGE = "/lib/js/act/diagram-viewer/images/deployer/business_rule.png";
+var TIMER_IMAGE = 			"/lib/js/act/diagram-viewer/images/deployer/timer.png";
+var MESSAGE_CATCH_IMAGE = 	"/lib/js/act/diagram-viewer/images/deployer/message_catch.png";
+var MESSAGE_THROW_IMAGE = 	"/lib/js/act/diagram-viewer/images/deployer/message_throw.png";
+var ERROR_THROW_IMAGE = 	"/lib/js/act/diagram-viewer/images/deployer/error_throw.png";
+var ERROR_CATCH_IMAGE = 	"/lib/js/act/diagram-viewer/images/deployer/error_catch.png";
+var SIGNAL_CATCH_IMAGE = 	"/lib/js/act/diagram-viewer/images/deployer/signal_catch.png";
+var SIGNAL_THROW_IMAGE = 	"/lib/js/act/diagram-viewer/images/deployer/signal_throw.png";
+var MULTIPLE_CATCH_IMAGE = 	"/lib/js/act/diagram-viewer/images/deployer/multiple_catch.png";
 
 
 var ObjectType = {
@@ -159,8 +159,8 @@ ProcessDiagramCanvas.prototype = {
 		var h = document.getElementById(this.canvasHolder);
 		if (!h) return;
 		
-		h.style.width = this.canvasWidth;
-		h.style.height = this.canvasHeight;
+		h.style.width = this.canvasWidth+"px";
+		h.style.height = this.canvasHeight+"px";
 		
 		this.g = Raphael(this.canvasHolder);
 		this.g.clear();
@@ -996,24 +996,21 @@ ProcessDiagramCanvas.prototype = {
 				polyClone.attr({opacity: 0.0});
 			});
 		polyClone.data("objectId", polyline.element.id);
-		polyClone.click(function(){
+
+
+		polyClone.click(function(event){
 			var instance = this;
 			var objectId = instance.data("objectId");
 			var object = this.paper.getById(objectId);
 			var contextObject = object.data("contextObject");
-			if (contextObject) {
-				console.log("[flow], objectId: " + object.id +", flow: " + contextObject.flow);
-				ProcessDiagramGenerator.showFlowInfo(contextObject);
+			if (ProcessDiagramGenerator.options && ProcessDiagramGenerator.options.on && ProcessDiagramGenerator.options.on.click) {
+				var args = [instance, polyline.element, contextObject];
+				ProcessDiagramGenerator.options.on.click.apply(event, args);
 			}
+
+
 		}).dblclick(function(){
 			console.log("!!! DOUBLE CLICK !!!");
-		}).hover(function (mouseEvent) {
-			var instance = this;
-			var objectId = instance.data("objectId");
-			var object = this.paper.getById(objectId);
-			var contextObject = object.data("contextObject");
-			if (contextObject)
-				ProcessDiagramGenerator.showFlowInfo(contextObject);
 		});
 		polyClone.data("parentId", uuid);
 		
@@ -1388,7 +1385,7 @@ ProcessDiagramCanvas.prototype = {
 		var text = original;
 
 		// TODO: move attr on parameters
-		var attr = {font: "11px Arial", opacity: 0};
+		var attr = {font: "10px Arial", opacity: 0};
 		
 		// remove length for "..."
 		var dots = this.g.text(0, 0, "...").attr(attr).hide();
@@ -2015,12 +2012,13 @@ ProcessDiagramCanvas.prototype = {
 			
 			if (layout != null) {
 				// TODO: and check if measurer has next layout. If no then don't draw  dots
-				if (!availableLinesCount || i < availableLinesCount) {
-					layouts.push(layout);
-				} else {
-					layouts.push(this.fitTextToWidth(layout + "...", boxWidth));
-					break;
-				}
+// TODO: and check if measurer has next layout. If no then don't draw  dots
+                if (!availableLinesCount || i < availableLinesCount) {
+                    layouts.push(layout);
+                } else {
+                    layouts.push(this.fitTextToWidth(layout + "...", boxWidth));
+                    break;
+                }
 			}
 			i++;
 		};

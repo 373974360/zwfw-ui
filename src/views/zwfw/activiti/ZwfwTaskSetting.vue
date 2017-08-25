@@ -16,7 +16,7 @@
                     </el-form-item>
                     <el-button type="primary" @click="flush('JS017:1:52506')">确定</el-button>
                 </el-form>
-                <div id="pb1">
+                <div id="pb1_div">
 
                 </div>
                 <div id="overlayBox">
@@ -36,8 +36,143 @@
         </el-col>
         <el-col :span="8">
             <div class="grid-content">
-                <!--用户任务的设置区域-->
-                <h2>{{task.name}}</h2>
+                <div class="ibox">
+                    <div class="ibox-content">
+                        <!--<div class="affix" id="diagramInfo" style="z-index:99999;background:#fff;margin:auto;left:0; right:0; top:0;width:50%;">-->
+                        <div id="diagramInfo">
+
+                        </div>
+
+                        <div id="taskUserInfo" style="display: none">
+                            <h3>人员安排</h3>
+                            <label class="assignee"></label>
+                        </div>
+                        <div id="taskUserEditor" style="display: none">
+                            <form method="post" onsubmit="return false;">
+                                <h3>人员安排设置(点击保存生效):</h3>
+                                <div class="full-height-scroll" style="margin-top: 14px;">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="userSearch"
+                                                   name="userSearch" value="" placeholder="添加人员">
+                                            <div class="input-group-btn">
+                                                <button type="button"
+                                                        class="btn btn-default dropdown-toggle"
+                                                        data-toggle="dropdown">
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-right"
+                                                    role="menu">
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--<div class="form-group">
+                                        <select class="form-control" id="userSearch" name="name"
+                                        ></select>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="userSearch" name="name"
+                                                   placeholder="添加人员">
+                                            <div class="input-group-btn">
+                                                <button type="button" class="btn btn-primary dropdown-toggle"
+                                                        data-toggle="dropdown">
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>-->
+                                </div>
+                                <div class="table-responsive">
+                                    <table id="candidateUsersTable" class="table table-striped table-hover">
+
+                                    </table>
+                                </div>
+                                <div class="form-group" style="margin-top: 14px;">
+                                    <button class="btn btn-primary btn-block " onclick="saveCandidateUser()">
+                                        保存人员设置
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="userTaskSetting" v-show="taskDefinitionKey" class="m-t-sm">
+                            <form method="post" onsubmit="return false;">
+                                <h3>用户任务其他设置(点击保存生效):</h3>
+                                <div class="form-group">
+                                    <div class="checkbox-inline">
+                                        <label>
+                                            <input type="checkbox" name="supportCorrection" v-model="supportCorrection"
+                                                   value="1">允许整改</label>
+                                    </div>
+                                    <div class="checkbox-inline">
+                                        <label>
+                                            <input type="checkbox" name="supportExtendTime" v-model="supportExtendTime">允许申请延期</label>
+                                    </div>
+                                    <div class="checkbox-inline">
+                                        <label>
+                                            <input type="checkbox" name="supportClose" v-model="supportClose" value="1">允许不予受理</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="timerInput">前台步骤名称:</label>
+                                    <input type="text" class="form-control" id="frontName"
+                                           name="frontName"
+                                           placeholder="" v-model="frontName">
+                                </div>
+                                <div class="form-group">
+                                    <label for="timerInput">任务默认时限天数:</label>
+                                    <input type="number" min="0" max="999" class="form-control" id="timerInput"
+                                           name="defaultTimeLimit"
+                                           placeholder="设置时限天数，0表是不限制" v-model="defaultTimeLimit">
+                                </div>
+                                <div class="form-group">
+                                    <label for="beginNotifyTemplate">任务开始时通知模板:</label>
+                                    <select class="form-control" id="beginNotifyTemplate"
+                                            name="beginNotifyTemplate" v-model="beginNotifyTemplate">
+                                        <option value="">不通知</option>
+                                        <option v-for="t in messageTemplate" :value="t.template_id" :title="t.sms_content" >
+                                            {{t.sms_title}}
+                                        </option>
+
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="notifyTarget">任务开始时通知对象:</label>
+                                    <select class="form-control"
+                                            name="beginNotifyTarget" id="beginNotifyTarget" v-model="beginNotifyTarget">
+                                        <option value="0">不通知</option>
+                                        <option value="1">申请办件的注册用户</option>
+                                        <option value="2">下一个步骤的工作人员</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="completeNotifyTemplate">任务完成时通知模板:</label>
+                                    <select class="form-control" id="completeNotifyTemplate"
+                                            name="completeNotifyTemplate" v-model="completeNotifyTemplate">
+                                        <option value="">不通知</option>
+                                        <option v-for="t in messageTemplate" :value="t.template_id" :title="t.sms_content" >
+                                            {{t.sms_title}}
+                                        </option>
+
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="notifyTarget">任务完成时通知对象:</label>
+                                    <select class="form-control"
+                                            name="completeNotifyTarget" id="notifyTarget" v-model="completeNotifyTarget">
+                                        <option value="0">不通知</option>
+                                        <option value="1">申请办件的注册用户</option>
+                                        <option value="2">下一个步骤的工作人员</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary btn-block " type="button" v-on:click="saveOtherSetting">
+                                    保存其他设置
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </el-col>
     </el-row>
@@ -107,8 +242,10 @@
         mounted() {
             //
 
+
+            var _this = this;
+
             var DiagramGenerator = {};
-            var pb1;
             ProcessDiagramGenerator.options = {
                 diagramBreadCrumbsId: "diagramBreadCrumbs",
                 diagramHolderId: "diagramHolder",
@@ -123,7 +260,7 @@
                         $('#taskUserInfo').hide();
                         //隐藏时限设置
 
-                        userTaskSetting.$data = {};
+                        _this.$data = {};
 
 
                         if (contextObject.flow) {
@@ -169,9 +306,9 @@
 //
 //
 
-                                userTaskSetting.$set("taskDefinitionKey", contextObject.id);
-                                userTaskSetting.$set("name", contextObject.getProperty('name'));
-                                userTaskSetting.$set("processDefinitionId", canvas.processDefinitionId);
+                                _this.$set("taskDefinitionKey", contextObject.id);
+                                _this.$set("name", contextObject.getProperty('name'));
+                                _this.$set("processDefinitionId", canvas.processDefinitionId);
 
 
                                 //发请求查询当前设置的默认时限
@@ -183,19 +320,19 @@
 //                                        if (data.data != null) {
 //                                            var c = data.data.setting;
 //                                            if (c) {
-//                                                userTaskSetting.$set('beginNotifyTarget', c.beginNotifyTarget);
-//                                                userTaskSetting.$set('beginNotifyTemplate', c.beginNotifyTemplate);
-//                                                userTaskSetting.$set('completeNotifyTarget', c.completeNotifyTarget);
-//                                                userTaskSetting.$set('completeNotifyTemplate', c.completeNotifyTemplate);
-//                                                userTaskSetting.$set('defaultTimeLimit', c.defaultTimeLimit);
-//                                                userTaskSetting.$set('supportClose', c.supportClose);
-//                                                userTaskSetting.$set('frontName', c.frontName);
-//                                                userTaskSetting.$set('supportCorrection', c.supportCorrection);
-//                                                userTaskSetting.$set('supportExtendTime', c.supportExtendTime);
+//                                                _this.$set('beginNotifyTarget', c.beginNotifyTarget);
+//                                                _this.$set('beginNotifyTemplate', c.beginNotifyTemplate);
+//                                                _this.$set('completeNotifyTarget', c.completeNotifyTarget);
+//                                                _this.$set('completeNotifyTemplate', c.completeNotifyTemplate);
+//                                                _this.$set('defaultTimeLimit', c.defaultTimeLimit);
+//                                                _this.$set('supportClose', c.supportClose);
+//                                                _this.$set('frontName', c.frontName);
+//                                                _this.$set('supportCorrection', c.supportCorrection);
+//                                                _this.$set('supportExtendTime', c.supportExtendTime);
 //                                            }
 //                                            //设置可选模板列表
 //                                            if (data.data.messageTemplate) {
-//                                                userTaskSetting.$set('messageTemplate', data.data.messageTemplate);
+//                                                _this.$set('messageTemplate', data.data.messageTemplate);
 //                                            }
 //                                        }
 //                                    }
@@ -246,9 +383,9 @@
                 } else {
                     alert("processDefinitionId parameter is required");
                 }
-                if (pb1 == null) {
-                    pb1 = new $.ProgressBar({
-                        boundingBox: '#pb1',
+                if (window.pb1 == null) {
+                    window.pb1 = new $.ProgressBar({
+                        boundingBox: '#pb1_div',
                         label: 'Progressbar!',
                         on: {
                             complete: function () {
@@ -265,7 +402,8 @@
                         value: 0
                     });
                 } else {
-                    //pb1.set('value', 0);
+                    console.log(window.pb1)
+                    window.pb1.set('value', 0);
                 }
 
                 console.log("Progress bar inited");
