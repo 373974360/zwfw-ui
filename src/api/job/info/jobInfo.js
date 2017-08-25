@@ -33,6 +33,22 @@ export function delJobInfos(ids) {
         data
     })
 }
+export function applyJobInfos(ids) {
+    const data = {ids};
+    return fetchJob({
+        url: '/jobInfo/applys',
+        method: 'post',
+        data
+    })
+}
+export function revokeJobInfos(ids) {
+    const data = {ids};
+    return fetchJob({
+        url: '/jobInfo/revokes',
+        method: 'post',
+        data
+    })
+}
 export function deleteJobInfo(id) {
     const data = {id};
     return fetchJob({

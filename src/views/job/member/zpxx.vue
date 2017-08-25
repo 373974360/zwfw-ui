@@ -34,13 +34,22 @@
                 </el-button>
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
-                <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="delete" @click="handleDelete">
+                <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="delete"
+                           @click="handleDelete">
                     删除
                 </el-button>
             </el-tooltip>
         </div>
-        <el-table :data="list" v-loading.body="listLoading" border fit style="width: 100%" @selection-change="handleSelectionChange">
+        <el-table :data="list" v-loading.body="listLoading" border fit style="width: 100%"
+                  @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"/>
+            <el-table-column align="center" label="状态" prop="state" width="80">
+                <template scope="scope">
+                    <el-tag v-if="scope.row.status==1" type="gray">未审核</el-tag>
+                    <el-tag v-if="scope.row.status==2" type="success">已审核</el-tag>
+                    <el-tag v-if="scope.row.status==3" type="gray">未通过</el-tag>
+                </template>
+            </el-table-column>
             <el-table-column align="center" label="职位名称" width="180">
                 <template scope="scope">
                     <nobr class="link-type" @click="handleView(scope.row)">{{scope.row.zwmc}}</nobr>
@@ -96,7 +105,7 @@
                     <nobr>{{scope.row.zwgjz}}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="刷新日期" width="174">
+            <el-table-column align="center" label="刷新日期" width="173">
                 <template scope="scope">
                     <nobr>{{scope.row.reloadtime | date('YYYY-MM-DD HH:mm:ss')}}</nobr>
                 </template>
@@ -110,60 +119,77 @@
         </div>
         <!-- 招聘信息查看弹出框  开始 -->
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogVisible">
-            <table class="member_view" width="100%">
-                <tr>
-                    <th>公司名称:</th>
-                    <td>{{zpxx.organName}}</td>
-                    <th>职位名称:</th>
-                    <td>{{zpxx.zwmc}}</td>
-                    <th>职位编号:</th>
-                    <td>{{zpxx.zwbh}}</td>
-                </tr>
-                <tr>
-                    <th>招聘人数:</th>
-                    <td>{{zpxx.zprs}}</td>
-                    <th>最低学历:</th>
-                    <td>{{zpxx.zdxl | dicts('xueli')}}</td>
-                    <th>年龄要求:</th>
-                    <td>{{zpxx.nlmin}} 至 {{zpxx.nlmax}}</td>
-                </tr>
-                <tr>
-                    <th>职能类别:</th>
-                    <td>{{zpxx.znflName}}</td>
-                    <th>工作年限:</th>
-                    <td>{{zpxx.gznx}}</td>
-                    <th>工作性质:</th>
-                    <td>{{zpxx.gzxz | dicts('gzxz')}}</td>
-                </tr>
-                <tr>
-                    <th>关 键 字:</th>
-                    <td>{{zpxx.zwgjz}}</td>
-                    <th>刷新日期:</th>
-                    <td>{{zpxx.reloadtime | date("YYYY-MM-DD HH:mm:ss")}}</td>
-                    <th>薪资标准:</th>
-                    <td>{{zpxx.xzlx | dicts('xzfw')}}</td>
-                </tr>
-                <tr>
-                    <th>工作地点:</th>
-                    <td colspan="5">{{zpxx.sbdz}}</td>
-                </tr>
-                <tr>
-                    <th>要求/描述:</th>
-                    <td colspan="5">{{zpxx.zwms}}</td>
-                </tr>
-            </table>
+            <el-tabs v-model="activeName" type="card">
+                <el-tab-pane label="招聘信息" name="zpxx">
+                    <table class="member_view" width="100%">
+                        <tr>
+                            <th>公司名称:</th>
+                            <td>{{zpxx.organName}}</td>
+                            <th>职位名称:</th>
+                            <td>{{zpxx.zwmc}}</td>
+                            <th>职位编号:</th>
+                            <td>{{zpxx.zwbh}}</td>
+                        </tr>
+                        <tr>
+                            <th>招聘人数:</th>
+                            <td>{{zpxx.zprs}}</td>
+                            <th>最低学历:</th>
+                            <td>{{zpxx.zdxl | dicts('xueli')}}</td>
+                            <th>年龄要求:</th>
+                            <td>{{zpxx.nlmin}} 至 {{zpxx.nlmax}}</td>
+                        </tr>
+                        <tr>
+                            <th>职能类别:</th>
+                            <td>{{zpxx.znflName}}</td>
+                            <th>工作年限:</th>
+                            <td>{{zpxx.gznx}}</td>
+                            <th>工作性质:</th>
+                            <td>{{zpxx.gzxz | dicts('gzxz')}}</td>
+                        </tr>
+                        <tr>
+                            <th>关 键 字:</th>
+                            <td>{{zpxx.zwgjz}}</td>
+                            <th>刷新日期:</th>
+                            <td>{{zpxx.reloadtime | date("YYYY-MM-DD HH:mm:ss")}}</td>
+                            <th>薪资标准:</th>
+                            <td>{{zpxx.xzlx | dicts('xzfw')}}</td>
+                        </tr>
+                        <tr>
+                            <th>工作地点:</th>
+                            <td colspan="5">{{zpxx.sbdz}}</td>
+                        </tr>
+                        <tr>
+                            <th>要求/描述:</th>
+                            <td colspan="5">{{zpxx.zwms}}</td>
+                        </tr>
+                    </table>
+                </el-tab-pane>
+                <el-tab-pane label="投递记录" name="tdjl">
+
+                </el-tab-pane>
+            </el-tabs>
         </el-dialog>
         <!-- 招聘信息查看弹出框  结束 -->
     </div>
 </template>
 <style>
-    .member_view td,th{line-height:45px;}
-    .member_view th{text-align:right;width:100px;}
-    .member_view td{text-align:left;padding-left:10px;}
+    .member_view td, th {
+        line-height: 45px;
+    }
+
+    .member_view th {
+        text-align: right;
+        width: 100px;
+    }
+
+    .member_view td {
+        text-align: left;
+        padding-left: 10px;
+    }
 </style>
 <script>
     import {getZnflCascader} from 'api/job/flxx/znfl';
-    import {getOrganZpxxList,delOrganZpxx} from "api/job/member/zpxx";
+    import {getOrganZpxxList, delOrganZpxx} from "api/job/member/zpxx";
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     export default{
@@ -173,6 +199,7 @@
                 list: null,
                 total: null,
                 listLoading: true,
+                activeName: 'zpxx',
                 cascader: [],
                 listQuery: {
                     page: this.$store.state.app.page,
