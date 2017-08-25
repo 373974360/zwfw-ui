@@ -36,143 +36,143 @@
         </el-col>
         <el-col :span="8">
             <div class="grid-content">
-                <div class="ibox">
-                    <div class="ibox-content">
-                        <!--<div class="affix" id="diagramInfo" style="z-index:99999;background:#fff;margin:auto;left:0; right:0; top:0;width:50%;">-->
-                        <div id="diagramInfo">
 
-                        </div>
+                <!--<div class="affix" id="diagramInfo" style="z-index:99999;background:#fff;margin:auto;left:0; right:0; top:0;width:50%;">-->
+                <div id="diagramInfo">
 
-                        <div id="taskUserInfo" style="display: none">
-                            <h3>人员安排</h3>
-                            <label class="assignee"></label>
-                        </div>
-                        <div id="taskUserEditor" style="display: none">
-                            <form method="post" onsubmit="return false;">
-                                <h3>人员安排设置(点击保存生效):</h3>
-                                <div class="full-height-scroll" style="margin-top: 14px;">
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="userSearch"
-                                                   name="userSearch" value="" placeholder="添加人员">
-                                            <div class="input-group-btn">
-                                                <button type="button"
-                                                        class="btn btn-default dropdown-toggle"
-                                                        data-toggle="dropdown">
-                                                    <span class="caret"></span>
-                                                </button>
-                                                <ul class="dropdown-menu dropdown-menu-right"
-                                                    role="menu">
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--<div class="form-group">
-                                        <select class="form-control" id="userSearch" name="name"
-                                        ></select>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="userSearch" name="name"
-                                                   placeholder="添加人员">
-                                            <div class="input-group-btn">
-                                                <button type="button" class="btn btn-primary dropdown-toggle"
-                                                        data-toggle="dropdown">
-                                                    <span class="caret"></span>
-                                                </button>
-                                                <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>-->
-                                </div>
-                                <div class="table-responsive">
-                                    <table id="candidateUsersTable" class="table table-striped table-hover">
-
-                                    </table>
-                                </div>
-                                <div class="form-group" style="margin-top: 14px;">
-                                    <button class="btn btn-primary btn-block " onclick="saveCandidateUser()">
-                                        保存人员设置
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                        <div id="userTaskSetting" v-show="taskDefinitionKey" class="m-t-sm">
-                            <form method="post" onsubmit="return false;">
-                                <h3>用户任务其他设置(点击保存生效):</h3>
-                                <div class="form-group">
-                                    <div class="checkbox-inline">
-                                        <label>
-                                            <input type="checkbox" name="supportCorrection" v-model="supportCorrection"
-                                                   value="1">允许整改</label>
-                                    </div>
-                                    <div class="checkbox-inline">
-                                        <label>
-                                            <input type="checkbox" name="supportExtendTime" v-model="supportExtendTime">允许申请延期</label>
-                                    </div>
-                                    <div class="checkbox-inline">
-                                        <label>
-                                            <input type="checkbox" name="supportClose" v-model="supportClose" value="1">允许不予受理</label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="timerInput">前台步骤名称:</label>
-                                    <input type="text" class="form-control" id="frontName"
-                                           name="frontName"
-                                           placeholder="" v-model="frontName">
-                                </div>
-                                <div class="form-group">
-                                    <label for="timerInput">任务默认时限天数:</label>
-                                    <input type="number" min="0" max="999" class="form-control" id="timerInput"
-                                           name="defaultTimeLimit"
-                                           placeholder="设置时限天数，0表是不限制" v-model="defaultTimeLimit">
-                                </div>
-                                <div class="form-group">
-                                    <label for="beginNotifyTemplate">任务开始时通知模板:</label>
-                                    <select class="form-control" id="beginNotifyTemplate"
-                                            name="beginNotifyTemplate" v-model="beginNotifyTemplate">
-                                        <option value="">不通知</option>
-                                        <option v-for="t in messageTemplate" :value="t.template_id" :title="t.sms_content" >
-                                            {{t.sms_title}}
-                                        </option>
-
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="notifyTarget">任务开始时通知对象:</label>
-                                    <select class="form-control"
-                                            name="beginNotifyTarget" id="beginNotifyTarget" v-model="beginNotifyTarget">
-                                        <option value="0">不通知</option>
-                                        <option value="1">申请办件的注册用户</option>
-                                        <option value="2">下一个步骤的工作人员</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="completeNotifyTemplate">任务完成时通知模板:</label>
-                                    <select class="form-control" id="completeNotifyTemplate"
-                                            name="completeNotifyTemplate" v-model="completeNotifyTemplate">
-                                        <option value="">不通知</option>
-                                        <option v-for="t in messageTemplate" :value="t.template_id" :title="t.sms_content" >
-                                            {{t.sms_title}}
-                                        </option>
-
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="notifyTarget">任务完成时通知对象:</label>
-                                    <select class="form-control"
-                                            name="completeNotifyTarget" id="notifyTarget" v-model="completeNotifyTarget">
-                                        <option value="0">不通知</option>
-                                        <option value="1">申请办件的注册用户</option>
-                                        <option value="2">下一个步骤的工作人员</option>
-                                    </select>
-                                </div>
-                                <button class="btn btn-primary btn-block " type="button" v-on:click="saveOtherSetting">
-                                    保存其他设置
-                                </button>
-                            </form>
-                        </div>
-                    </div>
                 </div>
+
+                <div id="taskUserInfo" style="display: none">
+                    <h3>人员安排</h3>
+                    <label class="assignee"></label>
+                </div>
+                <div id="taskUserEditor" style="display: none">
+                    <form method="post" onsubmit="return false;">
+                        <h3>人员安排设置(点击保存生效):</h3>
+                        <div class="full-height-scroll" style="margin-top: 14px;">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="userSearch"
+                                           name="userSearch" value="" placeholder="添加人员">
+                                    <div class="input-group-btn">
+                                        <button type="button"
+                                                class="btn btn-default dropdown-toggle"
+                                                data-toggle="dropdown">
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-right"
+                                            role="menu">
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--<div class="form-group">
+                                <select class="form-control" id="userSearch" name="name"
+                                ></select>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="userSearch" name="name"
+                                           placeholder="添加人员">
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn btn-primary dropdown-toggle"
+                                                data-toggle="dropdown">
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>-->
+                        </div>
+                        <div class="table-responsive">
+                            <table id="candidateUsersTable" class="table table-striped table-hover">
+
+                            </table>
+                        </div>
+                        <div class="form-group" style="margin-top: 14px;">
+                            <button class="btn btn-primary btn-block " onclick="saveCandidateUser()">
+                                保存人员设置
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div id="userTaskSetting" v-show="task.taskDefinitionKey" class="m-t-sm">
+                    <form method="post" onsubmit="return false;">
+                        <h3>用户任务其他设置(点击保存生效):</h3>
+                        <div class="form-group">
+                            <div class="checkbox-inline">
+                                <label>
+                                    <input type="checkbox" name="supportCorrection" v-model="task.supportCorrection"
+                                           value="1">允许整改</label>
+                            </div>
+                            <div class="checkbox-inline">
+                                <label>
+                                    <input type="checkbox" name="supportExtendTime"
+                                           v-model="task.supportExtendTime">允许申请延期</label>
+                            </div>
+                            <div class="checkbox-inline">
+                                <label>
+                                    <input type="checkbox" name="supportClose" v-model="task.supportClose"
+                                           value="1">允许不予受理</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="timerInput">前台步骤名称:</label>
+                            <input type="text" class="form-control" id="frontName"
+                                   name="frontName"
+                                   placeholder="" v-model="task.frontName">
+                        </div>
+                        <div class="form-group">
+                            <label for="timerInput">任务默认时限天数:</label>
+                            <input type="number" min="0" max="999" class="form-control" id="timerInput"
+                                   name="defaultTimeLimit"
+                                   placeholder="设置时限天数，0表是不限制" v-model="task.defaultTimeLimit">
+                        </div>
+                        <div class="form-group">
+                            <label for="beginNotifyTemplate">任务开始时通知模板:</label>
+                            <select class="form-control" id="beginNotifyTemplate"
+                                    name="beginNotifyTemplate" v-model="task.beginNotifyTemplate">
+                                <option value="">不通知</option>
+                                <option v-for="t in messageTemplate" :value="t.template_id" :title="t.sms_content">
+                                    {{t.sms_title}}
+                                </option>
+
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="notifyTarget">任务开始时通知对象:</label>
+                            <select class="form-control"
+                                    name="beginNotifyTarget" id="beginNotifyTarget" v-model="task.beginNotifyTarget">
+                                <option value="0">不通知</option>
+                                <option value="1">申请办件的注册用户</option>
+                                <option value="2">下一个步骤的工作人员</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="completeNotifyTemplate">任务完成时通知模板:</label>
+                            <select class="form-control" id="completeNotifyTemplate"
+                                    name="completeNotifyTemplate" v-model="task.completeNotifyTemplate">
+                                <option value="">不通知</option>
+                                <option v-for="t in messageTemplate" :value="t.template_id" :title="t.sms_content">
+                                    {{t.sms_title}}
+                                </option>
+
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="notifyTarget">任务完成时通知对象:</label>
+                            <select class="form-control"
+                                    name="completeNotifyTarget" id="notifyTarget" v-model="task.completeNotifyTarget">
+                                <option value="0">不通知</option>
+                                <option value="1">申请办件的注册用户</option>
+                                <option value="2">下一个步骤的工作人员</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary btn-block " type="button" v-on:click="saveOtherSetting">
+                            保存其他设置
+                        </button>
+                    </form>
+                </div>
+
             </div>
         </el-col>
     </el-row>
@@ -192,8 +192,11 @@
                 search: {
                     processDefinitionId: 0
                 },
+                messageTemplate: [],
+                processDefinitionId: 0,
                 task: {
                     name: '审核申报材料，出具单',
+                    taskDefinitionKey: '',
                     id: 'ziliao_shenhe',
                     type: 1,
                     taskAssigmentUser: 1,
@@ -219,16 +222,16 @@
             saveOtherSetting() {
                 $.post('/admin/item/process/saveOtherSetting', {
                     processDefinitionId: this.processDefinitionId,
-                    taskDefinitionKey: this.taskDefinitionKey,
-                    defaultTimeLimit: this.defaultTimeLimit,
-                    frontName: this.frontName,
-                    beginNotifyTemplate: this.beginNotifyTemplate,
-                    beginNotifyTarget: this.beginNotifyTarget,
-                    completeNotifyTemplate: this.completeNotifyTemplate,
-                    completeNotifyTarget: this.completeNotifyTarget,
-                    supportCorrection: this.supportCorrection,
+                    taskDefinitionKey: this.task.taskDefinitionKey,
+                    defaultTimeLimit: this.task.defaultTimeLimit,
+                    frontName: this.task.frontName,
+                    beginNotifyTemplate: this.task.beginNotifyTemplate,
+                    beginNotifyTarget: this.task.beginNotifyTarget,
+                    completeNotifyTemplate: this.task.completeNotifyTemplate,
+                    completeNotifyTarget: this.task.completeNotifyTarget,
+                    supportCorrection: this.task.supportCorrection,
                     supportExtendTime: this.supportExtendTime,
-                    supportClose: this.supportClose
+                    supportClose: this.task.supportClose
                 }, function (data) {
                     if (data.status == 200) {
                         info("保存成功");
@@ -260,7 +263,7 @@
                         $('#taskUserInfo').hide();
                         //隐藏时限设置
 
-                        _this.$data = {};
+                        _this.data = {};
 
 
                         if (contextObject.flow) {
@@ -272,15 +275,10 @@
                                 var name = contextObject.getProperty('name');
                                 var doc = contextObject.getProperty("documentation");
                                 var assignee = contextObject.getProperty("assignee");
-                                candidateUsersTable
-                                    .data(
-                                        'processDefinitionId', canvas.processDefinitionId
-                                    ).data(
-                                    'taskDefinitionKey', contextObject.getId()
-                                );
+//                                candidateUsersTable.data('processDefinitionId', canvas.processDefinitionId).data('taskDefinitionKey', contextObject.getId());
                                 if (assignee) {
                                     //有设置办理人员
-                                    candidateUsersTable.bootstrapTable('removeAll');
+//                                    candidateUsersTable.bootstrapTable('removeAll');
                                     $('#taskUserInfo').show().find('.assignee').text('流程中锁定为' + assignee + "(变量)所代表的用户");
                                     $('#taskUserEditor').hide();
                                 } else {
@@ -288,55 +286,55 @@
                                     $('#taskUserEditor').show();
                                     $('#taskUserInfo').hide();
 
-                                    candidateUsersTable.bootstrapTable('refresh', {
-                                        query: {
-                                            processDefinitionId: canvas.processDefinitionId,
-                                            taskDefinitionKey: contextObject.getId()
-                                        },
-                                        url: '/admin/item/process/getTaskUsers'
-                                    });
+//                                    candidateUsersTable.bootstrapTable('refresh', {
+//                                        query: {
+//                                            processDefinitionId: canvas.processDefinitionId,
+//                                            taskDefinitionKey: contextObject.getId()
+//                                        },
+//                                        url: '/admin/item/process/getTaskUsers'
+//                                    });
                                 }
-//                        $('#userTaskSetting').data({
-//                            taskDefinitionKey: contextObject.id,
-//                            name: contextObject.getProperty('name'),
-//                            processDefinitionId: canvas.processDefinitionId
-//                        }).show();
+                                $('#userTaskSetting').data({
+                                    taskDefinitionKey: contextObject.id,
+                                    name: contextObject.getProperty('name'),
+                                    processDefinitionId: canvas.processDefinitionId
+                                }).show();
 //
 //
 //
 //
 
-                                _this.$set("taskDefinitionKey", contextObject.id);
-                                _this.$set("name", contextObject.getProperty('name'));
-                                _this.$set("processDefinitionId", canvas.processDefinitionId);
+                                _this.task.taskDefinitionKey = contextObject.id;
+                                _this.task.name = contextObject.getProperty('name');
+                                _this.processDefinitionId = canvas.processDefinitionId;
 
 
-                                //发请求查询当前设置的默认时限
-//                                $.post('/admin/item/process/getOtherSetting', {
-//                                    processDefinitionId: canvas.processDefinitionId,
-//                                    taskDefinitionKey: contextObject.id
-//                                }, function (data) {
-//                                    if (data.status == 200) {
-//                                        if (data.data != null) {
-//                                            var c = data.data.setting;
-//                                            if (c) {
-//                                                _this.$set('beginNotifyTarget', c.beginNotifyTarget);
-//                                                _this.$set('beginNotifyTemplate', c.beginNotifyTemplate);
-//                                                _this.$set('completeNotifyTarget', c.completeNotifyTarget);
-//                                                _this.$set('completeNotifyTemplate', c.completeNotifyTemplate);
-//                                                _this.$set('defaultTimeLimit', c.defaultTimeLimit);
-//                                                _this.$set('supportClose', c.supportClose);
-//                                                _this.$set('frontName', c.frontName);
-//                                                _this.$set('supportCorrection', c.supportCorrection);
-//                                                _this.$set('supportExtendTime', c.supportExtendTime);
-//                                            }
-//                                            //设置可选模板列表
-//                                            if (data.data.messageTemplate) {
-//                                                _this.$set('messageTemplate', data.data.messageTemplate);
-//                                            }
-//                                        }
-//                                    }
-//                                });
+//                                发请求查询当前设置的默认时限
+                                $.post('/admin/item/process/getOtherSetting', {
+                                    processDefinitionId: canvas.processDefinitionId,
+                                    taskDefinitionKey: contextObject.id
+                                }, function (data) {
+                                    if (data.status == 200) {
+                                        if (data.data != null) {
+                                            var c = data.data.setting;
+                                            if (c) {
+                                                _this.task.beginNotifyTarget = c.beginNotifyTarget;
+                                                _this.task.beginNotifyTemplate = c.beginNotifyTemplate;
+                                                _this.task.completeNotifyTarget = c.completeNotifyTarget;
+                                                _this.task.completeNotifyTemplate = c.completeNotifyTemplate;
+                                                _this.task.defaultTimeLimit = c.defaultTimeLimit;
+                                                _this.task.supportClose = c.supportClose;
+                                                _this.task.frontName = c.frontName;
+                                                _this.task.supportCorrection = c.supportCorrection;
+                                                _this.task.supportExtendTime = c.supportExtendTime;
+                                            }
+                                            //设置可选模板列表
+                                            if (data.data.messageTemplate) {
+                                                _this.messageTemplate = data.data.messageTemplate;
+                                            }
+                                        }
+                                    }
+                                });
                             } else if (type == 'boundaryTimer') {
 
                             } else if (type == 'callActivity') {
