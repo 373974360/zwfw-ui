@@ -1,4 +1,4 @@
-import fetchTask from 'utils/fetchTask';
+import {fetchTask} from 'utils/fetch';
 
 export function getRegistryCenterList(query) {
     return fetchTask({

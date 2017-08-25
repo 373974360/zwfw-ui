@@ -105,7 +105,7 @@
 <script>
     /* eslint-disable */
     import {effectRipple, data2blob} from './utils';
-    import fetchSys from 'utils/fetchSys';
+    import {fetchSys} from 'utils/fetch';
     import langBag from './lang';
     const mimes = {
         'jpg': 'image/jpeg',

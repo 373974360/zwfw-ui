@@ -8,7 +8,7 @@
         </div>
         <tree-grid :columns="columns" :tree-structure="true" :data-source="categoryList" :list-loading="listLoading"
                    :handle-toggle="handleToggle" :handle-create="handleCreate"
-                   :handle-update="handleUpdate" :handle-delete="handleDelete">
+                   :handle-update="handleUpdate" :handle-delete="handleDelete" :handle-create1="handleCreate1">
         </tree-grid>
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
@@ -39,12 +39,87 @@
             </div>
         </el-dialog>
 
+        <!--事项关联dialog-->
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisibleItem">
+            <div class="filter-container">
+                <el-button class="filter-item" style="margin-left: 10px;" @click="handleDeleteOne" type="danger"
+                           icon="delete">
+                    删除
+                </el-button>
+            </div>
+            <el-table ref="zwfwItemTable" :data="zwfwItemList" v-loading.body="listLoading" border fit
+                      highlight-current-row
+                      style="width: 100%" @selection-change="handleSelectionChange">
+                <el-table-column type="selection" width="55"/>
+                <el-table-column align="center" label="序号">
+                    <template scope="scope">
+                        <span>{{scope.row.id}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center" label="事项名称" prop="name">
+                    <template scope="scope">
+                        <span>{{scope.row.name}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center" label="基本编码" prop="basicCode">
+                    <template scope="scope">
+                        <span>{{scope.row.basicCode}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center" label="事项类型" prop="type">
+                    <template scope="scope">
+                        <span>{{scope.row.type}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center" label="办件类型" prop="processType">
+                    <template scope="scope">
+                        <el-tag :type="scope.row.processType | dicts('bjlx')">
+                            {{scope.row.processType | dicts('bjlx')}}
+                        </el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center" label="办理形式" prop="handleType">
+                    <template scope="scope">
+                        <el-tag :type="scope.row.handleType | dicts('blxs')">
+                            {{scope.row.handleType | dicts('blxs')}}
+                        </el-tag>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem"
+                     label-position="right"
+                     label-width="80px"
+                     style='width: 80%; margin-left:10%; margin-top: 5%;'>
+                <el-form-item label="事项名称" prop="name">
+                    <el-select
+                            v-model="zwfwItem.name"
+                            filterable
+                            remote
+                            placeholder="请输入关键词"
+                            :remote-method="remoteMethod"
+                            @change="changeMaterial">
+                        <el-option
+                                v-for="item in optionsName"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.name">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <div style="text-align: center" slot="footer" class="dialog-footer">
+                <el-button type="primary" icon="circle-check" @click="saveCategoryItem">保 存
+                </el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
 <script>
     import TreeGrid from 'components/TreeGrid';
     import {getCategoryTree, getCategoryCascader, createCategory, updateCategory, delCategory} from 'api/zwfw/category';
+    import {getAllByNameOrbasicCode} from 'api/zwfw/zwfwItem';
+    import {getAllCategoeyItem, createZwfwCategoryItem, deleteZwfwCategoryItem} from 'api/zwfw/zwfwCategoryItem';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import TreeUtil from 'utils/TreeUtil.js';
@@ -55,6 +130,8 @@
         data() {
             return {
                 categoryList: [],
+                categoryItem: [],
+                zwfwItemList: [],
                 listLoading: true,
                 columns: [
                     {
@@ -89,8 +166,18 @@
                     enable: '',
                     remark: ''
                 },
+                zwfwItem: {
+                    id: undefined,
+                    name: '',
+                    basicCode: ''
+                },
+                selectedRows: [],
+                categoryId: '',
+                itemCategoryList: [],
                 cascader: [],
+                optionsName: [],
                 dialogFormVisible: false,
+                dialogFormVisibleItem: false,
                 dialogStatus: '',
                 dialogLoading: false,
                 categoryRules: {
@@ -105,6 +192,7 @@
         },
         created() {
             this.getList();
+            this.getItemList();
         },
         computed: {
             cascaderModel: function () {
@@ -144,6 +232,9 @@
             handleToggle(row) {
                 row._expanded = !row._expanded;
             },
+            handleSelectionChange(rows) {
+                this.selectedRows = rows;
+            },
             handleCreate(row) {
                 this.resetTemp();
                 if (row.treePosition) {
@@ -173,6 +264,101 @@
                 this.getOptions(this.category.id);
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
+            },
+            handleCreate1(row) {
+                this.dialogStatus = 'associateItem';
+                this.dialogFormVisibleItem = true;
+                this.categoryId = row.id;
+                this.getItemListByCategoryId();
+            },
+            getItemListByCategoryId() {
+                getAllCategoeyItem(this.categoryId).then(response => {
+                    const arr = [];
+                    console.log(response.data);
+                    for (const ids of response.data) {
+                        for (const idList of this.itemCategoryList) {
+                            if (ids.itemId == idList.id) {
+                                arr.push(idList);
+                            }
+                        }
+                    }
+                    this.zwfwItemList = arr;
+                })
+            },
+            getItemList() {
+                const query = {}
+                getAllByNameOrbasicCode(query).then(response => {
+                    this.itemCategoryList = response.data;
+                    console.log(this.itemCategoryList);
+                })
+            },
+            remoteMethod(query) {
+                const listQueryName = {
+                    name: undefined,
+                    basicCode: undefined
+                }
+                if (query !== '') {
+                    if (/.*[\u4e00-\u9fa5]+.*$/.test(query)) {
+                        listQueryName.name = query;
+                    } else {
+                        listQueryName.basicCode = query
+                    }
+                    getAllByNameOrbasicCode(listQueryName).then(response => {
+                        this.optionsName = response.data;
+                    })
+                } else {
+                    this.optionsName = [];
+                }
+            },
+            changeMaterial(value) {
+                for (const obj of this.itemCategoryList) {
+                    if (obj.name == value) {
+                        this.zwfwItem = Object.assign({}, obj);
+                    }
+                }
+            },
+            saveCategoryItem() {
+                this.$refs['zwfwItemForm'].validate((valid) => {
+                    if (valid) {
+                        const query = {
+                            categoryId: this.categoryId,
+                            itemId: this.zwfwItem.id
+                        }
+                        this.listLoading = true;
+                        createZwfwCategoryItem(query).then(response => {
+                            this.zwfwItemList.unshift(this.zwfwItem);
+                            this.total += 1;
+                            this.$message.success('创建成功');
+                            this.listLoading = false;
+                            this.zwfwItem = {};
+                        })
+                    } else {
+                        return false;
+                    }
+                });
+            },
+            handleDeleteOne() {
+                if (this.selectedRows == 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        let ids = new Array();
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        deleteZwfwCategoryItem(this.categoryId, ids).then(response => {
+                            const index = this.zwfwItemList.indexOf(this.selectedRows);
+                            this.zwfwItemList.splice(index, 1);
+                            this.$message.success('删除成功');
+                        })
+                    }).catch(() => {
+                        console.dir("取消");
+                    });
+                }
             },
             handleDelete(row) {
                 this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
@@ -223,7 +409,7 @@
                     sortNo: 1,
                     treePosition: '',
                     remark: '',
-                    enable: '',
+                    enable: ''
                 };
             }
         }

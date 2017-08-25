@@ -1,4 +1,4 @@
-import fetchZwfw from 'utils/fetchZwfw';
+import {fetchZwfw} from 'utils/fetch';
 
 export function getZwfwItemList(query) {
     return fetchZwfw({
@@ -8,7 +8,7 @@ export function getZwfwItemList(query) {
     });
 }
 
-export function createZwfwItem(zwfwItemVo){
+export function createZwfwItem(zwfwItemVo) {
     const data = zwfwItemVo;
     return fetchZwfw({
         url: '/zwfwItem/add',
@@ -17,7 +17,7 @@ export function createZwfwItem(zwfwItemVo){
     })
 }
 
-export function updateZwfwItem(zwfwItemVo){
+export function updateZwfwItem(zwfwItemVo) {
     const data = zwfwItemVo;
     return fetchZwfw({
         url: '/zwfwItem/edit',
@@ -41,5 +41,13 @@ export function deleteZwfwItem(id) {
         data
     })
 }
+export function getAllByNameOrbasicCode(query) {
+    return fetchZwfw({
+        url: '/zwfwItem/getAll',
+        method: 'get',
+        params: query
+    })
+}
+
 
 

@@ -1,4 +1,4 @@
-import fetchZwfw from 'utils/fetchZwfw';
+import {fetchZwfw} from 'utils/fetch';
 
 export function getZwfwMaterialList(query) {
     return fetchZwfw({
