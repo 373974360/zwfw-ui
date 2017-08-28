@@ -61,6 +61,7 @@ const Mixin = () => import('../views/components/mixin');
 const MemberPersonal = () => import('../views/job/member/personal');
 const MemberOrgan = () => import('../views/job/member/organ');
 const Zpxx = () => import('../views/job/member/zpxx');
+const MemberLevel = () => import('../views/job/member/jobMemberLevel');
 
 
 /* 广告位管理 */
@@ -152,7 +153,8 @@ export const asyncRouterMap = [
         children: [
             {path: 'personal', component: MemberPersonal, name: '个人会员'},
             {path: 'organ', component: MemberOrgan, name: '企业会员'},
-            {path: 'zpxx', component: Zpxx, name: '招聘信息'}
+            {path: 'zpxx', component: Zpxx, name: '招聘信息'},
+            {path: 'memberLevel', component: MemberLevel, name: '会员级别'}
         ]
     },
     {

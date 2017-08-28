@@ -11,7 +11,7 @@
                    :handle-update="handleUpdate" :handle-delete="handleDelete" :handle-create1="handleCreate1">
         </tree-grid>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+        <el-dialog  :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
             <el-form ref="categoryForm" class="small-space" :model="category" label-position="right" label-width="110px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="categoryRules">
                 <el-form-item label="上级事项分类">
@@ -47,7 +47,7 @@
                     删除
                 </el-button>
             </div>
-            <el-table ref="zwfwItemTable" :data="zwfwItemList" v-loading.body="listLoading" border fit
+            <el-table ref="zwfwItemTable" :data="zwfwItemList" v-loading.body="listLoading1" border fit
                       highlight-current-row
                       style="width: 100%" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55"/>
@@ -89,7 +89,7 @@
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem"
                      label-position="right"
                      label-width="80px"
-                     style='width: 80%; margin-left:10%; margin-top: 5%;'>
+                     style='width: 80%; margin-left:10%; margin-top: 5%;' v-loading="dialogLoading" :rules="categoryItemRules">
                 <el-form-item label="事项名称" prop="name">
                     <el-select
                             v-model="zwfwItem.name"
@@ -133,6 +133,7 @@
                 categoryItem: [],
                 zwfwItemList: [],
                 listLoading: true,
+                listLoading1: true,
                 columns: [
                     {
                         text: '序号',
@@ -183,6 +184,11 @@
                 categoryRules: {
                     name: [
                         {required: true, message: '请输入事项分类名称', trigger: 'blur'}
+                    ]
+                },
+                categoryItemRules: {
+                    name: [
+                        {required: true, message: '请输入事项名称'}
                     ]
                 }
             }
@@ -272,6 +278,7 @@
                 this.getItemListByCategoryId();
             },
             getItemListByCategoryId() {
+                this.listLoading1 = true;
                 getAllCategoeyItem(this.categoryId).then(response => {
                     const arr = [];
                     console.log(response.data);
@@ -283,6 +290,7 @@
                         }
                     }
                     this.zwfwItemList = arr;
+                    this.listLoading1 = false;
                 })
             },
             getItemList() {
@@ -318,18 +326,27 @@
                 }
             },
             saveCategoryItem() {
+                this.categoryItemRules.name[0].required = true;
                 this.$refs['zwfwItemForm'].validate((valid) => {
                     if (valid) {
+                        for (let obj of this.zwfwItemList) {
+                            if (obj.id == this.zwfwItem.id) {
+                                this.$message.warning('事项已存在');
+                                this.zwfwItem = {};
+                                this.categoryItemRules.name[0].required = false;
+                                return false;
+                            }
+                        }
                         const query = {
                             categoryId: this.categoryId,
                             itemId: this.zwfwItem.id
                         }
-                        this.listLoading = true;
+                        this.listLoading1 = true;
                         createZwfwCategoryItem(query).then(response => {
                             this.zwfwItemList.unshift(this.zwfwItem);
-                            this.total += 1;
                             this.$message.success('创建成功');
-                            this.listLoading = false;
+                            this.listLoading1 = false;
+                            this.categoryItemRules.name[0].required = false;
                             this.zwfwItem = {};
                         })
                     } else {
@@ -366,9 +383,11 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
+                    this.listLoading = true;
                     delCategory(row.id).then(response => {
-                        this.$message.success('删除成功');
                         TreeUtil.delRow(response.data, this.categoryList);
+                        this.$message.success('删除成功');
+                        this.listLoading = false;
                     })
                 }).catch(() => {
                     console.dir("取消");

@@ -315,7 +315,7 @@
                     删除
                 </el-button>
             </div>
-            <el-table ref="zwfwItemMaterialForm" :data="zwfwItemMaterialList" v-loading.body="listLoading"
+            <el-table ref="zwfwItemMaterialForm" :data="zwfwItemMaterialList" v-loading.body="listLoading1"
                       border fit
                       highlight-current-row
                       style="width: 100%" @selection-change="handleSelectionChange">
@@ -358,7 +358,7 @@
                             v-model="zwfwItemMaterial.name"
                             filterable
                             remote
-                            placeholder="请输入关键词"
+                            placeholder="请输入材料名称"
                             :remote-method="remoteMethod"
                             @change="changeMaterial">
                         <el-option
@@ -447,6 +447,7 @@
                 list: [],
                 total: null,
                 listLoading: true,
+                listLoading1: true,
                 changeTable: false,
                 listQuery: {
                     page: this.$store.state.app.page,
@@ -586,6 +587,7 @@
                 this.getItemMaterialListByItemId();
             },
             getItemMaterialListByItemId() {
+                this.listLoading1 = true;
                 getAllItemMaterial(this.currentItem.id).then(response => {
                     this.getMaterialIds = response.data;
                     const arr = [];
@@ -597,6 +599,7 @@
                         }
                     }
                     this.zwfwItemMaterialList = arr;
+                    this.listLoading1 = false;
                 })
             },
             getMaterialList() {
@@ -726,19 +729,34 @@
                 });
             },
             createMaterial() {
+                this.zwfwItemMaterialRules.name[0].required = true;
+                this.zwfwItemMaterialRules.source[0].required = true;
+                this.zwfwItemMaterialRules.type[0].required = true;
                 this.$refs['zwfwMaterialForm'].validate((valid) => {
                     if (valid) {
                         if (this.$refs.zwfwMaterialForm.$el[0].disabled != true) {
+                            for (let obj of this.zwfwItemMaterialList) {
+                                if (obj.id == this.zwfwItemMaterial.id) {
+                                    this.$message.warning('资料已存在');
+                                    this.zwfwItemMaterial = {};
+                                    this.zwfwItemMaterialRules.name[0].required = false;
+                                    this.zwfwItemMaterialRules.source[0].required = false;
+                                    this.zwfwItemMaterialRules.type[0].required = false;
+                                    return false;
+                                }
+                            }
                             const query = {
                                 itemId: this.itemId,
                                 materialId: this.zwfwItemMaterial.id
                             }
-                            this.listLoading = true;
+                            this.listLoading1 = true;
                             createZwfwItemMaterial(query).then(response => {
                                 this.zwfwItemMaterialList.unshift(this.zwfwItemMaterial);
-                                this.total += 1;
                                 this.$message.success('创建成功');
-                                this.listLoading = false;
+                                this.listLoading1 = false;
+                                this.zwfwItemMaterialRules.name[0].required = false;
+                                this.zwfwItemMaterialRules.source[0].required = false;
+                                this.zwfwItemMaterialRules.type[0].required = false;
                                 this.resetTemp1();
                             })
                         } else {
@@ -763,6 +781,9 @@
                                 copyProperties(this.currentRow, response.data);
                                 this.$message.success('更新成功');
                                 this.dialogFormVisible1 = true;
+                                this.zwfwItemMaterialRules.name[0].required = false;
+                                this.zwfwItemMaterialRules.source[0].required = false;
+                                this.zwfwItemMaterialRules.type[0].required = false;
                                 this.resetTemp1();
                                 this.$refs.zwfwMaterialForm.$el[0].disabled = false;
                             })

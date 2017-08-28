@@ -26,4 +26,19 @@ export function getMember(query) {
     });
 }
 
+export function jobOrganAuth(query) {
+    return fetchJob({
+        url: '/jobOrganAuth/get',
+        method: 'get',
+        params: query
+    });
+}
+export function jobMemberIntegral(query) {
+    return fetchJob({
+        url: '/jobMemberIntegral/getAll',
+        method: 'get',
+        params: query
+    });
+}
+
 

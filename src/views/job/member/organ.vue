@@ -27,7 +27,8 @@
                 </el-button>
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
-                <el-button class="filter-item" style="margin-left: 10px;" type="danger" @click="handleDelete" icon="delete">
+                <el-button class="filter-item" style="margin-left: 10px;" type="danger" @click="handleDelete"
+                           icon="delete">
                     删除
                 </el-button>
             </el-tooltip>
@@ -40,7 +41,7 @@
                     <nobr>{{scope.row.phone}}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="电子邮箱" width="170">
+            <el-table-column align="center" label="电子邮箱">
                 <template scope="scope">
                     <nobr class="link-type" @click="handleView(scope.row)">{{scope.row.email}}</nobr>
                 </template>
@@ -82,9 +83,27 @@
                     </el-tag>
                 </template>
             </el-table-column>
-            <el-table-column align="left" label="详细地址" width="364">
+            <el-table-column align="center" label="审核状态" width="100">
                 <template scope="scope">
-                    <nobr>{{scope.row.province}}{{scope.row.city}}{{scope.row.address}}</nobr>
+                    <el-tag v-if="scope.row.status == 1" type="gray">
+                        未审核
+                    </el-tag>
+                    <el-tag v-else-if="scope.row.status == 2" type="success">
+                        已审核
+                    </el-tag>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="认证状态" width="100">
+                <template scope="scope">
+                    <el-tag v-if="scope.row.authstatus == 1" type="gray">
+                        未认证
+                    </el-tag>
+                    <el-tag v-else-if="scope.row.authstatus == 2" type="success">
+                        已认证
+                    </el-tag>
+                    <el-tag v-else-if="scope.row.authstatus == 3" type="success">
+                        未通过
+                    </el-tag>
                 </template>
             </el-table-column>
         </el-table>
@@ -97,50 +116,113 @@
 
         <!-- 会员查看弹出框  开始 -->
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogVisible">
-            <table class="member_view" width="100%">
-                <tr>
-                    <th>公司名称:</th>
-                    <td>{{member.name}}</td>
-                    <th>公司性质:</th>
-                    <td>{{member.gsxz | dicts('gsxz')}}</td>
-                    <th>公司规模:</th>
-                    <td>{{member.gsgm | dicts('gsgm')}}</td>
-                </tr>
-                <tr>
-                    <th>行业类别:</th>
-                    <td>{{member.hylbname}}</td>
-                    <th>公司座机:</th>
-                    <td>{{member.tel}}</td>
-                    <th>邮　　编:</th>
-                    <td>{{member.yb}}</td>
-                </tr>
-                <tr>
-                    <th>公司官网:</th>
-                    <td>{{member.gsgw}}</td>
-                    <th>公司邮箱:</th>
-                    <td>{{member.email}}</td>
-                </tr>
-                <tr>
-                    <th>地　　址:</th>
-                    <td colspan="5">{{member.province}}{{member.city}}{{member.address}}</td>
-                </tr>
-                <tr>
-                    <th>公司简介:</th>
-                    <td colspan="5">{{member.gsjj}}</td>
-                </tr>
-            </table>
+            <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+                <el-tab-pane label="基本信息" name="member">
+                    <table class="member_view" width="100%">
+                        <tr>
+                            <th>公司名称:</th>
+                            <td>{{member.name}}</td>
+                            <th>公司性质:</th>
+                            <td>{{member.gsxz | dicts('gsxz')}}</td>
+                            <th>公司规模:</th>
+                            <td>{{member.gsgm | dicts('gsgm')}}</td>
+                        </tr>
+                        <tr>
+                            <th>行业类别:</th>
+                            <td>{{member.hylbname}}</td>
+                            <th>公司座机:</th>
+                            <td>{{member.tel}}</td>
+                            <th>邮　　编:</th>
+                            <td>{{member.yb}}</td>
+                        </tr>
+                        <tr>
+                            <th>公司官网:</th>
+                            <td>{{member.gsgw}}</td>
+                            <th>公司邮箱:</th>
+                            <td>{{member.email}}</td>
+                        </tr>
+                        <tr>
+                            <th>地　　址:</th>
+                            <td colspan="5">{{member.province}}{{member.city}}{{member.address}}</td>
+                        </tr>
+                        <tr>
+                            <th>公司简介:</th>
+                            <td colspan="5">{{member.gsjj}}</td>
+                        </tr>
+                    </table>
+                </el-tab-pane>
+                <el-tab-pane label="认证信息" name="auth">
+                    <table v-if="this.organAuth != null" class="member_view" width="100%">
+                        <tr>
+                            <th>资料1:</th>
+                            <td>{{organAuth.img1}}</td>
+                        </tr>
+                        <tr>
+                            <th>资料2:</th>
+                            <td>{{organAuth.img2}}</td>
+                        </tr>
+                        <tr>
+                            <th>资料3:</th>
+                            <td>{{organAuth.img3}}</td>
+                        </tr>
+                        <tr>
+                            <th>状态</th>
+                            <td>
+                                <el-tag v-if="organAuth.status == 1" type="gray">
+                                    未认证
+                                </el-tag>
+                                <el-tag v-else-if="organAuth.status == 2" type="success">
+                                    已认证
+                                </el-tag>
+                                <el-tag v-else-if="organAuth.status == 3" type="success">
+                                    未通过
+                                </el-tag>
+                            </td>
+                        </tr>
+                    </table>
+                    <table v-else class="member_view" width="100%">
+                        <tr>
+                            <td>暂未提交认证信息</td>
+                        </tr>
+                    </table>
+                </el-tab-pane>
+                <el-tab-pane label="积分信息" name="integral">
+                    <el-table :data="memberIntegralList" border fit style="width: 100%">
+                        <el-table-column align="center" label="积分">
+                            <template scope="scope">
+                                <nobr>{{scope.row.integral}}</nobr>
+                            </template>
+                        </el-table-column>
+                        <el-table-column align="center" label="时间">
+                            <template scope="scope">
+                                <nobr>{{scope.row.createTime}}</nobr>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-tab-pane>
+            </el-tabs>
         </el-dialog>
         <!-- 会员查看弹出框  结束 -->
     </div>
 </template>
 <style>
-    .member_view td,th{line-height:45px;}
-    .member_view th{text-align:right;width:100px;}
-    .member_view td{text-align:left;padding-left:10px;}
+    .member_view td, th {
+        line-height: 45px;
+    }
+
+    .member_view th {
+        text-align: right;
+        width: 100px;
+    }
+
+    .member_view td {
+        text-align: left;
+        padding-left: 10px;
+    }
 </style>
 <script>
     import {getHyflCascader} from 'api/job/flxx/hyfl';
-    import {getOrganList,delMember,getMember} from "api/job/member/organ";
+    import {getOrganList, delMember, getMember, jobOrganAuth,jobMemberIntegral} from "api/job/member/organ";
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     export default{
@@ -148,36 +230,46 @@
         data() {
             return {
                 list: null,
+                memberIntegralList:null,
                 total: null,
                 listLoading: true,
                 cascader: [],
+                activeName: 'member',
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     name: '',
-                    gsxz:'',
-                    gsgm:'',
-                    hylb:''
+                    gsxz: '',
+                    gsgm: '',
+                    hylb: ''
                 },
                 selectedRows: [],
                 dialogVisible: false,
                 dialogStatus: '',
                 member: {
-                    id:'',
-                    name:'',
-                    gsxz:'',
-                    gsgm:'',
-                    hylb:'',
-                    province:'',
-                    city:'',
-                    address:'',
-                    gsgw:'',
-                    yb:'',
-                    email:'',
-                    gsjj:'',
-                    logo:'',
-                    photo:'',
-                    hylbname:''
+                    id: '',
+                    name: '',
+                    gsxz: '',
+                    gsgm: '',
+                    hylb: '',
+                    province: '',
+                    city: '',
+                    address: '',
+                    gsgw: '',
+                    yb: '',
+                    email: '',
+                    gsjj: '',
+                    logo: '',
+                    photo: '',
+                    hylbname: ''
+                },
+                organAuth: {
+                    id: '',
+                    memberId: '',
+                    img1: '',
+                    img2: '',
+                    img3: '',
+                    status: ''
                 }
             }
         },
@@ -237,7 +329,7 @@
                 this.dialogVisible = true;
                 this.dialogStatus = 'view';
                 this.member.id = row.id;
-                getMember({'id':this.member.id}).then(response => {
+                getMember({'id': this.member.id}).then(response => {
                     if (response.httpCode == 200) {
                         this.member = response.data;
                     } else {
@@ -282,23 +374,51 @@
                     });
                 }
             },
+            handleClick(tab) {
+                if (tab.name == 'auth') {
+                    jobOrganAuth({'memberId': this.member.id}).then(response => {
+                        if (response.httpCode == 200) {
+                            this.organAuth = response.data;
+                        } else {
+                            this.$message.error(response.msg);
+                        }
+                    })
+                } else if (tab.name == 'integral') {
+                    jobMemberIntegral({'memberId': this.member.id}).then(response => {
+                        if (response.httpCode == 200) {
+                            this.memberIntegralList = response.data;
+                        } else {
+                            this.$message.error(response.msg);
+                        }
+                    })
+                }
+            },
             resetTemp() {
+                this.memberIntegralList = null;
+                this.organAuth = {
+                    id: '',
+                    memberId: '',
+                    img1: '',
+                    img2: '',
+                    img3: '',
+                    status: ''
+                }
                 this.member = {
-                    id:'',
-                    name:'',
-                    gsxz:'',
-                    gsgm:'',
-                    hylb:'',
-                    province:'',
-                    city:'',
-                    address:'',
-                    gsgw:'',
-                    yb:'',
-                    email:'',
-                    gsjj:'',
-                    logo:'',
-                    photo:'',
-                    hylbname:''
+                    id: '',
+                    name: '',
+                    gsxz: '',
+                    gsgm: '',
+                    hylb: '',
+                    province: '',
+                    city: '',
+                    address: '',
+                    gsgw: '',
+                    yb: '',
+                    email: '',
+                    gsjj: '',
+                    logo: '',
+                    photo: '',
+                    hylbname: ''
                 };
             }
         }
