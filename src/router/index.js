@@ -26,6 +26,7 @@ const Cache = () => import('../views/sys/system/cache');
 const Dict = () => import('../views/sys/system/dict');
 const MetadataType = () => import('../views/sys/system/metadataType');
 const SysMessageFiled = () => import('../views/sys/system/sysMessageFiled');
+const SysMessageTemplate = () => import('../views/sys/system/SysMessageTemplate');
 
 
 /* zwfw */
@@ -223,6 +224,7 @@ export const asyncRouterMap = [
             {path: 'dict', component: Dict, name: '数据字典'},
             {path: 'cache', component: Cache, name: '缓存管理'},
             {path: 'sysMessageFiled', component: SysMessageFiled, name: '短信字段管理'},
+            {path: 'sysMessageTemplate', component: SysMessageTemplate, name: '短信模板管理'},
             {path: 'date', component: Holiday, name: '节假日管理'},
             {path: 'log', component: Log, name: '日志管理'}
         ]

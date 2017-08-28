@@ -1,10 +1,17 @@
-import {fetchSys} from 'utils/fetchSys';
+import {fetchSys} from 'utils/fetch';
 
 export function getSysMessageFiledList(query) {
     return fetchSys({
         url: '/sysMessageFiled/list',
         method: 'get',
         params: query
+    });
+}
+
+export function getAllSysMessageFiled() {
+    return fetchSys({
+        url: '/sysMessageFiled/getAll',
+        method: 'get'
     });
 }
 

@@ -30,6 +30,16 @@ export function taskStatusFilter(status) {
     return taskStatusMap[status]
 }
 
+export function smsStatusFilter(status) {
+    const smsStatusMap = {
+        '2': 'success',
+        '3': 'danger',
+        '0': 'gray',
+        '1': 'primary',
+    };
+    return smsStatusMap[status]
+}
+
 export function enums(value, type) {
     var array = app.state.enums[type];
     var result = array.filter(function (item) {

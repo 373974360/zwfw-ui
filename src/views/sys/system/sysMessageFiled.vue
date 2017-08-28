@@ -116,9 +116,6 @@
                     name: [
                         {required: true, message: '请输入字段名称', trigger: 'blur'}
                     ],
-                    remark: [
-                        {required: true, message: '请输入备注', trigger: 'blur'}
-                    ],
                     value: [
                         {required: true, message: '请输入字段值', trigger: 'blur'}
                     ],
