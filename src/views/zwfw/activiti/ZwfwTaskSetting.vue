@@ -314,7 +314,7 @@
                                     processDefinitionId: canvas.processDefinitionId,
                                     taskDefinitionKey: contextObject.id
                                 }, function (data) {
-                                    if (data.status == 200) {
+                                    if (data.status === 200) {
                                         if (data.data != null) {
                                             var c = data.data.setting;
                                             if (c) {
