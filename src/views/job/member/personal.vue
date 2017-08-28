@@ -24,6 +24,13 @@
                         :label="item.value"
                         :value="item.code"/>
             </el-select>
+            <el-select v-model="listQuery.zgxl" placeholder="学历" class="filter-item" style="width: 180px">
+                <el-option
+                        v-for="item in dicts['xueli']"
+                        :key="item.code"
+                        :label="item.value"
+                        :value="item.code"/>
+            </el-select>
             <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="搜索" placement="top-start">
                 <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
                     搜索
@@ -43,7 +50,7 @@
                     <nobr>{{scope.row.phone}}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="电子邮箱" width="170">
+            <el-table-column align="center" label="电子邮箱">
                 <template scope="scope">
                     <nobr class="link-type" @click="handleView(scope.row)">{{scope.row.email}}</nobr>
                 </template>
@@ -66,6 +73,11 @@
             <el-table-column align="center" label="出生日期" width="120">
                 <template scope="scope">
                     <nobr>{{scope.row.csrq}}</nobr>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="学历" width="120">
+                <template scope="scope">
+                    <nobr>{{scope.row.zgxl | dicts('xueli')}}</nobr>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="婚姻状况" width="100">
@@ -93,11 +105,6 @@
                     <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
                         {{scope.row.enable | enums('Enable')}}
                     </el-tag>
-                </template>
-            </el-table-column>
-            <el-table-column align="left" label="家庭住址" width="294">
-                <template scope="scope">
-                    <nobr>{{scope.row.jtzz}}</nobr>
                 </template>
             </el-table-column>
         </el-table>
@@ -155,7 +162,9 @@
                         </tr>
                         <tr>
                             <th>个人主页:</th>
-                            <td colspan="5">{{member.grzy}}</td>
+                            <td>{{member.grzy}}</td>
+                            <th>最高学历:</th>
+                            <td colspan="3">{{member.zgxl | dicts('xueli')}}</td>
                         </tr>
                         <tr>
                             <th>目前住址:</th>
@@ -319,7 +328,8 @@
                     username: '',
                     qzzt: '',
                     hyzk: '',
-                    zzmm: ''
+                    zzmm: '',
+                    zgxl: ''
                 },
                 selectedRows: [],
                 dialogStatus: '',

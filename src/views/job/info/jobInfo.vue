@@ -7,14 +7,20 @@
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">
                 添加
             </el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleDelete" type="danger" icon="delete">
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleApplys()" type="primary" icon="circle-check">
+                发布
+            </el-button>
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleRevokes()" type="primary" icon="circle-cross">
+                撤回
+            </el-button>
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleDelete()" type="danger" icon="delete">
                 删除
             </el-button>
         </div>
         <el-row :gutter="20">
             <el-col :span="3">
                 <div class="grid-content bg-purple">
-                    <el-tree :data="treeList" :props="defaultProps" @node-click="handleNodeClick" highlight-current="true" accordion="true"></el-tree>
+                    <el-tree :data="treeList" :props="defaultProps" @node-click="handleNodeClick" highlight-current accordion></el-tree>
                 </div>
             </el-col>
             <el-col :span="21">
@@ -24,7 +30,7 @@
                         <el-table-column type="selection" width="55"/>
                         <el-table-column align="left" label="标题" prop="title">
                             <template scope="scope">
-                                <nobr>{{scope.row.title}}</nobr>
+                                <nobr class="link-type" @click="handleUpdate(scope.row)">{{scope.row.title}}</nobr>
                             </template>
                         </el-table-column>
                         <el-table-column align="center" label="点击数" prop="checknum" width="90">
@@ -47,28 +53,35 @@
                                 <span>{{scope.row.author}}</span>
                             </template>
                         </el-table-column>
-                        <el-table-column align="center" label="发布状态" prop="state" width="100">
+                        <el-table-column align="center" label="状态" prop="state" width="80">
                             <template scope="scope">
-                                <span v-if="scope.row.state==1">草稿</span>
-                                <span v-if="scope.row.state==2">未发布</span>
-                                <span v-if="scope.row.state==3">已发布</span>
-                                <span v-if="scope.row.state==4">已撤回</span>
+                                <span v-if="scope.row.state==1">未发布</span>
+                                <span v-if="scope.row.state==2">已发布</span>
+                                <span v-if="scope.row.state==3">已撤回</span>
                             </template>
                         </el-table-column>
                         <el-table-column align="center" label="操作" width="150">
                             <template scope="scope">
-                                <el-tooltip class="item" effect="dark" content="撤回" placement="right-start">
-                                    <el-button type="text" icon="circle-cross"></el-button>
-                                </el-tooltip>
-                                <el-tooltip class="item" effect="dark" content="发布" placement="right-start">
-                                    <el-button type="text" icon="circle-check"></el-button>
-                                </el-tooltip>
-                                <el-tooltip class="item" effect="dark" content="编辑" placement="right-start">
-                                    <el-button type="text" icon="edit"></el-button>
-                                </el-tooltip>
-                                <el-tooltip class="item" effect="dark" content="删除" placement="right-start">
-                                    <el-button type="text" icon="delete"></el-button>
-                                </el-tooltip>
+                                <span v-if="scope.row.state==1 || scope.row.state==3">
+                                    <el-tooltip class="item" effect="dark" content="发布" placement="right-start">
+                                        <el-button type="text" icon="circle-check" @click="handleApplys(scope.row)"></el-button>
+                                    </el-tooltip>
+                                </span>
+                                <span v-if="scope.row.state==2">
+                                    <el-tooltip class="item" effect="dark" content="撤回" placement="right-start">
+                                        <el-button type="text" icon="circle-cross" @click="handleRevokes(scope.row)"></el-button>
+                                    </el-tooltip>
+                                </span>
+                                <span style="margin-left:10px;">
+                                    <el-tooltip class="item" effect="dark" content="编辑" placement="right-start">
+                                        <el-button type="text" icon="edit" @click="handleUpdate(scope.row)"></el-button>
+                                    </el-tooltip>
+                                </span>
+                                <span style="margin-left:10px;">
+                                    <el-tooltip class="item" effect="dark" content="删除" placement="right-start">
+                                        <el-button type="text" icon="delete" @click="handleDelete(scope.row)"></el-button>
+                                    </el-tooltip>
+                                </span>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -90,50 +103,71 @@
                 <el-form-item label="简短标题" prop="subtitle">
                     <el-input v-model="jobInfo.subtitle"></el-input>
                 </el-form-item>
-                <el-form-item label="网络编辑" prop="editor">
-                    <el-input v-model="jobInfo.editor"></el-input>
+                <table width="100%">
+                    <tr>
+                        <td width="50%">
+                            <el-form-item label="网络编辑" prop="editor">
+                                <el-input v-model="jobInfo.editor"></el-input>
+                            </el-form-item>
+                        </td>
+                        <td width="50%">
+                            <el-form-item label="来　　源" prop="sources">
+                                <el-input v-model="jobInfo.sources"></el-input>
+                            </el-form-item>
+                        </td>
+                    </tr>
+                </table>
+                <table width="100%">
+                    <tr>
+                        <td width="50%">
+                            <el-form-item label="作　　者" prop="author">
+                                <el-input v-model="jobInfo.author"></el-input>
+                            </el-form-item>
+                        </td>
+                        <td width="50%">
+                            <el-form-item label="发布时间" prop="applytime">
+                                <el-date-picker v-model="jobInfo.applytime" type="datetime" placeholder="选择日期" @change="pickTime" style="width:284px;"></el-date-picker>
+                            </el-form-item>
+                        </td>
+                    </tr>
+                </table>
+                <table width="100%">
+                    <tr>
+                        <td width="30%">
+                            <el-form-item label="是否外链" prop="islink">
+                                <el-radio-group v-model="jobInfo.islink" @change="linkChange">
+                                    <el-radio :label="1">是</el-radio>
+                                    <el-radio :label="2">否</el-radio>
+                                </el-radio-group>
+                            </el-form-item>
+                        </td>
+                        <td>
+                            <el-form-item label="外链地址" prop="linkurl">
+                                <span v-if="jobInfo.islink == 1"><el-input v-model="jobInfo.linkurl"></el-input></span>
+                                <span v-else><el-input v-model="jobInfo.linkurl" :disabled="isLinkDisabled"></el-input></span>
+                            </el-form-item>
+                        </td>
+                    </tr>
+                </table>
+                <el-form-item label="关　键字" prop="keyword">
+                    <el-input v-model="jobInfo.keyword"></el-input>
                 </el-form-item>
-                <el-form-item label="来源" prop="sources">
-                    <el-input v-model="jobInfo.sources"></el-input>
+                <el-form-item label="标题图片" prop="img">
+                    <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
+                               :action="uploadAction" :file-list="uploadAvatars"
+                               :on-success="handleAvatarSuccess"
+                               :before-upload="beforeAvatarUpload"
+                               :on-remove="handleRemove">
+                        <i class="el-icon-plus"></i>
+                    </el-upload>
                 </el-form-item>
-                <el-form-item label="是否有标题图片1：是，2：否" prop="isimg">
-                    <el-input v-model="jobInfo.isimg"></el-input>
-                </el-form-item>
-                <el-form-item label="点击数" prop="checknum">
-                    <el-input v-model="jobInfo.checknum"></el-input>
-                </el-form-item>
-                <el-form-item label="作者" prop="author">
-                    <el-input v-model="jobInfo.author"></el-input>
-                </el-form-item>
-                <el-form-item label="摘要" prop="description">
-                    <el-input v-model="jobInfo.description"></el-input>
-                </el-form-item>
-                <el-form-item label="备注" prop="remark">
-                    <el-input v-model="jobInfo.remark"></el-input>
-                </el-form-item>
-                <el-form-item label="发布时间" prop="applytime">
-                    <el-input v-model="jobInfo.applytime"></el-input>
+                <el-form-item label="摘　　要" prop="description">
+                    <el-input v-model="jobInfo.description" type="textarea"></el-input>
                 </el-form-item>
                 <el-form-item label="正文内容" prop="content">
-                    <el-input v-model="jobInfo.content"></el-input>
-                </el-form-item>
-                <el-form-item label="是否外部链接，1：是，2：否" prop="islink">
-                    <el-input v-model="jobInfo.islink"></el-input>
-                </el-form-item>
-                <el-form-item label="标题图片地址" prop="imgurl">
-                    <el-input v-model="jobInfo.imgurl"></el-input>
-                </el-form-item>
-                <el-form-item label="外部链接地址" prop="linkurl">
-                    <el-input v-model="jobInfo.linkurl"></el-input>
-                </el-form-item>
-                <el-form-item label="发布状态：1草稿，2未发布，3已发布，4已撤回" prop="state">
-                    <el-input v-model="jobInfo.state"></el-input>
-                </el-form-item>
-                <el-form-item label="是否推荐1：是，2否" prop="isrec">
-                    <el-input v-model="jobInfo.isrec"></el-input>
-                </el-form-item>
-                <el-form-item label="关键字" prop="keyword">
-                    <el-input v-model="jobInfo.keyword"></el-input>
+                    <div class="editor-container">
+                        <Tinymce :height=200 ref="editor" v-model="jobInfo.content"></Tinymce>
+                    </div>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -150,10 +184,12 @@
 <script>
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
-    import {getJobInfoList, createJobInfo, updateJobInfo, delJobInfos} from 'api/job/info/jobInfo';
+    import {getJobInfoList, createJobInfo, updateJobInfo, delJobInfos,applyJobInfos,revokeJobInfos} from 'api/job/info/jobInfo';
     import {getJobInfoCatalogTree} from 'api/job/info/jobInfoCatalog';
+    import Tinymce from 'components/Tinymce';
 
     export default {
+        components: { Tinymce },
         name: 'jobInfo_table',
         data() {
             return {
@@ -171,20 +207,21 @@
                     id: undefined,
                     editor: undefined,
                     sources: undefined,
-                    isimg: undefined,
-                    checknum: undefined,
+                    isimg: '2',
+                    checknum: '0',
+                    cid:undefined,
                     author: undefined,
                     description: undefined,
                     remark: undefined,
                     title: undefined,
                     applytime: undefined,
                     content: undefined,
-                    islink: undefined,
+                    islink: '2',
                     imgurl: undefined,
                     subtitle: undefined,
                     linkurl: undefined,
-                    state: undefined,
-                    isrec: undefined,
+                    state: '1',
+                    isrec: '2',
                     keyword: undefined
                 },
                 currentRow: null,
@@ -193,62 +230,25 @@
                 dialogStatus: '',
                 dialogLoading: false,
                 jobInfoRules: {
-                    editor: [
-                        {required: true, message: '请输入网络编辑', trigger: 'blur'}
-                    ],
-                    sources: [
-                        {required: true, message: '请输入来源', trigger: 'blur'}
-                    ],
-                    isimg: [
-                        {required: true, message: '请输入是否有标题图片1：是，2：否', trigger: 'blur'}
-                    ],
-                    checknum: [
-                        {required: true, message: '请输入点击数', trigger: 'blur'}
-                    ],
-                    author: [
-                        {required: true, message: '请输入作者', trigger: 'blur'}
-                    ],
-                    description: [
-                        {required: true, message: '请输入摘要', trigger: 'blur'}
-                    ],
-                    remark: [
-                        {required: true, message: '请输入备注', trigger: 'blur'}
-                    ],
                     title: [
                         {required: true, message: '请输入新闻标题', trigger: 'blur'}
                     ],
                     applytime: [
-                        {required: true, message: '请输入发布时间', trigger: 'blur'}
+                        {required: true, message: '请输入发布时间', trigger: 'change'}
                     ],
                     content: [
                         {required: true, message: '请输入正文内容', trigger: 'blur'}
-                    ],
-                    islink: [
-                        {required: true, message: '请输入是否外部链接，1：是，2：否', trigger: 'blur'}
-                    ],
-                    imgurl: [
-                        {required: true, message: '请输入标题图片地址', trigger: 'blur'}
-                    ],
-                    subtitle: [
-                        {required: true, message: '请输入简短标题', trigger: 'blur'}
-                    ],
-                    linkurl: [
-                        {required: true, message: '请输入外部链接地址', trigger: 'blur'}
-                    ],
-                    state: [
-                        {required: true, message: '请输入发布状态：1草稿，2未发布，3已发布，4已撤回', trigger: 'blur'}
-                    ],
-                    isrec: [
-                        {required: true, message: '请输入是否推荐1：是，2否', trigger: 'blur'}
-                    ],
-                    keyword: [
-                        {required: true, message: '请输入关键字', trigger: 'blur'}
                     ]
                 },
                 defaultProps: {
                     children: 'children',
                     label: 'label'
-                }
+                },
+                currCatId:undefined,
+                treeType:0,
+                isLinkDisabled:true,
+                uploadAction: process.env.SYS_API + '/sysUpload/',
+                uploadAvatars: []
             }
         },
         created() {
@@ -295,13 +295,17 @@
                 this.$refs.jobInfoTable.toggleRowSelection(row);
             },
             handleCreate(row) {
-                if(this.listQuery.cid){
-                    this.currentRow = row;
-                    this.resetTemp();
-                    this.dialogStatus = 'create';
-                    this.dialogFormVisible = true;
+                if(this.currCatId){
+                    if(this.treeType==1){
+                        this.currentRow = row;
+                        this.resetTemp();
+                        this.dialogStatus = 'create';
+                        this.dialogFormVisible = true;
+                    }else{
+                        this.$message.warning('请选择终极目录添加内容');
+                    }
                 }else{
-                    this.$message.warning('请选择要添加的目录');
+                    this.$message.warning('请选择目录添加内容');
                 }
             },
             handleUpdate(row) {
@@ -312,6 +316,9 @@
                 this.dialogFormVisible = true;
             },
             handleDelete(row) {
+                if(row){
+                    this.selectedRows = row;
+                }
                 if (this.selectedRows == 0) {
                     this.$message.warning('请选择需要操作的记录');
                 } else {
@@ -344,11 +351,74 @@
                     });
                 }
             },
+            handleApplys(row) {
+                if(row){
+                    this.selectedRows = row;
+                }
+                if (this.selectedRows == 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('确定要发布选中的信息吗?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.listLoading = true;
+                        let ids = new Array();
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        applyJobInfos(ids).then(response => {
+                            if (response.httpCode == 200) {
+                                this.getList();
+                                this.$message.success('发布成功');
+                            } else {
+                                this.$message.error(response.msg);
+                            }
+                            this.listLoading = false;
+                        })
+                    }).catch(() => {
+                        console.dir("取消");
+                    });
+                }
+            },
+            handleRevokes(row) {
+                if(row){
+                    this.selectedRows = row;
+                }
+                if (this.selectedRows == 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('确定要撤销选中的信息吗?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.listLoading = true;
+                        let ids = new Array();
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        revokeJobInfos(ids).then(response => {
+                            if (response.httpCode == 200) {
+                                this.getList();
+                                this.$message.success('发布成功');
+                            } else {
+                                this.$message.error(response.msg);
+                            }
+                            this.listLoading = false;
+                        })
+                    }).catch(() => {
+                        console.dir("取消");
+                    });
+                }
+            },
             create() {
                 this.$refs['jobInfoForm'].validate((valid) => {
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
+                        this.jobInfo.cid = this.currCatId;
                         createJobInfo(this.jobInfo).then(response => {
                             if (response.httpCode == 200) {
                                 this.jobInfoList.unshift(response.data);
@@ -385,27 +455,62 @@
             },
             handleNodeClick(data) {
                 this.listQuery.cid = data.id;
+                this.currCatId = data.id;
+                if(data.children==null){
+                    this.treeType = 1;
+                }else{
+                    this.treeType = 0;
+                }
                 this.getList();
+            },
+            linkChange(val) {
+                if(val == 1){
+                    this.isLinkDisabled = false;
+                }else{
+                    this.jobInfo.linkurl = undefined;
+                    this.isLinkDisabled = true;
+                }
+            },
+            pickTime(val) {
+                this.jobInfo.applytime = val;
+            },
+            handleAvatarSuccess(res, file, fileList) {
+                fileList.length = 0;
+                fileList.push(file);
+                this.jobInfo.isimg = 1;
+                this.jobInfo.imgurl = res.url;
+            },
+            beforeAvatarUpload(file) {
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isLt2M;
+            },
+            handleRemove() {
+                this.jobInfo.isimg = 2;
+                this.jobInfo.imgurl = '';
             },
             resetTemp() {
                 this.jobInfo = {
                     id: undefined,
                     editor: undefined,
                     sources: undefined,
-                    isimg: undefined,
-                    checknum: undefined,
+                    isimg: '2',
+                    checknum: '0',
+                    cid:undefined,
                     author: undefined,
                     description: undefined,
                     remark: undefined,
                     title: undefined,
                     applytime: undefined,
                     content: undefined,
-                    islink: undefined,
+                    islink: '2',
                     imgurl: undefined,
                     subtitle: undefined,
                     linkurl: undefined,
-                    state: undefined,
-                    isrec: undefined,
+                    state: '1',
+                    isrec: '2',
                     keyword: undefined
                 };
             }
