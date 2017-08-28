@@ -35,7 +35,7 @@
             </div>
         </el-col>
         <el-col :span="8">
-            <div class="grid-content">
+            <div class="grid-content" sticky>
 
                 <!--<div class="affix" id="diagramInfo" style="z-index:99999;background:#fff;margin:auto;left:0; right:0; top:0;width:50%;">-->
                 <div id="diagramInfo">
@@ -178,6 +178,9 @@
     </el-row>
 </template>
 <script>
+
+    import Sticky from 'components/Sticky';
+
     import {
         getZwfwProcessDefinitionList,
         createZwfwProcessDefinition,
@@ -186,6 +189,7 @@
     } from 'api/zwfw/zwfwActiviti';
 
     export default {
+        components: { Sticky },
         name: 'table_demo',
         data() {
             return {
@@ -220,7 +224,7 @@
              * 保存其他设置
              */
             saveOtherSetting() {
-                $.post('/admin/item/process/saveOtherSetting', {
+                $.post(process.env.ZWFW_ACTIVITI_API + '/admin/item/process/saveOtherSetting', {
                     processDefinitionId: this.processDefinitionId,
                     taskDefinitionKey: this.task.taskDefinitionKey,
                     defaultTimeLimit: this.task.defaultTimeLimit,
@@ -310,7 +314,7 @@
 
 
 //                                发请求查询当前设置的默认时限
-                                $.post('/admin/item/process/getOtherSetting', {
+                                $.post(process.env.ZWFW_ACTIVITI_API + '/admin/item/process/getOtherSetting', {
                                     processDefinitionId: canvas.processDefinitionId,
                                     taskDefinitionKey: contextObject.id
                                 }, function (data) {
@@ -367,16 +371,15 @@
             };
 
             ActivitiRest.options = {
-                processInstanceHighLightsUrl: "http://localhost:9999/zwfw/activiti/service/process-instance/{processInstanceId}/highlights?callback=?",
-                processDefinitionUrl: "http://localhost:9999/zwfw/activiti/service/process-definition/{processDefinitionId}/diagram-layout?callback=?",
-                processDefinitionByKeyUrl: "http://localhost:9999/zwfw/activiti/service/process-definition/{processDefinitionKey}/diagram-layout?callback=?"
+                processInstanceHighLightsUrl: process.env.ZWFW_ACTIVITI_API +"/zwfw/activiti/service/process-instance/{processInstanceId}/highlights?callback=?",
+                processDefinitionUrl: process.env.ZWFW_ACTIVITI_API +"/zwfw/activiti/service/process-definition/{processDefinitionId}/diagram-layout?callback=?",
+                processDefinitionByKeyUrl: process.env.ZWFW_ACTIVITI_API +"/zwfw/activiti/service/process-definition/{processDefinitionKey}/diagram-layout?callback=?"
             };
 
 
             this.flush = function (processDefinitionId, processInstanceId) {
                 if (processDefinitionId) {
                     ProcessDiagramGenerator.drawDiagram(processDefinitionId);
-//            ProcessDiagramGenerator.addBreadCrumbsItem()1
 
                 } else {
                     alert("processDefinitionId parameter is required");
