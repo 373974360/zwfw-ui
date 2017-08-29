@@ -18,7 +18,8 @@
                 <span v-if="column.editAble">
                     <el-tooltip content="点击编辑" placement="right" effect="dark">
                         <span class="link-type" @click="handleUpdate(scope.row)">
-                            <el-tag  :type="scope.row[column.dataIndex] | enums(column.enums)| statusFilter" v-if="column.enums">{{scope.row[column.dataIndex] | enums(column.enums)}}</el-tag>
+                            <el-tag :type="scope.row[column.dataIndex] | enums(column.enums)| statusFilter"
+                                    v-if="column.enums">{{scope.row[column.dataIndex] | enums(column.enums)}}</el-tag>
                             <span v-else>
                                 <span v-if="column.dateformart">{{scope.row[column.dataIndex] | date(column.dateformart)}}</span>
                                 <span v-else>{{scope.row[column.dataIndex]}}</span>
@@ -27,7 +28,8 @@
                     </el-tooltip>
                 </span>
                 <span v-else>
-                        <el-tag :type="scope.row[column.dataIndex] | enums(column.enums)| statusFilter" v-if="column.enums">{{scope.row[column.dataIndex] | enums(column.enums)}}</el-tag>
+                        <el-tag :type="scope.row[column.dataIndex] | enums(column.enums)| statusFilter"
+                                v-if="column.enums">{{scope.row[column.dataIndex] | enums(column.enums)}}</el-tag>
                     <span v-else>
                         <span v-if="column.dateformart">{{scope.row[column.dataIndex] | date(column.dateformart)}}</span>
                         <span v-else>{{scope.row[column.dataIndex]}}</span>
@@ -36,11 +38,13 @@
             </template>
         </el-table-column>
         <el-table-column label="操作" v-if="treeType === 'normal'" width="300" align="center">
-            <template scope="scope">
-                <el-button type="primary" size="small" @click="onHandleAdd(scope.row)">添加</el-button>
+            <template scope="scope"  >
+                <el-button style="margin: 10px 0px;" type="primary" size="small" @click="onHandleAdd(scope.row)">添加</el-button>
                 <!--<el-button type="" size="small" @click="onHandleUpdate(scope.row)">编辑</el-button>-->
-                <el-button type="danger" size="small" @click="onHandleDelete(scope.row)">删除</el-button>
-                <el-button type="primary" size="small" @click="onHandleAssoicate(scope.row)">关联事项</el-button>
+                <el-button style="margin: 10px 0px;"class="item" type="danger" size="small" @click="onHandleDelete(scope.row)">删除</el-button>
+                <el-badge :value="scope.row.categoryItemCount" class="item">
+                    <el-button type="primary" size="small" @click="onHandleAssoicate(scope.row)">关联事项</el-button>
+                </el-badge>
             </template>
         </el-table-column>
     </el-table>

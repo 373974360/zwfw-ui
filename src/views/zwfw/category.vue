@@ -89,7 +89,8 @@
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem"
                      label-position="right"
                      label-width="80px"
-                     style='width: 80%; margin-left:10%; margin-top: 5%;' v-loading="dialogLoading" :rules="categoryItemRules">
+                     style='width: 80%; margin-left:10%; margin-top: 5%;' v-loading="dialogLoading"
+                     :rules="categoryItemRules">
                 <el-form-item label="事项名称" prop="name">
                     <el-select
                             v-model="zwfwItem.name"
@@ -274,8 +275,10 @@
                 this.dialogFormVisible = true;
             },
             handleCreate1(row) {
+                this.currentItem = row;
                 this.dialogStatus = 'associateItem';
                 this.dialogFormVisibleItem = true;
+                resetForm(this, 'zwfwItemForm');
                 this.categoryId = row.id;
                 this.getItemListByCategoryId();
             },
@@ -348,6 +351,7 @@
                             this.zwfwItemList.unshift(this.zwfwItem);
                             this.$message.success('创建成功');
                             this.listLoading1 = false;
+                            this.currentItem.categoryItemCount += 1;
                             this.categoryItemRules.name[0].required = false;
                             this.zwfwItem = {};
                         })
@@ -365,15 +369,19 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        let ids = new Array();
+                        const length = this.selectedRows.length;
+                        const ids = new Array();
                         for (const deleteRow of this.selectedRows) {
                             ids.push(deleteRow.id);
                         }
                         deleteZwfwCategoryItem(this.categoryId, ids).then(response => {
-                            const index = this.zwfwItemList.indexOf(this.selectedRows);
-                            this.zwfwItemList.splice(index, 1);
+                            this.currentItem.categoryItemCount -= length;
                             this.$message.success('删除成功');
                         })
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.zwfwItemList.indexOf(deleteRow);
+                            this.zwfwItemList.splice(index, 1);
+                        }
                     }).catch(() => {
                         console.dir("取消");
                     });

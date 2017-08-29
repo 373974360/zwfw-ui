@@ -70,10 +70,12 @@
             </el-table-column>
             <el-table-column align="center" label="操作">
                 <template scope="scope">
-                    <el-button class="filter-item" style="margin-left: 10px;" @click="handleMaterialList(scope.row)"
-                               type="primary" size="small">
-                        关联资料
-                    </el-button>
+                    <el-badge :value="scope.row.itemMaterialCount" class="item">
+                        <el-button class="filter-item" style="margin-left: 10px;" @click="handleMaterialList(scope.row)"
+                                   type="primary" size="small">
+                            关联资料
+                        </el-button>
+                    </el-badge>
                 </template>
             </el-table-column>
         </el-table>
@@ -105,27 +107,25 @@
                     <tr>
                         <td>
                             <el-form-item label="是否支持预约办理" prop="orderable">
-                                <el-radio-group v-model="zwfwItem.orderable">
-                                    <el-radio v-for="item in enums['YesNo']"
-                                              :key="item.code"
-                                              :label="item.code"
-                                              :value="item.code">
-                                        <span style="font-weight:normal;">{{item.value}}</span>
-                                    </el-radio>
-                                </el-radio-group>
+                                <el-switch
+                                        v-model="zwfwItem.orderable"
+                                        on-color="#13ce66"
+                                        off-color="#ff4949"
+                                        :on-value="true"
+                                        :off-value="false">
+                                </el-switch>
                             </el-form-item>
                         </td>
                         <td width="100"></td>
                         <td>
                             <el-form-item label="是否收费" prop="chargeable">
-                                <el-radio-group v-model="zwfwItem.chargeable">
-                                    <el-radio v-for="item in enums['YesNo']"
-                                              :key="item.code"
-                                              :label="item.code"
-                                              :value="item.code">
-                                        <span style="font-weight:normal;">{{item.value}}</span>
-                                    </el-radio>
-                                </el-radio-group>
+                                <el-switch
+                                        v-model="zwfwItem.chargeable"
+                                        on-color="#13ce66"
+                                        off-color="#ff4949"
+                                        :on-value="true"
+                                        :off-value="false">
+                                </el-switch>
                             </el-form-item>
                         </td>
                     </tr>
@@ -141,14 +141,13 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="是否支持网上支付" prop="payOnlineAble">
-                    <el-radio-group v-model="zwfwItem.payOnlineAble">
-                        <el-radio v-for="item in enums['YesNo']"
-                                  :key="item.code"
-                                  :label="item.code"
-                                  :value="item.code">
-                            <span style="font-weight:normal;">{{item.value}}</span>
-                        </el-radio>
-                    </el-radio-group>
+                    <el-switch
+                            v-model="zwfwItem.payOnlineAble"
+                            on-color="#13ce66"
+                            off-color="#ff4949"
+                            :on-value="true"
+                            :off-value="false">
+                    </el-switch>
                 </el-form-item>
                 <el-form-item label="承诺办结时间" prop="promiseEndTime">
                     <el-input v-model="zwfwItem.promiseEndTime"></el-input>
@@ -174,7 +173,13 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="结果样本" prop="resultExample">
-                    <el-input v-model="zwfwItem.resultExample"></el-input>
+                    <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
+                               :action="uploadAction" :file-list="uploadAvatarsResult"
+                               :on-success="handleAvatarResultSuccess"
+                               :before-upload="beforeAvatarUpload"
+                               :on-remove="handleRemoveResult">
+                        <i class="el-icon-plus"></i>
+                    </el-upload>
                 </el-form-item>
                 <el-form-item label="行使层级" prop="handleLevel">
                     <el-radio-group v-model="zwfwItem.handleLevel">
@@ -238,14 +243,13 @@
                     <el-input v-model="zwfwItem.legalEndTime"></el-input>
                 </el-form-item>
                 <el-form-item label="是否支持物流快递" prop="postable">
-                    <el-radio-group v-model="zwfwItem.postable">
-                        <el-radio v-for="item in enums['YesNo']"
-                                  :key="item.code"
-                                  :label="item.code"
-                                  :value="item.code">
-                            <span style="font-weight:normal;">{{item.value}}</span>
-                        </el-radio>
-                    </el-radio-group>
+                    <el-switch
+                            v-model="zwfwItem.postable"
+                            on-color="#13ce66"
+                            off-color="#ff4949"
+                            :on-value="true"
+                            :off-value="false">
+                    </el-switch>
                 </el-form-item>
                 <el-form-item label="版本生效时间" prop="versionAvailableTime">
                     <el-date-picker v-model="zwfwItem.versionAvailableTime" type="datetime"
@@ -373,14 +377,13 @@
                     <el-input v-model="zwfwItemMaterial.type"></el-input>
                 </el-form-item>
                 <el-form-item label="是否需要电子材料" prop="electronicMaterial">
-                    <el-radio-group v-model="zwfwItemMaterial.electronicMaterial">
-                        <el-radio v-for="item in enums['YesNo']"
-                                  :key="item.code"
-                                  :label="item.code"
-                                  :value="item.code">
-                            <span style="font-weight:normal;">{{item.value}}</span>
-                        </el-radio>
-                    </el-radio-group>
+                    <el-switch
+                            v-model="zwfwItemMaterial.electronicMaterial"
+                            on-color="#13ce66"
+                            off-color="#ff4949"
+                            :on-value="true"
+                            :off-value="false">
+                    </el-switch>
                 </el-form-item>
                 <el-form-item label="纸质材料说明（数量和规格）" prop="paperDescription">
                     <el-input v-model="zwfwItemMaterial.paperDescription"></el-input>
@@ -392,17 +395,21 @@
                     <el-input v-model="zwfwItemMaterial.source"></el-input>
                 </el-form-item>
                 <el-form-item label="材料样本" prop="example">
-                    <el-upload
-                            class="upload-demo"
-                            action="https://jsonplaceholder.typicode.com/posts/">
-                        <el-button size="small" type="primary">点击上传</el-button>
+                    <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
+                               :action="uploadAction" :file-list="uploadAvatarsExample"
+                               :on-success="handleAvatarExampleSuccess"
+                               :before-upload="beforeAvatarUpload"
+                               :on-remove="handleRemoveExample">
+                        <i class="el-icon-plus"></i>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="电子表单" prop="eform">
-                    <el-upload
-                            class="upload-demo"
-                            action="https://jsonplaceholder.typicode.com/posts/">
-                        <el-button size="small" type="primary">点击上传</el-button>
+                    <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
+                               :action="uploadAction" :file-list="uploadAvatarsEform"
+                               :on-success="handleAvatarEformSuccess"
+                               :before-upload="beforeAvatarUpload"
+                               :on-remove="handleRemoveEform">
+                        <i class="el-icon-plus"></i>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="填报须知" prop="notice">
@@ -523,6 +530,10 @@
                 dialogFormVisible1: false,
                 dialogStatus: '',
                 dialogLoading: false,
+                uploadAction: process.env.SYS_API + '/sysUpload/',
+                uploadAvatarsExample: [],
+                uploadAvatarsEform: [],
+                uploadAvatarsResult: [],
                 zwfwItemRules: {
                     name: [
                         {required: true, message: '请输入事项名称'}
@@ -604,6 +615,37 @@
                     this.listLoading1 = false;
                 })
             },
+            handleAvatarEformSuccess(res, file, fileList) {
+                fileList.length = 0;
+                fileList.push(file);
+                this.zwfwItemMaterial.eform = res.url;
+            },
+            handleRemoveEform() {
+                this.zwfwItemMaterial.eform = '';
+            },
+            handleAvatarExampleSuccess(res, file, fileList) {
+                fileList.length = 0;
+                fileList.push(file);
+                this.zwfwItemMaterial.example = res.url;
+            },
+            handleRemoveExample() {
+                this.zwfwItemMaterial.example = '';
+            },
+            handleAvatarResultSuccess(res, file, fileList) {
+                fileList.length = 0;
+                fileList.push(file);
+                this.zwfwItem.resultExample = res.url;
+            },
+            handleRemoveResult() {
+                this.zwfwItem.resultExample = '';
+            },
+            beforeAvatarUpload(file) {
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isLt2M;
+            },
             getMaterialList() {
                 const query = {}
                 getAllMaterial(query).then(response => {
@@ -632,6 +674,8 @@
             handleUpdateClick(row) {
                 this.currentRow = row;
                 this.zwfwItemMaterial = copyProperties(this.zwfwItemMaterial, row);
+                this.uploadAvatarsEform.push({url: this.zwfwItemMaterial.eform});
+                this.uploadAvatarsExample.push({url: this.zwfwItemMaterial.example});
                 this.$refs.zwfwMaterialForm.$el[0].disabled = true;
             },
             handleSizeChange(val) {
@@ -660,6 +704,7 @@
                 this.currentRow = row;
                 this.resetTemp();
                 this.zwfwItem = copyProperties(this.zwfwItem, row);
+                this.uploadAvatarsResult.push({url: this.zwfwItem.resultExample});
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
@@ -701,15 +746,19 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        let ids = new Array();
+                        const length = this.selectedRows.length;
+                        const ids = new Array();
                         for (const deleteRow of this.selectedRows) {
                             ids.push(deleteRow.id);
                         }
                         deleteZwfwItemMaterial(this.itemId, ids).then(response => {
-                            const index = this.zwfwItemMaterialList.indexOf(this.selectedRows);
-                            this.zwfwItemMaterialList.splice(index, 1);
+                            this.currentItem.itemMaterialCount -= length;
                             this.$message.success('删除成功');
                         })
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.zwfwItemMaterialList.indexOf(deleteRow);
+                            this.zwfwItemMaterialList.splice(index, 1);
+                        }
                     }).catch(() => {
                         console.dir("取消");
                     });
@@ -732,9 +781,6 @@
                 });
             },
             createMaterial() {
-                this.zwfwItemMaterialRules.name[0].required = true;
-                this.zwfwItemMaterialRules.source[0].required = true;
-                this.zwfwItemMaterialRules.type[0].required = true;
                 this.$refs['zwfwMaterialForm'].validate((valid) => {
                     if (valid) {
                         if (this.$refs.zwfwMaterialForm.$el[0].disabled != true) {
@@ -742,9 +788,6 @@
                                 if (obj.id == this.zwfwItemMaterial.id) {
                                     this.$message.warning('资料已存在');
                                     this.zwfwItemMaterial = {};
-                                    this.zwfwItemMaterialRules.name[0].required = false;
-                                    this.zwfwItemMaterialRules.source[0].required = false;
-                                    this.zwfwItemMaterialRules.type[0].required = false;
                                     return false;
                                 }
                             }
@@ -757,10 +800,8 @@
                                 this.zwfwItemMaterialList.unshift(this.zwfwItemMaterial);
                                 this.$message.success('创建成功');
                                 this.listLoading1 = false;
-                                this.zwfwItemMaterialRules.name[0].required = false;
-                                this.zwfwItemMaterialRules.source[0].required = false;
-                                this.zwfwItemMaterialRules.type[0].required = false;
                                 this.resetTemp1();
+                                this.currentItem.itemMaterialCount += 1;
                             })
                         } else {
                             const zwfwMaterialList = {
@@ -784,9 +825,6 @@
                                 copyProperties(this.currentRow, response.data);
                                 this.$message.success('更新成功');
                                 this.dialogFormVisible1 = true;
-                                this.zwfwItemMaterialRules.name[0].required = false;
-                                this.zwfwItemMaterialRules.source[0].required = false;
-                                this.zwfwItemMaterialRules.type[0].required = false;
                                 this.resetTemp1();
                                 this.$refs.zwfwMaterialForm.$el[0].disabled = false;
                             })
@@ -872,3 +910,8 @@
         }
     }
 </script>
+<style>
+    .item {
+        margin-top: 10px;    text-align: center;
+    }
+</style>
