@@ -6,12 +6,62 @@
                 添加
             </el-button>
         </div>
-        <tree-grid :columns="columns" :tree-structure="true" :data-source="categoryList" :list-loading="listLoading"
-                   :handle-toggle="handleToggle" :handle-create="handleCreate"
-                   :handle-update="handleUpdate" :handle-delete="handleDelete" :handle-create1="handleCreate1">
-        </tree-grid>
+        <el-table border fit highlight-current-row
+                  style="width: 100%"
+                  :data="data"
+                  :row-style="showTr" v-loading.body="listLoading">
+            <el-table-column v-for="(column, index) in columns" :key="column.dataIndex"
+                             :label="column.text" :width="column.width">
+                <template scope="scope">
+                <span v-if="spaceIconShow(index)" v-for="(space, levelIndex) in scope.row._level"
+                      class="ms-tree-space"></span>
+                    <template v-if="toggleIconShow(index,scope.row)">
+                    <span @click="onToggle(scope.row)" v-if="!scope.row._expanded" class="svg-container"><wscn-icon-svg
+                            icon-class="jiahao"/></span>
+                        <span @click="onToggle(scope.row)" v-if="scope.row._expanded" class="svg-container"><wscn-icon-svg
+                                icon-class="jianhao"/></span>
+                    </template>
+                    <span v-else-if="index===0" class="ms-tree-space"></span>
+                    <span v-if="column.editAble">
+                    <el-tooltip content="点击编辑" placement="right" effect="dark">
+                        <span class="link-type" @click="handleUpdate(scope.row)">
+                            <el-tag :type="scope.row[column.dataIndex] | enums(column.enums)| statusFilter"
+                                    v-if="column.enums">{{scope.row[column.dataIndex] | enums(column.enums)}}</el-tag>
+                            <span v-else>
+                                <span v-if="column.dateformart">{{scope.row[column.dataIndex] | date(column.dateformart)}}</span>
+                                <span v-else>{{scope.row[column.dataIndex]}}</span>
+                            </span>
+                        </span>
+                    </el-tooltip>
+                </span>
+                    <span v-else>
+                        <el-tag :type="scope.row[column.dataIndex] | enums(column.enums)| statusFilter"
+                                v-if="column.enums">{{scope.row[column.dataIndex] | enums(column.enums)}}</el-tag>
+                    <span v-else>
+                        <span v-if="column.dateformart">{{scope.row[column.dataIndex] | date(column.dateformart)}}</span>
+                        <span v-else>{{scope.row[column.dataIndex]}}</span>
+                    </span>
+                </span>
+                </template>
+            </el-table-column>
+            <el-table-column label="操作" width="300" align="center">
+                <template scope="scope">
+                    <el-button style="margin: 10px 0px;" type="primary" size="small" @click="onHandleAdd(scope.row)">
+                        添加
+                    </el-button>
+                    <!--<el-button type="" size="small" @click="onHandleUpdate(scope.row)">编辑</el-button>-->
+                    <el-button style="margin: 10px 0px;" class="item" type="danger" size="small"
+                               @click="onHandleDelete(scope.row)">删除
+                    </el-button>
+                    <el-badge :value="scope.row.categoryItemCount" class="item" style="margin-top: 0px;">
+                        <el-button type="primary" size="small" @click="onHandleAssoicate(scope.row)">关联事项</el-button>
+                    </el-badge>
+                </template>
+            </el-table-column>
+        </el-table>
 
-        <el-dialog  :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="closeOnClickModal">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible"
+                   :close-on-click-modal="closeOnClickModal">
             <el-form ref="categoryForm" class="small-space" :model="category" label-position="right" label-width="110px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="categoryRules">
                 <el-form-item label="上级事项分类">
@@ -20,7 +70,7 @@
                                  :change-on-select="true" style="width:100%"></el-cascader>
                 </el-form-item>
                 <el-form-item label="事项分类名称" prop="name">
-                    <el-input v-model="category.name"></el-input>
+                    <el-input v-model="category.name" ></el-input>
                 </el-form-item>
                 <el-form-item label="排序">
                     <el-input-number v-model="category.sortNo" :min="1" :max="100"/>
@@ -40,7 +90,8 @@
         </el-dialog>
 
         <!--事项关联dialog-->
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisibleItem" :close-on-click-modal="closeOnClickModal">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisibleItem"
+                   :close-on-click-modal="closeOnClickModal">
             <div class="filter-container">
                 <el-button class="filter-item" style="margin-left: 10px;" @click="handleDeleteOne" type="danger"
                            icon="delete">
@@ -211,9 +262,58 @@
             ...mapGetters([
                 'textMap',
                 'closeOnClickModal'
-            ])
+            ]),
+            data: function () {
+                let me = this
+                return TreeUtil.treeToArray(me.categoryList, null, null, true);
+            }
         },
         methods: {
+            // 显示行
+            showTr: function (row, index) {
+                let show = (row._parent ? (row._parent._expanded && row._parent._show) : true)
+                row._show = show
+                return show ? '' : 'display:none;'
+            },
+            // 显示层级关系的空格和图标
+            spaceIconShow(index) {
+                if (index === 0 || index === 1) {
+                    return true
+                }
+                return false
+            },
+            // 点击展开和关闭的时候，图标的切换
+            toggleIconShow(index, record) {
+                if (index === 0 && record.children && record.children.length > 0) {
+                    return true
+                }
+                return false
+            },
+            onToggle(trIndex) {
+                if (this.handleToggle) {
+                    this.handleToggle(trIndex);
+                }
+            },
+            onHandleAdd(data) {
+                if (this.handleCreate) {
+                    this.handleCreate(data);
+                }
+            },
+            onHandleUpdate(data) {
+                if (this.handleUpdate) {
+                    this.handleUpdate(data);
+                }
+            },
+            onHandleDelete(data) {
+                if (this.handleDelete) {
+                    this.handleDelete(data);
+                }
+            },
+            onHandleAssoicate(data) {
+                if (this.handleCreate1) {
+                    this.handleCreate1(data);
+                }
+            },
             getList() {
                 this.listLoading = true;
                 getCategoryTree().then(response => {
@@ -260,7 +360,9 @@
                 this.getOptions(null);
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
-                resetForm(this, 'categoryForm');
+                this.$nextTick(function () {
+                    resetForm(this, 'categoryForm');
+                })
             },
             handleUpdate(row) {
                 this.resetTemp();
@@ -280,7 +382,9 @@
                 this.dialogFormVisibleItem = true;
                 this.categoryId = row.id;
                 this.getItemListByCategoryId();
-                resetForm(this, 'zwfwItemForm');
+                this.$nextTick(function () {
+                    resetForm(this, 'zwfwItemForm');
+                });
             },
             getItemListByCategoryId() {
                 this.listLoading1 = true;
@@ -444,3 +548,20 @@
         }
     }
 </script>
+<style>
+    .ms-tree-space {
+        position: relative;
+        top: 1px;
+        display: inline-block;
+        font-family: 'Glyphicons Halflings';
+        font-style: normal;
+        font-weight: 400;
+        line-height: 1;
+        width: 18px;
+        height: 14px;
+    }
+
+    .ms-tree-space::before {
+        content: ""
+    }
+</style>
