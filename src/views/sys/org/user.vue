@@ -68,7 +68,8 @@
             </el-pagination>
         </div>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="closeOnClickModal">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible"
+                   :close-on-click-modal="closeOnClickModal" :before-close="resetUserForm1">
             <el-form id="checkboxTable" ref="userForm1" class="small-space" :model="sysUser" label-position="right"
                      label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="sysUserRules1">
@@ -128,7 +129,7 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button icon="circle-cross" type="danger" @click="dialogFormVisible = false">取 消</el-button>
+                <el-button icon="circle-cross" type="danger" @click="resetUserForm1">取 消</el-button>
                 <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
                 </el-button>
 
@@ -291,13 +292,11 @@
             },
             handleCreate(row) {
                 this.currentRow = row;
-                this.resetTemp();
                 this.sysUser.deptId = row.id;
                 this.sysUserRules1.password[0].required = true;
                 this.sysUserRules1.passwordConfirm[0].required = true;
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
-                resetForm(this, 'userForm1');
             },
             handleUpdate(row) {
                 this.currentRow = row;
@@ -432,6 +431,11 @@
                         return v[j]
                     }
                 }))
+            },
+            resetUserForm1() {
+                this.dialogFormVisible = false;
+                this.resetTemp();
+                resetForm(this, 'userForm1');
             }
         }
     }

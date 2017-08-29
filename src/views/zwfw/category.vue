@@ -60,8 +60,7 @@
             </el-table-column>
         </el-table>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible"
-                   :close-on-click-modal="closeOnClickModal">
+        <el-dialog  :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="closeOnClickModal">
             <el-form ref="categoryForm" class="small-space" :model="category" label-position="right" label-width="110px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="categoryRules">
                 <el-form-item label="上级事项分类">
@@ -70,7 +69,7 @@
                                  :change-on-select="true" style="width:100%"></el-cascader>
                 </el-form-item>
                 <el-form-item label="事项分类名称" prop="name">
-                    <el-input v-model="category.name" ></el-input>
+                    <el-input v-model="category.name"></el-input>
                 </el-form-item>
                 <el-form-item label="排序">
                     <el-input-number v-model="category.sortNo" :min="1" :max="100"/>
@@ -90,8 +89,7 @@
         </el-dialog>
 
         <!--事项关联dialog-->
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisibleItem"
-                   :close-on-click-modal="closeOnClickModal">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisibleItem" :close-on-click-modal="closeOnClickModal">
             <div class="filter-container">
                 <el-button class="filter-item" style="margin-left: 10px;" @click="handleDeleteOne" type="danger"
                            icon="delete">
@@ -544,6 +542,23 @@
                     remark: '',
                     enable: ''
                 };
+            },
+            resetTemp1() {
+                this.zwfwItem = {
+                    id: undefined,
+                    name: '',
+                    basicCode: ''
+                };
+            },
+            resetCategoryForm() {
+                this.dialogFormVisible = false;
+                this.resetTemp();
+                resetForm(this, 'categoryForm');
+            },
+            resetZwfwItemForm() {
+                this.dialogFormVisibleItem = false;
+                this.resetTemp1();
+                resetForm(this, 'zwfwItemForm');
             }
         }
     }

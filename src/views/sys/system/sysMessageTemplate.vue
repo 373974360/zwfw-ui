@@ -45,7 +45,8 @@
             </el-table-column>
         </el-table>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible"
+                   :close-on-click-modal="closeOnClickModal" :before-close="resetSysMessageTemplateForm">
             <el-form ref="sysMessageTemplateForm" class="small-space" :model="sysMessageTemplate" label-position="right"
                      label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="sysMessageTemplateRules">
@@ -69,7 +70,7 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button icon="circle-cross" type="danger" @click="dialogFormVisible = false">取 消</el-button>
+                <el-button icon="circle-cross" type="danger" @click="resetSysMessageTemplateForm">取 消</el-button>
                 <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
                 </el-button>
                 <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
@@ -80,7 +81,7 @@
 </template>
 
 <script>
-    import {copyProperties} from 'utils';
+    import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import {
         getSysMessageTemplateList,
@@ -113,13 +114,13 @@
                 dialogLoading: false,
                 sysMessageTemplateRules: {
                     sms_title: [
-                        {required: true, message: '请输入短信模板标题', trigger: 'blur'}
+                        {required: true, message: '请输入短信模板标题'}
                     ],
                     sms_content: [
-                        {required: true, message: '请输入短信模板内容', trigger: 'blur'}
+                        {required: true, message: '请输入短信模板内容'}
                     ],
                     sms_signature: [
-                        {required: true, message: '请输入短信签名', trigger: 'blur'}
+                        {required: true, message: '请输入短信签名'}
                     ]
                 },
                 deleteAble: true
@@ -131,7 +132,8 @@
         computed: {
             ...mapGetters([
                 'textMap',
-                'enums'
+                'enums',
+                'closeOnClickModal'
             ])
         },
         methods: {
@@ -246,6 +248,11 @@
                     sms_content: '',
                     sms_signature: ''
                 };
+            },
+            resetSysMessageTemplateForm() {
+                this.dialogFormVisible = false;
+                this.resetTemp();
+                resetForm(this, 'sysMessageTemplateForm');
             }
         }
     }

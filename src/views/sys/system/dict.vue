@@ -52,7 +52,8 @@
             </el-table-column>
         </el-table>
 
-        <el-dialog :title="textMap[dialogDictIndexStatus]" :visible.sync="dialogDictIndexVisible">
+        <el-dialog :title="textMap[dialogDictIndexStatus]" :visible.sync="dialogDictIndexVisible"
+                   :close-on-click-modal="closeOnClickModal" :before-close="resetCheckboxTable">
             <el-form id="checkboxTable" ref="dictIndexForm" class="small-space" :model="sysDictIndex" label-position="right"
                      label-width="80px"
                      style='width: 80%; margin-left:10%;' :rules="sysDictIndexRules">
@@ -68,14 +69,14 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button icon="circle-cross" type="danger" @click="dialogDictIndexVisible = false">取 消</el-button>
+                <el-button icon="circle-cross" type="danger" @click="resetCheckboxTable">取 消</el-button>
                 <el-button v-if="dialogDictIndexStatus=='create'" type="primary" icon="circle-check" @click="createDictIndex">确 定</el-button>
                 <el-button v-else type="primary" icon="circle-check" @Keyup.enter="updateDictIndex" @click="updateDictIndex">确 定</el-button>
             </div>
         </el-dialog>
 
         <!--字典子项目-->
-        <el-dialog :title="dialogDictListTitle" :visible.sync="dialogDictListVisible">
+        <el-dialog :title="dialogDictListTitle" :visible.sync="dialogDictListVisible" :close-on-click-modal="closeOnClickModal">
             <div class="filter-container">
                 <el-tooltip class="item" effect="dark" content="添加用户" placement="top-start">
                     <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="plus" @click="handleDictCreate">
@@ -117,7 +118,8 @@
                 </el-table-column>
             </el-table>
         </el-dialog>
-        <el-dialog :title="textMap[dialogDictFormStatus]" :visible.sync="dialogDictFormVisible">
+        <el-dialog :title="textMap[dialogDictFormStatus]" :visible.sync="dialogDictFormVisible"
+                   :close-on-click-modal="closeOnClickModal" :before-close="resetDictForm">
             <el-form id="checkboxTable1" ref="dictForm" class="small-space" :model="sysDict" label-position="right"
                      label-width="80px"
                      style='width: 80%; margin-left:10%;' :rules="sysDictRules">
@@ -136,7 +138,7 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button icon="circle-cross" type="danger" @click="dialogDictFormVisible = false">取 消</el-button>
+                <el-button icon="circle-cross" type="danger" @click="resetDictForm">取 消</el-button>
                 <el-button v-if="dialogDictFormStatus=='create'" type="primary" icon="circle-check" @click="createDict">确 定</el-button>
                 <el-button v-else type="primary" icon="circle-check" @Keyup.enter="updateDict" @click="updateDict">确 定</el-button>
             </div>
@@ -145,7 +147,7 @@
 </template>
 <script>
     import {getDictIndexList,updateDictIndex,createDictIndex,delDictIndex,getDictList,updateDict,createDict,delDict} from "api/sys/system/dict";
-    import {copyProperties} from 'utils';
+    import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     export default{
         name: 'table_demo',
@@ -209,7 +211,8 @@
         computed: {
             ...mapGetters([
                 'textMap',
-                'enums'
+                'enums',
+                'closeOnClickModal'
             ])
         },
         created() {
@@ -424,6 +427,16 @@
                     sortNo: '1',
                     remark: ''
                 };
+            },
+            resetCheckboxTable() {
+                this.dialogDictIndexVisible = false;
+                this.resetDictIndexTemp();
+                resetForm(this, 'dictIndexForm');
+            },
+            resetDictForm() {
+                this.dialogDictFormVisible = false;
+                this.resetDictTemp();
+                resetForm(this, 'dictForm');
             }
         }
     }

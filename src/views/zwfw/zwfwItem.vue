@@ -88,7 +88,7 @@
         </div>
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible"
-                   :close-on-click-modal="closeOnClickModal">
+                   :close-on-click-modal="closeOnClickModal" :before-close="resetZwfwItemForm">
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem" label-position="right"
                      label-width="134px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="zwfwItemRules">
@@ -301,7 +301,7 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer" style="text-align: center;">
-                <el-button icon="circle-cross" type="danger" @click="dialogFormVisible = false">取 消
+                <el-button icon="circle-cross" type="danger" @click="resetZwfwItemForm">取 消
                 </el-button>
                 <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">
                     确 定
@@ -314,7 +314,7 @@
 
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible1"
-                   :close-on-click-modal="closeOnClickModal">
+                   :close-on-click-modal="closeOnClickModal" :before-close="resetZwfwMaterialForm">
             <div class="filter-container">
                 <el-button class="filter-item" style="margin-left: 10px;" @click="handleDeleteOne" type="danger"
                            icon="delete">
@@ -422,7 +422,7 @@
                 </el-form-item>
             </el-form>
             <div style="text-align: center" slot="footer" class="dialog-footer">
-                <el-button icon="circle-cross" type="danger" @click="dialogFormVisible1 = false">取 消</el-button>
+                <el-button icon="circle-cross" type="danger" @click="resetZwfwMaterialForm">取 消</el-button>
                 <el-button type="primary" icon="circle-check"
                            @click="createMaterial">确 定
                 </el-button>
@@ -599,7 +599,6 @@
                 this.dialogStatus = 'associateMaterial';
                 this.dialogFormVisible1 = true;
                 this.getItemMaterialListByItemId();
-                resetForm(this, 'zwfwMaterialForm');
             },
             getItemMaterialListByItemId() {
                 this.listLoading1 = true;
@@ -708,7 +707,6 @@
                 this.resetTemp();
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
-                resetForm(this, 'zwfwItemForm');
             },
             handleUpdate(row) {
                 this.currentRow = row;
@@ -932,6 +930,16 @@
                     implCode: '',
                     updateType: ''
                 };
+            },
+            resetZwfwItemForm() {
+                this.dialogFormVisible = false;
+                this.resetTemp();
+                resetForm(this, 'zwfwItemForm');
+            },
+            resetZwfwMaterialForm() {
+                this.dialogFormVisible1 = false;
+                this.resetTemp1();
+                resetForm(this, 'zwfwMaterialForm');
             }
         }
     }

@@ -74,7 +74,8 @@
             </el-pagination>
         </div>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="closeOnClickModal">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible"
+                   :close-on-click-modal="closeOnClickModal" :before-close="resetZwfwNaturePersonForm">
             <el-form ref="zwfwNaturePersonForm" class="small-space" :model="zwfwNaturePerson" label-position="right"
                      label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="zwfwNaturePersonRules">
@@ -135,7 +136,7 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button icon="circle-cross" type="danger" @click="dialogFormVisible = false">取 消</el-button>
+                <el-button icon="circle-cross" type="danger" @click="resetZwfwNaturePersonForm">取 消</el-button>
                 <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
                 </el-button>
                 <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
@@ -304,7 +305,6 @@
                 this.zwfwNaturePersonRules.passwordConfirm[0].required = true;
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
-                resetForm(this, 'zwfwNaturePersonForm');
             },
             handleUpdate(row) {
                 this.currentRow = row;
@@ -392,6 +392,11 @@
                     remark: '',
                     enable: 1
                 };
+            },
+            resetZwfwNaturePersonForm() {
+                this.dialogFormVisible = false;
+                this.resetTemp();
+                resetForm(this, 'zwfwNaturePersonForm');
             }
         }
     }
