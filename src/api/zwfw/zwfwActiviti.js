@@ -80,7 +80,7 @@ export function getZwfwProcessDefinitionList(query) {
 }
 
 /**
- * 挂起流程
+ * 挂起流程定义
  * @param id
  */
 export function suspendZwfwProcessDefinition(id) {
@@ -94,6 +94,11 @@ export function suspendZwfwProcessDefinition(id) {
     })
 }
 
+/**
+ * 激活挂起的流程定义
+ * @param id
+ * @returns {*}
+ */
 export function activeZwfwProcessDefinition(id) {
 
     const data = {id: _.isArray(id) ? id.join('#') : id};

@@ -188,6 +188,10 @@
         activeZwfwProcessDefinition
     } from 'api/zwfw/zwfwActiviti';
 
+    import {
+        getOtherSetting
+    } from 'api/zwfw/zwfwItemProcess';
+
     export default {
         components: { Sticky },
         name: 'table_demo',
@@ -314,31 +318,26 @@
 
 
 //                                发请求查询当前设置的默认时限
-                                $.post(process.env.ZWFW_ACTIVITI_API + '/admin/item/process/getOtherSetting', {
-                                    processDefinitionId: canvas.processDefinitionId,
-                                    taskDefinitionKey: contextObject.id
-                                }, function (data) {
-                                    if (data.status === 200) {
-                                        if (data.data != null) {
-                                            var c = data.data.setting;
-                                            if (c) {
-                                                _this.task.beginNotifyTarget = c.beginNotifyTarget;
-                                                _this.task.beginNotifyTemplate = c.beginNotifyTemplate;
-                                                _this.task.completeNotifyTarget = c.completeNotifyTarget;
-                                                _this.task.completeNotifyTemplate = c.completeNotifyTemplate;
-                                                _this.task.defaultTimeLimit = c.defaultTimeLimit;
-                                                _this.task.supportClose = c.supportClose;
-                                                _this.task.frontName = c.frontName;
-                                                _this.task.supportCorrection = c.supportCorrection;
-                                                _this.task.supportExtendTime = c.supportExtendTime;
-                                            }
-                                            //设置可选模板列表
-                                            if (data.data.messageTemplate) {
-                                                _this.messageTemplate = data.data.messageTemplate;
-                                            }
-                                        }
+                                getOtherSetting(canvas.processDefinitionId, contextObject.id).then(response => {
+                                    const data = response.data;
+                                    const c = data.setting;
+                                    if (c) {
+                                        _this.task.beginNotifyTarget = c.beginNotifyTarget;
+                                        _this.task.beginNotifyTemplate = c.beginNotifyTemplate;
+                                        _this.task.completeNotifyTarget = c.completeNotifyTarget;
+                                        _this.task.completeNotifyTemplate = c.completeNotifyTemplate;
+                                        _this.task.defaultTimeLimit = c.defaultTimeLimit;
+                                        _this.task.supportClose = c.supportClose;
+                                        _this.task.frontName = c.frontName;
+                                        _this.task.supportCorrection = c.supportCorrection;
+                                        _this.task.supportExtendTime = c.supportExtendTime;
+                                    }
+                                    // 设置可选模板列表
+                                    if (data.messageTemplate) {
+                                        _this.messageTemplate = data.messageTemplate;
                                     }
                                 });
+
                             } else if (type == 'boundaryTimer') {
 
                             } else if (type == 'callActivity') {
