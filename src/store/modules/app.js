@@ -21,7 +21,8 @@ const app = {
         enums: [],
         dicts: [],
         theme: 'default',
-        livenewsChannels: Cookies.get('livenewsChannels') || '[]'
+        livenewsChannels: Cookies.get('livenewsChannels') || '[]',
+        closeOnClickModal: false
     },
     mutations: {
         TOGGLE_SIDEBAR: state => {

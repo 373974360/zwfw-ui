@@ -9,7 +9,7 @@
                    :handle-toggle="handleToggle" :handle-create="handleCreate"
                    :handle-update="handleUpdate" :handle-delete="handleDelete" :defaultExpandAll="false"></tree-grid>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="closeOnClickModal">
             <el-form ref="menuForm" class="small-space" :model="sysMenu" label-position="right" label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="sysMenuRules">
 
@@ -61,7 +61,7 @@
 <script>
     import TreeGrid from 'components/TreeGrid'
     import {getMenuTree, getMenuCascader, createMenu, updateMenu, delMenu} from 'api/sys/org/menu';
-    import {copyProperties} from 'utils';
+    import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import TreeUtil from 'utils/TreeUtil.js';
 
@@ -110,13 +110,13 @@
                 },
                 sysMenuRules: {
                     name: [
-                        {required: true, message: '请输入菜单名称', trigger: 'blur'}
+                        {required: true, message: '请输入菜单名称'}
                     ],
                     request: [
-                        {required: true, message: '请输入请求地址', trigger: 'blur'}
+                        {required: true, message: '请输入请求地址'}
                     ],
                     permission: [
-                        {required: true, message: '请输入权限标识', trigger: 'blur'}
+                        {required: true, message: '请输入权限标识'}
                     ]
                 },
                 dialogFormVisible: false,
@@ -134,7 +134,8 @@
             },
             ...mapGetters([
                 'enums',
-                'textMap'
+                'textMap',
+                'closeOnClickModal'
             ])
         },
         components: {
@@ -183,6 +184,7 @@
                 this.getOptions(null);
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
+                resetForm(this, 'menuForm');
             },
             handleUpdate(row) {
                 this.resetTemp();

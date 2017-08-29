@@ -74,7 +74,7 @@
             </el-pagination>
         </div>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="closeOnClickModal">
             <el-form ref="zwfwNaturePersonForm" class="small-space" :model="zwfwNaturePerson" label-position="right"
                      label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="zwfwNaturePersonRules">
@@ -146,7 +146,7 @@
 </template>
 
 <script>
-    import {copyProperties} from 'utils';
+    import {copyProperties, resetForm} from 'utils';
     import moment from 'moment';
     import {mapGetters} from 'vuex';
     import {
@@ -224,20 +224,20 @@
                         {required: true, validator: validateIdcard}
                     ],
                     address: [
-                        {required: true, message: '请输入住址', trigger: 'blur'}
+                        {required: true, message: '请输入住址'}
                     ],
                     nation: [
-                        {required: true, message: '请输入民族', trigger: 'blur'}
+                        {required: true, message: '请输入民族'}
                     ],
                     phone: [
-                        {required: true, validator: validatMobiles, trigger: 'blur'}
+                        {required: true, validator: validatMobiles}
                     ],
                     name: [
-                        {required: true, message: '请输入姓名', trigger: 'blur'}
+                        {required: true, message: '请输入姓名'}
                     ],
                     password: [
-                        {required: true, message: '请输入密码', trigger: 'blur'},
-                        {min: 6, max: 18, message: '长度在 6 到 18 个字符', trigger: 'blur'}
+                        {required: true, message: '请输入密码'},
+                        {min: 6, max: 18, message: '长度在 6 到 18 个字符'}
                     ],
                     passwordConfirm: [
                         {required: true, validator: validatePass2}
@@ -251,7 +251,8 @@
         computed: {
             ...mapGetters([
                 'textMap',
-                'enums'
+                'enums',
+                'closeOnClickModal'
             ])
         },
         methods: {
@@ -303,6 +304,7 @@
                 this.zwfwNaturePersonRules.passwordConfirm[0].required = true;
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
+                resetForm(this, 'zwfwNaturePersonForm');
             },
             handleUpdate(row) {
                 this.currentRow = row;

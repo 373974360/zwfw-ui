@@ -11,7 +11,7 @@
                    :handle-update="handleUpdate" :handle-delete="handleDelete" :defaultExpandAll="false">
         </tree-grid>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="closeOnClickModal">
             <el-form ref="deptForm" class="small-space" :model="sysDept" label-position="right" label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="deptRules">
                 <el-form-item label="上级部门">
@@ -51,7 +51,7 @@
 <script>
     import TreeGrid from 'components/TreeGrid';
     import {getDeptTree, getDeptCascader, createDept, updateDept, delDept} from 'api/sys/org/dept';
-    import {copyProperties} from 'utils';
+    import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import TreeUtil from 'utils/TreeUtil.js';
 
@@ -101,7 +101,7 @@
                 dialogLoading: false,
                 deptRules: {
                     name: [
-                        {required: true, message: '请输入部门名称', trigger: 'blur'}
+                        {required: true, message: '请输入部门名称'}
                     ]
                 }
             }
@@ -120,7 +120,8 @@
                 }
             },
             ...mapGetters([
-                'textMap'
+                'textMap',
+                'closeOnClickModal'
             ])
         },
         methods: {
@@ -163,6 +164,7 @@
                 this.getOptions(null);
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
+                resetForm(this, 'deptForm');
             },
             handleUpdate(row) {
                 this.resetTemp();

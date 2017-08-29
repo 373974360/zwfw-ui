@@ -85,7 +85,7 @@
             </el-pagination>
         </div>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="closeOnClickModal">
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem" label-position="right"
                      label-width="134px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="zwfwItemRules">
@@ -308,7 +308,7 @@
         </el-dialog>
 
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible1">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible1" :close-on-click-modal="closeOnClickModal">
             <div class="filter-container">
                 <el-button class="filter-item" style="margin-left: 10px;" @click="handleDeleteOne" type="danger"
                            icon="delete">
@@ -423,7 +423,7 @@
 </template>
 
 <script>
-    import {copyProperties} from 'utils';
+    import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import {getZwfwItemList, createZwfwItem, updateZwfwItem, delZwfwItems} from 'api/zwfw/zwfwItem';
     import {
@@ -566,7 +566,8 @@
             ...mapGetters([
                 'textMap',
                 'enums',
-                'dicts'
+                'dicts',
+                'closeOnClickModal'
             ])
         },
         methods: {
@@ -585,6 +586,7 @@
                 this.dialogStatus = 'associateMaterial';
                 this.dialogFormVisible1 = true;
                 this.getItemMaterialListByItemId();
+                resetForm(this, 'zwfwMaterialForm');
             },
             getItemMaterialListByItemId() {
                 this.listLoading1 = true;
@@ -652,6 +654,7 @@
                 this.resetTemp();
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
+                resetForm(this, 'zwfwItemForm');
             },
             handleUpdate(row) {
                 this.currentRow = row;

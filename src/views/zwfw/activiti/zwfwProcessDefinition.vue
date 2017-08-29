@@ -80,7 +80,7 @@
         </div>
 
         <!--弹出层-->
-        <el-dialog title="创建流程实例" :visible.sync="addDialogFormVisible">
+        <el-dialog title="创建流程实例" :visible.sync="addDialogFormVisible" :close-on-click-modal="closeOnClickModal">
             <el-form ref="zwfwProcessDefinitionForm" :model="zwfwProcessDefinition" label-position="right"
                      label-width="110px"
                      :rules="rules">
@@ -136,7 +136,7 @@
                 selectedRows: [],
                 rules: {
                     name: [{
-                        required: true, message: '请输入模型名称', trigger: 'blur'
+                        required: true, message: '请输入模型名称'
                     }]
                 }
             }
@@ -147,7 +147,8 @@
         computed: {
             ...mapGetters([
                 'textMap',
-                'enums'
+                'enums',
+                'closeOnClickModal'
             ])
         },
         methods: {

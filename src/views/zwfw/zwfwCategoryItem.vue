@@ -52,7 +52,7 @@
             </el-pagination>
         </div>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="closeOnClickModal">
             <el-form ref="zwfwCategoryItemForm" class="small-space" :model="zwfwCategoryItem" label-position="right"
                      label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="zwfwCategoryItemRules">
@@ -129,7 +129,8 @@
         computed: {
             ...mapGetters([
                 'textMap',
-                'enums'
+                'enums',
+                'closeOnClickModal'
             ])
         },
         methods: {

@@ -61,7 +61,7 @@
         </div>
 
         <!--添加编辑-->
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="addDialogFormVisible">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="addDialogFormVisible" :close-on-click-modal="closeOnClickModal">
             <el-form ref="windowForm" class="small-space" :model="window" label-position="left" label-width="130px"
                      style='width: 80%; margin-left:10%;' :rules="windowRules">
                 <el-form-item label="窗口名称" prop="name">
@@ -104,7 +104,7 @@
         <!--</el-dialog>-->
 
         <!--关联用户 :default-checked-keys="checkedUserList"-->
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="userWindowDialogFormVisible">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="userWindowDialogFormVisible" :close-on-click-modal="closeOnClickModal">
             <el-form id="checkboxTable" ref="userForm" class="small-space" :model="window"
                      label-position="left" label-width="25px"
                      style='width: 100%;' v-loading="userWindowDialogLoading">
@@ -136,7 +136,7 @@
 
 <script>
     import {getWindowList, createWindow, updateWindow, createUserWindow, getAllUserWindow, delWindow} from 'api/zwfw/window';
-    import {copyProperties} from 'utils';
+    import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import {getDeptNameAndUsers} from 'api/sys/org/user';
 
@@ -162,19 +162,19 @@
                 },
                 windowRules: {
                     name: [
-                        {required: true, message: '请输入窗口名称', trigger: 'blur'}
+                        {required: true, message: '请输入窗口名称'}
                     ],
                     callerKey: [
-                        {required: true, message: '请输入叫号设备key', trigger: 'blur'}
+                        {required: true, message: '请输入叫号设备key'}
                     ],
                     judgeKey: [
-                        {required: true, message: '请输入评价设备key', trigger: 'blur'}
+                        {required: true, message: '请输入评价设备key'}
                     ],
                     cameraKey: [
-                        {required: true, message: '请输入高拍仪设备key', trigger: 'blur'}
+                        {required: true, message: '请输入高拍仪设备key'}
                     ],
                     ledKey: [
-                        {required: true, message: '请输入LED显示设备key', trigger: 'blur'}
+                        {required: true, message: '请输入LED显示设备key'}
                     ]
                 },
                 dialogStatus: '',
@@ -196,7 +196,8 @@
         computed: {
             ...mapGetters([
                 'textMap',
-                'enums'
+                'enums',
+                'closeOnClickModal'
             ])
         },
         methods: {
@@ -220,13 +221,11 @@
                 this.listQuery.page = val;
                 this.getList();
             },
-            resetForm(windowForm) {
-                this.$refs[windowForm].resetFields();
-            },
             handleCreate() {
                 this.resetTemp();
                 this.dialogStatus = 'create';
                 this.addDialogFormVisible = true;
+                resetForm(this, 'windowForm');
             },
             handleUpdate(row) {
                 this.currentRow = row;

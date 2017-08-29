@@ -240,3 +240,7 @@ export function mergeTree(list, data, isAppend) {
         }
     }
 }
+
+export function resetForm(el, form) {
+    el.$refs[form].resetFields();
+}

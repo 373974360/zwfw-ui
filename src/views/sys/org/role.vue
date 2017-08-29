@@ -61,7 +61,7 @@
         </div>
 
         <!--添加编辑-->
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="addDialogFormVisible">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="addDialogFormVisible" :close-on-click-modal="closeOnClickModal">
             <el-form ref="roleForm" class="small-space" :model="sysRole" label-position="left" label-width="80px"
                      style='width: 80%; margin-left:10%;' :rules="roleRules">
                 <el-form-item label="角色名称" prop="name">
@@ -89,7 +89,7 @@
         </el-dialog>
 
         <!--关联权限-->
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="roleMenuDialogFormVisible">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="roleMenuDialogFormVisible" :close-on-click-modal="closeOnClickModal">
             <el-form ref="roleMenuForm" class="small-space" :model="sysRole" label-position="left" label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="roleMenuDialogLoading">
                 <el-tree ref="menuTree" :data="menuTree" show-checkbox node-key="id" :default-expand-all="true"
@@ -102,7 +102,7 @@
         </el-dialog>
 
         <!--关联用户 :default-checked-keys="checkedUserList"-->
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="userRoleDialogFormVisible">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="userRoleDialogFormVisible" :close-on-click-modal="closeOnClickModal">
             <el-form id="checkboxTable" ref="userForm" class="small-space" :model="sysRole"
                      label-position="left" label-width="25px"
                      style='width: 100%;' v-loading="userRoleDialogLoading">
@@ -134,7 +134,7 @@
 <script>
     import {getRoleList, createRole, updateRole, createRoleMenus, createUserRole, getAllRoleMenus, getAllUserRole, delRole} from 'api/sys/org/role';
     import {getMenuTree} from 'api/sys/org/menu';
-    import {copyProperties} from 'utils';
+    import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import {getDeptNameAndUsers} from 'api/sys/org/user';
 
@@ -158,7 +158,7 @@
                 },
                 roleRules: {
                     name: [
-                        {required: true, message: '请输入角色名称', trigger: 'blur'}
+                        {required: true, message: '请输入角色名称'}
                     ]
                 },
                 dialogStatus: '',
@@ -185,7 +185,8 @@
         computed: {
             ...mapGetters([
                 'textMap',
-                'enums'
+                'enums',
+                'closeOnClickModal'
             ])
         },
         methods: {
@@ -209,13 +210,11 @@
                 this.listQuery.page = val;
                 this.getList();
             },
-            resetForm(roleForm) {
-                this.$refs[roleForm].resetFields();
-            },
             handleCreate() {
                 this.resetTemp();
                 this.dialogStatus = 'create';
                 this.addDialogFormVisible = true;
+                resetForm(this, 'roleForm');
             },
             handleUpdate(row) {
                 this.currentRow = row;

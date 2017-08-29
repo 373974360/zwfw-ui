@@ -68,7 +68,7 @@
             </el-pagination>
         </div>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="closeOnClickModal">
             <el-form id="checkboxTable" ref="userForm1" class="small-space" :model="sysUser" label-position="right"
                      label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="sysUserRules1">
@@ -143,7 +143,7 @@
 <script>
     import {getDeptCascader} from 'api/sys/org/dept';
     import {getUserList, updateUser, createUser, delUser} from 'api/sys/org/user';
-    import {copyProperties} from 'utils';
+    import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import {delWindowUser} from 'api/zwfw/window';
     import ElRadio from "../../../../node_modules/element-ui/packages/radio/src/radio";
@@ -201,20 +201,20 @@
                         {required: true, message: '请选择部门'}
                     ],
                     name: [
-                        {required: true, message: '请输入姓名', trigger: 'blur'}
+                        {required: true, message: '请输入姓名'}
                     ],
                     phone: [
-                        {required: true, validator: validatMobiles, trigger: 'blur'}
+                        {required: true, validator: validatMobiles}
                     ],
                     avatar: [
-                        {type: 'url', required: true, message: '头像地址不正确', trigger: 'blur'}
+                        {type: 'url', required: true, message: '头像地址不正确'}
                     ],
                     account: [
-                        {type: 'email', required: true, message: '请输入合法的邮箱', trigger: 'blur'}
+                        {type: 'email', required: true, message: '请输入合法的邮箱'}
                     ],
                     password: [
-                        {required: true, message: '请输入密码', trigger: 'blur'},
-                        {min: 6, max: 18, message: '长度在 6 到 18 个字符', trigger: 'blur'}
+                        {required: true, message: '请输入密码'},
+                        {min: 6, max: 18, message: '长度在 6 到 18 个字符'}
                     ],
                     passwordConfirm: [
                         {required: true, validator: validatePass2}
@@ -232,7 +232,8 @@
         computed: {
             ...mapGetters([
                 'textMap',
-                'enums'
+                'enums',
+                'closeOnClickModal'
             ]),
             updateModel: function () {
                 let result = [];
@@ -296,6 +297,7 @@
                 this.sysUserRules1.passwordConfirm[0].required = true;
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
+                resetForm(this, 'userForm1');
             },
             handleUpdate(row) {
                 this.currentRow = row;

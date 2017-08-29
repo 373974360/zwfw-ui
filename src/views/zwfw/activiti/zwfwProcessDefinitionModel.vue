@@ -74,7 +74,7 @@
         </div>
 
         <!--弹出层-->
-        <el-dialog title="创建流程模型" :visible.sync="addDialogFormVisible">
+        <el-dialog title="创建流程模型" :visible.sync="addDialogFormVisible" :close-on-click-modal="closeOnClickModal">
             <el-form ref="activitiModelForm" :model="activitiModel" label-position="right" label-width="110px"
                      :rules="rules">
                 <el-form-item label="名称" prop="name">
@@ -99,7 +99,7 @@
         getZwfwActivitiModelList, getZwfwActivitiModelEditUrl, getZwfwActivitiModelUploadUrl, createZwfwActivitiModel, deleteZwfwActivitiModel,
         deployZwfwActivitiModel
     } from 'api/zwfw/zwfwActiviti';
-    import {copyProperties} from 'utils';
+    import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
 
     export default {
@@ -127,7 +127,7 @@
                 selectedRows: [],
                 rules: {
                     name: [{
-                        required: true, message: '请输入模型名称', trigger: 'blur'
+                        required: true, message: '请输入模型名称'
                     }]
                 }
             }
@@ -138,7 +138,8 @@
         computed: {
             ...mapGetters([
                 'textMap',
-                'enums'
+                'enums',
+                'closeOnClickModal'
             ]),
             getUploadUrl() {
                 return getZwfwActivitiModelUploadUrl();
@@ -172,6 +173,7 @@
                 this.resetTemp();
                 this.dialogStatus = 'create';
                 this.addDialogFormVisible = true;
+                resetForm(this, 'activitiModelForm');
             },
             handleUpdate(row) {
                 window.open(getZwfwActivitiModelEditUrl(row.id));

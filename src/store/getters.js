@@ -3,6 +3,7 @@ const getters = {
     enums: state => state.app.enums,
     dicts: state => state.app.dicts,
     textMap: state => state.app.textMap,
+    closeOnClickModal: state => state.app.closeOnClickModal,
     token: state => state.user.token,
     avatar: state => state.user.avatar,
     name: state => state.user.name,

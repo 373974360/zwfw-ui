@@ -11,7 +11,7 @@
                    :handle-update="handleUpdate" :handle-delete="handleDelete" :handle-create1="handleCreate1">
         </tree-grid>
 
-        <el-dialog  :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+        <el-dialog  :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="closeOnClickModal">
             <el-form ref="categoryForm" class="small-space" :model="category" label-position="right" label-width="110px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="categoryRules">
                 <el-form-item label="上级事项分类">
@@ -40,7 +40,7 @@
         </el-dialog>
 
         <!--事项关联dialog-->
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisibleItem">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisibleItem" :close-on-click-modal="closeOnClickModal">
             <div class="filter-container">
                 <el-button class="filter-item" style="margin-left: 10px;" @click="handleDeleteOne" type="danger"
                            icon="delete">
@@ -120,7 +120,7 @@
     import {getCategoryTree, getCategoryCascader, createCategory, updateCategory, delCategory} from 'api/zwfw/category';
     import {getAllByNameOrbasicCode} from 'api/zwfw/zwfwItem';
     import {getAllCategoeyItem, createZwfwCategoryItem, deleteZwfwCategoryItem} from 'api/zwfw/zwfwCategoryItem';
-    import {copyProperties} from 'utils';
+    import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import TreeUtil from 'utils/TreeUtil.js';
 
@@ -183,7 +183,7 @@
                 dialogLoading: false,
                 categoryRules: {
                     name: [
-                        {required: true, message: '请输入事项分类名称', trigger: 'blur'}
+                        {required: true, message: '请输入事项分类名称'}
                     ]
                 },
                 categoryItemRules: {
@@ -208,7 +208,8 @@
                 }
             },
             ...mapGetters([
-                'textMap'
+                'textMap',
+                'closeOnClickModal'
             ])
         },
         methods: {
@@ -258,6 +259,7 @@
                 this.getOptions(null);
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
+                resetForm(this, 'categoryForm');
             },
             handleUpdate(row) {
                 this.resetTemp();
