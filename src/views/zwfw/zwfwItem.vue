@@ -87,7 +87,8 @@
             </el-pagination>
         </div>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="closeOnClickModal">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible"
+                   :close-on-click-modal="closeOnClickModal">
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem" label-position="right"
                      label-width="134px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="zwfwItemRules">
@@ -312,7 +313,8 @@
         </el-dialog>
 
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible1" :close-on-click-modal="closeOnClickModal">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible1"
+                   :close-on-click-modal="closeOnClickModal">
             <div class="filter-container">
                 <el-button class="filter-item" style="margin-left: 10px;" @click="handleDeleteOne" type="danger"
                            icon="delete">
@@ -674,8 +676,16 @@
             handleUpdateClick(row) {
                 this.currentRow = row;
                 this.zwfwItemMaterial = copyProperties(this.zwfwItemMaterial, row);
-                this.uploadAvatarsEform.push({url: this.zwfwItemMaterial.eform});
-                this.uploadAvatarsExample.push({url: this.zwfwItemMaterial.example});
+                if (this.zwfwItemMaterial.eform == '') {
+                    this.handleRemoveExample();
+                } else {
+                    this.uploadAvatarsEform.push({url: this.zwfwItemMaterial.eform});
+                }
+                if (this.zwfwItemMaterial.example == '') {
+                    this.handleRemoveExample();
+                } else {
+                    this.uploadAvatarsExample.push({url: this.zwfwItemMaterial.example});
+                }
                 this.$refs.zwfwMaterialForm.$el[0].disabled = true;
             },
             handleSizeChange(val) {
@@ -781,6 +791,9 @@
                 });
             },
             createMaterial() {
+                this.zwfwItemMaterialRules.name[0].required = true;
+                this.zwfwItemMaterialRules.source[0].required = true;
+                this.zwfwItemMaterialRules.type[0].required = true;
                 this.$refs['zwfwMaterialForm'].validate((valid) => {
                     if (valid) {
                         if (this.$refs.zwfwMaterialForm.$el[0].disabled != true) {
@@ -788,6 +801,9 @@
                                 if (obj.id == this.zwfwItemMaterial.id) {
                                     this.$message.warning('资料已存在');
                                     this.zwfwItemMaterial = {};
+                                    this.zwfwItemMaterialRules.name[0].required = false;
+                                    this.zwfwItemMaterialRules.source[0].required = false;
+                                    this.zwfwItemMaterialRules.type[0].required = false;
                                     return false;
                                 }
                             }
@@ -800,7 +816,12 @@
                                 this.zwfwItemMaterialList.unshift(this.zwfwItemMaterial);
                                 this.$message.success('创建成功');
                                 this.listLoading1 = false;
+                                this.zwfwItemMaterialRules.name[0].required = false;
+                                this.zwfwItemMaterialRules.source[0].required = false;
+                                this.zwfwItemMaterialRules.type[0].required = false;
                                 this.resetTemp1();
+                                this.uploadAvatarsExample = [];
+                                this.uploadAvatarsEform = [];
                                 this.currentItem.itemMaterialCount += 1;
                             })
                         } else {
@@ -825,7 +846,12 @@
                                 copyProperties(this.currentRow, response.data);
                                 this.$message.success('更新成功');
                                 this.dialogFormVisible1 = true;
+                                this.zwfwItemMaterialRules.name[0].required = false;
+                                this.zwfwItemMaterialRules.source[0].required = false;
+                                this.zwfwItemMaterialRules.type[0].required = false;
                                 this.resetTemp1();
+                                this.uploadAvatarsExample = [];
+                                this.uploadAvatarsEform = [];
                                 this.$refs.zwfwMaterialForm.$el[0].disabled = false;
                             })
                         }
@@ -912,6 +938,7 @@
 </script>
 <style>
     .item {
-        margin-top: 10px;    text-align: center;
+        margin-top: 10px;
+        text-align: center;
     }
 </style>

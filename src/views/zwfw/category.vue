@@ -96,7 +96,7 @@
                             v-model="zwfwItem.name"
                             filterable
                             remote
-                            placeholder="请输入关键词"
+                            placeholder="请输入事项名称或基本编码"
                             :remote-method="remoteMethod"
                             @change="changeMaterial">
                         <el-option
@@ -189,7 +189,7 @@
                 },
                 categoryItemRules: {
                     name: [
-                        {required: true, message: '请输入事项名称'}
+                        {required: true, message: '请输入事项名称或基本编码'}
                     ]
                 }
             }
@@ -278,9 +278,9 @@
                 this.currentItem = row;
                 this.dialogStatus = 'associateItem';
                 this.dialogFormVisibleItem = true;
-                resetForm(this, 'zwfwItemForm');
                 this.categoryId = row.id;
                 this.getItemListByCategoryId();
+                resetForm(this, 'zwfwItemForm');
             },
             getItemListByCategoryId() {
                 this.listLoading1 = true;

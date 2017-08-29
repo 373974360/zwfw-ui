@@ -42,10 +42,20 @@ export function delWindowUser(ids) {
         data
     })
 }
+
 export function createUserWindow(windowId, userIds) {
     const data = {windowId, userIds};
     return fetchZwfw({
         url: '/zwfwWindowUser/addList',
+        method: 'post',
+        data
+    })
+}
+
+export function createZwfwWindowItem(zwfwWindowItemVo) {
+    const data = zwfwWindowItemVo;
+    return fetchZwfw({
+        url: '/zwfwWindowItem/add',
         method: 'post',
         data
     })
@@ -59,5 +69,21 @@ export function getAllUserWindow(windowId) {
     })
 }
 
+export function getAllItemWindow(windowId) {
+    return fetchZwfw({
+        url: '/zwfwWindowItem/getAll',
+        method: 'get',
+        params: {windowId}
+    })
+}
+
+export function deleteZwfwWindowItem(windowId, ids) {
+    const data = {windowId, ids};
+    return fetchZwfw({
+        url: '/zwfwWindowItem/delete',
+        method: 'post',
+        data
+    })
+}
 
 

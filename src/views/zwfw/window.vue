@@ -37,14 +37,14 @@
         </el-table-column>
             <el-table-column align="center" label="操作" width="350">
                 <template scope="scope">
-                    <!--<el-badge :value="scope.row.itemWindowCount" class="item">-->
-                        <!--<el-button class="filter-item" style="margin-left: 10px;" @click="handleMenuList(scope.row)"-->
-                                   <!--type="primary" size="small">-->
-                            <!--关联事项-->
-                        <!--</el-button>-->
-                    <!--</el-badge>-->
+                    <el-badge :value="scope.row.windowItemCount" class="item" >
+                        <el-button class="filter-item" @click="handleItemList(scope.row)"
+                                   type="primary" size="small">
+                            关联事项
+                        </el-button>
+                    </el-badge>
                     <el-badge :value="scope.row.windowUserCount" class="item">
-                        <el-button class="filter-item" style="margin-left: 10px;" @click="handleUserList(scope.row)"
+                        <el-button class="filter-item"  @click="handleUserList(scope.row)"
                                    type="primary" size="small">
                             关联用户
                         </el-button>
@@ -90,18 +90,80 @@
             </div>
         </el-dialog>
 
-        <!--关联权限-->
-        <!--<el-dialog :title="textMap[dialogStatus]" :visible.sync="roleMenuDialogFormVisible">-->
-            <!--<el-form ref="roleMenuForm" class="small-space" :model="window" label-position="left" label-width="80px"-->
-                     <!--style='width: 80%; margin-left:10%;' v-loading="roleMenuDialogLoading">-->
-                <!--<el-tree ref="menuTree" :data="menuTree" show-checkbox node-key="id" :default-expand-all="true"-->
-                         <!--@check-change="menuTreeChecked" :default-checked-keys="checkedMenu"></el-tree>-->
-            <!--</el-form>-->
-            <!--<div slot="footer" class="dialog-footer">-->
-                <!--<el-button icon="circle-cross" type="danger" @click="roleMenuDialogFormVisible = false">取 消</el-button>-->
-                <!--<el-button type="primary" @click="submitWindowMenu">确 定</el-button>-->
-            <!--</div>-->
-        <!--</el-dialog>-->
+        <!--事项关联dialog-->
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisibleItem" :close-on-click-modal="closeOnClickModal">
+            <div class="filter-container">
+                <el-button class="filter-item" style="margin-left: 10px;" @click="handleDeleteOne" type="danger"
+                           icon="delete">
+                    删除
+                </el-button>
+            </div>
+            <el-table ref="zwfwItemTable" :data="zwfwItemList" v-loading.body="listLoading1" border fit
+                      highlight-current-row
+                      style="width: 100%" @selection-change="handleSelectionChange">
+                <el-table-column type="selection" width="55"/>
+                <el-table-column align="center" label="序号">
+                    <template scope="scope">
+                        <span>{{scope.row.id}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center" label="事项名称" prop="name">
+                    <template scope="scope">
+                        <span>{{scope.row.name}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center" label="基本编码" prop="basicCode">
+                    <template scope="scope">
+                        <span>{{scope.row.basicCode}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center" label="事项类型" prop="type">
+                    <template scope="scope">
+                        <span>{{scope.row.type}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center" label="办件类型" prop="processType">
+                    <template scope="scope">
+                        <el-tag :type="scope.row.processType | dicts('bjlx')">
+                            {{scope.row.processType | dicts('bjlx')}}
+                        </el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center" label="办理形式" prop="handleType">
+                    <template scope="scope">
+                        <el-tag :type="scope.row.handleType | dicts('blxs')">
+                            {{scope.row.handleType | dicts('blxs')}}
+                        </el-tag>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem"
+                     label-position="right"
+                     label-width="80px"
+                     style='width: 80%; margin-left:10%; margin-top: 5%;' v-loading="dialogLoading"
+                     :rules="windowItemRules">
+                <el-form-item label="事项名称" prop="name">
+                    <el-select
+                            v-model="zwfwItem.name"
+                            filterable
+                            remote
+                            placeholder="请输入事项名称或基本编码"
+                            :remote-method="remoteMethod"
+                            @change="changeMaterial">
+                        <el-option
+                                v-for="item in optionsName"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.name">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <div style="text-align: center" slot="footer" class="dialog-footer">
+                <el-button type="primary" icon="circle-check" @click="saveCategoryItem">保 存
+                </el-button>
+            </div>
+        </el-dialog>
 
         <!--关联用户 :default-checked-keys="checkedUserList"-->
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="userWindowDialogFormVisible" :close-on-click-modal="closeOnClickModal">
@@ -135,10 +197,11 @@
 </template>
 
 <script>
-    import {getWindowList, createWindow, updateWindow, createUserWindow, getAllUserWindow, delWindow} from 'api/zwfw/window';
+    import {getWindowList, createWindow, updateWindow, createUserWindow, getAllUserWindow, delWindow, getAllItemWindow, createZwfwWindowItem, deleteZwfwWindowItem} from 'api/zwfw/window';
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import {getDeptNameAndUsers} from 'api/sys/org/user';
+    import {getAllByNameOrbasicCode} from 'api/zwfw/zwfwItem';
 
     export default {
         name: 'table_demo',
@@ -147,6 +210,8 @@
                 list: null,
                 total: null,
                 listLoading: true,
+                listLoading1: true,
+                dialogLoading: false,
                 listQuery: {
                     name: '',
                     page: this.$store.state.app.page,
@@ -177,21 +242,36 @@
                         {required: true, message: '请输入LED显示设备key'}
                     ]
                 },
+                windowItemRules: {
+                    name: [
+                        {required: true, message: '请输入事项名称或基本编码'}
+                    ]
+                },
+                zwfwItem: {
+                    id: undefined,
+                    name: '',
+                    basicCode: ''
+                },
                 dialogStatus: '',
                 checked: true,
                 addDialogFormVisible: false,
                 userWindowDialogFormVisible: false,
                 userWindowDialogLoading: false,
+                dialogFormVisibleItem: false,
                 currentWindow: [],
                 userTree: [],
                 checkedUser: [],
                 userList: [],
                 checkedUsers: [],
-                selectedRows: []
+                selectedRows: [],
+                zwfwItemList: [],
+                itemWindowList: [],
+                optionsName: []
             }
         },
         created() {
             this.getList();
+            this.getItemList();
         },
         computed: {
             ...mapGetters([
@@ -300,6 +380,119 @@
                     cameraKey: '',
                     ledKey: ''
                 };
+            },
+            handleItemList(row) {
+                this.currentItem = row;
+                this.dialogStatus = 'associateItem';
+                this.dialogFormVisibleItem = true;
+                this.windowId = row.id;
+                this.getItemListByWindowId();
+                resetForm(this, 'zwfwItemForm');
+            },
+            getItemListByWindowId() {
+                this.listLoading1 = true;
+                getAllItemWindow(this.windowId).then(response => {
+                    const arr = [];
+                    console.log(response.data);
+                    for (const ids of response.data) {
+                        for (const idList of this.itemWindowList) {
+                            if (ids.itemId == idList.id) {
+                                arr.push(idList);
+                            }
+                        }
+                    }
+                    this.zwfwItemList = arr;
+                    this.listLoading1 = false;
+                })
+            },
+            getItemList() {
+                const query = {}
+                getAllByNameOrbasicCode(query).then(response => {
+                    this.itemWindowList = response.data;
+                    console.log(this.itemWindowList);
+                })
+            },
+            remoteMethod(query) {
+                const listQueryName = {
+                    name: undefined,
+                    basicCode: undefined
+                }
+                if (query !== '') {
+                    if (/.*[\u4e00-\u9fa5]+.*$/.test(query)) {
+                        listQueryName.name = query;
+                    } else {
+                        listQueryName.basicCode = query
+                    }
+                    getAllByNameOrbasicCode(listQueryName).then(response => {
+                        this.optionsName = response.data;
+                    })
+                } else {
+                    this.optionsName = [];
+                }
+            },
+            changeMaterial(value) {
+                for (const obj of this.itemWindowList) {
+                    if (obj.name == value) {
+                        this.zwfwItem = Object.assign({}, obj);
+                    }
+                }
+            },
+            saveCategoryItem() {
+                this.windowItemRules.name[0].required = true;
+                this.$refs['zwfwItemForm'].validate((valid) => {
+                    if (valid) {
+                        for (let obj of this.zwfwItemList) {
+                            if (obj.id == this.zwfwItem.id) {
+                                this.$message.warning('事项已存在');
+                                this.windowItemRules.name[0].required = false;
+                                this.zwfwItem = {};
+                                return false;
+                            }
+                        }
+                        const query = {
+                            windowId: this.windowId,
+                            itemId: this.zwfwItem.id
+                        }
+                        this.listLoading1 = true;
+                        createZwfwWindowItem(query).then(response => {
+                            this.zwfwItemList.unshift(this.zwfwItem);
+                            this.$message.success('创建成功');
+                            this.listLoading1 = false;
+                            this.windowItemRules.name[0].required = false;
+                            this.currentItem.windowItemCount += 1;
+                            this.zwfwItem = {};
+                        })
+                    } else {
+                        return false;
+                    }
+                });
+            },
+            handleDeleteOne() {
+                if (this.selectedRows == 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        const length = this.selectedRows.length;
+                        const ids = new Array();
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        deleteZwfwWindowItem(this.windowId, ids).then(response => {
+                            this.currentItem.windowItemCount -= length;
+                            this.$message.success('删除成功');
+                        })
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.zwfwItemList.indexOf(deleteRow);
+                            this.zwfwItemList.splice(index, 1);
+                        }
+                    }).catch(() => {
+                        console.dir("取消");
+                    });
+                }
             },
             handleUserList(data) {
                 this.currentWindow = data;
