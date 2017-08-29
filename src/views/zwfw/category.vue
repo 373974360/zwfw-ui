@@ -60,7 +60,7 @@
             </el-table-column>
         </el-table>
 
-        <el-dialog  :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="closeOnClickModal">
+        <el-dialog  :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="closeOnClickModal" :before-close="resetCategoryForm">
             <el-form ref="categoryForm" class="small-space" :model="category" label-position="right" label-width="110px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="categoryRules">
                 <el-form-item label="上级事项分类">
@@ -79,7 +79,7 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button icon="circle-cross" type="danger" @click="dialogFormVisible = false">取 消</el-button>
+                <el-button icon="circle-cross" type="danger" @click="resetCategoryForm">取 消</el-button>
                 <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
                 </el-button>
 
@@ -89,7 +89,7 @@
         </el-dialog>
 
         <!--事项关联dialog-->
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisibleItem" :close-on-click-modal="closeOnClickModal">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisibleItem" :close-on-click-modal="closeOnClickModal" :before-close="resetZwfwItemForm">
             <div class="filter-container">
                 <el-button class="filter-item" style="margin-left: 10px;" @click="handleDeleteOne" type="danger"
                            icon="delete">
@@ -358,9 +358,6 @@
                 this.getOptions(null);
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
-                this.$nextTick(function () {
-                    resetForm(this, 'categoryForm');
-                })
             },
             handleUpdate(row) {
                 this.resetTemp();
@@ -380,9 +377,6 @@
                 this.dialogFormVisibleItem = true;
                 this.categoryId = row.id;
                 this.getItemListByCategoryId();
-                this.$nextTick(function () {
-                    resetForm(this, 'zwfwItemForm');
-                });
             },
             getItemListByCategoryId() {
                 this.listLoading1 = true;

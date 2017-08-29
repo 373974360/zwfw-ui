@@ -42,9 +42,6 @@
                 <el-button style="margin: 10px 0px;" type="primary" size="small" @click="onHandleAdd(scope.row)">添加</el-button>
                 <!--<el-button type="" size="small" @click="onHandleUpdate(scope.row)">编辑</el-button>-->
                 <el-button style="margin: 10px 0px;"class="item" type="danger" size="small" @click="onHandleDelete(scope.row)">删除</el-button>
-                <el-badge :value="scope.row.categoryItemCount" class="item" style="margin-top: 0px;">
-                    <el-button type="primary" size="small" @click="onHandleAssoicate(scope.row)">关联事项</el-button>
-                </el-badge>
             </template>
         </el-table-column>
     </el-table>
@@ -169,11 +166,6 @@
             onHandleDelete(data) {
                 if (this.handleDelete) {
                     this.handleDelete(data);
-                }
-            },
-            onHandleAssoicate(data) {
-                if (this.handleCreate1) {
-                    this.handleCreate1(data);
                 }
             }
         }
