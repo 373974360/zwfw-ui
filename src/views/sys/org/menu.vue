@@ -9,7 +9,8 @@
                    :handle-toggle="handleToggle" :handle-create="handleCreate"
                    :handle-update="handleUpdate" :handle-delete="handleDelete" :defaultExpandAll="false"></tree-grid>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="closeOnClickModal">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible"
+                   :close-on-click-modal="closeOnClickModal" :before-close="resetMenuForm">
             <el-form ref="menuForm" class="small-space" :model="sysMenu" label-position="right" label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="sysMenuRules">
 
@@ -48,7 +49,7 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button icon="circle-cross" type="danger" @click="dialogFormVisible = false">取 消</el-button>
+                <el-button icon="circle-cross" type="danger" @click="resetMenuForm">取 消</el-button>
                 <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
                 </el-button>
 
@@ -184,7 +185,6 @@
                 this.getOptions(null);
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
-                resetForm(this, 'menuForm');
             },
             handleUpdate(row) {
                 this.resetTemp();
@@ -251,6 +251,11 @@
                     permission: '',
                     remark: ''
                 };
+            },
+            resetMenuForm() {
+                this.dialogFormVisible = false;
+                this.resetTemp();
+                resetForm(this, 'menuForm');
             }
         }
     }

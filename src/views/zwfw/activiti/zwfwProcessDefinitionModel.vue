@@ -74,7 +74,8 @@
         </div>
 
         <!--弹出层-->
-        <el-dialog title="创建流程模型" :visible.sync="addDialogFormVisible" :close-on-click-modal="closeOnClickModal">
+        <el-dialog title="创建流程模型" :visible.sync="addDialogFormVisible"
+                   :close-on-click-modal="closeOnClickModal" :before-close="resetActivitiModelForm">
             <el-form ref="activitiModelForm" :model="activitiModel" label-position="right" label-width="110px"
                      :rules="rules">
                 <el-form-item label="名称" prop="name">
@@ -87,7 +88,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="create">创建</el-button>
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button @click="resetActivitiModelForm">取 消</el-button>
             </div>
         </el-dialog>
 
@@ -173,7 +174,6 @@
                 this.resetTemp();
                 this.dialogStatus = 'create';
                 this.addDialogFormVisible = true;
-                resetForm(this, 'activitiModelForm');
             },
             handleUpdate(row) {
                 window.open(getZwfwActivitiModelEditUrl(row.id));
@@ -266,6 +266,11 @@
                     description: '',
                     category: ''
                 };
+            },
+            resetActivitiModelForm() {
+                this.addDialogFormVisible = false;
+                this.resetTemp();
+                resetForm(this, 'activitiModelForm');
             }
         }
     }

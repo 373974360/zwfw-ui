@@ -61,7 +61,8 @@
         </div>
 
         <!--添加编辑-->
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="addDialogFormVisible" :close-on-click-modal="closeOnClickModal">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="addDialogFormVisible"
+                   :close-on-click-modal="closeOnClickModal" :before-close="resetRoleForm">
             <el-form ref="roleForm" class="small-space" :model="sysRole" label-position="left" label-width="80px"
                      style='width: 80%; margin-left:10%;' :rules="roleRules">
                 <el-form-item label="角色名称" prop="name">
@@ -79,7 +80,7 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button icon="circle-cross" type="danger" @click="addDialogFormVisible = false">取 消</el-button>
+                <el-button icon="circle-cross" type="danger" @click="resetRoleForm">取 消</el-button>
                 <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
                 </el-button>
 
@@ -102,7 +103,8 @@
         </el-dialog>
 
         <!--关联用户 :default-checked-keys="checkedUserList"-->
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="userRoleDialogFormVisible" :close-on-click-modal="closeOnClickModal">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="userRoleDialogFormVisible"
+                   :close-on-click-modal="closeOnClickModal">
             <el-form id="checkboxTable" ref="userForm" class="small-space" :model="sysRole"
                      label-position="left" label-width="25px"
                      style='width: 100%;' v-loading="userRoleDialogLoading">
@@ -214,7 +216,6 @@
                 this.resetTemp();
                 this.dialogStatus = 'create';
                 this.addDialogFormVisible = true;
-                resetForm(this, 'roleForm');
             },
             handleUpdate(row) {
                 this.currentRow = row;
@@ -371,6 +372,11 @@
                     this.$message.success('关联成功');
                     this.currentRole.userRoleCount = this.checkedUsers.length;
                 })
+            },
+            resetRoleForm() {
+                this.addDialogFormVisible = false;
+                this.resetTemp();
+                resetForm(this, 'roleForm');
             }
         }
     }

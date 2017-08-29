@@ -11,7 +11,8 @@
                    :handle-update="handleUpdate" :handle-delete="handleDelete">
         </tree-grid>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible"
+                   :close-on-click-modal="closeOnClickModal" :before-close="resetMetadataTypeForm">
             <el-form ref="metadataTypeForm" class="small-space" :model="sysMetadataType" label-position="right" label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="metadataTypeRules">
                 <el-form-item label="上级分类">
@@ -30,7 +31,7 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button icon="circle-cross" type="danger" @click="dialogFormVisible = false">取 消</el-button>
+                <el-button icon="circle-cross" type="danger" @click="resetMetadataTypeForm">取 消</el-button>
                 <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
                 </el-button>
 
@@ -45,7 +46,7 @@
 <script>
     import TreeGrid from 'components/TreeGrid';
     import {getMetadataTypeTree, getMetadataTypeCascader, createMetadataType, updateMetadataType, delMetadataType} from 'api/sys/system/metadataType';
-    import {copyProperties} from 'utils';
+    import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import TreeUtil from 'utils/TreeUtil.js';
 
@@ -85,7 +86,7 @@
                 dialogLoading: false,
                 metadataTypeRules: {
                     name: [
-                        {required: true, message: '请输入分类名称', trigger: 'blur'}
+                        {required: true, message: '请输入分类名称'}
                     ]
                 }
             }
@@ -104,7 +105,8 @@
                 }
             },
             ...mapGetters([
-                'textMap'
+                'textMap',
+                'closeOnClickModal'
             ])
         },
         methods: {
@@ -211,6 +213,11 @@
                     treePosition: '',
                     remark: ''
                 };
+            },
+            resetMetadataTypeForm() {
+                this.dialogFormVisible = false;
+                this.resetTemp();
+                resetForm(this, 'metadataTypeForm');
             }
         }
     }
