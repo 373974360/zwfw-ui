@@ -39,9 +39,11 @@
         </el-table-column>
         <el-table-column label="操作" v-if="treeType === 'normal'" width="300" align="center">
             <template scope="scope"  >
-                <el-button style="margin: 10px 0px;" type="primary" size="small" @click="onHandleAdd(scope.row)">添加</el-button>
-                <!--<el-button type="" size="small" @click="onHandleUpdate(scope.row)">编辑</el-button>-->
+                <el-button  style="margin: 10px 0px;" type="primary" size="small" @click="onHandleAdd(scope.row)">添加</el-button>
                 <el-button style="margin: 10px 0px;"class="item" type="danger" size="small" @click="onHandleDelete(scope.row)">删除</el-button>
+                <el-badge v-show="assoicateItem" :value="scope.row.categoryItemCount" class="item" style="margin-top: 0px;">
+                    <el-button type="primary" size="small" @click="onHandleAssoicate(scope.row)">关联事项</el-button>
+                </el-badge>
             </template>
         </el-table-column>
     </el-table>
@@ -110,7 +112,13 @@
                     return null
                 }
             },
-            handleCreate1: {
+            assoicateItem: {
+                type: Boolean,
+                default: function () {
+                    return false
+                }
+            },
+            handleItem: {
                 type: Function,
                 default: function () {
                     return null
@@ -118,7 +126,9 @@
             }
         },
         data() {
-            return {}
+            return {
+                associate: true
+            }
         },
         computed: {
             // 格式化数据源
@@ -166,6 +176,11 @@
             onHandleDelete(data) {
                 if (this.handleDelete) {
                     this.handleDelete(data);
+                }
+            },
+            onHandleAssoicate(data) {
+                if (this.handleItem) {
+                    this.handleItem(data);
                 }
             }
         }
