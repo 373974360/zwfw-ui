@@ -57,29 +57,6 @@ const SplitPane = () => import('../views/components/splitpane');
 const CountTo = () => import('../views/components/countTo');
 const Mixin = () => import('../views/components/mixin');
 
-/* Member */
-const MemberPersonal = () => import('../views/job/member/personal');
-const MemberOrgan = () => import('../views/job/member/organ');
-const Zpxx = () => import('../views/job/member/zpxx');
-const MemberLevel = () => import('../views/job/member/jobMemberLevel');
-
-
-/* 广告位管理 */
-const JobAd = () => import('../views/job/ad/jobAd');
-const JobAdType = () => import('../views/job/ad/jobAdType');
-
-/* 友情链接 */
-const JobLink = () => import('../views/job/link/jobLink');
-const JobLinkType = () => import('../views/job/link/jobLinkType');
-
-/* 内容管理 */
-const JobInfo = () => import('../views/job/info/jobInfo');
-const JobInfoCatalog = () => import('../views/job/info/jobInfoCatalog');
-
-/* 分类信息 */
-const Zyfl = () => import('../views/job/flxx/zyfl');
-const Hyfl = () => import('../views/job/flxx/hyfl');
-const Znfl = () => import('../views/job/flxx/znfl');
 
 /* charts */
 const chartIndex = () => import('../views/charts/index');
@@ -144,64 +121,6 @@ export default new Router({
 });
 
 export const asyncRouterMap = [
-    {
-        path: '/member',
-        component: Layout,
-        redirect: 'noredirect',
-        name: '会员管理',
-        icon: 'huiyuan',
-        children: [
-            {path: 'personal', component: MemberPersonal, name: '个人会员'},
-            {path: 'organ', component: MemberOrgan, name: '企业会员'},
-            {path: 'zpxx', component: Zpxx, name: '招聘信息'},
-            {path: 'memberLevel', component: MemberLevel, name: '会员级别'}
-        ]
-    },
-    {
-        path: '/info',
-        component: Layout,
-        redirect: 'noredirect',
-        name: '内容管理',
-        icon: 'neirongguanli',
-        children: [
-            {path: 'jobInfo', component: JobInfo, name: '内容管理'},
-            {path: 'jobInfoCatalog', component: JobInfoCatalog, name: '目录管理'}
-        ]
-    },
-    {
-        path: '/ad',
-        component: Layout,
-        redirect: 'noredirect',
-        name: '广告管理',
-        icon: 'msnui-ad',
-        children: [
-            {path: 'jobad', component: JobAd, name: '广告内容'},
-            {path: 'jobadtype', component: JobAdType, name: '广告位'}
-        ]
-    },
-    {
-        path: '/link',
-        component: Layout,
-        redirect: 'noredirect',
-        name: '友情链接',
-        icon: 'lianjie',
-        children: [
-            {path: 'joblink', component: JobLink, name: '友情链接'},
-            {path: 'joblinktype', component: JobLinkType, name: '链接分类'}
-        ]
-    },
-    {
-        path: '/flxx',
-        component: Layout,
-        redirect: 'noredirect',
-        name: '分类设置',
-        icon: 'fenlei',
-        children: [
-            {path: 'zyfl', component: Zyfl, name: '专业分类'},
-            {path: 'hyfl', component: Hyfl, name: '行业分类'},
-            {path: 'znfl', component: Znfl, name: '职能分类'}
-        ]
-    },
     {
         path: '/org',
         component: Layout,
