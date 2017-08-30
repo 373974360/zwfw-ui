@@ -9,10 +9,10 @@ export function getOrganList(query) {
     });
 }
 
-export function delMember(ids) {
+export function delOrgan(ids) {
     const data = {ids};
     return fetchJob({
-        url: '/jobMember/dels',
+        url: '/jobOrgan/dels',
         method: 'post',
         data
     })
@@ -38,6 +38,62 @@ export function jobMemberIntegral(query) {
         url: '/jobMemberIntegral/getAll',
         method: 'get',
         params: query
+    });
+}
+
+
+
+export function shOrgan(ids) {
+    const data = {ids};
+    return fetchJob({
+        url: '/jobOrgan/sh',
+        method: 'post',
+        data
+    });
+}
+
+export function cxOrgan(ids) {
+    const data = {ids};
+    return fetchJob({
+        url: '/jobOrgan/cx',
+        method: 'post',
+        data
+    });
+}
+
+export function tjOrgan(ids) {
+    const data = {ids};
+    return fetchJob({
+        url: '/jobOrgan/tj',
+        method: 'post',
+        data
+    });
+}
+
+export function qxtjOrgan(ids) {
+    const data = {ids};
+    return fetchJob({
+        url: '/jobOrgan/qxtj',
+        method: 'post',
+        data
+    });
+}
+
+export function authOrgan(ids) {
+    const data = {ids};
+    return fetchJob({
+        url: '/jobOrgan/auth',
+        method: 'post',
+        data
+    });
+}
+
+export function qxauthOrgan(ids) {
+    const data = {ids};
+    return fetchJob({
+        url: '/jobOrgan/qxauth',
+        method: 'post',
+        data
     });
 }
 

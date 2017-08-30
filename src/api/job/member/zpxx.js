@@ -16,3 +16,39 @@ export function delOrganZpxx(ids) {
         data
     });
 }
+
+export function shOrganZpxx(ids) {
+    const data = {ids};
+    return fetchJob({
+        url: '/jobOrganZpxx/sh',
+        method: 'post',
+        data
+    });
+}
+
+export function cxOrganZpxx(ids) {
+    const data = {ids};
+    return fetchJob({
+        url: '/jobOrganZpxx/cx',
+        method: 'post',
+        data
+    });
+}
+
+export function tjOrganZpxx(ids) {
+    const data = {ids};
+    return fetchJob({
+        url: '/jobOrganZpxx/tj',
+        method: 'post',
+        data
+    });
+}
+
+export function qxtjOrganZpxx(ids) {
+    const data = {ids};
+    return fetchJob({
+        url: '/jobOrganZpxx/qxtj',
+        method: 'post',
+        data
+    });
+}

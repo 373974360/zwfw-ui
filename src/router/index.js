@@ -81,6 +81,10 @@ const Zyfl = () => import('../views/job/flxx/zyfl');
 const Hyfl = () => import('../views/job/flxx/hyfl');
 const Znfl = () => import('../views/job/flxx/znfl');
 
+/* 统计分析 */
+const OrganData = () => import('../views/job/statistics/organdata');
+const PersonalData = () => import('../views/job/statistics/personaldata');
+
 /* charts */
 const chartIndex = () => import('../views/charts/index');
 const KeyboardChart = () => import('../views/charts/keyboard');
@@ -200,6 +204,17 @@ export const asyncRouterMap = [
             {path: 'zyfl', component: Zyfl, name: '专业分类'},
             {path: 'hyfl', component: Hyfl, name: '行业分类'},
             {path: 'znfl', component: Znfl, name: '职能分类'}
+        ]
+    },
+    {
+        path: '/statistics',
+        component: Layout,
+        redirect: 'noredirect',
+        name: '统计分析',
+        icon: 'statisticalAnalysis',
+        children: [
+            {path: 'organdata', component: OrganData, name: '企业数据统计'},
+            {path: 'personaldata', component: PersonalData, name: '个人数据统计'}
         ]
     },
     {

@@ -2,28 +2,64 @@
     <div class="app-container calendar-list-container">
         <div class="filter-container">
             <el-input v-model="listQuery.name" style="width: 180px;" class="filter-item"
-                      placeholder="登录名/公司名称"></el-input>
-            <el-select v-model="listQuery.gsxz" placeholder="公司性质" class="filter-item" style="width: 180px">
-                <el-option
-                        v-for="item in dicts['gsxz']"
-                        :key="item.code"
-                        :label="item.value"
-                        :value="item.code"/>
-            </el-select>
-            <el-select v-model="listQuery.gsgm" placeholder="公司规模" class="filter-item" style="width: 180px">
-                <el-option
-                        v-for="item in dicts['gsgm']"
-                        :key="item.code"
-                        :label="item.value"
-                        :value="item.code"/>
-            </el-select>
-            <el-cascader :options="cascader" class="filter-item" @change="handleChange"
-                         :show-all-levels="true" clearable filterable expand-trigger="hover"
-                         :change-on-select="true" style="width: 180px" placeholder="选择行业">
-            </el-cascader>
+                      placeholder="公司名称"></el-input>
+            <!--<el-select v-model="listQuery.gsxz" placeholder="公司性质" class="filter-item" style="width: 180px">-->
+            <!--<el-option-->
+            <!--v-for="item in dicts['gsxz']"-->
+            <!--:key="item.code"-->
+            <!--:label="item.value"-->
+            <!--:value="item.code"/>-->
+            <!--</el-select>-->
+            <!--<el-select v-model="listQuery.gsgm" placeholder="公司规模" class="filter-item" style="width: 180px">-->
+            <!--<el-option-->
+            <!--v-for="item in dicts['gsgm']"-->
+            <!--:key="item.code"-->
+            <!--:label="item.value"-->
+            <!--:value="item.code"/>-->
+            <!--</el-select>-->
+            <!--<el-cascader :options="cascader" class="filter-item" @change="handleChange"-->
+            <!--:show-all-levels="true" clearable filterable expand-trigger="hover"-->
+            <!--:change-on-select="true" style="width: 180px" placeholder="选择行业">-->
+            <!--</el-cascader>-->
             <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="搜索" placement="top-start">
                 <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
                     搜索
+                </el-button>
+            </el-tooltip>
+            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="审核" placement="top-start">
+                <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="circle-check"
+                           @click="handleSh">
+                    审核
+                </el-button>
+            </el-tooltip>
+            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="撤销审核" placement="top-start">
+                <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="circle-cross"
+                           @click="handleCx">
+                    撤销审核
+                </el-button>
+            </el-tooltip>
+            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="推荐" placement="top-start">
+                <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="circle-check"
+                           @click="handleTj">
+                    推荐
+                </el-button>
+            </el-tooltip>
+            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="取消推荐" placement="top-start">
+                <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="circle-cross"
+                           @click="handleQxtj">
+                    取消推荐
+                </el-button>
+            </el-tooltip>
+            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="认证" placement="top-start">
+                <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="circle-check"
+                           @click="handleAuth">
+                    认证
+                </el-button>
+            </el-tooltip>
+            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="取消认证" placement="top-start">
+                <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="circle-cross"
+                           @click="handleQxAuth">
+                    取消认证
                 </el-button>
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
@@ -36,19 +72,30 @@
         <el-table :data="list" v-loading.body="listLoading" border fit style="width: 100%"
                   @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"/>
-            <el-table-column align="center" label="联系电话" width="125">
+            <el-table-column align="center" label="手机号码" width="125">
                 <template scope="scope">
-                    <nobr>{{scope.row.phone}}</nobr>
+                    <nobr>{{scope.row.jobMember.phone}}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="电子邮箱">
+            <el-table-column align="left" label="电子邮箱" min-width="300">
                 <template scope="scope">
-                    <nobr class="link-type" @click="handleView(scope.row)">{{scope.row.email}}</nobr>
+                    <nobr class="link-type" @click="handleView(scope.row)">
+                        <el-tag v-if="scope.row.status == 1" type="gray">未审核</el-tag>
+                        <el-tag v-if="scope.row.isauth == 1 || scope.row.isauth == 3" type="gray">未认证</el-tag>
+                        <el-tag v-if="scope.row.enable == 0" type="danger">禁用</el-tag>
+                        <el-tag v-if="scope.row.isrec==1" type="danger">推荐</el-tag>
+                        {{scope.row.jobMember.email}}
+                    </nobr>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="注册时间" width="175">
                 <template scope="scope">
-                    <nobr>{{scope.row.registerdate | date('YYYY-MM-DD HH:mm:ss')}}</nobr>
+                    <nobr>{{scope.row.jobMember.registerdate | date('YYYY-MM-DD HH:mm:ss')}}</nobr>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="会员级别" width="100">
+                <template scope="scope">
+                    <nobr>{{scope.row.memberLevelName}}</nobr>
                 </template>
             </el-table-column>
             <el-table-column align="left" label="公司名称" width="210">
@@ -68,42 +115,12 @@
             </el-table-column>
             <el-table-column align="center" label="行业类别" width="170">
                 <template scope="scope">
-                    <nobr>{{scope.row.hylbname}}</nobr>
+                    <nobr>{{scope.row.hylbName}}</nobr>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="座机号码" width="130">
                 <template scope="scope">
                     <nobr>{{scope.row.tel}}</nobr>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="帐号状态" width="100">
-                <template scope="scope">
-                    <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
-                        {{scope.row.enable | enums('Enable')}}
-                    </el-tag>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="审核状态" width="100">
-                <template scope="scope">
-                    <el-tag v-if="scope.row.status == 1" type="gray">
-                        未审核
-                    </el-tag>
-                    <el-tag v-else-if="scope.row.status == 2" type="success">
-                        已审核
-                    </el-tag>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="认证状态" width="100">
-                <template scope="scope">
-                    <el-tag v-if="scope.row.authstatus == 1" type="gray">
-                        未认证
-                    </el-tag>
-                    <el-tag v-else-if="scope.row.authstatus == 2" type="success">
-                        已认证
-                    </el-tag>
-                    <el-tag v-else-if="scope.row.authstatus == 3" type="success">
-                        未通过
-                    </el-tag>
                 </template>
             </el-table-column>
         </el-table>
@@ -129,7 +146,7 @@
                         </tr>
                         <tr>
                             <th>行业类别:</th>
-                            <td>{{member.hylbname}}</td>
+                            <td>{{member.hylbName}}</td>
                             <th>公司座机:</th>
                             <td>{{member.tel}}</td>
                             <th>邮　　编:</th>
@@ -139,7 +156,7 @@
                             <th>公司官网:</th>
                             <td>{{member.gsgw}}</td>
                             <th>公司邮箱:</th>
-                            <td>{{member.email}}</td>
+                            <td>{{member.jobMember.email}}</td>
                         </tr>
                         <tr>
                             <th>地　　址:</th>
@@ -164,20 +181,6 @@
                         <tr>
                             <th>资料3:</th>
                             <td>{{organAuth.img3}}</td>
-                        </tr>
-                        <tr>
-                            <th>状态</th>
-                            <td>
-                                <el-tag v-if="organAuth.status == 1" type="gray">
-                                    未认证
-                                </el-tag>
-                                <el-tag v-else-if="organAuth.status == 2" type="success">
-                                    已认证
-                                </el-tag>
-                                <el-tag v-else-if="organAuth.status == 3" type="success">
-                                    未通过
-                                </el-tag>
-                            </td>
                         </tr>
                     </table>
                     <table v-else class="member_view" width="100%">
@@ -222,7 +225,19 @@
 </style>
 <script>
     import {getHyflCascader} from 'api/job/flxx/hyfl';
-    import {getOrganList, delMember, getMember, jobOrganAuth,jobMemberIntegral} from "api/job/member/organ";
+    import {
+        getOrganList,
+        delOrgan,
+        getMember,
+        jobOrganAuth,
+        jobMemberIntegral,
+        shOrgan,
+        cxOrgan,
+        tjOrgan,
+        qxtjOrgan,
+        authOrgan,
+        qxauthOrgan
+    } from "api/job/member/organ";
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     export default{
@@ -230,7 +245,7 @@
         data() {
             return {
                 list: null,
-                memberIntegralList:null,
+                memberIntegralList: null,
                 total: null,
                 listLoading: true,
                 cascader: [],
@@ -247,7 +262,8 @@
                 dialogVisible: false,
                 dialogStatus: '',
                 member: {
-                    id: '',
+                    jobMember: {},
+                    memberId: '',
                     name: '',
                     gsxz: '',
                     gsgm: '',
@@ -257,19 +273,20 @@
                     address: '',
                     gsgw: '',
                     yb: '',
-                    email: '',
+                    tel: '',
                     gsjj: '',
+                    level: '',
+                    isauth: '',
                     logo: '',
                     photo: '',
-                    hylbname: ''
+                    hylbName: ''
                 },
                 organAuth: {
                     id: '',
                     memberId: '',
                     img1: '',
                     img2: '',
-                    img3: '',
-                    status: ''
+                    img3: ''
                 }
             }
         },
@@ -328,14 +345,7 @@
                 this.resetTemp();
                 this.dialogVisible = true;
                 this.dialogStatus = 'view';
-                this.member.id = row.id;
-                getMember({'id': this.member.id}).then(response => {
-                    if (response.httpCode == 200) {
-                        this.member = response.data;
-                    } else {
-                        this.$message.error(response.msg);
-                    }
-                })
+                this.member = copyProperties(this.member, row);
             },
             handleDelete() {
                 var selectCounts = this.selectedRows.length;
@@ -349,10 +359,10 @@
                     }).then(() => {
                         let ids = new Array();
                         for (const deleteRow of this.selectedRows) {
-                            ids.push(deleteRow.id);
+                            ids.push(deleteRow.memberId);
                         }
                         this.listLoading = true;
-                        delMember(ids).then(response => {
+                        delOrgan(ids).then(response => {
                             if (response.httpCode == 200) {
                                 this.total -= selectCounts;
                                 for (const deleteRow of this.selectedRows) {
@@ -376,7 +386,7 @@
             },
             handleClick(tab) {
                 if (tab.name == 'auth') {
-                    jobOrganAuth({'memberId': this.member.id}).then(response => {
+                    jobOrganAuth({'memberId': this.member.memberId}).then(response => {
                         if (response.httpCode == 200) {
                             this.organAuth = response.data;
                         } else {
@@ -384,13 +394,211 @@
                         }
                     })
                 } else if (tab.name == 'integral') {
-                    jobMemberIntegral({'memberId': this.member.id}).then(response => {
+                    jobMemberIntegral({'memberId': this.member.memberId}).then(response => {
                         if (response.httpCode == 200) {
                             this.memberIntegralList = response.data;
                         } else {
                             this.$message.error(response.msg);
                         }
                     })
+                }
+            },
+            handleSh() {
+                var selectCounts = this.selectedRows.length;
+                if (this.selectedRows == 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('确定通过审核选中的信息?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        let ids = new Array();
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        this.listLoading = true;
+                        shOrgan(ids).then(response => {
+                            if (response.httpCode == 200) {
+                                this.getList();
+                                this.$message.success('审核成功');
+                            } else {
+                                this.$message.error(response.msg);
+                            }
+                            this.listLoading = false;
+                        })
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.list.indexOf(deleteRow);
+                            this.list.splice(index, 1);
+                        }
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
+            handleCx() {
+                var selectCounts = this.selectedRows.length;
+                if (this.selectedRows == 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('确定撤销审核选中的信息?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        let ids = new Array();
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        this.listLoading = true;
+                        cxOrgan(ids).then(response => {
+                            if (response.httpCode == 200) {
+                                this.getList();
+                                this.$message.success('撤销成功');
+                            } else {
+                                this.$message.error(response.msg);
+                            }
+                            this.listLoading = false;
+                        })
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.list.indexOf(deleteRow);
+                            this.list.splice(index, 1);
+                        }
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
+            handleTj() {
+                var selectCounts = this.selectedRows.length;
+                if (this.selectedRows == 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('确定推荐选中的信息?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        let ids = new Array();
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        this.listLoading = true;
+                        tjOrgan(ids).then(response => {
+                            if (response.httpCode == 200) {
+                                this.getList();
+                                this.$message.success('推荐成功');
+                            } else {
+                                this.$message.error(response.msg);
+                            }
+                            this.listLoading = false;
+                        })
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.list.indexOf(deleteRow);
+                            this.list.splice(index, 1);
+                        }
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
+            handleQxtj() {
+                var selectCounts = this.selectedRows.length;
+                if (this.selectedRows == 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('确定取消推荐选中的信息?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        let ids = new Array();
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        this.listLoading = true;
+                        qxtjOrgan(ids).then(response => {
+                            if (response.httpCode == 200) {
+                                this.getList();
+                                this.$message.success('取消成功');
+                            } else {
+                                this.$message.error(response.msg);
+                            }
+                            this.listLoading = false;
+                        })
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.list.indexOf(deleteRow);
+                            this.list.splice(index, 1);
+                        }
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
+            handleAuth() {
+                var selectCounts = this.selectedRows.length;
+                if (this.selectedRows == 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('确定认证选中的信息?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        let ids = new Array();
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        this.listLoading = true;
+                        authOrgan(ids).then(response => {
+                            if (response.httpCode == 200) {
+                                this.getList();
+                                this.$message.success('认证成功');
+                            } else {
+                                this.$message.error(response.msg);
+                            }
+                            this.listLoading = false;
+                        })
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.list.indexOf(deleteRow);
+                            this.list.splice(index, 1);
+                        }
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
+            handleQxAuth() {
+                var selectCounts = this.selectedRows.length;
+                if (this.selectedRows == 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('确定取消认证选中的信息?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        let ids = new Array();
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        this.listLoading = true;
+                        qxauthOrgan(ids).then(response => {
+                            if (response.httpCode == 200) {
+                                this.getList();
+                                this.$message.success('取消成功');
+                            } else {
+                                this.$message.error(response.msg);
+                            }
+                            this.listLoading = false;
+                        })
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.list.indexOf(deleteRow);
+                            this.list.splice(index, 1);
+                        }
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
                 }
             },
             resetTemp() {
@@ -400,11 +608,11 @@
                     memberId: '',
                     img1: '',
                     img2: '',
-                    img3: '',
-                    status: ''
+                    img3: ''
                 }
                 this.member = {
-                    id: '',
+                    jobMember: {},
+                    memberId: '',
                     name: '',
                     gsxz: '',
                     gsgm: '',
@@ -414,11 +622,13 @@
                     address: '',
                     gsgw: '',
                     yb: '',
-                    email: '',
+                    tel: '',
                     gsjj: '',
+                    level: '',
+                    isauth: '',
                     logo: '',
                     photo: '',
-                    hylbname: ''
+                    hylbName: ''
                 };
             }
         }

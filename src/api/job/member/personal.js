@@ -8,10 +8,10 @@ export function getPersonalList(query) {
     });
 }
 
-export function delMember(ids) {
+export function delPersonal(ids) {
     const data = {ids};
     return fetchJob({
-        url: '/jobMember/dels',
+        url: '/jobPersonal/dels',
         method: 'post',
         data
     })
@@ -62,6 +62,25 @@ export function getPersonalZs(query) {
         url: '/jobPersonalZs/getAll',
         method: 'get',
         params: query
+    });
+}
+
+
+export function tjPersonal(ids) {
+    const data = {ids};
+    return fetchJob({
+        url: '/jobPersonal/tj',
+        method: 'post',
+        data
+    });
+}
+
+export function qxtjPersonal(ids) {
+    const data = {ids};
+    return fetchJob({
+        url: '/jobPersonal/qxtj',
+        method: 'post',
+        data
     });
 }
 

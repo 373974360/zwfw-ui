@@ -77,10 +77,12 @@
                     <el-input v-model="jobAd.name"></el-input>
                 </el-form-item>
                 <el-form-item label="图　　标" prop="img">
-                    <el-upload class="upload-demo"
-                            action="https://jsonplaceholder.typicode.com/posts/" >
-                        <el-button size="small" type="primary">点击上传</el-button>
-                        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+                    <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
+                               :action="uploadAction" :file-list="uploadAvatars"
+                               :on-success="handleAvatarSuccess"
+                               :before-upload="beforeAvatarUpload"
+                               :on-remove="handleRemove">
+                        <i class="el-icon-plus"></i>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="链接地址" prop="linkurl">
@@ -89,8 +91,8 @@
                 <table>
                     <tr>
                         <td>
-                            <el-form-item label="推荐位置" prop="wz">
-                                <el-select v-model="jobAd.wz" placeholder="推荐位置">
+                            <el-form-item label="广告位置" prop="wz">
+                                <el-select v-model="jobAd.wz" placeholder="广告位置">
                                     <el-option
                                             v-for="item in selectOptions"
                                             :key="item.id"
@@ -174,7 +176,9 @@
                     wz: [
                         {required: true, message: '请选择广告位置', trigger: 'change', type:'number'}
                     ]
-                }
+                },
+                uploadAction: process.env.SYS_API + '/sysUpload/',
+                uploadAvatars: []
             }
         },
         created() {
@@ -228,6 +232,21 @@
                 this.jobAd = copyProperties(this.jobAd, row);
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
+            },
+            handleAvatarSuccess(res, file, fileList) {
+                fileList.length = 0;
+                fileList.push(file);
+                this.jobAd.img = res.url;
+            },
+            beforeAvatarUpload(file) {
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isLt2M;
+            },
+            handleRemove() {
+                this.jobAd.img = '';
             },
             handleDelete(row) {
                 if (this.selectedRows == 0) {

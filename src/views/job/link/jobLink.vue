@@ -70,11 +70,12 @@
                     <el-input v-model="jobLink.name"></el-input>
                 </el-form-item>
                 <el-form-item label="图　　标" prop="img">
-                    <el-upload class="upload-demo"
-                               action="https://jsonplaceholder.typicode.com/posts/"
-                               accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
-                        <el-button size="small" type="primary">点击上传</el-button>
-                        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+                    <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
+                               :action="uploadAction" :file-list="uploadAvatars"
+                               :on-success="handleAvatarSuccess"
+                               :before-upload="beforeAvatarUpload"
+                               :on-remove="handleRemove">
+                        <i class="el-icon-plus"></i>
                     </el-upload>
                 </el-form-item>
                 <table>
@@ -157,7 +158,9 @@
                     linktype: [
                         {required: true, message: '请选择链接类型', type: 'number', trigger: 'change'}
                     ]
-                }
+                },
+                uploadAction: process.env.SYS_API + '/sysUpload/',
+                uploadAvatars: []
             }
         },
         created() {
@@ -211,6 +214,21 @@
                 this.jobLink = copyProperties(this.jobLink, row);
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
+            },
+            handleAvatarSuccess(res, file, fileList) {
+                fileList.length = 0;
+                fileList.push(file);
+                this.jobLink.img = res.url;
+            },
+            beforeAvatarUpload(file) {
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isLt2M;
+            },
+            handleRemove() {
+                this.jobLink.img = '';
             },
             handleDelete(row) {
                 if (this.selectedRows == 0) {

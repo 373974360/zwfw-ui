@@ -2,42 +2,55 @@
     <div class="app-container calendar-list-container">
         <div class="filter-container">
             <el-input v-model="listQuery.username" style="width: 180px;" class="filter-item"
-                      placeholder="登录名/真实姓名"></el-input>
-            <el-select v-model="listQuery.qzzt" placeholder="求职状态" class="filter-item" style="width: 180px">
-                <el-option
-                        v-for="item in dicts['qzzt']"
-                        :key="item.code"
-                        :label="item.value"
-                        :value="item.code"/>
-            </el-select>
-            <el-select v-model="listQuery.hyzk" placeholder="婚姻状况" class="filter-item" style="width: 180px">
-                <el-option
-                        v-for="item in dicts['hyzk']"
-                        :key="item.code"
-                        :label="item.value"
-                        :value="item.code"/>
-            </el-select>
-            <el-select v-model="listQuery.zzmm" placeholder="政治面貌" class="filter-item" style="width: 180px">
-                <el-option
-                        v-for="item in dicts['zzmm']"
-                        :key="item.code"
-                        :label="item.value"
-                        :value="item.code"/>
-            </el-select>
-            <el-select v-model="listQuery.zgxl" placeholder="学历" class="filter-item" style="width: 180px">
-                <el-option
-                        v-for="item in dicts['xueli']"
-                        :key="item.code"
-                        :label="item.value"
-                        :value="item.code"/>
-            </el-select>
+                      placeholder="真实姓名"></el-input>
+            <!--<el-select v-model="listQuery.qzzt" placeholder="求职状态" class="filter-item" style="width: 180px">-->
+            <!--<el-option-->
+            <!--v-for="item in dicts['qzzt']"-->
+            <!--:key="item.code"-->
+            <!--:label="item.value"-->
+            <!--:value="item.code"/>-->
+            <!--</el-select>-->
+            <!--<el-select v-model="listQuery.hyzk" placeholder="婚姻状况" class="filter-item" style="width: 180px">-->
+            <!--<el-option-->
+            <!--v-for="item in dicts['hyzk']"-->
+            <!--:key="item.code"-->
+            <!--:label="item.value"-->
+            <!--:value="item.code"/>-->
+            <!--</el-select>-->
+            <!--<el-select v-model="listQuery.zzmm" placeholder="政治面貌" class="filter-item" style="width: 180px">-->
+            <!--<el-option-->
+            <!--v-for="item in dicts['zzmm']"-->
+            <!--:key="item.code"-->
+            <!--:label="item.value"-->
+            <!--:value="item.code"/>-->
+            <!--</el-select>-->
+            <!--<el-select v-model="listQuery.zgxl" placeholder="学历" class="filter-item" style="width: 180px">-->
+            <!--<el-option-->
+            <!--v-for="item in dicts['xueli']"-->
+            <!--:key="item.code"-->
+            <!--:label="item.value"-->
+            <!--:value="item.code"/>-->
+            <!--</el-select>-->
             <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="搜索" placement="top-start">
                 <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
                     搜索
                 </el-button>
             </el-tooltip>
+            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="推荐" placement="top-start">
+                <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="circle-check"
+                           @click="handleTj">
+                    推荐
+                </el-button>
+            </el-tooltip>
+            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="取消推荐" placement="top-start">
+                <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="circle-cross"
+                           @click="handleQxtj">
+                    取消推荐
+                </el-button>
+            </el-tooltip>
             <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
-                <el-button class="filter-item" style="margin-left: 10px;" type="danger" @click="handleDelete" icon="delete">
+                <el-button class="filter-item" style="margin-left: 10px;" type="danger" @click="handleDelete"
+                           icon="delete">
                     删除
                 </el-button>
             </el-tooltip>
@@ -47,17 +60,21 @@
             <el-table-column type="selection" width="55"/>
             <el-table-column align="center" label="联系电话" width="125">
                 <template scope="scope">
-                    <nobr>{{scope.row.phone}}</nobr>
+                    <nobr>{{scope.row.jobMember.phone}}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="电子邮箱">
+            <el-table-column align="left" label="电子邮箱" min-width="300">
                 <template scope="scope">
-                    <nobr class="link-type" @click="handleView(scope.row)">{{scope.row.email}}</nobr>
+                    <nobr class="link-type" @click="handleView(scope.row)">
+                        <el-tag v-if="scope.row.isrec==1" type="danger">推荐</el-tag>
+                        <el-tag v-if="scope.row.enable == 0" type="danger">禁用</el-tag>
+                        {{scope.row.jobMember.email}}
+                    </nobr>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="注册时间" width="180">
                 <template scope="scope">
-                    <nobr>{{scope.row.registerdate | date('YYYY-MM-DD HH:mm:ss')}}</nobr>
+                    <nobr>{{scope.row.jobMember.registerdate | date('YYYY-MM-DD HH:mm:ss')}}</nobr>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="真实姓名" width="95">
@@ -90,21 +107,14 @@
                     <nobr>{{scope.row.zzmm | dicts('zzmm') }}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="工作年份" width="100">
-                <template scope="scope">
-                    <nobr>{{scope.row.ksgznf}}</nobr>
-                </template>
-            </el-table-column>
             <el-table-column align="center" label="求职状态" width="140">
                 <template scope="scope">
                     <nobr>{{scope.row.qzzt | dicts('qzzt')}}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="帐号状态" width="100">
+            <el-table-column align="center" label="刷新时间" width="175">
                 <template scope="scope">
-                    <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
-                        {{scope.row.enable | enums('Enable')}}
-                    </el-tag>
+                    <nobr>{{scope.row.reloadtime | date('YYYY-MM-DD HH:mm:ss')}}</nobr>
                 </template>
             </el-table-column>
         </el-table>
@@ -124,9 +134,9 @@
                             <th>姓　　名:</th>
                             <td>{{member.username}}</td>
                             <th>联系电话:</th>
-                            <td>{{member.phone}}</td>
+                            <td>{{member.jobMember.phone}}</td>
                             <th>电子邮箱:</th>
-                            <td>{{member.email}}</td>
+                            <td>{{member.jobMember.email}}</td>
                         </tr>
                         <tr>
                             <th>出生日期:</th>
@@ -205,7 +215,7 @@
                     </table>
                 </el-tab-pane>
                 <el-tab-pane label="工作经历" name="gzjl">
-                    <table v-for="gzjl in gzjlList" class="member_view" style="width: 100%" >
+                    <table v-for="gzjl in gzjlList" class="member_view" style="width: 100%">
                         <tr>
                             <th>公司名称:</th>
                             <td>
@@ -221,7 +231,7 @@
                         <tr>
                             <th>公司性质:</th>
                             <td>
-                                <nobr>{{gzjl.gsxz | dicts('gsxz')}}　｜　{{gzjl.gzlx |  dicts('gzxz')}}</nobr>
+                                <nobr>{{gzjl.gsxz | dicts('gsxz')}}　｜　{{gzjl.gzlx | dicts('gzxz')}}</nobr>
                             </td>
                         </tr>
                         <tr>
@@ -233,7 +243,7 @@
                     </table>
                 </el-tab-pane>
                 <el-tab-pane label="项目经验" name="xmjy">
-                    <table v-for="xmjy in xmjyList" class="member_view" style="width: 100%" >
+                    <table v-for="xmjy in xmjyList" class="member_view" style="width: 100%">
                         <tr>
                             <th>项目名称:</th>
                             <td>
@@ -255,7 +265,7 @@
                     </table>
                 </el-tab-pane>
                 <el-tab-pane label="教育经历" name="jyjl">
-                    <table v-for="jyjl in jyjlList" class="member_view" style="width: 100%" >
+                    <table v-for="jyjl in jyjlList" class="member_view" style="width: 100%">
                         <tr>
                             <th>学校名称:</th>
                             <td>
@@ -305,12 +315,33 @@
     </div>
 </template>
 <style>
-    .member_view td,th{line-height:45px;}
-    .member_view th{text-align:right;width:100px;}
-    .member_view td{text-align:left;padding-left:10px;}
+    .member_view td, th {
+        line-height: 45px;
+    }
+
+    .member_view th {
+        text-align: right;
+        width: 100px;
+    }
+
+    .member_view td {
+        text-align: left;
+        padding-left: 10px;
+    }
 </style>
 <script>
-    import {getPersonalList,delMember,getPersonal,getPersonalQzyx,getPersonalGzjl,getPersonalItem,getPersonalJyjl,getPersonalZs} from "api/job/member/personal";
+    import {
+        getPersonalList,
+        delPersonal,
+        getPersonal,
+        getPersonalQzyx,
+        getPersonalGzjl,
+        getPersonalItem,
+        getPersonalJyjl,
+        getPersonalZs,
+        tjPersonal,
+        qxtjPersonal
+    } from "api/job/member/personal";
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     export default{
@@ -334,28 +365,28 @@
                 selectedRows: [],
                 dialogStatus: '',
                 member: {
+                    jobMember: {},
+                    memberId: '',
+                    username: '',
+                    sex: '',
                     csrq: '',
-                    email:'',
-                    grzy: '',
+                    jzd: '',
+                    qzzt: '',
+                    ksgznf: '',
                     hkgj: '',
                     hyzk: '',
-                    jtzz: '',
-                    jzd: '',
-                    ksgznf: '',
-                    mqnsr: '',
-                    phone: '',
-                    qtlxfs: '',
-                    qtlxfslx: '',
-                    qzzt: '',
-                    registerdatec: '',
-                    sex: '',
-                    sg: '',
-                    status: '',
-                    username: '',
-                    yb: '',
-                    zjhm: '',
                     zjlx: '',
-                    zzmm: ''
+                    zjhm: '',
+                    qtlxfslx: '',
+                    qtlxfs: '',
+                    zzmm: '',
+                    sg: '',
+                    jtzz: '',
+                    zgxl: '',
+                    yb: '',
+                    grzy: '',
+                    mqnsr: '',
+                    reloadtime: ''
                 },
                 qzyx: {
                     qwxz: '',
@@ -410,26 +441,19 @@
                 this.resetTemp();
                 this.dialogVisible = true;
                 this.dialogStatus = 'view';
-                this.member.id = row.id;
-                getPersonal({'id':this.member.id}).then(response => {
-                    if (response.httpCode == 200) {
-                        this.member = response.data;
-                    } else {
-                        this.$message.error(response.msg);
-                    }
-                })
+                this.member = copyProperties(this.member, row);
             },
             handleClick(tab) {
-                if(tab.name=='qzyx'){
-                    getPersonalQzyx({'memberId':this.member.id}).then(response => {
+                if (tab.name == 'qzyx') {
+                    getPersonalQzyx({'memberId': this.member.memberId}).then(response => {
                         if (response.httpCode == 200) {
                             this.qzyx = response.data;
                         } else {
                             this.$message.error(response.msg);
                         }
                     })
-                }else if(tab.name=='gzjl'){
-                    getPersonalGzjl({'memberId':this.member.id}).then(response => {
+                } else if (tab.name == 'gzjl') {
+                    getPersonalGzjl({'memberId': this.member.memberId}).then(response => {
                         if (response.httpCode == 200) {
                             this.gzjlList = response.data;
                         } else {
@@ -437,8 +461,8 @@
                         }
                         this.listLoading = false;
                     })
-                }else if(tab.name=='xmjy'){
-                    getPersonalItem({'memberId':this.member.id}).then(response => {
+                } else if (tab.name == 'xmjy') {
+                    getPersonalItem({'memberId': this.member.memberId}).then(response => {
                         if (response.httpCode == 200) {
                             this.xmjyList = response.data;
                         } else {
@@ -446,8 +470,8 @@
                         }
                         this.listLoading = false;
                     })
-                }else if(tab.name=='jyjl'){
-                    getPersonalJyjl({'memberId':this.member.id}).then(response => {
+                } else if (tab.name == 'jyjl') {
+                    getPersonalJyjl({'memberId': this.member.memberId}).then(response => {
                         if (response.httpCode == 200) {
                             this.jyjlList = response.data;
                         } else {
@@ -455,8 +479,8 @@
                         }
                         this.listLoading = false;
                     })
-                }else if(tab.name=='ryzs'){
-                    getPersonalZs({'memberId':this.member.id}).then(response => {
+                } else if (tab.name == 'ryzs') {
+                    getPersonalZs({'memberId': this.member.memberId}).then(response => {
                         if (response.httpCode == 200) {
                             this.ryzsList = response.data;
                         } else {
@@ -478,10 +502,10 @@
                     }).then(() => {
                         let ids = new Array();
                         for (const deleteRow of this.selectedRows) {
-                            ids.push(deleteRow.id);
+                            ids.push(deleteRow.memberId);
                         }
                         this.listLoading = true;
-                        delMember(ids).then(response => {
+                        delPersonal(ids).then(response => {
                             if (response.httpCode == 200) {
                                 this.total -= selectCounts;
                                 for (const deleteRow of this.selectedRows) {
@@ -503,34 +527,100 @@
                     });
                 }
             },
+            handleTj() {
+                var selectCounts = this.selectedRows.length;
+                if (this.selectedRows == 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('确定推荐选中的信息?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        let ids = new Array();
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        this.listLoading = true;
+                        tjPersonal(ids).then(response => {
+                            if (response.httpCode == 200) {
+                                this.getList();
+                                this.$message.success('推荐成功');
+                            } else {
+                                this.$message.error(response.msg);
+                            }
+                            this.listLoading = false;
+                        })
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.list.indexOf(deleteRow);
+                            this.list.splice(index, 1);
+                        }
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
+            handleQxtj() {
+                var selectCounts = this.selectedRows.length;
+                if (this.selectedRows == 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('确定取消推荐选中的信息?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        let ids = new Array();
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        this.listLoading = true;
+                        qxtjPersonal(ids).then(response => {
+                            if (response.httpCode == 200) {
+                                this.getList();
+                                this.$message.success('取消成功');
+                            } else {
+                                this.$message.error(response.msg);
+                            }
+                            this.listLoading = false;
+                        })
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.list.indexOf(deleteRow);
+                            this.list.splice(index, 1);
+                        }
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
             resetTemp() {
                 this.gzjlList = null,
-                this.mjyList = null,
-                this.jyjlList = null,
-                this.ryzsList = null
+                    this.mjyList = null,
+                    this.jyjlList = null,
+                    this.ryzsList = null
                 this.member = {
+                    jobMember: {},
+                    memberId: '',
+                    username: '',
+                    sex: '',
                     csrq: '',
-                    email:'',
-                    grzy: '',
+                    jzd: '',
+                    qzzt: '',
+                    ksgznf: '',
                     hkgj: '',
                     hyzk: '',
-                    jtzz: '',
-                    jzd: '',
-                    ksgznf: '',
-                    mqnsr: '',
-                    phone: '',
-                    qtlxfs: '',
-                    qtlxfslx: '',
-                    qzzt: '',
-                    registerdatec: '',
-                    sex: '',
-                    sg: '',
-                    status: '',
-                    username: '',
-                    yb: '',
-                    zjhm: '',
                     zjlx: '',
-                    zzmm: ''
+                    zjhm: '',
+                    qtlxfslx: '',
+                    qtlxfs: '',
+                    zzmm: '',
+                    sg: '',
+                    jtzz: '',
+                    zgxl: '',
+                    yb: '',
+                    grzy: '',
+                    mqnsr: '',
+                    reloadtime: ''
                 };
                 this.qzyx = {
                     qwxz: '',
