@@ -29,21 +29,6 @@ const SysMessageFiled = () => import('../views/sys/system/sysMessageFiled');
 const SysMessageTemplate = () => import('../views/sys/system/SysMessageTemplate');
 
 
-/* zwfw */
-const Category = () => import('../views/zwfw/category');
-const Item = () => import('../views/zwfw/zwfwItem');
-const Window = () => import('../views/zwfw/window');
-const FormEditor = () => import('../views/zwfw/formEditor/editor');
-const LegalPerson = () => import('../views/zwfw/zwfwLegalPerson');
-const NaturePerson = () => import('../views/zwfw/zwfwNaturePerson');
-const ZwfwProcessDefinitionModel = () => import('../views/zwfw/activiti/zwfwProcessDefinitionModel');
-const ZwfwProcessDefinition = () => import('../views/zwfw/activiti/ZwfwProcessDefinition');
-const ZwfwTaskSetting = () => import('../views/zwfw/activiti/ZwfwTaskSetting')
-
-/* 定时任务 */
-const RegistryCenter = () => import('../views/task/registryCenter');
-const Task = () => import('../views/task/task');
-
 /* components */
 const componentsIndex = () => import('../views/components/index');
 const Tinymce = () => import('../views/components/tinymce');
@@ -244,38 +229,6 @@ export const asyncRouterMap = [
             {path: 'sysMessageTemplate', component: SysMessageTemplate, name: '短信模板管理'},
             {path: 'date', component: Holiday, name: '节假日管理'},
             {path: 'log', component: Log, name: '日志管理'}
-        ]
-    },
-    {
-        path: '/task',
-        component: Layout,
-        redirect: 'noredirect',
-        name: '任务管理',
-        icon: 'ling',
-        children: [
-            {path: 'registryCenter', component: RegistryCenter, name: '注册中心'},
-            {path: 'task', component: Task, name: '定时任务'}
-        ]
-    },
-    {
-        path: '/operate',
-        component: Layout,
-        redirect: 'noredirect',
-        name: '业务管理',
-        icon: 'yewuguanli',
-        children: [
-            {path: 'category', component: Category, name: '事项分类管理'},
-            {path: 'window', component: Window, name: '窗口管理'},
-            {path: 'formEditor', component: FormEditor, name: '表单编辑器'},
-            {path: 'zwfwItem', component: Item, name: '事项管理'},
-            {path: 'window', component: Window, name: '窗口管理'},
-            {path: 'zwfwLegalPerson', component: LegalPerson, name: '法人管理'},
-            {path: 'zwfwNaturePerson', component: NaturePerson, name: '自然人管理'},
-            {path: 'zwfwProcessDefinitionModel', component: ZwfwProcessDefinitionModel, name: '流程模型编辑'},
-            {path: 'zwfwProcessDefinition', component: ZwfwProcessDefinition, name: '已部署流程管理'},
-            {path: 'zwfwUserTaskSetting', component: ZwfwTaskSetting, name: '审批节点管理'},
-            // {path: 'zwfwProcessInstance', component: ZwfwProcessDefinitionModel, name: '已部署流程管理'},
-
         ]
     },
     {
