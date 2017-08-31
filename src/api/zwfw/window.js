@@ -34,6 +34,13 @@ export function delWindow(ids) {
         data
     })
 }
+export function getAllWindow() {
+    return fetchZwfw({
+        url: '/zwfwWindow/getAll',
+        mothod: 'get'
+    });
+}
+
 export function delWindowUser(ids) {
     const data = {ids};
     return fetchZwfw({

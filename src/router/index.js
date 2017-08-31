@@ -44,6 +44,11 @@ const ZwfwTaskSetting = () => import('../views/zwfw/activiti/ZwfwTaskSetting')
 const RegistryCenter = () => import('../views/task/registryCenter');
 const Task = () => import('../views/task/task');
 
+/* 统计分析 */
+const Call = () => import('../views/count/call');
+
+
+
 /* components */
 const componentsIndex = () => import('../views/components/index');
 const Tinymce = () => import('../views/components/tinymce');
@@ -180,6 +185,15 @@ export const asyncRouterMap = [
             {path: 'zwfwUserTaskSetting', component: ZwfwTaskSetting, name: '审批节点管理'},
             // {path: 'zwfwProcessInstance', component: ZwfwProcessDefinitionModel, name: '已部署流程管理'},
 
+        ]
+    },{
+        path: '/count',
+        component: Layout,
+        redirect: 'noredirect',
+        name: '统计分析',
+        icon: 'statisticalAnalysis',
+        children: [
+            {path: 'call', component: Call, name: '叫号统计'}
         ]
     },
     {

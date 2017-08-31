@@ -57,3 +57,10 @@ export function deleteCategory(id) {
         data
     })
 }
+
+export function getAllCategory() {
+    return fetchZwfw({
+        url: '/zwfwCategory/getAll',
+        mothod: 'get'
+    });
+}
