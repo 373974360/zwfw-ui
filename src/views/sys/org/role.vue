@@ -70,10 +70,10 @@
                 </el-form-item>
                 <el-form-item label="角色类型" prop="enable">
                     <el-radio-group v-model="sysRole.type">
-                        <el-radio  v-for="item in enums['RoleType']"
-                                   :key="item.code"
-                                   :label="item.code"
-                                   :value="item.code">
+                        <el-radio v-for="item in enums['RoleType']"
+                                  :key="item.code"
+                                  :label="item.code"
+                                  :value="item.code">
                             <span style="font-weight:normal;">{{item.value}}</span>
                         </el-radio>
                     </el-radio-group>
@@ -90,11 +90,12 @@
         </el-dialog>
 
         <!--关联权限-->
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="roleMenuDialogFormVisible" :close-on-click-modal="closeOnClickModal">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="roleMenuDialogFormVisible"
+                   :close-on-click-modal="closeOnClickModal">
             <el-form ref="roleMenuForm" class="small-space" :model="sysRole" label-position="left" label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="roleMenuDialogLoading">
                 <el-tree ref="menuTree" :data="menuTree" show-checkbox node-key="id" :default-expand-all="true"
-                         @check-change="menuTreeChecked" :default-checked-keys="checkedMenu"></el-tree>
+                         @check-change="menuTreeChecked" :check-strictly="true"></el-tree>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="roleMenuDialogFormVisible = false">取 消</el-button>
@@ -118,7 +119,8 @@
                                 </div>
                             </el-col>
                         </el-row>
-                        <el-checkbox v-for="user in users" :key="user.id" :label="user.id" style="top: -29px;margin-left: 15px;">
+                        <el-checkbox v-for="user in users" :key="user.id" :label="user.id"
+                                     style="top: -29px;margin-left: 15px;">
                             {{user.name}}
                         </el-checkbox>
                     </el-checkbox-group>
@@ -134,7 +136,16 @@
 </template>
 
 <script>
-    import {getRoleList, createRole, updateRole, createRoleMenus, createUserRole, getAllRoleMenus, getAllUserRole, delRole} from 'api/sys/org/role';
+    import {
+        getRoleList,
+        createRole,
+        updateRole,
+        createRoleMenus,
+        createUserRole,
+        getAllRoleMenus,
+        getAllUserRole,
+        delRole
+    } from 'api/sys/org/role';
     import {getMenuTree} from 'api/sys/org/menu';
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
@@ -172,7 +183,6 @@
                 userRoleDialogLoading: false,
                 currentRole: [],
                 menuTree: [],
-                checkedMenu: [],
                 userTree: [],
                 checkedUser: [],
                 deptList: [],
@@ -301,24 +311,28 @@
                 })
             },
             getAllRoleMenu() {
-                this.checkedMenu = [];
                 getAllRoleMenus(this.currentRole.id).then(response => {
                     const menus = response.data;
-                    let checked = [];
                     for (const menu of menus) {
-                        checked.push(menu.menuId);
+                        this.$refs.menuTree.setChecked(menu.menuId, true, false);
+//                        console.log(x);
                     }
-                    console.log(checked);
-                    this.$refs.menuTree.setCheckedKeys(checked);
                 })
             },
+
             menuTreeChecked(data, checked) {
                 if (checked) {
-                    this.checkedMenu.push(data.id);
+                    console.log(data)
+//                    this.checkedMenu.push(data.id);
+                    //找到上级，如果上级节点没有选中就自动选中
+                    if (data.parentId != 0) {
+                        this.$refs.menuTree.setChecked(data.parentId,true, false);
+                    }
                 } else {
-                    const index = this.checkedMenu.indexOf(data.id);
-                    if (index >= 0) {
-                        this.checkedMenu.splice(index, 1);
+                    if(data.children!=null && data.children.length>0) {
+                        for(let c of data.children) {
+                            this.$refs.menuTree.setChecked(c.id, false, true);
+                        }
                     }
                 }
             },
@@ -330,7 +344,10 @@
             },
             submitRoleMenu() {
                 this.roleMenuDialogLoading = true;
-                createRoleMenus(this.currentRole.id, this.checkedMenu).then(response => {
+
+                var checked = this.$refs.menuTree.getCheckedKeys(false);
+                console.log("提交的内容：", checked);
+                createRoleMenus(this.currentRole.id, checked).then(response => {
                     this.roleMenuDialogLoading = false;
                     this.roleMenuDialogFormVisible = false;
                     this.$message.success('关联成功');
