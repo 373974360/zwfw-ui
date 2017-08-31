@@ -47,8 +47,8 @@
         </el-col>
         <el-col :span="8">
             <div class="grid-content">
-                <div >
-                    <Sticky :sticky-top="0" :height="500"  >
+                <div>
+                    <Sticky :sticky-top="0" :height="500">
                         <!--<div class="affix" id="diagramInfo" style="z-index:99999;background:#fff;margin:auto;left:0; right:0; top:0;width:50%;">-->
                         <div id="diagramInfo">
 
@@ -58,7 +58,7 @@
                             <label class="assignee"></label>
                         </div>
                         <div id="taskUserEditor" style="display: none">
-                            <form method="post" onsubmit="return false;">
+                            <el-form ref="task" :model="search" label-width="80px">
                                 <h3>人员安排设置(点击保存生效):</h3>
                                 <el-select v-model="search.searchUser" filterable placeholder="请选择"
                                            @change="chooseAddUser">
@@ -92,40 +92,38 @@
                                             label="地址">
                                     </el-table-column>
                                 </el-table>
-                            </form>
+                            </el-form>
                         </div>
                         <div id="userTaskSetting" v-show="task.taskDefinitionKey">
-                            <form method="post" onsubmit="return false;">
-                                <h3>用户任务其他设置(点击保存生效):</h3>
-                                <div class="form-group">
-                                    <div class="checkbox-inline">
-                                        <el-checkbox v-model="task.supportCorrection">
-                                            允许整改
-                                        </el-checkbox>
-                                    </div>
-                                    <div class="checkbox-inline">
-                                        <el-checkbox v-model="task.supportExtendTime">
-                                            允许申请延期
-                                        </el-checkbox>
-                                    </div>
-                                    <div class="checkbox-inline">
-                                        <el-checkbox v-model="task.supportClose">
-                                            允许不予受理
-                                        </el-checkbox>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>前台步骤名称:</label>
+                            <h3>用户任务其他设置(点击保存生效):</h3>
+                            <el-form ref="settingForm" :model="task" label-width="120px">
+                                <el-form-item label="开放功能：">
+                                    <el-checkbox v-model="task.supportCorrection">
+                                        允许整改
+                                    </el-checkbox>
+                                    <el-checkbox v-model="task.supportExtendTime">
+                                        允许申请延期
+                                    </el-checkbox>
+                                    <el-checkbox v-model="task.supportClose">
+                                        允许不予受理
+                                    </el-checkbox>
+                                </el-form-item>
+
+                                <el-form-item label="前台名称：">
                                     <el-input v-model="task.frontName" placeholder="请输入内容"></el-input>
-                                </div>
-                                <div class="form-group">
-                                    <label>任务默认时限天数:</label>
+                                </el-form-item>
+                                <el-form-item label="默认时限天数：">
                                     <el-input-number v-model="task.defaultTimeLimit" :min="1"
                                                      :max="999"></el-input-number>
-
-                                </div>
-                                <div class="form-group">
-                                    <label>任务开始时通知模板:</label>
+                                </el-form-item>
+                                <el-form-item label="任务开始通知：">
+                                    <el-select v-model="task.beginNotifyTarget" placeholder="请选择">
+                                        <el-option label="不通知" value="0"></el-option>
+                                        <el-option label="申请办件的注册用户" value="1"></el-option>
+                                        <el-option label="下一个步骤的工作人员" value="2"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="开始时通知模板：">
                                     <el-select v-model="task.beginNotifyTemplate" placeholder="请选择">
                                         <el-option value="">不通知</el-option>
                                         <el-option
@@ -135,18 +133,16 @@
                                                 :value="t.template_id" :title="t.sms_content">
                                         </el-option>
                                     </el-select>
-                                </div>
-                                <div class="form-group">
-                                    <label>任务开始时通知对象:</label>
-                                    <el-select v-model="task.beginNotifyTarget" placeholder="请选择">
-                                        <el-option value="">不通知</el-option>
-                                        <el-option value="0">不通知</el-option>
-                                        <el-option value="1">申请办件的注册用户</el-option>
-                                        <el-option value="2">下一个步骤的工作人员</el-option>
+                                </el-form-item>
+
+                                <el-form-item label="任务结束通知：">
+                                    <el-select v-model="task.completeNotifyTarget" placeholder="请选择">
+                                        <el-option label="不通知" value="0"></el-option>
+                                        <el-option label="申请办件的注册用户" value="1"></el-option>
+                                        <el-option label="下一个步骤的工作人员" value="2"></el-option>
                                     </el-select>
-                                </div>
-                                <div class="form-group">
-                                    <label>任务完成时通知模板:</label>
+                                </el-form-item>
+                                <el-form-item label="结束通知模板：">
                                     <el-select v-model="task.completeNotifyTemplate" placeholder="请选择">
                                         <el-option value="">不通知</el-option>
                                         <el-option
@@ -156,18 +152,9 @@
                                                 :value="t.template_id" :title="t.sms_content">
                                         </el-option>
                                     </el-select>
-                                </div>
-                                <div class="form-group">
-                                    <label>任务完成时通知对象:</label>
-                                    <el-select v-model="task.completeNotifyTarget" placeholder="请选择">
-                                        <el-option value="">不通知</el-option>
-                                        <el-option value="0">不通知</el-option>
-                                        <el-option value="1">申请办件的注册用户</el-option>
-                                        <el-option value="2">下一个步骤的工作人员</el-option>
-                                    </el-select>
-                                </div>
-                                <el-button @click="saveOtherSetting">保存其他设置</el-button>
-                            </form>
+                                </el-form-item>
+                                <el-button class="el-button--primary" @click="saveOtherSetting">保存其他设置</el-button>
+                            </el-form>
                         </div>
                     </Sticky>
                 </div>
@@ -195,12 +182,12 @@
         },
         name: 'table_demo',
         computed: {
-            mainHeihgt:function(){
+            mainHeihgt: function () {
                 return window.innerHeight - 50;
             },
             candidateUserList: function () {
                 let array = [];
-                if (this.task && this.task.taskCandidateUsers != '') {
+                if (this.task && this.task.taskCandidateUsers) {
                     var taskCandidateUsersIds = this.task.taskCandidateUsers.split(',');
                     for (let uid of taskCandidateUsersIds) {
                         for (let u of this.userList) {
@@ -229,10 +216,10 @@
                 processDefinitionList: [],
                 processDefinitionVersionList: [],
                 task: {
-                    name: '审核申报材料，出具单',
+                    name: '',
                     taskDefinitionKey: '',
-                    id: 'ziliao_shenhe',
-                    type: 1,
+                    id: '',
+                    type: 0,
                     taskAssigmentUser: '',
                     taskCandidateUsers: '',
                     taskCandidateGroup: '',
@@ -240,11 +227,11 @@
                     supportExtendTime: true,
                     supportClose: true,
                     frontName: '',
-                    defaultTimeLimit: 1,
-                    completeNotifyTemplate: 1,
-                    completeNotifyTarget: 1,
-                    beginNotifyTemplate: 1,
-                    beginNotifyTarget: 1
+                    defaultTimeLimit: 0,
+                    completeNotifyTemplate: 0,
+                    completeNotifyTarget: 0,
+                    beginNotifyTemplate: 0,
+                    beginNotifyTarget: 0
 
                 }
             }
@@ -334,6 +321,8 @@
              * 保存其他设置
              */
             saveOtherSetting() {
+                var _this = this;
+
                 saveOtherSetting({
                     processDefinitionId: this.processDefinitionId,
                     taskDefinitionKey: this.task.taskDefinitionKey,
@@ -346,11 +335,10 @@
                     supportCorrection: this.task.supportCorrection,
                     supportExtendTime: this.supportExtendTime,
                     supportClose: this.task.supportClose
-
                 }).then(function () {
-                    this.$message.success('保存成功');
+                    _this.$message.success('保存成功');
                 }).then(function () {
-                    this.$message.error('保存失败');
+                    _this.$message.error('保存失败');
                 });
             }
 
@@ -401,14 +389,6 @@
                                     //显示人员列表
                                     $('#taskUserEditor').show();
                                     $('#taskUserInfo').hide();
-
-//                                    taskCandidateUsersTable.bootstrapTable('refresh', {
-//                                        query: {
-//                                            processDefinitionId: canvas.processDefinitionId,
-//                                            taskDefinitionKey: contextObject.getId()
-//                                        },
-//                                        url: '/admin/item/process/getTaskUsers'
-//                                    });
                                 }
                                 $('#userTaskSetting').data({
                                     taskDefinitionKey: contextObject.id,
@@ -425,17 +405,35 @@
 //                                    _this.candidateUserList = data;
 //                                });
 
+                                _this.task = {
+                                    name: '',
+                                    taskDefinitionKey: '',
+                                    id: '',
+                                    type: 0,
+                                    taskAssigmentUser: '',
+                                    taskCandidateUsers: '',
+                                    taskCandidateGroup: '',
+                                    supportCorrection: true,
+                                    supportExtendTime: true,
+                                    supportClose: true,
+                                    frontName: '',
+                                    defaultTimeLimit: 0,
+                                    completeNotifyTemplate: 0,
+                                    completeNotifyTarget: 0,
+                                    beginNotifyTemplate: 0,
+                                    beginNotifyTarget: 0
+                                };
 
                                 _this.task.taskDefinitionKey = contextObject.id;
                                 _this.task.name = contextObject.getProperty('name');
                                 _this.processDefinitionId = canvas.processDefinitionId;
-                                _this.task.taskCandidateUsers = [];
+                                _this.task.taskCandidateUsers = '';
 
 //                                发请求查询当前设置的默认时限
                                 getOtherSetting(canvas.processDefinitionId, contextObject.id).then(response => {
                                     const data = response.data;
                                     const c = data.setting;
-                                    console.log(c);
+//                                    console.log(c);
                                     if (c) {
                                         _this.task.beginNotifyTarget = c.beginNotifyTarget;
                                         _this.task.beginNotifyTemplate = c.beginNotifyTemplate;

@@ -19,10 +19,6 @@
             },
             className: {
                 type: String
-            },
-            height: {
-                type: String,
-                default:'auto'
             }
         },
         data() {
