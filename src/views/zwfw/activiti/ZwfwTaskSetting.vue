@@ -47,135 +47,130 @@
         </el-col>
         <el-col :span="8">
             <div class="grid-content">
+                <div >
+                    <Sticky :sticky-top="0" :height="500"  >
+                        <!--<div class="affix" id="diagramInfo" style="z-index:99999;background:#fff;margin:auto;left:0; right:0; top:0;width:50%;">-->
+                        <div id="diagramInfo">
 
-                <Sticky>
+                        </div>
+                        <div id="taskUserInfo" style="display: none">
+                            <h3>人员安排</h3>
+                            <label class="assignee"></label>
+                        </div>
+                        <div id="taskUserEditor" style="display: none">
+                            <form method="post" onsubmit="return false;">
+                                <h3>人员安排设置(点击保存生效):</h3>
+                                <el-select v-model="search.searchUser" filterable placeholder="请选择"
+                                           @change="chooseAddUser">
+                                    <el-option
+                                            v-for="item in userList"
+                                            :key="item.id"
+                                            :label="item.name"
+                                            :value="item.id">
+                                    </el-option>
+                                </el-select>
+                                <el-button slot="append" @click="addUserToTask">添加</el-button>
+                                <el-button class="el-button--primary" @click="saveCandidateUser">
+                                    保存人员设置
+                                </el-button>
 
-                    <!--<div class="affix" id="diagramInfo" style="z-index:99999;background:#fff;margin:auto;left:0; right:0; top:0;width:50%;">-->
-                    <div id="diagramInfo">
-
-                    </div>
-
-                    <div id="taskUserInfo" style="display: none">
-                        <h3>人员安排</h3>
-                        <label class="assignee"></label>
-                    </div>
-                    <div id="taskUserEditor" style="display: none">
-                        <form method="post" onsubmit="return false;">
-                            <h3>人员安排设置(点击保存生效):</h3>
-                            <el-select v-model="search.searchUser" filterable placeholder="请选择" @change="chooseAddUser">
-                                <el-option
-                                        v-for="item in userList"
-                                        :key="item.id"
-                                        :label="item.name"
-                                        :value="item.id">
-                                </el-option>
-
-                            </el-select>
-                            <el-button slot="append" @click="addUserToTask">添加</el-button>
-                            <el-button class="el-button--primary" @click="saveCandidateUser">
-                                保存人员设置
-                            </el-button>
-
-                            <el-table
-                                    :data="candidateUserList"
-                                    style="width: 100%;margin-top:14px;">
-                                <el-table-column
-                                        prop="id"
-                                        label="编号"
-                                        width="180">
-                                </el-table-column>
-                                <el-table-column
-                                        prop="name"
-                                        label="姓名"
-                                        width="180">
-                                </el-table-column>
-                                <el-table-column
-                                        prop="dept"
-                                        label="地址">
-                                </el-table-column>
-                            </el-table>
-                        </form>
-                    </div>
-                    <div id="userTaskSetting" v-show="task.taskDefinitionKey" class="m-t-sm">
-                        <form method="post" onsubmit="return false;">
-                            <h3>用户任务其他设置(点击保存生效):</h3>
-                            <div class="form-group">
-                                <div class="checkbox-inline">
-                                    <label>
-                                        <input type="checkbox" name="supportCorrection" v-model="task.supportCorrection"
-                                               value="1">允许整改</label>
+                                <el-table
+                                        :data="candidateUserList"
+                                        style="width: 100%;margin-top:14px;">
+                                    <el-table-column
+                                            prop="id"
+                                            label="编号"
+                                            width="180">
+                                    </el-table-column>
+                                    <el-table-column
+                                            prop="name"
+                                            label="姓名"
+                                            width="180">
+                                    </el-table-column>
+                                    <el-table-column
+                                            prop="dept"
+                                            label="地址">
+                                    </el-table-column>
+                                </el-table>
+                            </form>
+                        </div>
+                        <div id="userTaskSetting" v-show="task.taskDefinitionKey">
+                            <form method="post" onsubmit="return false;">
+                                <h3>用户任务其他设置(点击保存生效):</h3>
+                                <div class="form-group">
+                                    <div class="checkbox-inline">
+                                        <el-checkbox v-model="task.supportCorrection">
+                                            允许整改
+                                        </el-checkbox>
+                                    </div>
+                                    <div class="checkbox-inline">
+                                        <el-checkbox v-model="task.supportExtendTime">
+                                            允许申请延期
+                                        </el-checkbox>
+                                    </div>
+                                    <div class="checkbox-inline">
+                                        <el-checkbox v-model="task.supportClose">
+                                            允许不予受理
+                                        </el-checkbox>
+                                    </div>
                                 </div>
-                                <div class="checkbox-inline">
-                                    <label>
-                                        <input type="checkbox" name="supportExtendTime"
-                                               v-model="task.supportExtendTime">允许申请延期</label>
+                                <div class="form-group">
+                                    <label>前台步骤名称:</label>
+                                    <el-input v-model="task.frontName" placeholder="请输入内容"></el-input>
                                 </div>
-                                <div class="checkbox-inline">
-                                    <label>
-                                        <input type="checkbox" name="supportClose" v-model="task.supportClose"
-                                               value="1">允许不予受理</label>
+                                <div class="form-group">
+                                    <label>任务默认时限天数:</label>
+                                    <el-input-number v-model="task.defaultTimeLimit" :min="1"
+                                                     :max="999"></el-input-number>
+
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="timerInput">前台步骤名称:</label>
-                                <input type="text" class="form-control" id="frontName"
-                                       name="frontName"
-                                       placeholder="" v-model="task.frontName">
-                            </div>
-                            <div class="form-group">
-                                <label for="timerInput">任务默认时限天数:</label>
-                                <input type="number" min="0" max="999" class="form-control" id="timerInput"
-                                       name="defaultTimeLimit"
-                                       placeholder="设置时限天数，0表是不限制" v-model="task.defaultTimeLimit">
-                            </div>
-                            <div class="form-group">
-                                <label for="beginNotifyTemplate">任务开始时通知模板:</label>
-                                <select class="form-control" id="beginNotifyTemplate"
-                                        name="beginNotifyTemplate" v-model="task.beginNotifyTemplate">
-                                    <option value="">不通知</option>
-                                    <option v-for="t in messageTemplate" :value="t.template_id" :title="t.sms_content">
-                                        {{t.sms_title}}
-                                    </option>
-
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="notifyTarget">任务开始时通知对象:</label>
-                                <select class="form-control"
-                                        name="beginNotifyTarget" id="beginNotifyTarget"
-                                        v-model="task.beginNotifyTarget">
-                                    <option value="0">不通知</option>
-                                    <option value="1">申请办件的注册用户</option>
-                                    <option value="2">下一个步骤的工作人员</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="completeNotifyTemplate">任务完成时通知模板:</label>
-                                <select class="form-control" id="completeNotifyTemplate"
-                                        name="completeNotifyTemplate" v-model="task.completeNotifyTemplate">
-                                    <option value="">不通知</option>
-                                    <option v-for="t in messageTemplate" :value="t.template_id" :title="t.sms_content">
-                                        {{t.sms_title}}
-                                    </option>
-
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="notifyTarget">任务完成时通知对象:</label>
-                                <select class="form-control"
-                                        name="completeNotifyTarget" id="notifyTarget"
-                                        v-model="task.completeNotifyTarget">
-                                    <option value="0">不通知</option>
-                                    <option value="1">申请办件的注册用户</option>
-                                    <option value="2">下一个步骤的工作人员</option>
-                                </select>
-                            </div>
-                            <button class="btn btn-primary btn-block " type="button" v-on:click="saveOtherSetting">
-                                保存其他设置
-                            </button>
-                        </form>
-                    </div>
-                </Sticky>
+                                <div class="form-group">
+                                    <label>任务开始时通知模板:</label>
+                                    <el-select v-model="task.beginNotifyTemplate" placeholder="请选择">
+                                        <el-option value="">不通知</el-option>
+                                        <el-option
+                                                v-for="t in messageTemplate"
+                                                :key="t.template_id"
+                                                :label="t.sms_title"
+                                                :value="t.template_id" :title="t.sms_content">
+                                        </el-option>
+                                    </el-select>
+                                </div>
+                                <div class="form-group">
+                                    <label>任务开始时通知对象:</label>
+                                    <el-select v-model="task.beginNotifyTarget" placeholder="请选择">
+                                        <el-option value="">不通知</el-option>
+                                        <el-option value="0">不通知</el-option>
+                                        <el-option value="1">申请办件的注册用户</el-option>
+                                        <el-option value="2">下一个步骤的工作人员</el-option>
+                                    </el-select>
+                                </div>
+                                <div class="form-group">
+                                    <label>任务完成时通知模板:</label>
+                                    <el-select v-model="task.completeNotifyTemplate" placeholder="请选择">
+                                        <el-option value="">不通知</el-option>
+                                        <el-option
+                                                v-for="t in messageTemplate"
+                                                :key="t.template_id"
+                                                :label="t.sms_title"
+                                                :value="t.template_id" :title="t.sms_content">
+                                        </el-option>
+                                    </el-select>
+                                </div>
+                                <div class="form-group">
+                                    <label>任务完成时通知对象:</label>
+                                    <el-select v-model="task.completeNotifyTarget" placeholder="请选择">
+                                        <el-option value="">不通知</el-option>
+                                        <el-option value="0">不通知</el-option>
+                                        <el-option value="1">申请办件的注册用户</el-option>
+                                        <el-option value="2">下一个步骤的工作人员</el-option>
+                                    </el-select>
+                                </div>
+                                <el-button @click="saveOtherSetting">保存其他设置</el-button>
+                            </form>
+                        </div>
+                    </Sticky>
+                </div>
             </div>
         </el-col>
     </el-row>
@@ -200,6 +195,9 @@
         },
         name: 'table_demo',
         computed: {
+            mainHeihgt:function(){
+                return window.innerHeight - 50;
+            },
             candidateUserList: function () {
                 let array = [];
                 if (this.task && this.task.taskCandidateUsers != '') {
@@ -428,7 +426,6 @@
 //                                });
 
 
-
                                 _this.task.taskDefinitionKey = contextObject.id;
                                 _this.task.name = contextObject.getProperty('name');
                                 _this.processDefinitionId = canvas.processDefinitionId;
@@ -438,6 +435,7 @@
                                 getOtherSetting(canvas.processDefinitionId, contextObject.id).then(response => {
                                     const data = response.data;
                                     const c = data.setting;
+                                    console.log(c);
                                     if (c) {
                                         _this.task.beginNotifyTarget = c.beginNotifyTarget;
                                         _this.task.beginNotifyTemplate = c.beginNotifyTemplate;
