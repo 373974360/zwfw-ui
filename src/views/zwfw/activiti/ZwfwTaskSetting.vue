@@ -489,36 +489,39 @@
                 processDefinitionByKeyUrl: process.env.ZWFW_ACTIVITI_API + "/zwfw/activiti/service/process-definition/{processDefinitionKey}/diagram-layout?callback=?"
             };
 
+            ProcessDiagramGenerator.processDiagrams = {};
+            ProcessDiagramGenerator.diagramBreadCrumbs = null;
+            window.pb1 = new $.ProgressBar({
+                boundingBox: '#pb1_div',
+                label: 'Progressbar!',
+                on: {
+                    complete: function () {
+                        console.log("Progress Bar COMPLETE");
+                        this.set('label', 'complete!');
+//                        if (processInstanceId) {
+//                            ProcessDiagramGenerator.drawHighLights(processInstanceId);
+//                        }
+                    },
+                    valueChange: function (e) {
+                        this.set('label', e.newVal + '%');
+                    }
+                },
+                value: 0
+            });
 
             this.flush = function (processDefinitionId, processInstanceId) {
                 _this.loading = true;
                 processDefinitionId = this.search.processDefinitionId;
                 if (this.search.processDefinitionId) {
                     ProcessDiagramGenerator.drawDiagram(processDefinitionId);
+                    _this.loading = false;
+
                 } else {
                     alert("processDefinitionId parameter is required");
                 }
                 //如果进度条不存在的话，就构建一个进度条
                 if (window.pb1 == null) {
-                    window.pb1 = new $.ProgressBar({
-                        boundingBox: '#pb1_div',
-                        label: 'Progressbar!',
-                        on: {
-                            complete: function () {
-                                console.log("Progress Bar COMPLETE");
-                                this.set('label', 'complete!');
-                                _this.loading = false;
 
-                                if (processInstanceId) {
-                                    ProcessDiagramGenerator.drawHighLights(processInstanceId);
-                                }
-                            },
-                            valueChange: function (e) {
-                                this.set('label', e.newVal + '%');
-                            }
-                        },
-                        value: 0
-                    });
                 } else {
                     console.log(window.pb1)
                     window.pb1.set('value', 0);
