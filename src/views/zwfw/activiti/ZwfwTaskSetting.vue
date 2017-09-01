@@ -1,6 +1,6 @@
 <template>
     <el-row :gutter="20">
-        <el-col :span="16">
+        <el-col :span="14">
             <div class="grid-content">
                 <!--流程选择和流程的显示区域-->
                 <el-form :inline="true" ref="searchForm" :model="search" label-width="80px">
@@ -45,10 +45,10 @@
 
             </div>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="10">
             <div class="grid-content">
                 <div>
-                    <Sticky :sticky-top="0" :height="500">
+                    <Sticky :sticky-top="50" :sticky-height="mainHeight">
                         <!--<div class="affix" id="diagramInfo" style="z-index:99999;background:#fff;margin:auto;left:0; right:0; top:0;width:50%;">-->
                         <div id="diagramInfo">
 
@@ -153,7 +153,9 @@
                                         </el-option>
                                     </el-select>
                                 </el-form-item>
-                                <el-button class="el-button--primary" @click="saveOtherSetting">保存其他设置</el-button>
+                                <el-form-item>
+                                    <el-button class="el-button--primary" @click="saveOtherSetting">保存其他设置</el-button>
+                                </el-form-item>
                             </el-form>
                         </div>
                     </Sticky>
@@ -182,7 +184,7 @@
         },
         name: 'table_demo',
         computed: {
-            mainHeihgt: function () {
+            mainHeight: function () {
                 return window.innerHeight - 50;
             },
             candidateUserList: function () {
@@ -223,9 +225,9 @@
                     taskAssigmentUser: '',
                     taskCandidateUsers: '',
                     taskCandidateGroup: '',
-                    supportCorrection: true,
-                    supportExtendTime: true,
-                    supportClose: true,
+                    supportCorrection: false,
+                    supportExtendTime: false,
+                    supportClose: false,
                     frontName: '',
                     defaultTimeLimit: 0,
                     completeNotifyTemplate: 0,
@@ -368,8 +370,6 @@
                         //隐藏时限设置
 
                         _this.data = {};
-
-
                         if (contextObject.flow) {
                             ProcessDiagramGenerator.showFlowInfo(contextObject);
                         } else {
@@ -413,15 +413,15 @@
                                     taskAssigmentUser: '',
                                     taskCandidateUsers: '',
                                     taskCandidateGroup: '',
-                                    supportCorrection: true,
-                                    supportExtendTime: true,
-                                    supportClose: true,
+                                    supportCorrection: false,
+                                    supportExtendTime: false,
+                                    supportClose: false,
                                     frontName: '',
-                                    defaultTimeLimit: 0,
-                                    completeNotifyTemplate: 0,
-                                    completeNotifyTarget: 0,
-                                    beginNotifyTemplate: 0,
-                                    beginNotifyTarget: 0
+                                    defaultTimeLimit: '',
+                                    completeNotifyTemplate: '',
+                                    completeNotifyTarget: '',
+                                    beginNotifyTemplate: '',
+                                    beginNotifyTarget: ''
                                 };
 
                                 _this.task.taskDefinitionKey = contextObject.id;
@@ -489,36 +489,39 @@
                 processDefinitionByKeyUrl: process.env.ZWFW_ACTIVITI_API + "/zwfw/activiti/service/process-definition/{processDefinitionKey}/diagram-layout?callback=?"
             };
 
+            ProcessDiagramGenerator.processDiagrams = {};
+            ProcessDiagramGenerator.diagramBreadCrumbs = null;
+            window.pb1 = new $.ProgressBar({
+                boundingBox: '#pb1_div',
+                label: 'Progressbar!',
+                on: {
+                    complete: function () {
+                        console.log("Progress Bar COMPLETE");
+                        this.set('label', 'complete!');
+//                        if (processInstanceId) {
+//                            ProcessDiagramGenerator.drawHighLights(processInstanceId);
+//                        }
+                    },
+                    valueChange: function (e) {
+                        this.set('label', e.newVal + '%');
+                    }
+                },
+                value: 0
+            });
 
             this.flush = function (processDefinitionId, processInstanceId) {
                 _this.loading = true;
                 processDefinitionId = this.search.processDefinitionId;
                 if (this.search.processDefinitionId) {
                     ProcessDiagramGenerator.drawDiagram(processDefinitionId);
+                    _this.loading = false;
+
                 } else {
                     alert("processDefinitionId parameter is required");
                 }
                 //如果进度条不存在的话，就构建一个进度条
                 if (window.pb1 == null) {
-                    window.pb1 = new $.ProgressBar({
-                        boundingBox: '#pb1_div',
-                        label: 'Progressbar!',
-                        on: {
-                            complete: function () {
-                                console.log("Progress Bar COMPLETE");
-                                this.set('label', 'complete!');
-                                _this.loading = false;
 
-                                if (processInstanceId) {
-                                    ProcessDiagramGenerator.drawHighLights(processInstanceId);
-                                }
-                            },
-                            valueChange: function (e) {
-                                this.set('label', e.newVal + '%');
-                            }
-                        },
-                        value: 0
-                    });
                 } else {
                     console.log(window.pb1)
                     window.pb1.set('value', 0);
