@@ -6,10 +6,13 @@
             </div>
             <hr style="height:1px;border:none;border-top:1px solid #555555;"/>
             <div class="filter-container">
-                <el-date-picker style="top: -5px;" v-model="listQuery.selectDateTime" type="datetimerange"
-                                placeholder="选择时间范围" format="yyyy-MM-dd HH:mm:ss" @change="changeDate">
+                <el-date-picker style="top: -5px;" v-model="listQuery.startDate" type="date"
+                                placeholder="开始时间" @change="changeDate">
                 </el-date-picker>
-                <el-select v-model="listQuery.categorys" class="filter-item" multiple filterable placeholder="选择部门">
+                <el-date-picker style="top: -5px;" v-model="listQuery.endDate" type="date"
+                                placeholder="结束时间" @change="changeDate">
+                </el-date-picker>
+                <el-select v-model="listQuery.categoryIds" class="filter-item" multiple filterable placeholder="选择部门">
                     <el-option :key="item.id" v-for="item in categoryList" :label="item.name" :value="item.id"/>
                 </el-select>
                 <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="统计" placement="top-start">
@@ -26,10 +29,13 @@
             </div>
             <hr style="height:1px;border:none;border-top:1px solid #555555;"/>
             <div class="filter-container">
-                <el-date-picker style="top: -5px;" v-model="listQuery.selectDateTime" type="datetimerange"
-                                placeholder="选择时间范围" format="yyyy-MM-dd HH:mm:ss" @change="changeDate">
+                <el-date-picker style="top: -5px;" v-model="listQuery.startDate" type="date"
+                                placeholder="开始时间" @change="changeDate">
                 </el-date-picker>
-                <el-select v-model="listQuery.windows" class="filter-item" multiple filterable placeholder="选择窗口">
+                <el-date-picker style="top: -5px;" v-model="listQuery.endDate" type="date"
+                                placeholder="结束时间" @change="changeDate">
+                </el-date-picker>
+                <el-select v-model="listQuery.windowIds" class="filter-item" multiple filterable placeholder="选择窗口">
                     <el-option :key="item.id" v-for="item in windowList" :label="item.name" :value="item.id"/>
                 </el-select>
                 <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="统计" placement="top-start">
@@ -45,10 +51,13 @@
             </div>
             <hr style="height:1px;border:none;border-top:1px solid #555555;"/>
             <div class="filter-container">
-                <el-date-picker style="top: -5px;" v-model="listQuery.selectDateTime" type="datetimerange"
-                                placeholder="选择时间范围" format="yyyy-MM-dd HH:mm:ss" @change="changeDate">
+                <el-date-picker style="top: -5px;" v-model="listQuery.startDate" type="date"
+                                placeholder="开始时间" @change="changeDate">
                 </el-date-picker>
-                <el-select v-model="listQuery.users" class="filter-item" multiple filterable placeholder="选择用户">
+                <el-date-picker style="top: -5px;" v-model="listQuery.endDate" type="date"
+                                placeholder="结束时间" @change="changeDate">
+                </el-date-picker>
+                <el-select v-model="listQuery.userIds" class="filter-item" multiple filterable placeholder="选择用户">
                     <el-option :key="item.id" v-for="item in userList" :label="item.name" :value="item.id"/>
                 </el-select>
                 <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="统计" placement="top-start">
@@ -72,6 +81,7 @@
     import moment from 'moment';
     import {getAllCategory} from 'api/zwfw/category';
     import {getAllWindow} from 'api/zwfw/window';
+    import {plotByCategory, plotByWindow, plotByUser} from 'api/zwfw/dataPlot';
     import {getAllUser} from 'api/sys/org/user';
 
     export default {
@@ -97,10 +107,11 @@
         data() {
             return {
                 listQuery: {
-                    selectDateTime: undefined,
-                    categorys: undefined,
-                    windows: undefined,
-                    users: undefined
+                    startDate: moment(new Date()).format("YYYY-MM-DD"),
+                    endDate: undefined,
+                    categoryIds: undefined,
+                    windowIds: undefined,
+                    userIds: undefined
                 },
                 userList: [],
                 windowList: [],
@@ -121,6 +132,9 @@
             this.getCategoryList();
             this.getWindowList();
             this.getUserList();
+            this.plotByCategory();
+            this.plotByWindow();
+            this.plotByUser();
         },
         methods: {
             initBar() {
@@ -204,6 +218,25 @@
             getUserList() {
                 getAllUser().then(response => {
                     this.userList = response.data;
+                })
+            },
+            plotByCategory() {
+                plotByCategory({
+                    startDate: this.listQuery.startDate,
+                    endDate: this.listQuery.endDate,
+                    userIds: this.listQuery.userIds
+                }).then(response => {
+                    console.log(response.data);
+                })
+            },
+            plotByWindow() {
+                plotByWindow(this.listQuery).then(response => {
+                    console.log(response.data);
+                })
+            },
+            plotByUser() {
+                plotByUser(this.listQuery).then(response => {
+                    console.log(response.data);
                 })
             },
             changeDate() {

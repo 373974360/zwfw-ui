@@ -45,7 +45,7 @@ const RegistryCenter = () => import('../views/task/registryCenter');
 const Task = () => import('../views/task/task');
 
 /* 统计分析 */
-const Call = () => import('../views/count/call');
+const Call = () => import('../views/zwfw/count/call');
 
 
 
@@ -186,8 +186,9 @@ export const asyncRouterMap = [
             // {path: 'zwfwProcessInstance', component: ZwfwProcessDefinitionModel, name: '已部署流程管理'},
 
         ]
-    },{
-        path: '/count',
+    },
+    {
+        path: '/operate',
         component: Layout,
         redirect: 'noredirect',
         name: '统计分析',
