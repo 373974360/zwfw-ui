@@ -1,6 +1,6 @@
 <template>
     <el-row :gutter="20">
-        <el-col :span="16">
+        <el-col :span="14">
             <div class="grid-content">
                 <!--流程选择和流程的显示区域-->
                 <el-form :inline="true" ref="searchForm" :model="search" label-width="80px">
@@ -45,10 +45,10 @@
 
             </div>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="10">
             <div class="grid-content">
                 <div>
-                    <Sticky :sticky-top="0" :height="500">
+                    <Sticky :sticky-top="50" :sticky-height="mainHeight">
                         <!--<div class="affix" id="diagramInfo" style="z-index:99999;background:#fff;margin:auto;left:0; right:0; top:0;width:50%;">-->
                         <div id="diagramInfo">
 
@@ -153,7 +153,9 @@
                                         </el-option>
                                     </el-select>
                                 </el-form-item>
-                                <el-button class="el-button--primary" @click="saveOtherSetting">保存其他设置</el-button>
+                                <el-form-item>
+                                    <el-button class="el-button--primary" @click="saveOtherSetting">保存其他设置</el-button>
+                                </el-form-item>
                             </el-form>
                         </div>
                     </Sticky>
@@ -182,7 +184,7 @@
         },
         name: 'table_demo',
         computed: {
-            mainHeihgt: function () {
+            mainHeight: function () {
                 return window.innerHeight - 50;
             },
             candidateUserList: function () {
@@ -223,9 +225,9 @@
                     taskAssigmentUser: '',
                     taskCandidateUsers: '',
                     taskCandidateGroup: '',
-                    supportCorrection: true,
-                    supportExtendTime: true,
-                    supportClose: true,
+                    supportCorrection: false,
+                    supportExtendTime: false,
+                    supportClose: false,
                     frontName: '',
                     defaultTimeLimit: 0,
                     completeNotifyTemplate: 0,
@@ -368,8 +370,6 @@
                         //隐藏时限设置
 
                         _this.data = {};
-
-
                         if (contextObject.flow) {
                             ProcessDiagramGenerator.showFlowInfo(contextObject);
                         } else {
@@ -413,15 +413,15 @@
                                     taskAssigmentUser: '',
                                     taskCandidateUsers: '',
                                     taskCandidateGroup: '',
-                                    supportCorrection: true,
-                                    supportExtendTime: true,
-                                    supportClose: true,
+                                    supportCorrection: false,
+                                    supportExtendTime: false,
+                                    supportClose: false,
                                     frontName: '',
-                                    defaultTimeLimit: 0,
-                                    completeNotifyTemplate: 0,
-                                    completeNotifyTarget: 0,
-                                    beginNotifyTemplate: 0,
-                                    beginNotifyTarget: 0
+                                    defaultTimeLimit: '',
+                                    completeNotifyTemplate: '',
+                                    completeNotifyTarget: '',
+                                    beginNotifyTemplate: '',
+                                    beginNotifyTarget: ''
                                 };
 
                                 _this.task.taskDefinitionKey = contextObject.id;
