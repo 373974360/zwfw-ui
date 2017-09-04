@@ -363,7 +363,7 @@
         }
     }
 </script>
-<style scope="scope">
+<style scoped>
     .el-input-number{width:215px;}
     .el-form-item__content{width:215px;}
     .fullLine{width:100%;}
