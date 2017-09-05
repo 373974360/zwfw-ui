@@ -6,14 +6,15 @@
             </div>
             <hr style="height:1px;border:none;border-top:1px solid #555555;"/>
             <div class="filter-container">
-                <el-date-picker style="top: -5px;" v-model="listQuery.startDate" type="date"
-                                placeholder="开始时间" @change="changeDate">
+                <el-date-picker style="top: -5px;" v-model="listQuery.startDateCategory" type="date"
+                                placeholder="开始时间" @change="changeDateStartCategory">
                 </el-date-picker>
-                <el-date-picker style="top: -5px;" v-model="listQuery.endDate" type="date"
-                                placeholder="结束时间" @change="changeDate">
+                <el-date-picker style="top: -5px;" v-model="listQuery.endDateCategory" type="date"
+                                placeholder="结束时间" @change="changeDateEndCategory">
                 </el-date-picker>
                 <el-select v-model="listQuery.categoryIds" class="filter-item" multiple filterable placeholder="选择部门">
-                    <el-option :key="item.id" v-for="item in categoryList" :label="item.name" :value="item.id"/>
+                    <el-option :key="item.id" v-for="item in categoryList" :label="item.name" :value="item.id">
+                    </el-option>
                 </el-select>
                 <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="统计" placement="top-start">
                     <el-button class="filter-item" type="primary" v-waves icon="search" @click="doCategoryPlot">
@@ -21,7 +22,7 @@
                     </el-button>
                 </el-tooltip>
             </div>
-            <div :class="className" :id="id" :style="{height:height,width:width}"></div>
+            <div class="className" id="plotbyCategory"></div>
         </div>
         <div class="row">
             <div>
@@ -29,11 +30,11 @@
             </div>
             <hr style="height:1px;border:none;border-top:1px solid #555555;"/>
             <div class="filter-container">
-                <el-date-picker style="top: -5px;" v-model="listQuery.startDate" type="date"
-                                placeholder="开始时间" @change="changeDate">
+                <el-date-picker style="top: -5px;" v-model="listQuery.startDateWindow" type="date"
+                                placeholder="开始时间" @change="changeDateStartWindow">
                 </el-date-picker>
-                <el-date-picker style="top: -5px;" v-model="listQuery.endDate" type="date"
-                                placeholder="结束时间" @change="changeDate">
+                <el-date-picker style="top: -5px;" v-model="listQuery.endDateWindow" type="date"
+                                placeholder="结束时间" @change="changeDateEndWindow">
                 </el-date-picker>
                 <el-select v-model="listQuery.windowIds" class="filter-item" multiple filterable placeholder="选择窗口">
                     <el-option :key="item.id" v-for="item in windowList" :label="item.name" :value="item.id"/>
@@ -44,6 +45,7 @@
                     </el-button>
                 </el-tooltip>
             </div>
+            <div class="className" id="plotbyWindow"></div>
         </div>
         <div class="row">
             <div>
@@ -51,11 +53,11 @@
             </div>
             <hr style="height:1px;border:none;border-top:1px solid #555555;"/>
             <div class="filter-container">
-                <el-date-picker style="top: -5px;" v-model="listQuery.startDate" type="date"
-                                placeholder="开始时间" @change="changeDate">
+                <el-date-picker style="top: -5px;" v-model="listQuery.startDateUser" type="date"
+                                placeholder="开始时间" @change="changeDateStartUser">
                 </el-date-picker>
-                <el-date-picker style="top: -5px;" v-model="listQuery.endDate" type="date"
-                                placeholder="结束时间" @change="changeDate">
+                <el-date-picker style="top: -5px;" v-model="listQuery.endDateUser" type="date"
+                                placeholder="结束时间" @change="changeDateEndUser">
                 </el-date-picker>
                 <el-select v-model="listQuery.userIds" class="filter-item" multiple filterable placeholder="选择用户">
                     <el-option :key="item.id" v-for="item in userList" :label="item.name" :value="item.id"/>
@@ -66,6 +68,7 @@
                     </el-button>
                 </el-tooltip>
             </div>
+            <div class="className" id="plotbyUser"></div>
         </div>
     </div>
 </template>
@@ -73,11 +76,13 @@
 <script>
     const echarts = require('echarts/lib/echarts');
     require('echarts/lib/chart/bar');
+    require('echarts/lib/chart/pie');
     require('echarts/lib/chart/line');
     require('echarts/lib/component/tooltip');
     require('echarts/lib/component/title');
     require('echarts/lib/component/visualMap');
     import {mapGetters} from 'vuex';
+    import ElOption from "../../../../node_modules/element-ui/packages/select/src/option";
     import moment from 'moment';
     import {getAllCategory} from 'api/zwfw/category';
     import {getAllWindow} from 'api/zwfw/window';
@@ -85,37 +90,31 @@
     import {getAllUser} from 'api/sys/org/user';
 
     export default {
+        components: {ElOption},
         name: 'table_demo',
-        props: {
-            className: {
-                type: String,
-                default: 'chart'
-            },
-            id: {
-                type: String,
-                default: 'chart'
-            },
-            width: {
-                type: String,
-                default: '200px'
-            },
-            height: {
-                type: String,
-                default: '200px'
-            }
-        },
         data() {
             return {
                 listQuery: {
-                    startDate: moment(new Date()).format("YYYY-MM-DD"),
-                    endDate: undefined,
+                    startDateCategory: moment(new Date()).format('YYYY-MM-DD'),
+                    endDateCategory: undefined,
+                    startDateWindow: moment(new Date()).format('YYYY-MM-DD'),
+                    endDateWindow: undefined,
+                    startDateUser: moment(new Date()).format('YYYY-MM-DD'),
+                    endDateUser: undefined,
                     categoryIds: undefined,
                     windowIds: undefined,
                     userIds: undefined
                 },
                 userList: [],
                 windowList: [],
-                categoryList: []
+                categoryList: [],
+                categoryName: [],
+                categoryTotal: [],
+                windowName: [],
+                windowTotal: [],
+                userName: [],
+                userTotal: [],
+                all: 0
             }
         },
         computed: {
@@ -124,9 +123,6 @@
                 'enums',
                 'closeOnClickModal'
             ])
-        },
-        mounted() {
-            this.initBar();
         },
         created() {
             this.getCategoryList();
@@ -137,74 +133,6 @@
             this.plotByUser();
         },
         methods: {
-            initBar() {
-                this.chart = echarts.init(document.getElementById(this.id));
-//                const xAxisData = [];
-//                const data = [];
-//                for (let i = 0; i < 30; i++) {
-//                    xAxisData.push(i + '号');
-//                    data.push(Math.round(Math.random() * 2 + 3))
-//                }
-//
-//                this.chart.setOption(
-//                    {
-//                        backgroundColor: '#08263a',
-//                        tooltip: {
-//                            trigger: 'axis'
-//                        },
-//                        xAxis: {
-//                            show: false,
-//                            data: xAxisData
-//                        },
-//                        visualMap: {
-//                            show: false,
-//                            min: 0,
-//                            max: 50,
-//                            dimension: 0,
-//                            inRange: {
-//                                color: ['#4a657a', '#308e92', '#b1cfa5', '#f5d69f', '#f5898b', '#ef5055']
-//                            }
-//                        },
-//                        yAxis: {
-//                            axisLine: {
-//                                show: false
-//                            },
-//                            axisLabel: {
-//                                textStyle: {
-//                                    color: '#4a657a'
-//                                }
-//                            },
-//                            splitLine: {
-//                                show: true,
-//                                lineStyle: {
-//                                    color: '#08263f'
-//                                }
-//                            },
-//                            axisTick: {}
-//                        },
-//                        series: [{
-//                            type: 'bar',
-//                            data,
-//                            name: '撸文数',
-//                            itemStyle: {
-//                                normal: {
-//                                    barBorderRadius: 5,
-//                                    shadowBlur: 10,
-//                                    shadowColor: '#111'
-//                                }
-//                            },
-//                            animationEasing: 'elasticOut',
-//                            animationEasingUpdate: 'elasticOut',
-//                            animationDelay(idx) {
-//                                return idx * 20;
-//                            },
-//                            animationDelayUpdate(idx) {
-//                                return idx * 20;
-//                            }
-//                        }]
-//                    })
-            },
-
             getCategoryList() {
                 getAllCategory().then(response => {
                     this.categoryList = response.data;
@@ -221,40 +149,211 @@
                 })
             },
             plotByCategory() {
-                plotByCategory({
-                    startDate: this.listQuery.startDate,
-                    endDate: this.listQuery.endDate,
-                    userIds: this.listQuery.userIds
-                }).then(response => {
+                let query = {};
+                if (this.listQuery.categoryIds != undefined) {
+                    const categoryId = this.listQuery.categoryIds.toString();
+                    query = {
+                        startDate: this.listQuery.startDateCategory,
+                        endDate: this.listQuery.endDateCategory,
+                        categoryIds: categoryId
+                    }
+                } else {
+                    query = {
+                        startDate: this.listQuery.startDateCategory,
+                        endDate: this.listQuery.endDateCategory,
+                        categoryIds: this.listQuery.categoryIds
+                    }
+                }
+                plotByCategory(query).then(response => {
                     console.log(response.data);
+                    const list = response.data;
+                    this.categoryName = [];
+                    this.categoryTotal = [];
+                    this.all = 0;
+                    for (let i = 0; i < list.length; i++) {
+                        this.categoryName.push(list[i].categoryName);
+                        console.log(this.categoryName);
+                        const map = {};
+                        map.name = list[i].categoryName;
+                        map.value = list[i].total;
+                        this.all += list[i].total;
+                        this.categoryTotal.push(map);
+                    }
+                    const e = echarts.init(document.getElementById('plotbyCategory'));
+                    e.setOption({
+                        title: {
+                            text: '按部门统计叫号数据',
+                            subtext: '叫号总计：' + this.all,
+                            x: 'center'
+                        },
+                        tooltip: {trigger: 'item'},
+                        legend: {orient: 'vertical', x: 'center', data: ['直接访问','邮件营销']},
+                        calculable: !0,
+                        series: [{
+                            name: '叫号统计',
+                            type: 'pie',
+                            radius: '55%',
+                            center: ['50%', '70%'],
+                            itemStyle: {
+                                normal: {
+                                    label: {
+                                        show: true,
+                                        formatter: '{b} : {c}个 ({d}%)'
+                                    },
+                                    labelLine: {show: true}
+                                }
+                            },
+                            data: this.categoryTotal
+                        }]
+                    })
                 })
             },
             plotByWindow() {
-                plotByWindow(this.listQuery).then(response => {
+                let query = {};
+                if (this.listQuery.windowIds != undefined) {
+                    const windowId = this.listQuery.windowIds.toString();
+                    query = {
+                        startDate: this.listQuery.startDateWindow,
+                        endDate: this.listQuery.endDateWindow,
+                        windowIds: windowId
+                    }
+                } else {
+                    query = {
+                        startDate: this.listQuery.startDateWindow,
+                        endDate: this.listQuery.endDateWindow,
+                        windowIds: this.listQuery.windowId
+                    }
+                }
+                plotByWindow(query).then(response => {
                     console.log(response.data);
+                    const list = response.data;
+                    this.windowName = [];
+                    this.windowTotal = [];
+                    for (let i = 0; i < list.length; i++) {
+                        this.windowName.push(list[i].windowName);
+                        this.windowTotal.push(list[i].total);
+                    }
+                    const e = echarts.init(document.getElementById('plotbyWindow'));
+                    e.setOption({
+                        title: {text: '按窗口统计叫号数据', x: 'center'},
+                        tooltip: {trigger: 'axis'},
+                        legend: {top: 40, orient: 'horizontal', x: 'center', data: this.windowName},
+                        grid: {x: 40, x2: 40, y2: 24},
+                        calculable: !0,
+                        xAxis: [{type: 'category', data: this.windowName}],
+                        yAxis: [{type: 'value'}],
+                        series: [{
+                            name: '叫号数',
+                            type: 'bar',
+                            label: {
+                                normal: {
+                                    show: true,
+                                    position: 'top'
+                                }
+                            },
+                            data: this.windowTotal
+                        }]
+                    });
                 })
             },
             plotByUser() {
-                plotByUser(this.listQuery).then(response => {
+                let query = {};
+                if (this.listQuery.userIds != undefined) {
+                    const userId = this.listQuery.userIds.toString();
+                    query = {
+                        startDate: this.listQuery.startDateUser,
+                        endDate: this.listQuery.endDateUser,
+                        userIds: userId
+                    }
+                } else {
+                    query = {
+                        startDate: this.listQuery.startDateUser,
+                        endDate: this.listQuery.endDateUser,
+                        windowIds: this.listQuery.userId
+                    }
+                }
+                plotByUser(query).then(response => {
                     console.log(response.data);
+                    const list = response.data;
+                    this.userName = [];
+                    this.userTotal = [];
+                    for (let i = 0; i < list.length; i++) {
+                        this.userName.push(list[i].userName);
+                        this.userTotal.push(list[i].total);
+                    }
+                    const e = echarts.init(document.getElementById('plotbyUser'));
+                    e.setOption({
+                        title: {text: '按用户统计叫号数据', x: 'center'},
+                        tooltip: {trigger: 'axis'},
+                        legend: {top: 40, orient: 'horizontal', x: 'center', data: this.userName},
+                        grid: {x: 40, x2: 40, y2: 24},
+                        calculable: !0,
+                        xAxis: [{type: 'category', data: this.userName}],
+                        yAxis: [{type: 'value'}],
+                        series: [{
+                            name: '叫号数',
+                            type: 'bar',
+                            label: {
+                                normal: {
+                                    show: true,
+                                    position: 'top'
+                                }
+                            },
+                            data: this.userTotal
+                        }]
+                    })
                 })
             },
-            changeDate() {
-                if (this.listQuery.selectDateTime[0] == null) {
-                    this.listQuery.selectDateTime = [];
+            changeDateStartCategory() {
+                if (this.listQuery.startDateCategory == null || this.listQuery.startDateCategory == '') {
+                    this.listQuery.startDateCategory = [];
                 } else {
-                    this.listQuery.selectDateTime[0] = moment(this.listQuery.selectDateTime[0]).format("YYYY-MM-DD HH:mm:ss");
-                    this.listQuery.selectDateTime[1] = moment(this.listQuery.selectDateTime[1]).format("YYYY-MM-DD HH:mm:ss");
+                    this.listQuery.startDateCategory = moment(this.listQuery.startDateCategory).format('YYYY-MM-DD');
                 }
             },
-            doCategoryPlot(){
-
+            changeDateEndCategory() {
+                if (this.listQuery.endDateCategory == null || this.listQuery.endDateCategory == '') {
+                    this.listQuery.endDateCategory = [];
+                } else {
+                    this.listQuery.endDateCategory = moment(this.listQuery.endDateCategory).format('YYYY-MM-DD');
+                }
             },
-            doWindowPlot(){
-
+            changeDateStartWindow() {
+                if (this.listQuery.startDateWindow == null || this.listQuery.startDateWindow == '') {
+                    this.listQuery.startDateWindow = [];
+                } else {
+                    this.listQuery.startDateWindow = moment(this.listQuery.startDateWindow).format('YYYY-MM-DD');
+                }
             },
-            doUserPlot(){
-
+            changeDateEndWindow() {
+                if (this.listQuery.endDateWindow == null || this.listQuery.endDateWindow == '') {
+                    this.listQuery.endDateWindow = [];
+                } else {
+                    this.listQuery.endDateWindow = moment(this.listQuery.endDateWindow).format('YYYY-MM-DD');
+                }
+            },
+            changeDateStartUser() {
+                if (this.listQuery.startDateUser == null || this.listQuery.startDateUser == '') {
+                    this.listQuery.startDateUser = [];
+                } else {
+                    this.listQuery.startDateUser = moment(this.listQuery.startDateUser).format('YYYY-MM-DD');
+                }
+            },
+            changeDateEndUser() {
+                if (this.listQuery.endDateUser == null || this.listQuery.endDateUser == '') {
+                    this.listQuery.endDateUser = [];
+                } else {
+                    this.listQuery.endDateUser = moment(this.listQuery.endDateUser).format('YYYY-MM-DD');
+                }
+            },
+            doCategoryPlot() {
+                this.plotByCategory();
+            },
+            doWindowPlot() {
+                this.plotByWindow();
+            },
+            doUserPlot() {
+                this.plotByUser()
             }
         }
     }
@@ -263,5 +362,10 @@
     .row {
         margin-right: -15px;
         margin-left: -15px;
+    }
+
+    .className {
+        width: 1614px;
+        height: 240px
     }
 </style>
