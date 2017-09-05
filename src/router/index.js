@@ -38,7 +38,10 @@ const LegalPerson = () => import('../views/zwfw/zwfwLegalPerson');
 const NaturePerson = () => import('../views/zwfw/zwfwNaturePerson');
 const ZwfwProcessDefinitionModel = () => import('../views/zwfw/activiti/zwfwProcessDefinitionModel');
 const ZwfwProcessDefinition = () => import('../views/zwfw/activiti/ZwfwProcessDefinition');
-const ZwfwTaskSetting = () => import('../views/zwfw/activiti/ZwfwTaskSetting')
+const ZwfwTaskSetting = () => import('../views/zwfw/activiti/ZwfwTaskSetting');
+
+
+const DeptWorkPendingList = () => import('../views/zwfw/work/deptWorkPendingList');
 
 /* 定时任务 */
 const RegistryCenter = () => import('../views/task/registryCenter');
@@ -188,7 +191,17 @@ export const asyncRouterMap = [
         ]
     },
     {
-        path: '/operate',
+        path: '/work',
+        component: Layout,
+        redirect: 'noredirect',
+        name: '办件管理',
+        icon: 'yewuguanli',
+        children: [
+            {path: 'deptPending', component: DeptWorkPendingList, name: '待办事项'}
+
+        ]
+    },{
+        path: '/count',
         component: Layout,
         redirect: 'noredirect',
         name: '统计分析',
