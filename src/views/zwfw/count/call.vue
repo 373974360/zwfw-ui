@@ -172,7 +172,6 @@
                     this.all = 0;
                     for (let i = 0; i < list.length; i++) {
                         this.categoryName.push(list[i].categoryName);
-                        console.log(this.categoryName);
                         const map = {};
                         map.name = list[i].categoryName;
                         map.value = list[i].total;
@@ -187,7 +186,7 @@
                             x: 'center'
                         },
                         tooltip: {trigger: 'item'},
-                        legend: {orient: 'vertical', x: 'center', data: ['直接访问','邮件营销']},
+                        legend: {top: 55, orient: 'horizontal', x: 'center', data: this.categoryName},
                         calculable: !0,
                         series: [{
                             name: '叫号统计',
