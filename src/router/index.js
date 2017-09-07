@@ -50,7 +50,11 @@ const Task = () => import('../views/task/task');
 /* 统计分析 */
 const Call = () => import('../views/zwfw/count/call');
 
-
+/* 网上预审 */
+const WaitPretrial = () => import('../views/zwfw/pretrial/waitPretrial');
+const OverPretrial = () => import('../views/zwfw/pretrial/overPretrial');
+const Reform = () => import('../views/zwfw/pretrial/reform');
+const Ignore = () => import('../views/zwfw/pretrial/ignore');
 
 /* components */
 const componentsIndex = () => import('../views/components/index');
@@ -140,6 +144,19 @@ export const asyncRouterMap = [
             {path: 'user', component: User, name: '用户管理'},
             {path: 'menu', component: Menu, name: '菜单管理'},
             {path: 'role', component: Role, name: '角色管理'}
+        ]
+    },
+    {
+        path: '/pretrial',
+        component: Layout,
+        redirect: 'noredirect',
+        name: '网上预审',
+        icon: 'zuzhi',
+        children: [
+            {path: 'waitPretrial', component: WaitPretrial, name: '待预审件 '},
+            {path: 'overPretrial', component: OverPretrial, name: '已预审件'},
+            {path: 'reform', component: Reform, name: '整改件'},
+            {path: 'ignore', component: Ignore, name: '不予受理件'}
         ]
     },
     {
