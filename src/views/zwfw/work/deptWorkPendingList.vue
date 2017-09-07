@@ -1,6 +1,14 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
+
+
+            <el-switch :width="100"
+                    v-model="listQuery.me"
+                    on-text="我的办件"
+                    off-text="所有办件">
+            </el-switch>
+
             <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="名称"
                       v-model="listQuery.name"></el-input>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
@@ -9,7 +17,7 @@
         <el-table ref="zwfwDeptWorkPendingTable" :data="zwfwDeptWorkPendingList" v-loading.body="listLoading" border fit
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
-            <el-table-column align="center" label="ID" width="200px">
+            <el-table-column align="center" label="ID" width="100px">
                 <template scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
@@ -59,6 +67,11 @@
             <el-table-column prop="enable" class-name="status-col" label="状态">
                 <template scope="scope">
                     <span>{{scope.row.status | enums('ItemProcessStatus')}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column>
+                <template scope="scope">
+                    <el-button >处理选中</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -111,7 +124,8 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
-                    name: undefined
+                    name: undefined,
+                    me: true
                 },
                 zwfwDeptWorkPending: {
                     id: undefined,
