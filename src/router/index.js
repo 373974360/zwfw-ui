@@ -28,7 +28,6 @@ const MetadataType = () => import('../views/sys/system/metadataType');
 const SysMessageFiled = () => import('../views/sys/system/sysMessageFiled');
 const SysMessageTemplate = () => import('../views/sys/system/SysMessageTemplate');
 
-
 /* zwfw */
 const Category = () => import('../views/zwfw/category');
 const Item = () => import('../views/zwfw/zwfwItem');
@@ -40,8 +39,16 @@ const ZwfwProcessDefinitionModel = () => import('../views/zwfw/activiti/zwfwProc
 const ZwfwProcessDefinition = () => import('../views/zwfw/activiti/ZwfwProcessDefinition');
 const ZwfwTaskSetting = () => import('../views/zwfw/activiti/ZwfwTaskSetting');
 
-
+/* 部门待办列表*/
 const DeptWorkPendingList = () => import('../views/zwfw/work/deptWorkPendingList');
+
+/* 综合窗口 - 窗口收件*/
+const CompositeWindowWork = () => import("../views/zwfw/hall/CompositeWindowWork");
+/* 综合窗口 - 受理记录*/
+// const CompositeWindowHistory = () => import("../views/zwfw/hall/CompositeWindowHistory");
+/* 综合窗口 - 办结取件*/
+// const CompositeWindowTakeCert = () => import("../views/zwfw/hall/CompositeWindowTakeCert");
+
 
 /* 定时任务 */
 const RegistryCenter = () => import('../views/task/registryCenter');
@@ -191,6 +198,16 @@ export const asyncRouterMap = [
         ]
     },
     {
+        path: '/compositeWindow',
+        component: Layout,
+        redirect: 'noredirect',
+        name: '综合窗口',
+        icon: 'yewuguanli',
+        children: [
+            {path: 'work', component: CompositeWindowWork, name: '窗口收件'}
+
+        ]
+    },{
         path: '/work',
         component: Layout,
         redirect: 'noredirect',

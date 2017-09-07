@@ -32,6 +32,7 @@ Object.keys(filters).forEach(key => {
     Vue.filter(key, filters[key])
 });
 
+
 // permissiom judge
 function hasPermission(permissions, permissionRoles) {
     if (!permissionRoles) return true;
@@ -117,6 +118,10 @@ if (process.env === 'production') {
 //         origin.call(console, errorlog);
 //     }
 // })(console.error);
+
+//加载政务服务的枚举类型
+import {getZwfwEnums} from 'api/zwfw/zwfwCommon';
+store.dispatch('MergeEnums', getZwfwEnums());
 
 new Vue({
     router,

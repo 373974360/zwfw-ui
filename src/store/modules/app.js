@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie';
-import {getEnums,getDicts} from 'api/common';
+import {getDicts, getEnums} from 'api/common';
 
 const app = {
     state: {
@@ -22,7 +22,8 @@ const app = {
         dicts: [],
         theme: 'default',
         livenewsChannels: Cookies.get('livenewsChannels') || '[]',
-        closeOnClickModal: false
+        closeOnClickModal: false,
+        loadedEnums: []
     },
     mutations: {
         TOGGLE_SIDEBAR: state => {
@@ -36,9 +37,17 @@ const app = {
         SET_ENUMS: (state, enums) => {
             state.enums = enums;
         },
+        MERGE_ENUMS: (state, enums) => {
+            for (var name in enums) {
+                if (state.enums[name] == null) {
+                    state.enums[name] = enums[name];
+                }
+            }
+            console.log(state.enums)
+        },
         SET_DICTS: (state, dicts) => {
             state.dicts = dicts;
-        },
+        }
     },
     actions: {
         ToggleSideBar: ({commit}) => {
@@ -53,7 +62,7 @@ const app = {
                     } else {
                         let enums = {};
                         let result = response.data;
-                        for(let obj of result){
+                        for (let obj of result) {
                             enums[obj.name] = obj.value;
                         }
                         commit('SET_ENUMS', enums);
@@ -62,6 +71,25 @@ const app = {
                     reject(error);
                 });
             });
+        },
+        MergeEnums({commit}, request) {
+            return new Promise((resolve, reject) => {
+                request.then(response => {
+                    if (response.httpCode !== 200) {
+                        reject(response.msg);
+                    } else {
+                        let enums = {};
+                        let result = response.data;
+                        for (let obj of result) {
+                            enums[obj.name] = obj.value;
+                        }
+                        commit('MERGE_ENUMS', enums);
+                    }
+                }).catch(error => {
+                    reject(error);
+                });
+            });
+
         },
         // 获取后台字典项目json数据
         SetDicts({commit}) {
@@ -72,7 +100,7 @@ const app = {
                     } else {
                         let dicts = {};
                         let result = response.data;
-                        for(let obj of result){
+                        for (let obj of result) {
                             dicts[obj.name] = obj.value;
                         }
                         commit('SET_DICTS', dicts);
@@ -81,7 +109,7 @@ const app = {
                     reject(error);
                 });
             });
-        },
+        }
     }
 };
 
