@@ -146,7 +146,6 @@
     import {getUserList, updateUser, createUser, delUser} from 'api/sys/org/user';
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
-    import {delWindowUser} from 'api/zwfw/window';
     import ElRadio from "../../../../node_modules/element-ui/packages/radio/src/radio";
 
     export default {
@@ -348,12 +347,10 @@
                             ids.push(deleteRow.id);
                         }
                         delUser(ids).then(response => {
-                            delWindowUser(ids).then(response => {
-                                this.listLoading = false;
-                                this.total -= selectCounts;
-                                this.$message.success('删除成功');
-                                this.getList();
-                            })
+                            this.listLoading = false;
+                            this.total -= selectCounts;
+                            this.$message.success('删除成功');
+                            this.getList();
                         })
                         for (const deleteRow of this.selectedRows) {
                             const index = this.list.indexOf(deleteRow);

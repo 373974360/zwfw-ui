@@ -67,8 +67,8 @@ const Hyfl = () => import('../views/job/flxx/hyfl');
 const Znfl = () => import('../views/job/flxx/znfl');
 
 /* 统计分析 */
-const OrganData = () => import('../views/job/statistics/organdata');
-const PersonalData = () => import('../views/job/statistics/personaldata');
+const OrganCharts = () => import('../views/job/charts/organ');
+const PersonalCharts = () => import('../views/job/charts/personal');
 
 /* charts */
 const chartIndex = () => import('../views/charts/index');
@@ -192,14 +192,14 @@ export const asyncRouterMap = [
         ]
     },
     {
-        path: '/statistics',
+        path: '/jobcharts',
         component: Layout,
         redirect: 'noredirect',
         name: '统计分析',
         icon: 'statisticalAnalysis',
         children: [
-            {path: 'organdata', component: OrganData, name: '企业数据统计'},
-            {path: 'personaldata', component: PersonalData, name: '个人数据统计'}
+            {path: 'organ', component: OrganCharts, name: '企业数据统计'},
+            {path: 'personal', component: PersonalCharts, name: '个人数据统计'}
         ]
     },
     {

@@ -187,7 +187,7 @@
                     </table>
                 </el-tab-pane>
                 <el-tab-pane label="求职意向" name="qzyx">
-                    <table class="member_view" width="100%">
+                    <table v-if="qzyx!=null" class="member_view" width="100%">
                         <tr>
                             <th>期望薪资:</th>
                             <td>{{qzyx.qwxz | dicts('xzfw')}}</td>

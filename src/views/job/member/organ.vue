@@ -189,20 +189,20 @@
                         </tr>
                     </table>
                 </el-tab-pane>
-                <el-tab-pane label="积分信息" name="integral">
-                    <el-table :data="memberIntegralList" border fit style="width: 100%">
-                        <el-table-column align="center" label="积分">
-                            <template scope="scope">
-                                <nobr>{{scope.row.integral}}</nobr>
-                            </template>
-                        </el-table-column>
-                        <el-table-column align="center" label="时间">
-                            <template scope="scope">
-                                <nobr>{{scope.row.createTime}}</nobr>
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                </el-tab-pane>
+                <!--<el-tab-pane label="积分信息" name="integral">-->
+                    <!--<el-table :data="memberIntegralList" border fit style="width: 100%">-->
+                        <!--<el-table-column align="center" label="积分">-->
+                            <!--<template scope="scope">-->
+                                <!--<nobr>{{scope.row.integral}}</nobr>-->
+                            <!--</template>-->
+                        <!--</el-table-column>-->
+                        <!--<el-table-column align="center" label="时间">-->
+                            <!--<template scope="scope">-->
+                                <!--<nobr>{{scope.row.createTime}}</nobr>-->
+                            <!--</template>-->
+                        <!--</el-table-column>-->
+                    <!--</el-table>-->
+                <!--</el-tab-pane>-->
             </el-tabs>
         </el-dialog>
         <!-- 会员查看弹出框  结束 -->
