@@ -37,7 +37,7 @@
             </el-table-column>
             <el-table-column width="250px" align="center" label="状态">
                 <template scope="scope">
-                    <span>{{scope.row.status}}</span>
+                    <span>{{scope.row.status | enums('PretrialStatus')}}</span>
                 </template>
             </el-table-column>
             <el-table-column width="250px" align="center" label="备注">
@@ -130,7 +130,7 @@
                             </tr>
                         </table>
                     </div>
-                    <div class="table-inline">
+                    <div class="table-inline" style="padding-left: 30px;">
                         <h3>审核结果:</h3>
                         <el-form ref="zwfwItemPretrial" label-width="140px" :model="ItemPretrial"
                                  :rules="ItemPretrialRules">
@@ -145,7 +145,6 @@
                             </el-form-item>
                             <el-form-item label="审核结果" prop="status">
                                 <el-select v-model="ItemPretrial.status">
-                                    <el-option label="请输入审核结果" value="0"></el-option>
                                     <el-option label="通过" value="4"></el-option>
                                     <el-option label="整改" value="3"></el-option>
                                     <el-option label="不予受理" value="5"></el-option>
@@ -158,7 +157,7 @@
                                 <el-input v-model="passRemark" type="textarea"></el-input>
                             </el-form-item>
                             <el-form-item v-if="ItemPretrial.status==5" label="不予受理原因">
-                                <el-input v-model="IgnoreRemark" type="textarea"></el-input>
+                                <el-input v-model="changeRemark" type="textarea"></el-input>
                             </el-form-item>
                         </el-form>
                         <div style="text-align: center" slot="footer" class="dialog-footer">
@@ -206,7 +205,6 @@
                 dialogFormVisible: false,
                 changeRemark: '1、\n2、\n3、\n',
                 passRemark: '确认通过',
-                IgnoreRemark: '1、\n2、\n3、\n',
                 ItemPretrial: {
                     id: undefined,
                     companyName: '',
@@ -256,7 +254,6 @@
             },
             editAudit(row) {
                 this.currentItemPretrial = row;
-                this.currentItemPretrial.status = '';
                 this.resetTemp();
                 this.ItemPretrial = copyProperties(this.ItemPretrial, row);
                 this.dialogFormVisible = true;
@@ -270,9 +267,12 @@
                     this.member = response.data.member;
                     this.materialList = response.data.materialList;
                     this.ItemPretrial = this.currentItemPretrial;
+                    this.ItemPretrial.status = '';
+                    this.ItemPretrialRules.status[0].required = false;
                 })
             },
             submitReview() {
+                this.ItemPretrialRules.status[0].required = true;
                 this.$refs['zwfwItemPretrial'].validate((valid) => {
                     if (valid) {
                         this.dialogFormVisible = false;
@@ -282,20 +282,14 @@
                             status: this.ItemPretrial.status,
                             remark: null
                         }
-                        if (this.changeRemark) {
+                        if (this.ItemPretrial.status == 3 || this.ItemPretrial.status == 5) {
                             querry.remark = this.changeRemark;
-                        }
-                        if (this.passRemark) {
+                        } else if (this.ItemPretrial.status == 4) {
                             querry.remark = this.passRemark;
                         }
-                        if (this.IgnoreRemark) {
-                            querry.remark = this.IgnoreRemark;
-                        }
-
                         submitReview(querry).then(response => {
-                            this.zwfwItemList.unshift(response.data);
-                            this.total += 1;
-                            this.$message.success('创建成功');
+                            const index = this.pretrialList.indexOf(this.selectedRows);
+                            this.pretrialList.splice(index, 1);
                             this.listLoading = false;
                         })
                     } else {
