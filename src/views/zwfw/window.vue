@@ -30,21 +30,21 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="创建时间" >
-            <template scope="scope">
-                <span>{{scope.row.createTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
-            </template>
-        </el-table-column>
+            <el-table-column align="center" label="创建时间">
+                <template scope="scope">
+                    <span>{{scope.row.createTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
+                </template>
+            </el-table-column>
             <el-table-column align="center" label="操作" width="350">
                 <template scope="scope">
-                    <el-badge :value="scope.row.windowItemCount" class="item" >
+                    <el-badge :value="scope.row.windowItemCount" class="item">
                         <el-button class="filter-item" @click="handleItemList(scope.row)"
                                    type="primary" size="small">
                             关联事项
                         </el-button>
                     </el-badge>
                     <el-badge :value="scope.row.windowUserCount" class="item">
-                        <el-button class="filter-item"  @click="handleUserList(scope.row)"
+                        <el-button class="filter-item" @click="handleUserList(scope.row)"
                                    type="primary" size="small">
                             关联用户
                         </el-button>
@@ -141,10 +141,10 @@
             </el-table>
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem"
                      label-position="right"
-                     label-width="80px"
+                     label-width="130px"
                      style='width: 80%; margin-left:10%; margin-top: 5%;' v-loading="dialogLoading"
                      :rules="windowItemRules">
-                <el-form-item label="事项名称" prop="name">
+                <el-form-item label="事项名称：" prop="name">
                     <el-select
                             v-model="zwfwItem.name"
                             filterable
@@ -159,6 +159,11 @@
                                 :value="item.name">
                         </el-option>
                     </el-select>
+                </el-form-item>
+                <el-form-item label="窗口支持此事项：" class="checkbox-item">
+                    <el-checkbox v-model="supportNormal">正常办理</el-checkbox>
+                    <el-checkbox v-model="supportAssist">协助预审并办理</el-checkbox>
+                    <el-checkbox v-model="supportEnquire">咨询</el-checkbox>
                 </el-form-item>
             </el-form>
             <div style="text-align: center" slot="footer" class="dialog-footer">
@@ -192,7 +197,8 @@
             </el-form>
 
             <div slot="footer" class="dialog-footer">
-                <el-button icon="circle-cross" type="danger" @click="userWindowDialogFormVisible = false">取 消</el-button>
+                <el-button icon="circle-cross" type="danger" @click="userWindowDialogFormVisible = false">取 消
+                </el-button>
                 <el-button type="primary" @click="submitUserWindow">确 定</el-button>
             </div>
         </el-dialog>
@@ -200,13 +206,25 @@
 </template>
 
 <script>
-    import {getWindowList, createWindow, updateWindow, createUserWindow, getAllUserWindow, delWindow, getAllItemWindow, createZwfwWindowItem, deleteZwfwWindowItem} from 'api/zwfw/window';
+    import {
+        getWindowList,
+        createWindow,
+        updateWindow,
+        createUserWindow,
+        getAllUserWindow,
+        delWindow,
+        getAllItemWindow,
+        createZwfwWindowItem,
+        deleteZwfwWindowItem
+    } from 'api/zwfw/window';
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import {getDeptNameAndUsers} from 'api/sys/org/user';
     import {getAllByNameOrbasicCode} from 'api/zwfw/zwfwItem';
+    import ElFormItem from "../../../node_modules/element-ui/packages/form/src/form-item";
 
     export default {
+        components: {ElFormItem},
         name: 'table_demo',
         data() {
             return {
@@ -255,6 +273,9 @@
                     name: '',
                     basicCode: ''
                 },
+                supportNormal: true,
+                supportAssist: true,
+                supportEnquire: true,
                 dialogStatus: '',
                 checked: true,
                 addDialogFormVisible: false,
@@ -410,6 +431,9 @@
                 const query = {}
                 getAllByNameOrbasicCode(query).then(response => {
                     this.itemWindowList = response.data;
+                    this.zwfwItem.supportAssist = true;
+                    this.zwfwItem.supportEnquire = true;
+                    this.zwfwItem.supportNormal = true;
                     console.log(this.itemWindowList);
                 })
             },
@@ -452,7 +476,10 @@
                         }
                         const query = {
                             windowId: this.windowId,
-                            itemId: this.zwfwItem.id
+                            itemId: this.zwfwItem.id,
+                            supportNormal: this.supportNormal,
+                            supportAssist: this.supportAssist,
+                            supportEnquire: this.supportEnquire
                         }
                         this.listLoading1 = true;
                         createZwfwWindowItem(query).then(response => {
@@ -461,7 +488,10 @@
                             this.listLoading1 = false;
                             this.windowItemRules.name[0].required = false;
                             this.currentItem.windowItemCount += 1;
-                            this.zwfwItem = {};
+                            this.resetTemp1();
+                            this.supportNormal = true;
+                            this.supportAssist = true;
+                            this.supportEnquire = true;
                         })
                     } else {
                         return false;
@@ -555,5 +585,8 @@
     .item {
         margin-top: 10px;
         margin-right: 40px;
+    }
+    .el-checkbox__label {
+        font-weight: normal;
     }
 </style>
