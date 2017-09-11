@@ -1,4 +1,4 @@
-import {fetchSys} from 'utils/fetch';
+import {fetchSys, fetchZwfw} from 'utils/fetch';
 
 export function getEnums() {
     return fetchSys({
@@ -10,6 +10,13 @@ export function getEnums() {
 export function getDicts() {
     return fetchSys({
         url: '/base/dicts',
+        method: 'get'
+    });
+}
+
+export function getZwfwEnums() {
+    return fetchZwfw({
+        url: '/zwfw/enums',
         method: 'get'
     });
 }

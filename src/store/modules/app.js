@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie';
-import {getDicts, getEnums} from 'api/common';
+import {getDicts, getEnums, getZwfwEnums} from 'api/common';
 
 const app = {
     state: {
@@ -20,6 +20,7 @@ const app = {
         },
         enums: [],
         dicts: [],
+        zwfwEnumData: [],
         theme: 'default',
         livenewsChannels: Cookies.get('livenewsChannels') || '[]',
         closeOnClickModal: false,
@@ -37,13 +38,8 @@ const app = {
         SET_ENUMS: (state, enums) => {
             state.enums = enums;
         },
-        MERGE_ENUMS: (state, enums) => {
-            for (var name in enums) {
-                if (state.enums[name] == null) {
-                    state.enums[name] = enums[name];
-                }
-            }
-            console.log(state.enums)
+        SET_ZWFWEDATADATA: (state, enums) => {
+            state.zwfwEnumData = enums;
         },
         SET_DICTS: (state, dicts) => {
             state.dicts = dicts;
@@ -60,9 +56,9 @@ const app = {
                     if (response.httpCode !== 200) {
                         reject(response.msg);
                     } else {
-                        let enums = {};
-                        let result = response.data;
-                        for (let obj of result) {
+                        const enums = {};
+                        const result = response.data;
+                        for (const obj of result) {
                             enums[obj.name] = obj.value;
                         }
                         commit('SET_ENUMS', enums);
@@ -72,24 +68,23 @@ const app = {
                 });
             });
         },
-        MergeEnums({commit}, request) {
+        SetZwfwEnumData({commit}) {
             return new Promise((resolve, reject) => {
-                request.then(response => {
+                getZwfwEnums().then(response => {
                     if (response.httpCode !== 200) {
                         reject(response.msg);
                     } else {
-                        let enums = {};
-                        let result = response.data;
-                        for (let obj of result) {
-                            enums[obj.name] = obj.value;
+                        const zwfwEnumData = {};
+                        const result = response.data;
+                        for (const obj of result) {
+                            zwfwEnumData[obj.name] = obj.value;
                         }
-                        commit('MERGE_ENUMS', enums);
+                        commit('SET_ZWFWEDATADATA', zwfwEnumData);
                     }
                 }).catch(error => {
                     reject(error);
                 });
             });
-
         },
         // 获取后台字典项目json数据
         SetDicts({commit}) {

@@ -1,6 +1,7 @@
 const getters = {
     sidebar: state => state.app.sidebar,
     enums: state => state.app.enums,
+    zwfwEnumData: state => state.app.zwfwEnumData,
     dicts: state => state.app.dicts,
     textMap: state => state.app.textMap,
     closeOnClickModal: state => state.app.closeOnClickModal,
