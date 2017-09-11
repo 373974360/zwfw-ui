@@ -1,29 +1,25 @@
 <template>
     <div class="app-container calendar-list-container">
-        <el-tabs v-model="activeName" type="card">
-            <el-tab-pane label="按性别统计" name="activeSex">
-                <chart :options="sexOptions" ref="pie" auto-resize></chart>
-            </el-tab-pane>
-            <el-tab-pane label="按年龄段统计" name="activeAge">
-                <chart :options="ageOptions" ref="pie" auto-resize></chart>
-            </el-tab-pane>
-            <el-tab-pane label="按文化程度统计" name="activeXueli">
-                <chart :options="xueliOptions" ref="pie" auto-resize></chart>
-            </el-tab-pane>
-            <el-tab-pane label="按专业统计" name="activeZhuanye">
-                <chart :options="hyflOptions" ref="pie" auto-resize></chart>
-            </el-tab-pane>
-            <el-tab-pane label="按薪酬要求统计" name="activeXzfw">
-                <chart :options="xzfwOptions" ref="pie" auto-resize></chart>
-            </el-tab-pane>
-            <el-tab-pane label="需求职位" name="activeZhiwei">
-                <chart :options="znflOptions" ref="pie" auto-resize></chart>
-            </el-tab-pane>
-        </el-tabs>
+        <table>
+            <tr>
+                <td><chart :options="gsxzOptions" ref="pie" auto-resize></chart></td>
+                <td><chart :options="hyflOptions" ref="pie" auto-resize></chart></td>
+            </tr>
+            <tr>
+                <td><chart :options="xueliOptions" ref="pie" auto-resize></chart></td>
+                <td><chart :options="znflOptions" ref="pie" auto-resize></chart></td>
+            </tr>
+            <tr>
+                <td><chart :options="zprsOptions" ref="pie" auto-resize></chart></td>
+            </tr>
+        </table>
     </div>
 </template>
+<style>
+    table td{padding:20px;}
+</style>
 <script>
-    import {getCharts} from 'api/job/charts/personal';
+    import {getCharts} from 'api/job/charts/organ';
     import ECharts from 'vue-echarts/components/ECharts.vue'
     import 'echarts/lib/chart/pie'
     import 'echarts/lib/component/tooltip'
@@ -40,20 +36,18 @@
         data() {
             return {
                 activeName: 'activeSex',
-                sexData: null,
-                sexOptions: null,
-                ageData: null,
-                ageOptions: null,
-                znflData: null,
-                znflOptions: null,
-                hyflData: null,
-                hyflOptions: null,
+                gsxzData: null,
+                gsxzTitle: null,
+                gsxzOptions: null,
                 xueliData: null,
                 xueliTitle: null,
                 xueliOptions: null,
-                xzfwData: null,
-                xzfwTitle: null,
-                xzfwOptions: null
+                hyflData: null,
+                hyflOptions: null,
+                znflData: null,
+                znflOptions: null,
+                zprsData: null,
+                zprsOptions: null
             };
         },
         mounted() {
@@ -62,24 +56,26 @@
         methods: {
             getChart() {
                 getCharts().then(response => {
-                    this.sexData = response.data.sex;
+                    this.gsxzData = response.data.gsxz.data;
+                    this.gsxzTitle = response.data.gsxz.titleStr;
                     this.xueliData = response.data.xueli.data;
                     this.xueliTitle = response.data.xueli.titleStr;
-                    this.xzfwData = response.data.xzfw.data;
-                    this.xzfwTitle = response.data.xzfw.titleStr;
-                    this.znflData = response.data.znfl;
                     this.hyflData = response.data.hyfl;
-                    this.ageData = response.data.age;
-                    this.initSexChart();
-                    this.initXueliChart();
-                    this.initXzfwChart();
-                    this.initZnflChart();
+                    this.znflData = response.data.znfl;
+                    this.zprsData = response.data.zprs;
+                    this.initGsxzChart();
                     this.initHyflChart();
-                    this.initAgeChart();
+                    this.initZnflChart();
+                    this.initZprsChart();
+                    this.initXueliChart();
                 })
             },
-            initSexChart() {
-                this.sexOptions = {
+            initGsxzChart() {
+                this.gsxzOptions = {
+                    title: {
+                        text: '按公司性质统计公司数量',
+                        x: 'center'
+                    },
                     tooltip: {
                         trigger: 'item',
                         formatter: "{a} <br/>{b} : {c} ({d}%)"
@@ -87,66 +83,14 @@
                     legend: {
                         orient: 'vertical',
                         left: 'left',
-                        data: ['男', '女']
+                        data: [this.gsxzTitle]
                     },
                     series: [{
-                        name: '人数/占比',
+                        name: '数量/占比',
                         type: 'pie',
-                        radius: '55%',
+                        radius: '70%',
                         center: ['50%', '60%'],
-                        data: this.sexData,
-                        itemStyle: {
-                            emphasis: {
-                                shadowBlur: 10,
-                                shadowOffsetX: 0,
-                                shadowColor: 'rgba(0, 0, 0, 0.5)'
-                            }
-                        }
-                    }]
-                }
-            },
-            initAgeChart() {
-                this.ageOptions = {
-                    tooltip: {
-                        trigger: 'item',
-                        formatter: "{a} <br/>{b} : {c} ({d}%)"
-                    },
-                    legend: {
-                        orient: 'vertical',
-                        left: 'left'
-                    },
-                    series: [{
-                        name: '人数/占比',
-                        type: 'pie',
-                        radius: '55%',
-                        center: ['50%', '60%'],
-                        data: this.ageData,
-                        itemStyle: {
-                            emphasis: {
-                                shadowBlur: 10,
-                                shadowOffsetX: 0,
-                                shadowColor: 'rgba(0, 0, 0, 0.5)'
-                            }
-                        }
-                    }]
-                }
-            },
-            initZnflChart() {
-                this.znflOptions = {
-                    tooltip: {
-                        trigger: 'item',
-                        formatter: "{a} <br/>{b} : {c} ({d}%)"
-                    },
-                    legend: {
-                        orient: 'vertical',
-                        left: 'left'
-                    },
-                    series: [{
-                        name: '人数/占比',
-                        type: 'pie',
-                        radius: '55%',
-                        center: ['50%', '60%'],
-                        data: this.znflData,
+                        data: this.gsxzData,
                         itemStyle: {
                             emphasis: {
                                 shadowBlur: 10,
@@ -159,6 +103,10 @@
             },
             initHyflChart() {
                 this.hyflOptions = {
+                    title: {
+                        text: '按行业分类统计公司数量',
+                        x: 'center'
+                    },
                     tooltip: {
                         trigger: 'item',
                         formatter: "{a} <br/>{b} : {c} ({d}%)"
@@ -168,9 +116,9 @@
                         left: 'left'
                     },
                     series: [{
-                        name: '人数/占比',
+                        name: '数量/占比',
                         type: 'pie',
-                        radius: '55%',
+                        radius: '70%',
                         center: ['50%', '60%'],
                         data: this.hyflData,
                         itemStyle: {
@@ -183,23 +131,26 @@
                     }]
                 }
             },
-            initXueliChart() {
-                this.xueliOptions = {
+            initZprsChart() {
+                this.zprsOptions = {
+                    title: {
+                        text: '按按职位分类统计提供岗位数量',
+                        x: 'center'
+                    },
                     tooltip: {
                         trigger: 'item',
                         formatter: "{a} <br/>{b} : {c} ({d}%)"
                     },
                     legend: {
                         orient: 'vertical',
-                        left: 'left',
-                        data: [this.xueliTitle]
+                        left: 'left'
                     },
                     series: [{
-                        name: '人数/占比',
+                        name: '数量/占比',
                         type: 'pie',
-                        radius: '55%',
+                        radius: '70%',
                         center: ['50%', '60%'],
-                        data: this.xueliData,
+                        data: this.zprsData,
                         itemStyle: {
                             emphasis: {
                                 shadowBlur: 10,
@@ -210,8 +161,42 @@
                     }]
                 }
             },
-            initXzfwChart() {
-                this.xzfwOptions = {
+            initZnflChart() {
+                this.znflOptions = {
+                    title: {
+                        text: '按职位分类统计',
+                        x: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b} : {c} ({d}%)"
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left'
+                    },
+                    series: [{
+                        name: '数量/占比',
+                        type: 'pie',
+                        radius: '70%',
+                        center: ['50%', '60%'],
+                        data: this.znflData,
+                        itemStyle: {
+                            emphasis: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }]
+                }
+            },
+            initXueliChart() {
+                this.xueliOptions = {
+                    title: {
+                        text: '按要求学历统计',
+                        x: 'center'
+                    },
                     tooltip: {
                         trigger: 'item',
                         formatter: "{a} <br/>{b} : {c} ({d}%)"
@@ -219,14 +204,14 @@
                     legend: {
                         orient: 'vertical',
                         left: 'left',
-                        data: [this.xzfwTitle]
+                        data: [this.xueliTitle]
                     },
                     series: [{
-                        name: '人数/占比',
+                        name: '数量/占比',
                         type: 'pie',
-                        radius: '55%',
+                        radius: '70%',
                         center: ['50%', '60%'],
-                        data: this.xzfwData,
+                        data: this.xueliData,
                         itemStyle: {
                             emphasis: {
                                 shadowBlur: 10,
