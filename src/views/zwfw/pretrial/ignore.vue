@@ -37,7 +37,7 @@
             </el-table-column>
             <el-table-column width="200px" align="center" label="状态">
                 <template scope="scope">
-                    <span>{{scope.row.status | enums('PretrialStatus')}}</span>
+                    <span>{{scope.row.status | zwfwEnumData('PretrialStatus')}}</span>
                 </template>
             </el-table-column>
             <el-table-column width="250px" align="center" label="备注">
@@ -114,23 +114,22 @@
                             </tr>
                             <tr v-for="m in materialList">
                                 <td>{{m.itemMaterialName}}</td>
-                                <!--<td>-->
-                                <!--<template v-for="(index,file) in m.multipleFile">-->
-                                <!--<template v-if="file.url!=null && file.url!=''">-->
-                                <!--<a target="_blank"-->
-                                <!--v-if="file.fileType == 'doc' || file.fileType == 'docx' || file.fileType == 'xls' || file.fileType == 'xlsx' || file.fileType == 'ppt'"-->
-                                <!--href="https://view.officeapps.live.com/op/view.aspx?src={{win.cxt}}{{file.url}}">[{{index-->
-                                <!--+ 1}}]</a>-->
-                                <!--<a v-else href="{{file.url}}"-->
-                                <!--target="_blank">[{{index + 1}}]</a>-->
-                                <!--</template>-->
-                                <!--<span v-else>未上传</span>-->
-                                <!--</template>-->
-                                <!--</td>-->
+                                <td>
+                                    <template v-for="(file,index) in m.multipleFile">
+                                        <template v-if="file.url!=null && file.url!=''">
+                                            <a target="_blank"
+                                               v-if="file.fileType == 'doc' || file.fileType == 'docx' || file.fileType == 'xls' || file.fileType == 'xlsx' || file.fileType == 'ppt'"
+                                               :href="'https://view.officeapps.live.com/op/view.aspx?src='+win.cxt+file.url">[{{index
+                                            + 1}}]</a>
+                                            <a v-else :href="file.url"
+                                               target="_blank">[{{index + 1}}]</a>
+                                        </template>
+                                    </template>
+                                </td>
                             </tr>
                         </table>
                     </div>
-                    <div class="table-inline">
+                    <div class="table-inline" style="padding-left: 30px;">
                         <h3>审核结果:</h3>
                         <table class="table table-responsive table-bordered">
                             <tr>
@@ -155,7 +154,7 @@
                             </tr>
                             <tr>
                                 <th width="140">状态</th>
-                                <td>{{ItemPretrial.status | enums('PretrialStatus')}}</td>
+                                <td>{{ItemPretrial.status | zwfwEnumData('PretrialStatus')}}</td>
                             </tr>
                             <tr>
                                 <th width="140">备注</th>
@@ -208,7 +207,7 @@
         computed: {
             ...mapGetters([
                 'textMap',
-                'enums',
+                'zwfwEnumData',
                 'closeOnClickModal'
             ])
         },
@@ -245,7 +244,7 @@
                     console.log(response.data);
                     this.company = response.data.company;
                     this.member = response.data.member;
-                    this.materialList = response.data.materialList;
+                    this.materialList = response.data.pretrialMaterialList;
                     this.ItemPretrial = this.currentItemPretrial;
                 })
             },
@@ -303,5 +302,9 @@
 
     .el-textarea__inner {
         height: 100px;
+    }
+
+    a {
+        color: #337ab7;
     }
 </style>
