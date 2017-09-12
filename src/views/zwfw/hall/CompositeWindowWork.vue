@@ -1,27 +1,26 @@
 <template>
     <el-row :gutter="20">
-        <!--{{1 | enums('CompanyStatus')}}-->
         <el-col :span="8">
             <div class="grid-content ">
                 <div style="padding:10px">
                     <el-input v-model="getNumberBy_pretrialNumber" placeholder="输入预审抽号">
-                        <el-button slot="append" type="primary">已预审抽号</el-button>
+                        <el-button slot="append" type="primary" @click="takeNumberByPretrialNumber">已预审抽号</el-button>
                     </el-input>
 
                     <div style="margin: 20px 0;"></div>
 
                     <el-input v-model="getNumberBy_itemCode" placeholder="输入事项编码">
-                        <el-button slot="append" type="primary">未预审抽号</el-button>
+                        <el-button slot="append" type="primary" @click="takeNumberByItemCode">未预审抽号</el-button>
                     </el-input>
 
                     <div style="margin: 20px 0;"></div>
 
                     <el-input v-model="getNumberBy_hallNumber" placeholder="输入呼叫号查看办理事项">
-                        <el-button slot="append" type="primary">按呼叫号查询</el-button>
+                        <el-button slot="append" type="primary" @click="queryNumberByCallNumber">按呼叫号查询</el-button>
                     </el-input>
 
                     <div style="margin: 20px 0;"></div>
-                    <el-button type="primary" @click="queryNumber">查询当前业务</el-button>
+                    <el-button type="primary" @click="queryCurrentNumber">查询当前业务</el-button>
 
 
                     <div id="numberInfo" v-show="itemNumber!=null">
@@ -61,12 +60,12 @@
                             </tr>
                             <tr v-if="itemPretrialVo!=null">
                                 <th>预审状态:</th>
-                                <td>{{itemPretrialVo.status | enums('PretrialStatus')}}
+                                <td>{{itemPretrialVo.status | zwfwEnumData('PretrialStatus')}}
                                 </td>
                             </tr>
                             <tr>
                                 <th>排号状态:</th>
-                                <td style="color:red">{{itemNumber.status | enums('ItemNumberStatus')}}
+                                <td style="color:red">{{itemNumber.status | zwfwEnumData('ItemNumberStatus')}}
                                 </td>
                             </tr>
                             <tr v-if="itemNumber.status!=6">
@@ -206,7 +205,7 @@
                                     </tr>
                                     <tr>
                                         <th>办件类型</th>
-                                        <td>{{itemVo.type | enums('ItemType')}}
+                                        <td>{{itemVo.type | zwfwEnumData('ItemType')}}
                                         </td>
                                     </tr>
                                     <tr>
@@ -286,14 +285,20 @@
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import {getZwfwEnums} from 'api/zwfw/zwfwCommon';
+    import {
+        takeNumberByPretrialNumber,
+        takeNumberByItemCode,
+        queryNumberByCallNumber,
+        queryCurrentNumber
+    } from 'api/zwfw/zwfwCompositeWindow'
 
 
     export default {
         name: 'compositeWindowWork',
         data() {
             return {
-                getNumberBy_pretrialNumber: '',
-                getNumberBy_itemCode: '',
+                getNumberBy_pretrialNumber: 'TEST002',
+                getNumberBy_itemCode: 'ZJYW000001',
                 getNumberBy_hallNumber: '',
                 itemNumber: {},
                 itemVo: {},
@@ -310,11 +315,36 @@
 
             }
         },
+        beforeRouteEnter(to, from, next) {
+            getZwfwEnums().then(function () {
+                next();
+            })
+        },
         methods: {
             /**
-             * 查询号码
+             * 抽号 - 根据预审号码
              */
-            queryNumber() {
+            takeNumberByPretrialNumber() {
+
+            },
+            /**
+             * 抽号 - 根据事项编码
+             */
+            takeNumberByItemCode() {
+
+            },
+
+            /**
+             * 查询 - 根据呼叫号查询今日此号码信息
+             */
+            queryNumberByCallNumber() {
+
+            },
+            /**
+             *
+             * 查询 - 当前此窗口正在办理的业务
+             */
+            queryCurrentNumber() {
 
             },
             /**
@@ -323,11 +353,17 @@
             submitWork() {
 
             },
+            /**
+             * TAB 页面切换的时候事件
+             * @param tab
+             * @param event
+             */
             handleTabClick(tab, event) {
                 console.log(tab, event);
             }
         },
         mounted() {
+
         }
     }
 </script>

@@ -31,7 +31,7 @@ export function fetchZwfwActiviti(object) {
     return fetch(object);
 }
 
-function fetch(object){
+function fetch(object) {
     // 创建axios实例
     const service = axios.create({
         // headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -39,9 +39,10 @@ function fetch(object){
         timeout: 1000 * 60 * 5,                  // 请求超时时间  1000 * 60 * 5
         withCredentials: true,  // 跨域允许cookie
         // 请求数据转为json格式 springmvc自动填充
-        transformRequest: [function(data) {
-            if (!data)
+        transformRequest: [function (data) {
+            if (!data) {
                 data = {}
+            }
             data = Qs.stringify(data, {arrayFormat: 'brackets'})
             return data
         }]
@@ -68,22 +69,22 @@ function fetch(object){
              */
             // // 50014:Token 过期了 50012:其他客户端登录了 50008:非法的token
             if (code !== 200) {
-                if(code === 207){
+                if (code === 207) {
                     Message({
                         message: "短时间内请求太过频繁，请重新刷新页面",
                         type: 'error',
                         duration: 5 * 1000
                     });
-                }else{
+                } else {
                     Message({
                         message: response.data.msg,
                         type: 'error',
                         duration: 5 * 1000
                     });
                 }
-            }else{
+            } else {
                 code = response.data.httpCode;
-                if(code === 401){
+                if (code === 401) {
                     Message({
                         message: "登录超时，请重新登录",
                         type: 'error',
@@ -91,10 +92,10 @@ function fetch(object){
                     });
                     // 登出
                     store.dispatch('LogOut').then(() => {
-                        router.push({ path: '/login' })
+                        router.push({path: '/login'})
                     });
                 }
-                if(code === 403){
+                if (code === 403) {
                     Message({
                         message: "当前登录用户没有此权限",
                         type: 'error',
