@@ -66,7 +66,7 @@ module.exports = {
         'no-caller': 'error',
 
         // disallow empty functions
-        'no-empty-function': 'error',
+        'no-empty-function': 'warn',
 
         // disallow unnecessary calls to .bind()
         'no-extra-bind': 'error',
@@ -292,7 +292,7 @@ module.exports = {
         'object-shorthand': 'error',
 
         // require arrow functions as callbacks
-        'prefer-arrow-callback': 'error',
+        'prefer-arrow-callback': 'warn',
 
         // require const declarations for variables that are never reassigned after declared
         'prefer-const': 'error',
