@@ -20,7 +20,11 @@
                     </el-input>
 
                     <div style="margin: 20px 0;"></div>
-                    <el-button type="primary" @click="queryCurrentNumber">查询当前业务</el-button>
+
+                    <el-button-group>
+                        <el-button type="primary" @click="callNumber">叫号</el-button>
+                        <el-button type="primary" @click="queryCurrentNumber">查询当前业务</el-button>
+                    </el-button-group>
 
 
                     <div id="numberInfo" v-show="itemNumber!=null">
@@ -315,36 +319,61 @@
 
             }
         },
-        beforeRouteEnter(to, from, next) {
-            getZwfwEnums().then(function () {
-                next();
-            })
-        },
+//        beforeRouteEnter(to, from, next) {
+//            getZwfwEnums().then(function () {
+//                next();
+//            })
+//        },
         methods: {
             /**
              * 抽号 - 根据预审号码
              */
             takeNumberByPretrialNumber() {
+                var _this = this;
+                takeNumberByPretrialNumber({
+                    pretrialNumber: this.getNumberBy_pretrialNumber
+                }).then(function (data) {
+//                    console.log(data.data.callNumber);
+                    _this.$message.success("抽到的号码是：" + data.data.callNumber);
 
+                });
             },
             /**
              * 抽号 - 根据事项编码
              */
             takeNumberByItemCode() {
-
+                takeNumberByItemCode({
+                    itemCode: this.getNumberBy_itemCode
+                }).then(function (data) {
+                    _this.$message.success("抽到的号码是：" + data.data.callNumber);
+                });
             },
 
             /**
              * 查询 - 根据呼叫号查询今日此号码信息
              */
             queryNumberByCallNumber() {
-
+                queryNumberByCallNumber({
+                    hallNumber: this.getNumberBy_hallNumber
+                }).then(function (data) {
+                    console.log(data);
+                });
             },
             /**
              *
              * 查询 - 当前此窗口正在办理的业务
              */
             queryCurrentNumber() {
+                queryCurrentNumber({}).then(function (data) {
+                    console.log(data);
+                })
+            },
+            /**
+             *
+             * 叫号 - 当前用户所对应的窗口叫号
+             */
+            callNumber() {
+                //判断当前有没有正在办理却不是结束状态的号码，如果有则不允许叫号
 
             },
             /**

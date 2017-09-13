@@ -33,7 +33,7 @@ export function takeNumberByItemCode(query) {
  */
 export function queryNumberByCallNumber(query) {
     return fetchZwfw({
-        url: '/zwfwHallCompositeWindow/queryNumberByCallNumber',
+        url: '/zwfwHallCompositeWindow/query',
         method: 'post',
         params: query
     })
@@ -46,7 +46,7 @@ export function queryNumberByCallNumber(query) {
  */
 export function queryCurrentNumber(query) {
     return fetchZwfw({
-        url: '/zwfwHallCompositeWindow/queryCurrentNumber',
+        url: '/zwfwHallCompositeWindow/query',
         method: 'post',
         params: query
     })
