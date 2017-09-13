@@ -333,7 +333,6 @@
                 this.sysUser.avatar = '';
             },
             handleDelete() {
-                this.listLoading = true;
                 var selectCounts = this.selectedRows.length;
                 if (this.selectedRows == 0) {
                     this.$message.warning('请选择需要操作的记录');
@@ -343,6 +342,7 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
+                        this.listLoading = true;
                         let ids = new Array();
                         for (const deleteRow of this.selectedRows) {
                             ids.push(deleteRow.id);

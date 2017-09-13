@@ -12,7 +12,7 @@
                   style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column min-width="200px" align="center" label="预审号">
                 <template scope="scope">
-                    <span>{{scope.row.id}}<br/>({{scope.row.itemName}})</span>
+                    <span>{{scope.row.number}}<br/>({{scope.row.itemName}})</span>
                 </template>
             </el-table-column>
             <el-table-column width="250px" align="center" label="企业名称">
@@ -134,7 +134,7 @@
                         <table class="table table-responsive table-bordered">
                             <tr>
                                 <th width="140">预审编号</th>
-                                <td>{{ItemPretrial.id}}</td>
+                                <td>{{ItemPretrial.number}}</td>
                             </tr>
                             <tr>
                                 <th width="140">办理事项</th>
@@ -251,6 +251,7 @@
             resetTemp() {
                 this.ItemPretrial = {
                     id: undefined,
+                    number: '',
                     companyName: '',
                     applyTime: '',
                     auditTime: '',

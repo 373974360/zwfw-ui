@@ -12,7 +12,7 @@
                   style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column min-width="200px" align="center" label="预审号">
                 <template scope="scope">
-                    <span>{{scope.row.id}}<br/>({{scope.row.itemName}})</span>
+                    <span>{{scope.row.number}}<br/>({{scope.row.itemName}})</span>
                 </template>
             </el-table-column>
             <el-table-column width="250px" align="center" label="企业名称">
@@ -134,7 +134,7 @@
                         <el-form ref="zwfwItemPretrial" label-width="140px" :model="ItemPretrial"
                                  :rules="ItemPretrialRules">
                             <el-form-item label="预审编号">
-                                <el-input v-model="ItemPretrial.id" disabled></el-input>
+                                <el-input v-model="ItemPretrial.number" disabled></el-input>
                             </el-form-item>
                             <el-form-item label="办理事项">
                                 <el-input v-model="ItemPretrial.itemName" disabled></el-input>
@@ -206,6 +206,7 @@
                 passRemark: '确认通过',
                 ItemPretrial: {
                     id: undefined,
+                    number: '',
                     companyName: '',
                     applyTime: '',
                     auditTime: '',
@@ -300,6 +301,7 @@
             resetTemp() {
                 this.ItemPretrial = {
                     id: undefined,
+                    number: '',
                     companyName: '',
                     applyTime: '',
                     auditTime: '',

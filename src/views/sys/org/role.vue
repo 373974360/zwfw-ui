@@ -244,6 +244,7 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
+                        this.listLoading = true;
                         let ids = new Array();
                         for (const deleteRow of this.selectedRows) {
                             ids.push(deleteRow.id);

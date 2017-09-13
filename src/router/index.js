@@ -38,6 +38,7 @@ const NaturePerson = () => import('../views/zwfw/zwfwNaturePerson');
 const ZwfwProcessDefinitionModel = () => import('../views/zwfw/activiti/zwfwProcessDefinitionModel');
 const ZwfwProcessDefinition = () => import('../views/zwfw/activiti/ZwfwProcessDefinition');
 const ZwfwTaskSetting = () => import('../views/zwfw/activiti/ZwfwTaskSetting');
+const ZwfwNumberScope = () => import('../views/zwfw/zwfwNumberScope');
 
 /* 部门待办列表*/
 const DeptWorkPendingList = () => import('../views/zwfw/work/deptWorkPendingList');
@@ -58,10 +59,10 @@ const Task = () => import('../views/task/task');
 const Call = () => import('../views/zwfw/count/call');
 
 /* 网上预审 */
-const WaitPretrial = () => import('../views/zwfw/pretrial/waitPretrial');
-const OverPretrial = () => import('../views/zwfw/pretrial/overPretrial');
-const Reform = () => import('../views/zwfw/pretrial/reform');
-const Ignore = () => import('../views/zwfw/pretrial/ignore');
+const Pending = () => import('../views/zwfw/pretrial/pending');
+const Finish = () => import('../views/zwfw/pretrial/finish');
+const Correction = () => import('../views/zwfw/pretrial/correction');
+const NoAccept = () => import('../views/zwfw/pretrial/noAccept');
 
 /* components */
 const componentsIndex = () => import('../views/components/index');
@@ -158,12 +159,12 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: 'noredirect',
         name: '网上预审',
-        icon: 'zuzhi',
+        icon: 'shenpi',
         children: [
-            {path: 'waitPretrial', component: WaitPretrial, name: '待预审件 '},
-            {path: 'overPretrial', component: OverPretrial, name: '已预审件'},
-            {path: 'reform', component: Reform, name: '整改件'},
-            {path: 'ignore', component: Ignore, name: '不予受理件'}
+            {path: 'pending', component: Pending, name: '待预审件 '},
+            {path: 'finish', component: Finish, name: '已预审件'},
+            {path: 'correction', component: Correction, name: '整改件'},
+            {path: 'noAccept', component: NoAccept, name: '不予受理件'}
         ]
     },
     {
@@ -204,7 +205,7 @@ export const asyncRouterMap = [
             {path: 'window', component: Window, name: '窗口管理'},
             {path: 'formEditor', component: FormEditor, name: '表单编辑器'},
             {path: 'zwfwItem', component: Item, name: '事项管理'},
-            {path: 'window', component: Window, name: '窗口管理'},
+            {path: 'zwfwNumberScope', component: ZwfwNumberScope, name: '抽号管理'},
             {path: 'zwfwLegalPerson', component: LegalPerson, name: '法人管理'},
             {path: 'zwfwNaturePerson', component: NaturePerson, name: '自然人管理'},
             {path: 'zwfwProcessDefinitionModel', component: ZwfwProcessDefinitionModel, name: '流程模型编辑'},
@@ -224,7 +225,7 @@ export const asyncRouterMap = [
             {path: 'work', component: CompositeWindowWork, name: '窗口收件'}
 
         ]
-    },{
+    }, {
         path: '/work',
         component: Layout,
         redirect: 'noredirect',
@@ -234,7 +235,7 @@ export const asyncRouterMap = [
             {path: 'deptPending', component: DeptWorkPendingList, name: '待办事项'}
 
         ]
-    },{
+    }, {
         path: '/count',
         component: Layout,
         redirect: 'noredirect',
