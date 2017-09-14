@@ -852,10 +852,13 @@
             update() {
                 this.$refs['zwfwItemForm'].validate((valid) => {
                     if (valid) {
+                        this.listLoading = true;
                         this.dialogFormVisible = false;
                         updateZwfwItem(this.zwfwItem).then(response => {
                             copyProperties(this.currentRow, response.data);
                             this.$message.success('更新成功');
+                            this.listLoading = false;
+
                         })
                     } else {
                         return false;

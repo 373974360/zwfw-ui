@@ -14,7 +14,9 @@
                     </el-input>
 
                     <div style="margin: 20px 0;"></div>
-
+                    <el-input v-model="devMockWindowKey" placeholder="输入窗口key">
+                        <el-button slot="append" type="primary" @click="loginToWindow">登录到窗口</el-button>
+                    </el-input>
                     <el-input v-model="getNumberBy_hallNumber" placeholder="输入呼叫号查看办理事项">
                         <el-button slot="append" type="primary" @click="queryNumberByCallNumber">按呼叫号查询</el-button>
                     </el-input>
@@ -22,8 +24,20 @@
                     <div style="margin: 20px 0;"></div>
 
                     <el-button-group>
-                        <el-button type="primary" @click="callNumber">叫号</el-button>
+                        <el-button v-if="itemNumber == null || itemNumber.status==1" type="primary" @click="callNumber">
+                            叫号
+                        </el-button>
                         <el-button type="primary" @click="queryCurrentNumber">查询当前业务</el-button>
+                        <el-button v-if="itemNumber.status==2" type="primary"
+                                   v-bind:disabled="itemNumber.applyFinishTime!=null"
+                                   @click="welcomeNumber" title="仅限测试使用">
+                            模拟欢迎
+                        </el-button>
+                        <el-button v-if="itemNumber.status==2" type="primary"
+                                   v-bind:disabled="itemNumber.applyFinishTime!=null"
+                                   @click="skip" title="申请人未到达窗口时跳过">
+                            跳过
+                        </el-button>
                     </el-button-group>
 
 
@@ -42,17 +56,17 @@
                             <!--<td style="color:red"><strong class="font-size:5rem">{{itemNumber.type | enum-->
                             <!--'ItemWindowSupport'}}</strong></td>-->
                             <!--</tr>-->
-                            <tr v-show="memberVo!=null">
+                            <tr v-show="member!=null">
                                 <th>申报人:</th>
-                                <td>{{memberVo.name}}</td>
+                                <td>{{member.name}}</td>
                             </tr>
-                            <tr v-show="memberVo!=null">
+                            <tr v-show="member!=null">
                                 <th>申报人联系电话:</th>
-                                <td>{{memberVo.mobilephone}}</td>
+                                <td>{{member.mobilephone}}</td>
                             </tr>
-                            <tr v-show="companyVo!=null">
+                            <tr v-show="company!=null">
                                 <th>办事企业:</th>
-                                <td>{{companyVo.name}}</td>
+                                <td>{{company.name}}</td>
                             </tr>
                             <tr v-if="itemPretrialVo!=null">
                                 <th>预审号码:</th>
@@ -79,8 +93,8 @@
                             <tr width="140">
                                 <th>受理窗口:</th>
                                 <td style="color:red">
-                                    <strong v-if="windowVo!=null" class="font-size:5rem">{{windowVo.name}}</strong>
-                                    <strong v-if="windowVo==null" class="font-size:5rem">无</strong>
+                                    <strong v-if="window!=null" class="font-size:5rem">{{window.name}}</strong>
+                                    <strong v-if="window==null" class="font-size:5rem">无</strong>
                                 </td>
                             </tr>
                             <tr v-show="itemWindowUserName">
@@ -109,45 +123,35 @@
                             </tr>
                         </table>
                         <div class="block full-width" v-if="itemNumber.status==6">
-                                <textarea class="form-control full-width" placeholder="备注"
-                                          v-model="remark" data-toggle="tooltip" data-placement="auto"
-                                          title="用于记录不予受理的原因"></textarea>
+
+                            <el-input
+                                    type="textarea"
+                                    :autosize="{ minRows: 2, maxRows: 4}"
+                                    placeholder="用于记录不予受理的原因"
+                                    v-model="remark">
+                            </el-input>
                         </div>
-                        <div v-if="itemNumber.status==1">
-                            <button class="btn btn-success" type="button"
-                                    v-bind:disabled="itemNumber.applyFinishTime!=null"
-                                    v-on:click.self="call"
-                                    data-toggle="tooltip" data-placement="auto" title="仅限测试使用">
+                        <div style="margin: 20px 0;"></div>
+                        <el-button-group>
+                            <el-button v-if="itemNumber.status==1" type="primary"
+                                       v-bind:disabled="itemNumber.applyFinishTime!=null"
+                                       @click.self="callNumber"
+                                       title="仅限测试使用">
                                 模拟叫号
-                            </button>
-                        </div>
-                        <div class="form-group m-md" v-if="itemNumber.status==2">
-                            <button class="btn btn-success" type="button"
-                                    v-bind:disabled="itemNumber.applyFinishTime!=null"
-                                    v-on:click.self="welcome"
-                                    data-toggle="tooltip" data-placement="auto" title="仅限测试使用">
-                                模拟欢迎
-                            </button>
-                            <button class="btn btn-warning" type="button"
-                                    v-bind:disabled="itemNumber.applyFinishTime!=null"
-                                    v-on:click.self="skip"
-                                    data-toggle="tooltip" data-placement="auto" title="申请人未到达窗口时跳过">
-                                跳过
-                            </button>
-                        </div>
-                        <div class="m-md" v-if="itemNumber.status==6">
-                            <button class="btn btn-success" type="button"
-                                    v-bind:disabled="itemNumber.applyFinishTime!=null"
-                                    v-on:click.self="pass" data-toggle="tooltip" data-placement="auto"
-                                    title="核验资料无误时点击此处">
+                            </el-button>
+                            <el-button v-if="itemNumber.status==6" type="primary"
+                                       v-bind:disabled="itemNumber.applyFinishTime!=null"
+                                       @click="pass"
+                                       title="核验资料无误时点击此处">
                                 收件并转交部门
-                            </button>
-                            <button class="btn btn-danger" type="button"
-                                    v-bind:disabled="itemNumber.applyFinishTime!=null"
-                                    v-on:click.self="reject">
+                            </el-button>
+                            <el-button v-if="itemNumber.status==6" type="primary"
+                                       v-bind:disabled="itemNumber.applyFinishTime!=null"
+                                       @click.self="reject">
                                 不予受理
-                            </button>
-                        </div>
+                            </el-button>
+
+                        </el-button-group>
                     </div>
                 </div>
 
@@ -160,34 +164,85 @@
                     <el-tabs v-model="tabName" type="card" @tab-click="handleTabClick">
                         <el-tab-pane label="所需资料" name="materialListPanel">
                             <el-table
+                                    ref="itemMaterialVoList"
                                     :data="itemMaterialVoList"
                                     height="400"
                                     border
-                                    style="width: 100%">
+                                    style="width: 100%"
+
+                                    @selection-change="handleMaterialSelectionChange"
+                            >
                                 <el-table-column
+                                        fixed
                                         type="index"
                                         width="50">
                                 </el-table-column>
-                                <el-table-column v-if="false"
-                                                 type="selection"
-                                                 width="55">
+                                <el-table-column
+                                        fixed
+                                        v-if="itemNumber.status==6"
+                                        type="selection"
+                                        prop="received"
+                                        width="55">
                                 </el-table-column>
                                 <el-table-column
+                                        fixed
                                         prop="name"
                                         label="材料"
                                         width="180">
                                 </el-table-column>
                                 <el-table-column
-                                        prop="address"
-                                        label="份数">
+                                        prop="type"
+                                        label="类型">
                                 </el-table-column>
                                 <el-table-column
-                                        prop="address"
-                                        label="材料形式">
+                                        prop="example"
+                                        label="样本">
+                                    <template scope="scope">
+                                        <a v-if="scope.row.example" :href="scope.row.example" target="_blank">点击下载</a>
+                                        <span v-else>无</span>
+                                    </template>
                                 </el-table-column>
                                 <el-table-column
-                                        prop="address"
-                                        label="链接">
+                                        prop="source"
+                                        label="来源">
+                                    <template scope="scope">
+                                        {{scope.row.source | dicts('sxsqclly')}}
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                        prop="paperDescription"
+                                        label="纸质说明">
+                                </el-table-column>
+                                <el-table-column
+                                        prop="notice"
+                                        label="填报须知">
+                                </el-table-column>
+                                <el-table-column
+                                        prop="acceptStandard"
+                                        label="受理标准">
+                                </el-table-column>
+                                <el-table-column
+                                        prop="electronicMaterial"
+                                        label="需要预审">
+                                    <template scope="scope">
+                                        {{scope.row.electronicMaterial ? '是 ' : '否'}}
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                        prop="multipleFile"
+                                        label="已上传">
+                                    <template scope="scope">
+                                        <span v-for="(file,index) in scope.row.multipleFile">
+                                            <span v-if="file.url!=null && file.url!=''">
+                                            <a target="_blank"
+                                               v-if="file.fileType == 'doc' || file.fileType == 'docx' || file.fileType == 'xls' || file.fileType == 'xlsx' || file.fileType == 'ppt'"
+                                               :href="'https://view.officeapps.live.com/op/view.aspx?src=' + win.cxt + file.url ">[{{index + 1}}]</a>
+                                            <a v-else :href="file.url"
+                                               target="_blank">[{{index + 1}}]</a>
+                                            </span>
+                                            <span v-else>未上传</span>
+                                        </span>
+                                    </template>
                                 </el-table-column>
 
                             </el-table>
@@ -200,30 +255,34 @@
                                         <td>{{itemVo.name}}</td>
                                     </tr>
                                     <tr>
-                                        <th>办理主体</th>
-                                        <td>{{itemVo.departmentName}}</td>
+                                        <th>实施机构</th>
+                                        <td>{{itemVo.implAgency}}</td>
                                     </tr>
                                     <tr>
-                                        <th>事项审批涉及的部门</th>
-                                        <td>{{itemVo.departmentNames}}</td>
+                                        <th>联办机构</th>
+                                        <td>{{itemVo.unionAgency}}</td>
                                     </tr>
                                     <tr>
                                         <th>办件类型</th>
-                                        <td>{{itemVo.type | zwfwEnumData('ItemType')}}
+                                        <td>{{itemVo.processType | dicts('bjlx')}}
                                         </td>
                                     </tr>
                                     <tr>
                                         <th>承诺时限</th>
-                                        <td>{{itemVo.promiseDay}} 个工作日</td>
+                                        <td>{{itemVo.promiseEndTime}} 个工作日</td>
                                     </tr>
                                     <tr>
                                         <th>法定时限</th>
-                                        <td>{{itemVo.legalDay}} 个工作日</td>
+                                        <td>{{itemVo.legalEndTime}} 个工作日</td>
                                     </tr>
                                     <tr>
                                         <th>核准数量</th>
-                                        <td>{{itemVo.authorizedQuantity == 0 ? '无数量限制' : itemVo.authorizedQuantity}}
+                                        <td>{{itemVo.numberLimit == 0 ? '无数量限制' : itemVo.numberLimit}}
                                         </td>
+                                    </tr>
+                                    <tr>
+                                        <th>是否收费</th>
+                                        <td>{{itemVo.chargeable ? '是' : '否'}}</td>
                                     </tr>
                                     <tr>
                                         <th>收费标准</th>
@@ -234,48 +293,28 @@
                                         <td>{{itemVo.chargeBasis}}</td>
                                     </tr>
                                     <tr>
-                                        <th>批准证件</th>
-                                        <td>{{itemVo.approvalDocumentName}}</td>
+                                        <th>结果名称</th>
+                                        <td>{{itemVo.resultName}}</td>
                                     </tr>
                                     <tr>
                                         <th>联系电话</th>
-                                        <td>{{itemVo.tellphone}}</td>
+                                        <td>{{itemVo.askPhone}}</td>
                                     </tr>
                                     <tr>
                                         <th>监督电话</th>
-                                        <td>{{itemVo.superviseTellphone}}</td>
+                                        <td>{{itemVo.supervisePhone}}</td>
                                     </tr>
                                     <tr>
                                         <th>办理条件</th>
                                         <td>
-                                            <ol>
-                                                <li v-for="c in itemConditionVoList">
-                                                    {{c.content}}
-                                                </li>
-                                            </ol>
+                                            <div style="white-space:pre-wrap">{{itemVo.acceptCondition}}</div>
                                         </td>
                                     </tr>
                                 </table>
                             </div>
                         </el-tab-pane>
-                        <el-tab-pane label="办理步骤" name="itemStep">
-
-                            <div id="itemStepInfo">
-                                <table>
-                                    <tr>
-                                        <th>序号</th>
-                                        <th>步骤</th>
-                                        <th>说明</th>
-                                        <th>操作者</th>
-                                    </tr>
-                                    <tr v-for="c in approveStepList">
-                                        <td>{{$index + 1}}</td>
-                                        <td>{{c.name}}</td>
-                                        <td>{{c.desc}}</td>
-                                        <td>{{c.role}}</td>
-                                    </tr>
-                                </table>
-                            </div>
+                        <el-tab-pane label="内部办理流程描述" name="itemStep">
+                            <div id="itemStepInfo" style="white-space:pre-wrap">{{itemVo.workflowDescription}}</div>
                         </el-tab-pane>
                     </el-tabs>
                 </div>
@@ -293,7 +332,11 @@
         takeNumberByPretrialNumber,
         takeNumberByItemCode,
         queryNumberByCallNumber,
-        queryCurrentNumber
+        queryCurrentNumber,
+        loginToWindow,
+        callNumber,
+        welcomeNumber,
+        submitWork
     } from 'api/zwfw/zwfwCompositeWindow'
 
 
@@ -304,18 +347,21 @@
                 getNumberBy_pretrialNumber: 'TEST002',
                 getNumberBy_itemCode: 'ZJYW000001',
                 getNumberBy_hallNumber: '',
+                materialSelection:[],
+                remark: '',
                 itemNumber: {},
                 itemVo: {},
-                memberVo: {},
-                companyVo: {},
+                member: {},
+                company: {},
                 itemPretrialVo: {},
                 tabName: 'materialListPanel',
                 itemMaterialVoList: [],
                 approveStepList: [],
                 itemConditionVoList: [],
-                windowVo: {},
+                window: {},
                 itemWindowUserName: '',
-                testStatus: '1'
+                testStatus: '1',
+                devMockWindowKey: ''
 
             }
         },
@@ -325,6 +371,19 @@
 //            })
 //        },
         methods: {
+            /**
+             * 模拟当前用户登录到窗口
+             */
+            loginToWindow() {
+                var _this = this;
+                loginToWindow({
+                    windowKey: this.devMockWindowKey
+                }).then(function (data) {
+//                    console.log(data.data.callNumber);
+                    _this.$message.success("登录到窗口");
+
+                });
+            },
             /**
              * 抽号 - 根据预审号码
              */
@@ -353,10 +412,21 @@
              * 查询 - 根据呼叫号查询今日此号码信息
              */
             queryNumberByCallNumber() {
+                let _this = this;
                 queryNumberByCallNumber({
                     hallNumber: this.getNumberBy_hallNumber
-                }).then(function (data) {
-                    console.log(data);
+                }).then(function (resp) {
+                    let data = resp.data;
+                    _this.itemNumber = data.itemNumber;
+                    _this.itemVo = data.itemVo;
+                    _this.member = data.member;
+                    _this.company = data.company;
+                    _this.itemPretrialVo = data.itemPretrialVo;
+                    _this.itemMaterialVoList = data.itemMaterialVoList;
+                    _this.approveStepList = data.approveStepList;
+                    _this.itemConditionVoList = data.itemConditionVoList;
+                    _this.window = data.window;
+                    _this.itemWindowUserName = data.itemWindowUserName;
                 });
             },
             /**
@@ -364,23 +434,114 @@
              * 查询 - 当前此窗口正在办理的业务
              */
             queryCurrentNumber() {
-                queryCurrentNumber({}).then(function (data) {
-                    console.log(data);
+                let _this = this;
+                queryCurrentNumber({}).then(function (resp) {
+                    let data = resp.data;
+                    _this.itemNumber = data.itemNumber;
+                    _this.itemVo = data.itemVo;
+                    _this.member = data.member;
+                    _this.company = data.company;
+                    _this.itemPretrialVo = data.itemPretrialVo;
+                    _this.itemMaterialVoList = data.itemMaterialVoList;
+                    _this.approveStepList = data.approveStepList;
+                    _this.itemConditionVoList = data.itemConditionVoList;
+                    _this.window = data.window;
+                    _this.itemWindowUserName = data.itemWindowUserName;
                 })
             },
+
             /**
              *
              * 叫号 - 当前用户所对应的窗口叫号
              */
-            callNumber() {
+            callNextNumber() {
                 //判断当前有没有正在办理却不是结束状态的号码，如果有则不允许叫号
 
             },
             /**
-             * 提交收件结果
+             *
+             * 叫号 - 将当前查看的号码修改为已经呼叫的状态
              */
-            submitWork() {
+            callNumber() {
+                let _this = this;
+                callNumber({
+                    numberId: _this.itemNumber.id
+                }).then(function (resp) {
+                    let data = resp.data;
+                    _this.itemNumber = data.itemNumber;
+                });
+            },
+            /**
+             * 模拟欢迎
+             *
+             * */
+            welcomeNumber() {
+                let _this = this;
+                welcomeNumber({
+                    numberId: _this.itemNumber.id
+                }).then(function (resp) {
+                    let data = resp.data;
+                    _this.itemNumber = data.itemNumber;
+                });
+            },
+            /**
+             * 通过
+             */
+            pass() {
+                let _this = this;
+                let checked_m = this.materialSelection.map(function(m){
+                    return m.id;
+                });
+                let _itemNumber = _this.itemNumber;
 
+                let msg = "";
+                if (checked_m.length > 0) {
+                    msg = "确认已经收件（" + checked_m.length + "项），是否确认并交由部门处理？"
+                } else {
+                    msg = "您没有勾选收件！！，是否确定直接提交部门处理？";
+                }
+
+                this.$confirm(msg, '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    submitWork({
+                        id: _itemNumber.id,
+                        status: 3,
+                        remark: this.remark,
+                        received: checked_m.join(',')
+
+                    }).then(function (data) {
+                        console.log(data);
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消提交'
+                    });
+                });
+            },
+
+            /**
+             * 不予受理
+             * */
+            reject() {
+                submitWork({}).then(function (resp) {
+
+                });
+            },
+            /**
+             * 跳过处理
+             *
+             * */
+            skip() {
+                submitWork({}).then(function (resp) {
+
+                });
+            },
+            handleMaterialSelectionChange(val) {
+                this.materialSelection = val;
             },
             /**
              * TAB 页面切换的时候事件

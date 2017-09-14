@@ -51,3 +51,53 @@ export function queryCurrentNumber(query) {
         params: query
     })
 }
+
+/**
+ * 登录到窗口
+ * @param query
+ * @returns {*}
+ */
+export function loginToWindow(query) {
+    return fetchZwfw({
+        url: '/zwfwHallCompositeWindow/loginToWindow',
+        method: 'post',
+        params: query
+    })
+}
+
+/**
+ * 叫号
+ * @param query
+ * @returns {*}
+ */
+export function callNumber(query) {
+    return fetchZwfw({
+        url: '/zwfwHallCompositeWindow/callNumber',
+        method: 'post',
+        params: query
+    });
+}
+
+/**
+ * 欢迎
+ * @param query
+ * @returns {*}
+ */
+export function welcomeNumber(query) {
+    return fetchZwfw({
+        url: '/zwfwHallCompositeWindow/welcomeNumber',
+        method: 'post',
+        params: query
+    });
+}
+
+/**
+ * 综合窗口提交收件
+ * */
+export function submitWork(query) {
+    return fetchZwfw({
+        url: '/zwfwHallCompositeWindow/submitWork',
+        method: 'post',
+        params: query
+    });
+}
