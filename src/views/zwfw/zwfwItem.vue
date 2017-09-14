@@ -789,19 +789,14 @@
                 });
             },
             createMaterial() {
-                this.zwfwItemMaterialRules.name[0].required = true;
-                this.zwfwItemMaterialRules.source[0].required = true;
-                this.zwfwItemMaterialRules.type[0].required = true;
                 this.$refs['zwfwMaterialForm'].validate((valid) => {
                     if (valid) {
                         if (this.$refs.zwfwMaterialForm.$el[0].disabled != true) {
                             for (let obj of this.zwfwItemMaterialList) {
                                 if (obj.id == this.zwfwItemMaterial.id) {
                                     this.$message.warning('资料已存在');
-                                    this.zwfwItemMaterial = {};
-                                    this.zwfwItemMaterialRules.name[0].required = false;
-                                    this.zwfwItemMaterialRules.source[0].required = false;
-                                    this.zwfwItemMaterialRules.type[0].required = false;
+                                    this.resetTemp1();
+                                    resetForm(this, 'zwfwMaterialForm');
                                     return false;
                                 }
                             }
@@ -814,12 +809,9 @@
                                 this.zwfwItemMaterialList.unshift(this.zwfwItemMaterial);
                                 this.$message.success('创建成功');
                                 this.listLoading1 = false;
-                                this.zwfwItemMaterialRules.name[0].required = false;
-                                this.zwfwItemMaterialRules.source[0].required = false;
-                                this.zwfwItemMaterialRules.type[0].required = false;
-                                this.resetTemp1();
                                 this.uploadAvatarsExample = [];
                                 this.uploadAvatarsEform = [];
+                                this.resetZwfwMaterialForm();
                                 this.currentItem.itemMaterialCount += 1;
                             })
                         } else {
@@ -840,16 +832,15 @@
                                 example: this.zwfwItemMaterial.example,
                                 notice: this.zwfwItemMaterial.notice
                             }
+                            this.listLoading1 = true;
                             updateZwfwMaterial(zwfwMaterialList).then(response => {
+                                this.listLoading1 = false;
                                 copyProperties(this.currentRow, response.data);
                                 this.$message.success('更新成功');
                                 this.dialogFormVisible1 = true;
-                                this.zwfwItemMaterialRules.name[0].required = false;
-                                this.zwfwItemMaterialRules.source[0].required = false;
-                                this.zwfwItemMaterialRules.type[0].required = false;
-                                this.resetTemp1();
                                 this.uploadAvatarsExample = [];
                                 this.uploadAvatarsEform = [];
+                                this.resetZwfwMaterialForm();
                                 this.$refs.zwfwMaterialForm.$el[0].disabled = false;
                             })
                         }

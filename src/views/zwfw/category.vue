@@ -8,7 +8,8 @@
         </div>
         <tree-grid :columns="columns" :tree-structure="true" :data-source="categoryList" :list-loading="listLoading"
                    :handle-toggle="handleToggle" :handle-create="handleCreate"
-                   :handle-update="handleUpdate" :handle-delete="handleDelete" :defaultExpandAll="true" :handle-item="handleCreateItem"
+                   :handle-update="handleUpdate" :handle-delete="handleDelete" :defaultExpandAll="true"
+                   :handle-item="handleCreateItem"
                    :assoicateItem="showButton">
         </tree-grid>
 
@@ -333,14 +334,13 @@
                 }
             },
             saveCategoryItem() {
-                this.categoryItemRules.name[0].required = true;
                 this.$refs['zwfwItemForm'].validate((valid) => {
                     if (valid) {
-                        for (let obj of this.zwfwItemList) {
+                        for (const obj of this.zwfwItemList) {
                             if (obj.id == this.zwfwItem.id) {
                                 this.$message.warning('事项已存在');
-                                this.zwfwItem = {};
-                                this.categoryItemRules.name[0].required = false;
+                                this.resetTemp1();
+                                resetForm(this, 'zwfwItemForm');
                                 return false;
                             }
                         }
@@ -353,9 +353,8 @@
                             this.zwfwItemList.unshift(this.zwfwItem);
                             this.$message.success('创建成功');
                             this.listLoading1 = false;
+                            this.resetZwfwItemForm();
                             this.currentItem.categoryItemCount += 1;
-                            this.categoryItemRules.name[0].required = false;
-                            this.zwfwItem = {};
                         })
                     } else {
                         return false;
@@ -379,6 +378,7 @@
                         deleteZwfwCategoryItem(this.categoryId, ids).then(response => {
                             this.currentItem.categoryItemCount -= length;
                             this.$message.success('删除成功');
+                            this.resetZwfwItemForm();
                         })
                         for (const deleteRow of this.selectedRows) {
                             const index = this.zwfwItemList.indexOf(deleteRow);

@@ -63,12 +63,12 @@
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="addDialogFormVisible"
                    :close-on-click-modal="closeOnClickModal" :before-close="resetNumberForm">
             <el-form ref="zwfwNumberScope" class="small-space" :model="zwfwNumberScope" label-position="left"
-                     label-width="130px"
+                     label-width="100px"
                      style='width: 80%; margin-left:10%;' :rules="numberScopeRules">
-                <el-form-item label="排号单前缀" prop="name">
+                <el-form-item label="排号单前缀" prop="prefixName">
                     <el-input v-model="zwfwNumberScope.prefixName"/>
                 </el-form-item>
-                <el-form-item label="起始段号" prop="callerKey">
+                <el-form-item label="起始段号" prop="beginNumber">
                     <el-input v-model="zwfwNumberScope.beginNumber"/>
                 </el-form-item>
             </el-form>
@@ -197,10 +197,10 @@
                 },
                 numberScopeRules: {
                     prefixName: [
-                        {required: true, message: '请输入排号单前缀'}
+                        {required: true, message: '请输入排号单前缀', trigger: 'blur'}
                     ],
                     beginNumber: [
-                        {required: true, message: '请输入起始段号'}
+                        {required: true, message: '请输入起始段号', trigger: 'blur'}
                     ]
                 },
                 zwfwNumberScopeItemRules: {
@@ -244,16 +244,8 @@
                     this.listLoading = false;
                 })
             },
-            getNumberScopeItem() {
-                const query = {};
-                getAllItemNumberScope(query).then(response => {
-                    this.numberScopeList = response.data;
-                    console.log(this.numberScopeList);
-                })
-            },
             handleSelectionChange(row) {
                 this.selectedRows = row;
-                console.log(this.selectedRows);
             },
             handleSizeChange(val) {
                 this.listQuery.rows = val;
@@ -402,7 +394,6 @@
                 const query = {};
                 getAllItemNumberScope(query).then(response => {
                     this.numberScopeList = response.data;
-                    this.zwfwNumberScopeItemRules.name[0].required = true;
                     this.$refs['zwfwItemForm'].validate((valid) => {
                         if (valid) {
                             for (let obj of this.zwfwItemList) {
@@ -430,9 +421,8 @@
                                 this.zwfwItemList.unshift(this.zwfwItem);
                                 this.$message.success('创建成功');
                                 this.listLoading1 = false;
-                                this.zwfwNumberScopeItemRules.name[0].required = false;
                                 this.currentItem.numberItemCount += 1;
-                                this.resetTemp1();
+                                this.resetZwfwItemForm();
                             })
                         } else {
                             return false;
@@ -459,6 +449,7 @@
                             this.listLoading1 = false;
                             this.currentItem.numberItemCount -= length;
                             this.$message.success('删除成功');
+                            this.resetZwfwItemForm();
                         })
                         for (const deleteRow of this.selectedRows) {
                             const index = this.zwfwItemList.indexOf(deleteRow);

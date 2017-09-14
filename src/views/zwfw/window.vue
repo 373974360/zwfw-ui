@@ -248,19 +248,19 @@
                 },
                 windowRules: {
                     name: [
-                        {required: true, message: '请输入窗口名称'}
+                        {required: true, message: '请输入窗口名称', trigger: 'blur'}
                     ],
                     callerKey: [
-                        {required: true, message: '请输入叫号设备key'}
+                        {required: true, message: '请输入叫号设备key', trigger: 'blur'}
                     ],
                     judgeKey: [
-                        {required: true, message: '请输入评价设备key'}
+                        {required: true, message: '请输入评价设备key', trigger: 'blur'}
                     ],
                     cameraKey: [
-                        {required: true, message: '请输入高拍仪设备key'}
+                        {required: true, message: '请输入高拍仪设备key', trigger: 'blur'}
                     ],
                     ledKey: [
-                        {required: true, message: '请输入LED显示设备key'}
+                        {required: true, message: '请输入LED显示设备key', trigger: 'blur'}
                     ]
                 },
                 windowItemRules: {
@@ -463,14 +463,13 @@
                 }
             },
             saveCategoryItem() {
-                this.windowItemRules.name[0].required = true;
                 this.$refs['zwfwItemForm'].validate((valid) => {
                     if (valid) {
                         for (let obj of this.zwfwItemList) {
                             if (obj.id == this.zwfwItem.id) {
                                 this.$message.warning('事项已存在');
-                                this.windowItemRules.name[0].required = false;
-                                this.zwfwItem = {};
+                                this.resetTemp1();
+                                resetForm(this, 'zwfwItemForm');
                                 return false;
                             }
                         }
@@ -486,12 +485,8 @@
                             this.zwfwItemList.unshift(this.zwfwItem);
                             this.$message.success('创建成功');
                             this.listLoading1 = false;
-                            this.windowItemRules.name[0].required = false;
                             this.currentItem.windowItemCount += 1;
-                            this.resetTemp1();
-                            this.supportNormal = true;
-                            this.supportAssist = true;
-                            this.supportEnquire = true;
+                            this.resetZwfwItemForm();
                         })
                     } else {
                         return false;
@@ -515,6 +510,7 @@
                         deleteZwfwWindowItem(this.windowId, ids).then(response => {
                             this.currentItem.windowItemCount -= length;
                             this.$message.success('删除成功');
+                            this.resetZwfwItemForm();
                         })
                         for (const deleteRow of this.selectedRows) {
                             const index = this.zwfwItemList.indexOf(deleteRow);
