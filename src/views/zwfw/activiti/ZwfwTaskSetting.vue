@@ -69,7 +69,7 @@
                                             :value="item.id">
                                     </el-option>
                                 </el-select>
-                                <el-button slot="append" @click="addUserToTask">添加</el-button>
+                                <el-button type="primary"  @click="addUserToTask">添加</el-button>
                                 <el-button class="el-button--primary" @click="saveCandidateUser">
                                     保存人员设置
                                 </el-button>
@@ -314,7 +314,7 @@
                     return item.id
                 })).then(function (response) {
                     _this.$message.success("保存成功")
-                }).then(function (response) {
+                },function (response) {
                     _this.$message.error("保存失败");
                 });
 
