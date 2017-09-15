@@ -133,12 +133,7 @@
                         </div>
                         <div style="margin: 20px 0;"></div>
                         <el-button-group>
-                            <el-button v-if="itemNumber.status==1" type="primary"
-                                       v-bind:disabled="itemNumber.applyFinishTime!=null"
-                                       @click.self="callNumber"
-                                       title="仅限测试使用">
-                                模拟叫号
-                            </el-button>
+
                             <el-button v-if="itemNumber.status==6" type="primary"
                                        v-bind:disabled="itemNumber.applyFinishTime!=null"
                                        @click="pass"
@@ -347,7 +342,7 @@
                 getNumberBy_pretrialNumber: 'TEST002',
                 getNumberBy_itemCode: 'ZJYW000001',
                 getNumberBy_hallNumber: '',
-                materialSelection:[],
+                materialSelection: [],
                 remark: '',
                 itemNumber: {},
                 itemVo: {},
@@ -416,17 +411,26 @@
                 queryNumberByCallNumber({
                     hallNumber: this.getNumberBy_hallNumber
                 }).then(function (resp) {
-                    let data = resp.data;
-                    _this.itemNumber = data.itemNumber;
-                    _this.itemVo = data.itemVo;
-                    _this.member = data.member;
-                    _this.company = data.company;
-                    _this.itemPretrialVo = data.itemPretrialVo;
-                    _this.itemMaterialVoList = data.itemMaterialVoList;
-                    _this.approveStepList = data.approveStepList;
-                    _this.itemConditionVoList = data.itemConditionVoList;
-                    _this.window = data.window;
-                    _this.itemWindowUserName = data.itemWindowUserName;
+                    if (resp.httpCode === 200) {
+                        if (resp.data != null) {
+                            let data = resp.data;
+                            _this.itemNumber = data.itemNumber;
+                            _this.itemVo = data.itemVo;
+                            _this.member = data.member;
+                            _this.company = data.company;
+                            _this.itemPretrialVo = data.itemPretrialVo;
+                            _this.itemMaterialVoList = data.itemMaterialVoList;
+                            _this.approveStepList = data.approveStepList;
+                            _this.itemConditionVoList = data.itemConditionVoList;
+                            _this.window = data.window;
+                            _this.itemWindowUserName = data.itemWindowUserName;
+                        } else {
+                            _this.$message({
+                                showClose: true,
+                                message: '当前窗口没有正在办理的业务'
+                            });
+                        }
+                    }
                 });
             },
             /**
@@ -436,27 +440,27 @@
             queryCurrentNumber() {
                 let _this = this;
                 queryCurrentNumber({}).then(function (resp) {
-                    let data = resp.data;
-                    _this.itemNumber = data.itemNumber;
-                    _this.itemVo = data.itemVo;
-                    _this.member = data.member;
-                    _this.company = data.company;
-                    _this.itemPretrialVo = data.itemPretrialVo;
-                    _this.itemMaterialVoList = data.itemMaterialVoList;
-                    _this.approveStepList = data.approveStepList;
-                    _this.itemConditionVoList = data.itemConditionVoList;
-                    _this.window = data.window;
-                    _this.itemWindowUserName = data.itemWindowUserName;
+                    if (resp.httpCode === 200) {
+                        if (resp.data != null) {
+                            let data = resp.data;
+                            _this.itemNumber = data.itemNumber;
+                            _this.itemVo = data.itemVo;
+                            _this.member = data.member;
+                            _this.company = data.company;
+                            _this.itemPretrialVo = data.itemPretrialVo;
+                            _this.itemMaterialVoList = data.itemMaterialVoList;
+                            _this.approveStepList = data.approveStepList;
+                            _this.itemConditionVoList = data.itemConditionVoList;
+                            _this.window = data.window;
+                            _this.itemWindowUserName = data.itemWindowUserName;
+                        } else {
+                            _this.$message({
+                                showClose: true,
+                                message: '当前窗口没有正在办理的业务'
+                            });
+                        }
+                    }
                 })
-            },
-
-            /**
-             *
-             * 叫号 - 当前用户所对应的窗口叫号
-             */
-            callNextNumber() {
-                //判断当前有没有正在办理却不是结束状态的号码，如果有则不允许叫号
-
             },
             /**
              *
@@ -464,12 +468,48 @@
              */
             callNumber() {
                 let _this = this;
-                callNumber({
-                    numberId: _this.itemNumber.id
-                }).then(function (resp) {
-                    let data = resp.data;
-                    _this.itemNumber = data.itemNumber;
-                });
+
+                if (_this.itemNumber != null) {
+                    callNumber({
+                        numberId: _this.itemNumber.id
+                    }).then(function (resp) {
+                        let data = resp.data;
+                        if (data != null) {
+                            _this.itemNumber = data.itemNumber;
+                            _this.itemVo = data.itemVo;
+                            _this.member = data.member;
+                            _this.company = data.company;
+                            _this.itemPretrialVo = data.itemPretrialVo;
+                            _this.itemMaterialVoList = data.itemMaterialVoList;
+                            _this.approveStepList = data.approveStepList;
+                            _this.itemConditionVoList = data.itemConditionVoList;
+                            _this.window = data.window;
+                            _this.itemWindowUserName = data.itemWindowUserName;
+                        }
+                    });
+                } else {
+                    callNumber({}).then(function (resp) {
+                        let data = resp.data;
+                        if (data != null) {
+                            _this.itemNumber = data.itemNumber;
+                            _this.itemVo = data.itemVo;
+                            _this.member = data.member;
+                            _this.company = data.company;
+                            _this.itemPretrialVo = data.itemPretrialVo;
+                            _this.itemMaterialVoList = data.itemMaterialVoList;
+                            _this.approveStepList = data.approveStepList;
+                            _this.itemConditionVoList = data.itemConditionVoList;
+                            _this.window = data.window;
+                            _this.itemWindowUserName = data.itemWindowUserName;
+                        } else {
+                            _this.$message({
+                                showClose: true,
+                                message: '没有下一个号码了'
+                            });
+                        }
+                    });
+                }
+
             },
             /**
              * 模拟欢迎
@@ -489,7 +529,7 @@
              */
             pass() {
                 let _this = this;
-                let checked_m = this.materialSelection.map(function(m){
+                let checked_m = this.materialSelection.map(function (m) {
                     return m.id;
                 });
                 let _itemNumber = _this.itemNumber;
@@ -507,13 +547,31 @@
                     type: 'warning'
                 }).then(() => {
                     submitWork({
-                        id: _itemNumber.id,
+                        numberId: _itemNumber.id,
                         status: 3,
                         remark: this.remark,
                         received: checked_m.join(',')
 
-                    }).then(function (data) {
-                        console.log(data);
+                    }).then(function (resp) {
+                        let data = resp.data;
+                        if (data != null) {
+                            _this.itemNumber = data.itemNumber;
+                            _this.itemVo = data.itemVo;
+                            _this.member = data.member;
+                            _this.company = data.company;
+                            _this.itemPretrialVo = data.itemPretrialVo;
+                            _this.itemMaterialVoList = data.itemMaterialVoList;
+                            _this.approveStepList = data.approveStepList;
+                            _this.itemConditionVoList = data.itemConditionVoList;
+                            _this.window = data.window;
+                            _this.itemWindowUserName = data.itemWindowUserName;
+                        } else {
+                            _this.$message({
+                                showClose: true,
+                                message: '没有下一个号码了'
+                            });
+                        }
+
                     });
                 }).catch(() => {
                     this.$message({
