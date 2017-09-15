@@ -239,8 +239,10 @@
                                         </span>
                                     </template>
                                 </el-table-column>
-
                             </el-table>
+                            <h3>注意事项:</h3>
+                            <pre class="panel-warning">{{itemVo.noticeText}}</pre>
+
                         </el-tab-pane>
                         <el-tab-pane label="事项信息" name="itemInfoPanel">
                             <div id="itemInfo">
@@ -312,6 +314,12 @@
                             <div id="itemStepInfo" style="white-space:pre-wrap">{{itemVo.workflowDescription}}</div>
                         </el-tab-pane>
                     </el-tabs>
+
+                    <!-- 打印按钮-->
+                    <div v-if="itemNumber.status==3">
+                        <el-button type="primary" @click="print_ywsld">打印业务受理单</el-button>
+                        <el-button type="primary" @click="print_wlzyd">打印物料转移单</el-button>
+                    </div>
                 </div>
             </div>
         </el-col>
@@ -521,7 +529,7 @@
                     numberId: _this.itemNumber.id
                 }).then(function (resp) {
                     let data = resp.data;
-                    if(data!=null) {
+                    if (data != null) {
                         _this.itemNumber = data.itemNumber;
                     }
                 });
@@ -633,12 +641,50 @@
              *
              * */
             skip() {
-                submitWork({}).then(function (resp) {
+                let _itemNumber = _this.itemNumber;
 
+                let msg = "确定跳过吗？";
+
+                this.$confirm(msg, '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    submitWork({
+                        numberId: _itemNumber.id,
+                        status: 5,
+                        remark: this.remark
+                    }).then(function (resp) {
+                        let data = resp.data;
+                        if (data != null) {
+                            _this.itemNumber = data.itemNumber;
+                            _this.itemVo = data.itemVo;
+                            _this.member = data.member;
+                            _this.company = data.company;
+                            _this.itemPretrialVo = data.itemPretrialVo;
+                            _this.itemMaterialVoList = data.itemMaterialVoList;
+                            _this.approveStepList = data.approveStepList;
+                            _this.itemConditionVoList = data.itemConditionVoList;
+                            _this.window = data.window;
+                            _this.itemWindowUserName = data.itemWindowUserName;
+                        }
+
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消提交'
+                    });
                 });
             },
             handleMaterialSelectionChange(val) {
                 this.materialSelection = val;
+            },
+            print_ywsld() {
+
+            },
+            print_wlzyd() {
+
             },
             /**
              * TAB 页面切换的时候事件
