@@ -44,7 +44,7 @@ const ZwfwNumberScope = () => import('../views/zwfw/zwfwNumberScope');
 const DeptWorkPendingList = () => import('../views/zwfw/work/deptWorkPendingList');
 
 /* 综合窗口 - 窗口收件*/
-const CompositeWindowWork = () => import("../views/zwfw/hall/CompositeWindowWork");
+const CompositeWindowWork = () => import('../views/zwfw/hall/CompositeWindowWork');
 /* 综合窗口 - 受理记录*/
 // const CompositeWindowHistory = () => import("../views/zwfw/hall/CompositeWindowHistory");
 /* 综合窗口 - 办结取件*/
@@ -63,6 +63,10 @@ const Pending = () => import('../views/zwfw/pretrial/pending');
 const Finish = () => import('../views/zwfw/pretrial/finish');
 const Correction = () => import('../views/zwfw/pretrial/correction');
 const NoAccept = () => import('../views/zwfw/pretrial/noAccept');
+/* 街办业务 */
+const WindowWork = () => import('../views/streetoffice/windowWork');
+const WindowHistory = () => import('../views/streetoffice/windowHistory');
+
 
 /* components */
 const componentsIndex = () => import('../views/components/index');
@@ -243,6 +247,17 @@ export const asyncRouterMap = [
         icon: 'statisticalAnalysis',
         children: [
             {path: 'call', component: Call, name: '叫号统计'}
+        ]
+    },
+    {
+        path: '/streetOffice',
+        component: Layout,
+        redirect: 'noredirect',
+        name: '街办业务',
+        icon: 'icon-weixin',
+        children: [
+            {path: 'windowWork', component: WindowWork, name: '街办收件'},
+            {path: 'windowHistory', component: WindowHistory, name: '办件查询'}
         ]
     },
     {
