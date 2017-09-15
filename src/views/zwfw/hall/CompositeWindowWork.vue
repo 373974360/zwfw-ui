@@ -142,7 +142,7 @@
                             </el-button>
                             <el-button v-if="itemNumber.status==6" type="primary"
                                        v-bind:disabled="itemNumber.applyFinishTime!=null"
-                                       @click.self="reject">
+                                       @click="reject">
                                 不予受理
                             </el-button>
 
@@ -521,7 +521,9 @@
                     numberId: _this.itemNumber.id
                 }).then(function (resp) {
                     let data = resp.data;
-                    _this.itemNumber = data.itemNumber;
+                    if(data!=null) {
+                        _this.itemNumber = data.itemNumber;
+                    }
                 });
             },
             /**
@@ -585,9 +587,46 @@
              * 不予受理
              * */
             reject() {
-                submitWork({}).then(function (resp) {
 
+//                console.log("不予受理。。。");
+                let _this = this;
+
+                let _itemNumber = _this.itemNumber;
+
+                let msg = "确定不予受理吗？";
+
+                this.$confirm(msg, '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    submitWork({
+                        numberId: _itemNumber.id,
+                        status: 4,
+                        remark: this.remark
+                    }).then(function (resp) {
+                        let data = resp.data;
+                        if (data != null) {
+                            _this.itemNumber = data.itemNumber;
+                            _this.itemVo = data.itemVo;
+                            _this.member = data.member;
+                            _this.company = data.company;
+                            _this.itemPretrialVo = data.itemPretrialVo;
+                            _this.itemMaterialVoList = data.itemMaterialVoList;
+                            _this.approveStepList = data.approveStepList;
+                            _this.itemConditionVoList = data.itemConditionVoList;
+                            _this.window = data.window;
+                            _this.itemWindowUserName = data.itemWindowUserName;
+                        }
+
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消提交'
+                    });
                 });
+
             },
             /**
              * 跳过处理
@@ -636,7 +675,6 @@
 
     #itemInfo table {
         width: 100%;
-        margin-top: 20px;
     }
 
     #itemInfo table th, #itemInfo table td {
