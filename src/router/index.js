@@ -46,9 +46,9 @@ const DeptWorkPendingList = () => import('../views/zwfw/work/deptWorkPendingList
 /* 综合窗口 - 窗口收件*/
 const CompositeWindowWork = () => import('../views/zwfw/hall/CompositeWindowWork');
 /* 综合窗口 - 受理记录*/
-// const CompositeWindowHistory = () => import("../views/zwfw/hall/CompositeWindowHistory");
+const CompositeWindowHistory = () => import('../views/zwfw/hall/CompositeWindowHistory');
 /* 综合窗口 - 办结取件*/
-// const CompositeWindowTakeCert = () => import("../views/zwfw/hall/CompositeWindowTakeCert");
+const CompositeWindowTakeCert = () => import('../views/zwfw/hall/CompositeWindowTakeCert');
 
 
 /* 定时任务 */
@@ -226,7 +226,9 @@ export const asyncRouterMap = [
         name: '综合窗口',
         icon: 'yewuguanli',
         children: [
-            {path: 'work', component: CompositeWindowWork, name: '窗口收件'}
+            {path: 'work', component: CompositeWindowWork, name: '窗口收件'},
+            {path: 'history', component: CompositeWindowHistory, name: '受理记录'},
+            {path: 'takeCert', component: CompositeWindowTakeCert, name: '办结取件'}
 
         ]
     }, {

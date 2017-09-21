@@ -41,5 +41,11 @@ export function deleteZwfwCompany(id) {
         data
     })
 }
-
+export function getAllCompany(query) {
+    return fetchZwfw({
+        url: '/zwfwCompany/getAll',
+        method: 'get',
+        params: query
+    })
+}
 

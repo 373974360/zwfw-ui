@@ -107,3 +107,19 @@ export function getUserList() {
     });
 }
 
+export function getFinishList(query) {
+    return fetchZwfw({
+        url: '/zwfwHallCompositeWindowCert/finish_list',
+        method: 'get',
+        params: query
+    });
+}
+export function updateTake(query) {
+    const data = query;
+    return fetchZwfw({
+        url: '/zwfwHallCompositeWindowCert/update_take',
+        method: 'post',
+        data
+    })
+}
+
