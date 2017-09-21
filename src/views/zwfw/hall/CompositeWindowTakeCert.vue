@@ -47,7 +47,9 @@
             </el-table-column>
             <el-table-column align="center" label="取件时间">
                 <template scope="scope">
-                    <span v-if="scope.row.takeCertTime != null">{{scope.row.takeCertTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
+                    <span v-if="scope.row.takeCertTime != null">{{scope.row.takeCertTime | date('YYYY-MM-DD HH:mm:ss')}}
+                        <div v-if="scope.row.itemPostInfo!=null">{{scope.row.itemPostInfo.expressCompany}}:{{scope.row.itemPostInfo.expressNumber}}</div>
+                    </span>
                     <span v-if="scope.row.takeCertTime == null">未取</span>
                 </template>
             </el-table-column>
@@ -75,19 +77,12 @@
             </el-pagination>
         </div>
 
-        <!--大厅自取  确定标记为已取dialog-->
-        <el-dialog title="提示" :visible.sync="dialogVisible" size="tiny">
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-            </span>
-        </el-dialog>
 
         <!--快递邮寄  确定标记为已邮寄dialog-->
         <el-dialog :visible.sync="dialogFormVisible"
                    :close-on-click-modal="closeOnClickModal">
-            <el-form  class="small-space" :model="express" label-position="left" label-width="80px"
-                     style='width: 80%; margin-left:10%;' >
+            <el-form class="small-space" :model="express" label-position="left" label-width="80px"
+                     style='width: 80%; margin-left:10%;' :rules="validateExpressForm" ref="validateExpressForm">
                 <el-form-item label="快递公司" prop="expressCompany">
                     <el-input v-model="express.expressCompany"/>
                 </el-form-item>
@@ -96,7 +91,7 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button type="primary" icon="circle-check">确 定
+                <el-button @click="submitTakeTypeExpress" type="primary" icon="circle-check">确 定
                 </el-button>
             </div>
         </el-dialog>
@@ -110,6 +105,7 @@
     import {getAllCompany} from 'api/zwfw/zwfwCompany';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
+
     export default {
         name: 'table_demo',
         data() {
@@ -140,7 +136,18 @@
                 companyList: [],
                 dialogVisible: false,
                 selectedRows: [],
-                dialogFormVisible: false
+                dialogFormVisible: false,
+                validateExpressForm: {
+                    expressCompany: [
+                        {
+                            required: true, message: '请输入快递公司'
+                        }
+                    ],
+                    expressNumber: [
+                        {
+                            required: true, message: '请输入快递单号'
+                        }]
+                }
             }
         },
         computed: {
@@ -163,6 +170,16 @@
                     this.total = response.data.total;
                     this.listLoading = false;
                 })
+            },
+            handlePageChange(val) {
+                this.listQuery.page = val;
+                this.getList();
+            },
+            handleSizeChange(val) {
+                this.listQuery.rows = val;
+//                this.listQuery.itemId = null;
+//                this.listQuery.companyId = null;
+                this.getList();
             },
             getAllItemList() {
                 const query = {};
@@ -196,29 +213,32 @@
                 });
             },
             changeTakeTypeExpress(row) {
+                this.currRow = row;
                 this.resetTemp();
                 this.dialogFormVisible = true;
             },
-            handleSizeChange(val) {
-                this.listQuery.rows = val;
-                this.listQuery.deptId = null;
-                this.listQuery.userName = null;
-                this.getList();
-            },
-            handlePageChange(val) {
-                this.listQuery.page = val;
-                this.getList();
-            },
-            getUserList() {
-                getAllUser().then(response => {
-                    this.userList = response.data;
-                })
-            },
-            handleUpdate(row) {
-                this.resetTemp();
-                this.sysLog = copyProperties(this.sysLog, row);
-                this.sysLog.password = '';
-                this.dialogFormVisible = true;
+            submitTakeTypeExpress() {
+
+
+                this.$refs['validateExpressForm'].validate((valid) => {
+                    if (valid) {
+                        this.listLoading = true;
+                        const query = {
+                            id: this.currRow.id,
+                            expressNumber: this.express.expressNumber,
+                            expressCompany: this.express.expressCompany
+                        };
+                        updateTake(query).then(response => {
+                            copyProperties(this.currRow, response.data);
+                            this.listLoading = false;
+                            this.currRow = null;
+                            this.dialogFormVisible = false;
+                        });
+                    } else {
+                        return false;
+                    }
+                });
+
             },
             resetTemp() {
                 this.express = {

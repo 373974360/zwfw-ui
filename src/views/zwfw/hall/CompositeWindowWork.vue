@@ -70,7 +70,7 @@
                             </tr>
                             <tr v-if="itemPretrialVo!=null">
                                 <th>预审号码:</th>
-                                <td>{{itemPretrialVo.id}}</td>
+                                <td>{{itemPretrialVo.number}}</td>
                             </tr>
                             <tr v-else>
                                 <th>预审状态:</th>
@@ -240,8 +240,6 @@
                                     </template>
                                 </el-table-column>
                             </el-table>
-                            <h3>注意事项:</h3>
-                            <pre class="panel-warning">{{itemVo.noticeText}}</pre>
 
                         </el-tab-pane>
                         <el-tab-pane label="事项信息" name="itemInfoPanel">
@@ -308,6 +306,8 @@
                                         </td>
                                     </tr>
                                 </table>
+                                <h3>常见问题:</h3>
+                                <pre class="panel-warning" style="white-space:pre-wrap">{{itemVo.commonRequestion}}</pre>
                             </div>
                         </el-tab-pane>
                         <el-tab-pane label="内部办理流程描述" name="itemStep">
