@@ -1,7 +1,7 @@
 <template xmlns="http://www.w3.org/1999/html">
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-select v-model="listQuery.flagTakeCert" placeholder="请选择状态">
+            <el-select class="filter-item" v-model="listQuery.flagTakeCert" placeholder="请选择状态">
                 <el-option
                         v-for="item in options"
                         :key="item.value"
