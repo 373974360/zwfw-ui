@@ -114,8 +114,8 @@
                 total: null,
                 listLoading: true,
                 listQuery: {
-                    limit: this.$store.state.app.page,
-                    offset: this.$store.state.app.rows,
+                    page: this.$store.state.app.page,
+                    rows: this.$store.state.app.rows,
                     itemId: undefined,
                     companyId: undefined,
                     flagTakeCert: '0'
