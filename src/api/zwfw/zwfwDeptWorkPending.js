@@ -13,3 +13,52 @@ export function getZwfwDeptWorkPendingList(q) {
         params: q
     });
 }
+
+export function getZwfwDeptWorkDetailList(query) {
+    return fetchZwfw({
+        url: '/zwfwItemProcessWork/getZwfwDeptWorkDetail',
+        method: 'get',
+        params: query
+    });
+}
+export function workComplete(query) {
+    const data = query;
+    return fetchZwfw({
+        url: '/zwfwItemProcessWork/workComplete',
+        method: 'post',
+        data
+    })
+}
+export function workCorrection(query) {
+    const data = query;
+    return fetchZwfw({
+        url: '/zwfwItemProcessWork/workCorrection',
+        method: 'post',
+        data
+    })
+}
+export function workExtendTime(query) {
+    const data = query;
+    return fetchZwfw({
+        url: '/zwfwItemProcessWork/workExtendTime',
+        method: 'post',
+        data
+    })
+}
+export function workClose(query) {
+    const data = query;
+    return fetchZwfw({
+        url: '/zwfwItemProcessWork/workClose',
+        method: 'post',
+        data
+    })
+}
+export function workCancelExtendTime(query) {
+    const data = query;
+    return fetchZwfw({
+        url: '/zwfwItemProcessWork/workCancelExtendTime',
+        method: 'post',
+        data
+    })
+}
+
