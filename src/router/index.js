@@ -1,11 +1,10 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-
 /* layout */
 import Layout from '../views/layout/Layout';
-
 /* login */
 import Login from '../views/login/';
+
 const authRedirect = () => import('../views/login/authredirect');
 const sendPWD = () => import('../views/login/sendpwd');
 const reset = () => import('../views/login/reset');
@@ -42,6 +41,9 @@ const ZwfwNumberScope = () => import('../views/zwfw/zwfwNumberScope');
 
 /* 部门待办列表*/
 const DeptWorkPendingList = () => import('../views/zwfw/work/deptWorkPendingList');
+/* 部门办件查询*/
+const DeptWorkQueryList = () => import('../views/zwfw/work/deptWorkQueryList');
+
 
 /* 综合窗口 - 窗口收件*/
 const CompositeWindowWork = () => import('../views/zwfw/hall/CompositeWindowWork');
@@ -49,6 +51,10 @@ const CompositeWindowWork = () => import('../views/zwfw/hall/CompositeWindowWork
 const CompositeWindowHistory = () => import('../views/zwfw/hall/CompositeWindowHistory');
 /* 综合窗口 - 办结取件*/
 const CompositeWindowTakeCert = () => import('../views/zwfw/hall/CompositeWindowTakeCert');
+/* 办件管理 - 延期审核管理*/
+const DeptWorkExtendTimeList = () => import('../views/zwfw/work/deptExtendTimeList');
+/* 办件管理 - 督办管理*/
+const DeptWorkSuperviseList = () => import('../views/zwfw/work/deptSuperviseList');
 
 
 /* 定时任务 */
@@ -238,8 +244,10 @@ export const asyncRouterMap = [
         name: '办件管理',
         icon: 'yewuguanli',
         children: [
-            {path: 'deptPending', component: DeptWorkPendingList, name: '待办事项'}
-
+            {path: 'deptWorkPending', component: DeptWorkPendingList, name: '待办事项'},
+            {path: 'deptWorkQuery', component: DeptWorkQueryList, name: '办件查询'},
+            {path: 'deptWorkExtendTime', component: DeptWorkExtendTimeList, name: '延期批准'},
+            {path: 'deptWorkSupervise', component: DeptWorkSuperviseList, name: '督办管理'}
         ]
     }, {
         path: '/count',
