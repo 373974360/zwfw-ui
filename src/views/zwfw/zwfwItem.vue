@@ -712,7 +712,11 @@
                 this.currentRow = row;
                 this.resetTemp();
                 this.zwfwItem = copyProperties(this.zwfwItem, row);
-                this.uploadAvatarsResult.push({url: this.zwfwItem.resultExample});
+                if (this.zwfwItem.resultExample == '') {
+                    this.handleRemoveExample();
+                } else {
+                    this.uploadAvatarsResult.push({url: this.zwfwItem.resultExample});
+                }
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
