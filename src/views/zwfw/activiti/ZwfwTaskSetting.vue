@@ -335,7 +335,7 @@
                     completeNotifyTemplate: this.task.completeNotifyTemplate,
                     completeNotifyTarget: this.task.completeNotifyTarget,
                     supportCorrection: this.task.supportCorrection,
-                    supportExtendTime: this.supportExtendTime,
+                    supportExtendTime: this.task.supportExtendTime,
                     supportClose: this.task.supportClose
                 }).then(function () {
                     _this.$message.success('保存成功');
