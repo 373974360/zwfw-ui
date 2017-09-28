@@ -316,7 +316,7 @@
                     </el-tabs>
 
                     <!-- 打印按钮-->
-                    <div v-if="itemNumber.status==3">
+                    <div v-if="itemNumber.status==3" style="margin-top:20px;">
                         <el-button type="primary" @click="print_ywsld">打印业务受理单</el-button>
                         <el-button type="primary" @click="print_wlzyd">打印物料转移单</el-button>
                     </div>
@@ -681,10 +681,14 @@
                 this.materialSelection = val;
             },
             print_ywsld() {
-
+                if(this.itemNumber!=null) {
+                    window.open('/static/print/ywsld.html?orderNo='+this.itemNumber.orderNo);
+                }
             },
             print_wlzyd() {
-
+                if(this.itemNumber!=null) {
+                    window.open('/static/print/wlzyd.html?orderNo='+this.itemNumber.orderNo);
+                }
             },
             /**
              * TAB 页面切换的时候事件
