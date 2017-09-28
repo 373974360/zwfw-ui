@@ -59,7 +59,7 @@
             </el-table-column>
             <el-table-column align="center" label="操作">
                 <template scope="scope">
-                    <el-button class="filter-item" @click="handleDatilList(scope.row)" type="primary"> 查看</el-button>
+                    <el-button class="filter-item" @click="handleDetailList(scope.row)" type="primary"> 查看</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -295,6 +295,13 @@
                             <div id="itemStepInfo" style="white-space:pre-wrap">{{itemVo.workflowDescription}}</div>
                         </el-tab-pane>
                     </el-tabs>
+
+
+                    <!-- 打印按钮-->
+                    <div v-if="itemNumber.status==3" style="margin-top:20px;">
+                        <el-button type="primary" @click="print_ywsld">打印业务受理单</el-button>
+                        <el-button type="primary" @click="print_wlzyd">打印物料转移单</el-button>
+                    </div>
                 </el-col>
             </el-row>
         </el-dialog>
@@ -363,13 +370,23 @@
                 this.listQuery.page = val;
                 this.getList();
             },
-            handleDatilList(row) {
+            handleDetailList(row) {
                 this.resetTemp();
                 this.tabName = 'materialListPanel';
                 this.itemNumber = copyProperties(this.itemNumber, row);
                 this.dialogFormVisible = true;
                 this.itemNumberId = row.id;
                 this.getDatilList();
+            },
+            print_ywsld() {
+                if(this.itemNumber!=null) {
+                    window.open('/static/print/ywsld.html?orderNo='+this.itemNumber.orderNo);
+                }
+            },
+            print_wlzyd() {
+                if(this.itemNumber!=null) {
+                    window.open('/static/print/wlzyd.html?orderNo='+this.itemNumber.orderNo);
+                }
             },
             getDatilList() {
                 getDatilByItemNumberId(this.itemNumberId).then(response => {
