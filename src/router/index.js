@@ -31,6 +31,7 @@ const SysMessageTemplate = () => import('../views/sys/system/SysMessageTemplate'
 const Category = () => import('../views/zwfw/category');
 const Item = () => import('../views/zwfw/zwfwItem');
 const Window = () => import('../views/zwfw/window');
+const Material = () => import('../views/zwfw/zwfwMaterial');
 const FormEditor = () => import('../views/zwfw/formEditor/editor');
 const LegalPerson = () => import('../views/zwfw/zwfwLegalPerson');
 const NaturePerson = () => import('../views/zwfw/zwfwNaturePerson');
@@ -215,6 +216,7 @@ export const asyncRouterMap = [
             {path: 'window', component: Window, name: '窗口管理'},
             {path: 'formEditor', component: FormEditor, name: '表单编辑器'},
             {path: 'zwfwItem', component: Item, name: '事项管理'},
+            {path: 'zwfwMaterial', component: Material, name: '材料管理'},
             {path: 'zwfwNumberScope', component: ZwfwNumberScope, name: '抽号管理'},
             {path: 'zwfwLegalPerson', component: LegalPerson, name: '法人管理'},
             {path: 'zwfwNaturePerson', component: NaturePerson, name: '自然人管理'},
