@@ -682,12 +682,12 @@
             },
             print_ywsld() {
                 if(this.itemNumber!=null) {
-                    window.open('/static/print/ywsld.html?orderNo='+this.itemNumber.orderNo);
+                    window.open('/static/zwfw/print/ywsld.html?id='+this.itemNumber.id);
                 }
             },
             print_wlzyd() {
                 if(this.itemNumber!=null) {
-                    window.open('/static/print/wlzyd.html?orderNo='+this.itemNumber.orderNo);
+                    window.open('/static/zwfw/print/wlzyd.html?id='+this.itemNumber.id);
                 }
             },
             /**

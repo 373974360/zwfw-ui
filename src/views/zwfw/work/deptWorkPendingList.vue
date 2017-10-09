@@ -159,7 +159,7 @@
                                     </tr>
                                 </table>
                             </td>
-                            <td>{{h.reason}}</td>
+                            <td><div style="white-space: pre-line">{{h.reason}}</div></td>
                             <td>
                                 <template v-if="h.endTime">{{h.endTime | date('YYYY-MM-DD HH:mm')}}
                                 </template>
@@ -276,7 +276,7 @@
                                 <tr v-for="h in correctionList">
                                     <td>{{h.correctionTime | date('YYYY-MM-DD HH:mm')}}</td>
                                     <td>{{h.taskName}}</td>
-                                    <td>{{h.correctionReason}}</td>
+                                    <td><div style="white-space: pre-line">{{h.correctionReason}}</div></td>
                                     <td>{{h.correctionUserName}}</td>
                                 </tr>
                             </table>
