@@ -6,7 +6,7 @@
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
         </div>
 
-        <el-table ref="zwfwDeptWorkPendingTable" :data="zwfwDeptWorkPendingList" v-loading.body="listLoading" border fit
+        <el-table ref="zwfwDeptWorkQueryTable" :data="zwfwDeptWorkQueryList" v-loading.body="listLoading" border fit
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column align="center" label="ID" width="100px">
@@ -31,9 +31,9 @@
                     <span>{{scope.row.currentTaskName}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="步骤时限" prop="limitTime">
+            <el-table-column align="center" label="步骤时限" prop="taskLimitTime">
                 <template scope="scope">
-                    <span>{{scope.row.limitTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
+                    <span>{{scope.row.taskLimitTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="承诺期限" prop="promiseFinishTime">
@@ -58,12 +58,12 @@
             </el-table-column>
             <el-table-column prop="enable" class-name="status-col" label="状态">
                 <template scope="scope">
-                    <span>{{scope.row.status | enums('ItemProcessStatus')}}</span>
+                    <span>{{scope.row.status | zwfwEnumData('ItemProcessStatus')}}</span>
                 </template>
             </el-table-column>
             <el-table-column>
                 <template scope="scope">
-                    <el-button >处理选中</el-button>
+                    <el-button @click="showDetail(scope.row)">查看</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -75,6 +75,238 @@
             </el-pagination>
         </div>
 
+        <!--查看-->
+        <el-dialog class="s-dialog-title" :title="textMapTitle" :visible.sync="dialogFormVisible"
+                   :close-on-click-modal="closeOnClickModal" :before-close="resetWorkPengingForm">
+            <div>
+                <div>
+                    <h2 class="h2-style-show">审批记录：</h2>
+                    <table class="table table-responsive table-bordered">
+                        <tr>
+                            <th>流入时间</th>
+                            <th>办理步骤</th>
+                            <th>表单</th>
+                            <!--<th>整改</th>-->
+                            <th>
+                                处理意见
+                            </th>
+                            <th>办理时间</th>
+                            <th>耗时</th>
+                            <th>办理人</th>
+                        </tr>
+                        <tr v-for="h in history">
+                            <td>{{h.createTime | date('YYYY-MM-DD HH:mm')}}</td>
+                            <td>{{h.name}}</td>
+                            <td>
+                                <table v-if="h.formValue!=null" class="table table-bordered">
+                                    <tr v-for="(k,v) in h.formValue">
+                                        <th>{{k}}:</th>
+                                        <td>{{v}}</td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <!--<td>X</td>-->
+                            <td>
+                                <div style="white-space: pre-line"><strong v-if="h.correctionFlag">整改：</strong>
+                                    <strong v-if="h.status==1">通过：</strong>
+                                    <strong v-if="h.status==2">未通过：</strong>
+                                    <strong v-else></strong>{{h.reason}}
+                                </div>
+                            </td>
+                            <td>
+                                <template v-if="h.endTime">{{h.endTime | date('YYYY-MM-DD HH:mm')}}
+                                </template>
+                            </td>
+                            <td>
+                                <template v-if="h.durationInMillis">{{h.durationInMillis}}
+                                </template>
+                            </td>
+                            <td>
+                                <template v-if="h.assignee">{{users[h.assignee]}}</template>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <el-tabs v-model="tabPaneShow" type="card">
+                        <el-tab-pane label="申请企业/个人" name="first">
+                            <div>
+                                <div>
+                                    <table class="table table-responsive table-bordered">
+                                        <tr>
+                                            <th width="140">办事企业/机构</th>
+                                            <td>{{company.name}}</td>
+                                            <th width="140">统一社会信用代码</th>
+                                            <td>{{company.unifyCode}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th width="140">法人姓名</th>
+                                            <td>{{company.legalPerson}}</td>
+                                            <th width="140">法人身份证号</th>
+                                            <td>{{company.legalPersonCard}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th width="140">企业/机构地址</th>
+                                            <td colspan="3">{{company.address}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div>
+                                    <table class="table table-responsive table-bordered">
+                                        <tr>
+                                            <th width="140">姓名</th>
+                                            <td>{{member.name}}</td>
+                                            <th width="140">身份证号</th>
+                                            <td>{{member.idNumber}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th width="140">邮箱</th>
+                                            <td>{{member.email}}</td>
+                                            <th width="140">手机</th>
+                                            <td>{{member.mobilephone}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th width="140">地址</th>
+                                            <td colspan="3">{{member.address}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </el-tab-pane>
+                        <el-tab-pane label="办件进度" name="second">
+
+                            <div v-if="itemProcessVo.status==10">
+                                <table class="table table-bordered table-responsive">
+                                    <tr v-if="itemProcessVo.taskLimitTime">
+                                        <td>当前步骤期限</td>
+                                        <td>
+                                            {{itemProcessVo.taskLimitTime | date('YYYY-MM-DD HH:mm:ss')}}
+                                            <!--包括工作日{{itemProcessVo.taskLimitTime|fromNow}}-->
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>当前办理步骤</td>
+                                        <td>{{itemProcessVo.currentTaskName}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>督办件</td>
+                                        <td>{{itemProcessVo.flagSupervied | enums('YesNo')}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>超期件</td>
+                                        <td>{{itemProcessVo.flagTimeout | enums('YesNo')}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>整改状态</td>
+                                        <td>{{itemProcessVo.flagCorrection | enums('YesNo')}}
+                                            <a v-if="itemProcessVo.flagCorrection==1"
+                                               target="print" @click="print_ycxgzd(itemProcessVo.pretrialNumber)">打印一次性告知单</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>申请办件时间</td>
+                                        <td>{{itemProcessVo.startItemTime | date('YYYY-MM-DD HH:mm:ss')}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>承诺办结日期</td>
+                                        <td>{{itemProcessVo.promiseFinishTime | date('YYYY-MM-DD HH:mm:ss')}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>流入当前步骤时间</td>
+                                        <td>{{itemProcessVo.taskCreateTime | date('YYYY-MM-DD HH:mm:ss')}}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div v-if="itemProcessVo.status==15">
+                                已办结
+                            </div>
+
+                            <div v-if="itemProcessVo.status==99">
+                                不予受理
+                            </div>
+                        </el-tab-pane>
+                        <el-tab-pane label="整改记录" name="third">
+                            <table class="table table-responsive table-bordered">
+                                <tr>
+                                    <th>整改时间</th>
+                                    <th>所在步骤</th>
+                                    <th>整改原因</th>
+                                    <th>操作人</th>
+                                </tr>
+                                <tr v-for="h in correctionList">
+                                    <td>{{h.correctionTime | date('YYYY-MM-DD HH:mm')}}</td>
+                                    <td>{{h.taskName}}</td>
+                                    <td>
+                                        <div style="white-space: pre-line">{{h.correctionReason}}</div>
+                                    </td>
+                                    <td>{{h.correctionUserName}}</td>
+                                </tr>
+                            </table>
+                        </el-tab-pane>
+                        <el-tab-pane label="延期记录" name="fourth">
+                            <table class="table table-responsive table-bordered">
+                                <tr>
+                                    <th>申请时间</th>
+                                    <th>延期天数</th>
+                                    <th>延期到</th>
+                                    <th>所在步骤</th>
+                                    <th>延期原因</th>
+                                    <th>审核状态</th>
+                                    <th>申请人</th>
+                                    <th>审核人</th>
+                                    <th>操作</th>
+                                </tr>
+                                <tr v-for="h in extendTimeVoList">
+                                    <td>{{h.timeExtendApply | date('YYYY-MM-DD HH:mm')}}</td>
+                                    <td>{{h.timeExtendWorkdates}}</td>
+                                    <td>{{h.timeExtendToDate | date('YYYY-MM-DD HH:mm')}}</td>
+                                    <td>{{h.taskName}}</td>
+                                    <td>{{h.reason}}</td>
+                                    <td>{{h.timeExtendStatus | zwfwEnumData('TimeExtendStatus')}}</td>
+                                    <td>{{h.applyUserName}}</td>
+                                    <td>{{h.auditUserName}}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger"
+                                                v-if="h.timeExtendStatus==1"
+                                                @click="cancelExtendTime(h.id)">撤销申请
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </el-tab-pane>
+                        <el-tab-pane label="办件材料" name="fifth">
+                            <table class="table table-bordered table-responsive">
+                                <tr>
+                                    <th>序号</th>
+                                    <th>材料</th>
+                                    <th width="50">查看</th>
+                                </tr>
+                                <tr v-for="c in itemMaterialVoList">
+                                    <td>{{c.id}}</td>
+                                    <td>{{c.name}}</td>
+                                    <td>
+                                        <template v-for="(file,index) in c.multipleFile">
+                                            <template v-if="file.url!=null && file.url!=''">
+                                                <a target="_blank"
+                                                   v-if="file.fileType == 'doc' || file.fileType == 'docx' || file.fileType == 'xls' || file.fileType == 'xlsx' || file.fileType == 'ppt'"
+                                                   :href="'https://view.officeapps.live.com/op/view.aspx?src='+win.cxt+file.url">[{{index
+                                                + 1}}]</a>
+                                                <a v-else :href="file.url"
+                                                   target="_blank">[{{index + 1}}]</a>
+                                            </template>
+                                        </template>
+                                    </td>
+                                </tr>
+                            </table>
+                        </el-tab-pane>
+                    </el-tabs>
+                </div>
+            </div>
+        </el-dialog>
+
 
     </div>
 </template>
@@ -83,34 +315,15 @@
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import {
-        getZwfwDeptWorkPendingList
-    } from 'api/zwfw/zwfwDeptWorkPending';
+        getZwfwDeptWorkQueryList, getZwfwDeptWorkDetail
+    } from 'api/zwfw/zwfwDeptWorkQuery';
 
     export default {
-        name: 'zwfwDeptWorkPending_table',
+        name: 'zwfwDeptWorkQuery_table',
         data() {
-            const validatCompanyCode = (rule, value, callback) => {
-                if (!/[0-9A-HJ-NPQRTUWXY]{2}\d{6}[0-9A-HJ-NPQRTUWXY]{10}/.test(value) || value.length !== 18) {
-                    return callback(new Error('统一代码由十八位的数字或大写英文字母（不适用I、O、Z、S、V）组成,且第3-8位为数字'));
-                } else {
-                    callback();
-                }
-            };
-            const validatePass2 = (rule, value, callback) => {
-                if (this.zwfwDeptWorkPending.password === '') {
-                    callback();
-                } else {
-                    if (value === '') {
-                        callback(new Error('请再次输入密码'));
-                    } else if (value !== this.zwfwDeptWorkPending.password) {
-                        callback(new Error('两次输入密码不一致!'));
-                    } else {
-                        callback();
-                    }
-                }
-            };
             return {
-                zwfwDeptWorkPendingList: [],
+                textMapTitle: null,
+                zwfwDeptWorkQueryList: [],
                 total: null,
                 listLoading: true,
                 listQuery: {
@@ -119,7 +332,7 @@
                     name: undefined,
                     me: true
                 },
-                zwfwDeptWorkPending: {
+                zwfwDeptWorkQuery: {
                     id: undefined,
                     companyCode: '',
                     password: '',
@@ -137,33 +350,30 @@
                 dialogFormVisible: false,
                 dialogStatus: '',
                 dialogLoading: false,
-                zwfwDeptWorkPendingRules: {
-                    companyCode: [
-                        {required: true, validator: validatCompanyCode}
-                    ],
-                    password: [
-                        {required: true, message: '请输入密码'},
-                        {min: 6, max: 18, message: '长度在 6 到 18 个字符'}
-                    ],
-                    passwordConfirm: [
-                        {required: true, validator: validatePass2}
-                    ],
-                    registerPlace: [
-                        {required: true, message: '请输入注册地址'}
-                    ],
-                    companyType: [
-                        {required: true, message: '请输入机构类型'}
-                    ],
-                    companyName: [
-                        {required: true, message: '请输入机构名称'}
-                    ],
-                    legalPerson: [
-                        {required: true, message: '请输入法定代表人'}
-                    ],
-                    agencyCode: [
-                        {required: true, message: '请输入机构代码'}
-                    ]
-                }
+                passRemark: '确认通过',
+                correctionReason: '1、\n2、\n3、\n4、\n5、\n',
+                closeReason: '1、\n2、\n3、\n4、\n5、\n',
+                extendTimeReason: null,
+                extendTimeDays: '',
+                tabPaneShow: 'first',
+                approveStepList: [],
+                itemConditionVoList: [],
+                itemMaterialVoList: [],
+                itemProcessVo: {
+                    id: undefined,
+                    taskId: '',
+                    taskLimitTime: ''
+                },
+                taskForm: [],
+                itemVo: {},
+                member: {},
+                company: {},
+                history: [],
+                users: {},
+                itemTaskSetting: {},
+                action: '',
+                correctionList: [],
+                extendTimeVoList: []
             }
         },
         created() {
@@ -179,8 +389,8 @@
         methods: {
             getList() {
                 this.listLoading = true;
-                getZwfwDeptWorkPendingList(this.listQuery).then(response => {
-                    this.zwfwDeptWorkPendingList = response.data.list;
+                getZwfwDeptWorkQueryList(this.listQuery).then(response => {
+                    this.zwfwDeptWorkQueryList = response.data.list;
                     this.total = response.data.total;
                     this.listLoading = false;
                 })
@@ -198,106 +408,104 @@
                 this.selectedRows = rows;
             },
             toggleSelection(row) {
-                this.$refs.zwfwDeptWorkPendingTable.toggleRowSelection(row);
+                this.$refs.zwfwDeptWorkQueryTable.toggleRowSelection(row);
             },
-            handleCreate(row) {
-//                this.currentRow = row;
-//                this.resetTemp();
-//                this.zwfwDeptWorkPendingRules.password[0].required = true;
-//                this.zwfwDeptWorkPendingRules.passwordConfirm[0].required = true;
-//                this.dialogStatus = 'create';
-//                this.dialogFormVisible = true;
-            },
-            handleUpdate(row) {
-//                this.currentRow = row;
-//                this.resetTemp();
-//                this.zwfwDeptWorkPending = copyProperties(this.zwfwDeptWorkPending, row);
-//                this.zwfwDeptWorkPending.password = '';
-//                this.zwfwDeptWorkPendingRules.password[0].required = false;
-//                this.zwfwDeptWorkPendingRules.passwordConfirm[0].required = false;
-//                this.dialogStatus = 'update';
-//                this.dialogFormVisible = true;
-            },
-            handleDelete(row) {
-                if (this.selectedRows == 0) {
-                    this.$message.warning('请选择需要操作的记录');
-                } else {
-                    this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-//                        this.listLoading = true;
-//                        let selectCounts = this.selectedRows.length;
-//                        let ids = new Array();
-//                        for (const deleteRow of this.selectedRows) {
-//                            ids.push(deleteRow.id);
-//                        }
-//                        delZwfwLegalPersons(ids).then(response => {
-//                            this.total -= selectCounts;
-//                            for (const deleteRow of this.selectedRows) {
-//                                const index = this.zwfwDeptWorkPendingList.indexOf(deleteRow);
-//                                this.zwfwDeptWorkPendingList.splice(index, 1);
-//                            }
-//                            this.$message.success('删除成功');
-//                            this.listLoading = false;
-//                        })
-                    }).catch(() => {
-                        console.dir("取消");
-                    });
-                }
-            },
-            create() {
-                this.$refs['zwfwDeptWorkPendingForm'].validate((valid) => {
-                    if (valid) {
-                        this.dialogFormVisible = false;
-                        this.listLoading = true;
-//                        createZwfwLegalPerson(this.zwfwDeptWorkPending).then(response => {
-//                            this.zwfwDeptWorkPendingList.unshift(response.data);
-//                            this.total += 1;
-//                            this.$message.success('创建成功');
-//                            this.listLoading = false;
-//                        })
-                    } else {
-                        return false;
-                    }
-                });
-            },
-            update() {
-                this.$refs['zwfwDeptWorkPendingForm'].validate((valid) => {
-                    if (valid) {
-                        this.dialogFormVisible = false;
-                        this.listLoading = true;
-//                        updateZwfwLegalPerson(this.zwfwDeptWorkPending).then(response => {
-//                            copyProperties(this.currentRow, response.data);
-//                            this.$message.success('更新成功');
-//                            this.listLoading = false;
-//                        })
-                    } else {
-                        return false;
-                    }
-                });
-            },
-            resetTemp() {
-                this.zwfwDeptWorkPending = {
-                    id: undefined,
-                    companyCode: '',
-                    password: '',
-                    passwordConfirm: '',
-                    registerPlace: '',
-                    companyType: '',
-                    companyName: '',
-                    legalPerson: '',
-                    remark: '',
-                    enable: 1,
-                    agencyCode: ''
-                };
-            },
-            resetZwfwLegalPersonForm() {
+            resetWorkPengingForm() {
                 this.dialogFormVisible = false;
-                this.resetTemp();
-                resetForm(this, 'zwfwDeptWorkPendingForm');
+            },
+            showDetail(row) {
+                this.pretrialNumber = row.pretrialNumber;
+                this.taskId = row.taskId;
+                this.textMapTitle = '部门办事 - ' + row.itemName;
+                this.dialogFormVisible = true;
+                const query = {
+                    processNumber: this.pretrialNumber,
+                    taskId: this.taskId
+                }
+                getZwfwDeptWorkDetail(query).then(response => {
+                    console.log(response.data);
+                    this.approveStepList = response.data.approveStepList;
+                    this.itemConditionVoList = response.data.itemConditionVoList;
+                    this.itemMaterialVoList = response.data.itemMaterialVoList;
+                    this.itemProcessVo = response.data.itemProcessVo;
+                    this.taskForm = response.data.taskForm;
+                    this.itemVo = response.data.itemVo;
+                    this.member = response.data.member;
+                    this.company = response.data.company;
+                    this.history = response.data.history;
+                    this.users = response.data.users;
+                    this.itemTaskSetting = response.data.itemTaskSetting;
+                    this.action = '';
+                    this.correctionList = response.data.correctionList;
+                    this.extendTimeVoList = response.data.extendTimeVoList;
+                });
+            },
+            print_ycxgzd(pretrialNumber) {
+                if (pretrialNumber != null) {
+                    window.open('/static/zwfw/print/ycxgzd.html?number=' + pretrialNumber);
+                }
             }
         }
     }
 </script>
+<style>
+    .input-textarea {
+    }
+
+    .table-bordered {
+        border: 1px solid #EBEBEB;
+    }
+
+    .table-responsive {
+        min-height: .01%;
+        overflow-x: auto;
+    }
+
+    .table {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 20px;
+        background-color: transparent;
+        border-spacing: 0;
+        border-collapse: collapse;
+    }
+
+    .table > tr > td, .table > tr > th {
+        border-top: 1px solid #e7eaec;
+        line-height: 1.42857;
+        padding: 8px;
+        vertical-align: middle;
+        text-align: left;
+        font-weight: 500;
+    }
+
+    .table-bordered > tr > td, .table-bordered > tr > th {
+        border: 1px solid #e7e7e7;
+    }
+
+    .h2-style-show {
+        font-weight: 100;
+        font-size: 24px;
+    }
+
+    .s-dialog-title .el-form-item__label {
+        font-size: 24px;
+    }
+
+    .s-dialog-title label {
+        font-weight: 100;
+    }
+
+    .s-dialog-title .el-dialog__title {
+        font-size: 17px;
+        font-weight: 500;
+    }
+
+    .s-dialog-title .el-dialog__header {
+        margin-bottom: -29px;
+    }
+
+    .s-dialog-title .input-textarea .el-textarea__inner {
+        height: 10em;
+    }
+</style>

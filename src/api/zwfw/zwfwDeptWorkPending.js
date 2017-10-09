@@ -14,7 +14,7 @@ export function getZwfwDeptWorkPendingList(q) {
     });
 }
 
-export function getZwfwDeptWorkDetailList(query) {
+export function getZwfwDeptWorkDetail(query) {
     return fetchZwfw({
         url: '/zwfwItemProcessWork/getZwfwDeptWorkDetail',
         method: 'get',

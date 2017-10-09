@@ -39,9 +39,9 @@
                     <span>{{scope.row.currentTaskName}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="步骤时限" prop="limitTime">
+            <el-table-column align="center" label="步骤时限" prop="taskLimitTime">
                 <template scope="scope">
-                    <span>{{scope.row.limitTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
+                    <span>{{scope.row.taskLimitTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="承诺期限" prop="promiseFinishTime">
@@ -71,7 +71,7 @@
             </el-table-column>
             <el-table-column align="center" label="操作">
                 <template scope="scope">
-                    <el-button @click="showDatil(scope.row)">查看</el-button>
+                    <el-button @click="showDetail(scope.row)">查看</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -101,7 +101,7 @@
                     <el-button v-if="itemTaskSetting.supportClose" class="filter-item" type="primary"
                                @click="action='close'">不予处理
                     </el-button>
-                    <el-form  ref="deptWorkPendingForm" :model="itemProcessVo">
+                    <el-form ref="deptWorkPendingForm" :model="itemProcessVo">
                         <el-form-item v-show="action=='pass'" class="h2-style-show" label="提交办理意见：">
                             <el-input v-model="passRemark" type="textarea"></el-input>
                         </el-form-item>
@@ -113,10 +113,10 @@
                         </el-form-item>
                         <el-form-item v-show="action=='correction'">
                             <el-input v-model="extendTimeDays" type="text"
-                                      :placeholder='"请输入在"+$options.filters.date(itemProcessVo.limitTime, "YYYY-MM-DD HH:mm:ss")+"上的延期天数"'
+                                      :placeholder='"请输入在"+$options.filters.date(itemProcessVo.taskLimitTime, "YYYY-MM-DD HH:mm:ss")+"上的延期天数"'
                                       min="1"></el-input>
                         </el-form-item>
-                        <el-button v-show="action=='correction'"  type="primary" style="width: 100%;"
+                        <el-button v-show="action=='correction'" type="primary" style="width: 100%;"
                                    @click="submitCorrection">确定整改
                         </el-button>
                         <el-form-item v-show="action=='extendTime'" label="申请延期">
@@ -124,7 +124,7 @@
                         </el-form-item>
                         <el-form-item v-show="action=='extendTime'">
                             <el-input v-model="extendTimeDays" type="text"
-                                      :placeholder='"请输入在"+$options.filters.date(itemProcessVo.limitTime, "YYYY-MM-DD HH:mm:ss")+"上的延期天数"'
+                                      :placeholder='"请输入在"+$options.filters.date(itemProcessVo.taskLimitTime, "YYYY-MM-DD HH:mm:ss")+"上的延期天数"'
                                       min="1"></el-input>
                         </el-form-item>
                         <el-button style="width: 100%;" v-show="action=='extendTime'" type="primary"
@@ -133,7 +133,9 @@
                         <el-form-item v-show="action=='close'" label="请输入不予受理原因">
                             <el-input class="input-textarea" v-model="closeReason" type="textarea"></el-input>
                         </el-form-item>
-                        <el-button style="width: 100%;" v-show="action=='close'" type="primary" @click="submitClose">确定不予受理</el-button>
+                        <el-button style="width: 100%;" v-show="action=='close'" type="primary" @click="submitClose">
+                            确定不予受理
+                        </el-button>
                     </el-form>
                 </div>
                 <div>
@@ -142,7 +144,8 @@
                         <tr>
                             <th>流入时间</th>
                             <th>办理步骤</th>
-                            <th>信息</th>
+                            <th>表单</th>
+                            <!--<th>整改</th>-->
                             <th>意见</th>
                             <th>办理时间</th>
                             <th>耗时</th>
@@ -159,7 +162,10 @@
                                     </tr>
                                 </table>
                             </td>
-                            <td><div style="white-space: pre-line">{{h.reason}}</div></td>
+                            <!--<td>X</td>-->
+                            <td>
+                                <div style="white-space: pre-line">{{h.reason}}</div>
+                            </td>
                             <td>
                                 <template v-if="h.endTime">{{h.endTime | date('YYYY-MM-DD HH:mm')}}
                                 </template>
@@ -221,49 +227,59 @@
                             </div>
                         </el-tab-pane>
                         <el-tab-pane label="办件进度" name="second">
-                            <table class="table table-bordered table-responsive">
-                                <tr v-if="itemProcessVo.limitTime">
-                                    <td>当前步骤期限</td>
-                                    <td>
-                                        {{itemProcessVo.limitTime | date('YYYY-MM-DD HH:mm:ss')}}
-                                        <!--包括工作日{{itemProcessVo.limitTime|fromNow}}-->
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>当前办理步骤</td>
-                                    <td>{{itemProcessVo.currentTaskName}}</td>
-                                </tr>
-                                <tr>
-                                    <td>督办件</td>
-                                    <td>{{itemProcessVo.flagSupervied | enums('YesNo')}}</td>
-                                </tr>
-                                <tr>
-                                    <td>超期件</td>
-                                    <td>{{itemProcessVo.flagTimeout | enums('YesNo')}}</td>
-                                </tr>
-                                <tr>
-                                    <td>整改状态</td>
-                                    <td>{{itemProcessVo.flagCorrection | enums('YesNo')}}
-                                        <a v-if="itemProcessVo.flagCorrection==1"
-                                           target="print">打印一次性告知单</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>申请办件时间</td>
-                                    <td>{{itemProcessVo.startItemTime | date('YYYY-MM-DD HH:mm:ss')}}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>承诺办结日期</td>
-                                    <td>{{itemProcessVo.promiseFinishTime | date('YYYY-MM-DD HH:mm:ss')}}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>流入当前步骤时间</td>
-                                    <td>{{itemProcessVo.taskCreateTime | date('YYYY-MM-DD HH:mm:ss')}}
-                                    </td>
-                                </tr>
-                            </table>
+                            <div v-if="itemProcessVo.status==10">
+                                <table class="table table-bordered table-responsive">
+                                    <tr v-if="itemProcessVo.taskLimitTime">
+                                        <td>当前步骤期限</td>
+                                        <td>
+                                            {{itemProcessVo.taskLimitTime | date('YYYY-MM-DD HH:mm:ss')}}
+                                            <!--包括工作日{{itemProcessVo.taskLimitTime|fromNow}}-->
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>当前办理步骤</td>
+                                        <td>{{itemProcessVo.currentTaskName}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>督办件</td>
+                                        <td>{{itemProcessVo.flagSupervied | enums('YesNo')}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>超期件</td>
+                                        <td>{{itemProcessVo.flagTimeout | enums('YesNo')}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>整改状态</td>
+                                        <td>{{itemProcessVo.flagCorrection | enums('YesNo')}}
+                                            <a v-if="itemProcessVo.flagCorrection==1"
+                                               target="print" @click="print_ycxgzd(itemProcessVo.pretrialNumber)">打印一次性告知单</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>申请办件时间</td>
+                                        <td>{{itemProcessVo.startItemTime | date('YYYY-MM-DD HH:mm:ss')}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>承诺办结日期</td>
+                                        <td>{{itemProcessVo.promiseFinishTime | date('YYYY-MM-DD HH:mm:ss')}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>流入当前步骤时间</td>
+                                        <td>{{itemProcessVo.taskCreateTime | date('YYYY-MM-DD HH:mm:ss')}}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div v-if="itemProcessVo.status==15">
+                                已办结
+                            </div>
+
+                            <div v-if="itemProcessVo.status==99">
+                                不予受理
+                            </div>
+
                         </el-tab-pane>
                         <el-tab-pane label="整改记录" name="third">
                             <table class="table table-responsive table-bordered">
@@ -276,7 +292,11 @@
                                 <tr v-for="h in correctionList">
                                     <td>{{h.correctionTime | date('YYYY-MM-DD HH:mm')}}</td>
                                     <td>{{h.taskName}}</td>
-                                    <td><div style="white-space: pre-line">{{h.correctionReason}}</div></td>
+                                    <div style="white-space: pre-line"><strong v-if="h.correctionFlag">整改：</strong>
+                                        <strong v-if="h.status==1">通过：</strong>
+                                        <strong v-if="h.status==2">未通过：</strong>
+                                        <strong v-else></strong>{{h.reason}}
+                                    </div>
                                     <td>{{h.correctionUserName}}</td>
                                 </tr>
                             </table>
@@ -349,7 +369,7 @@
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import {
-        getZwfwDeptWorkPendingList, getZwfwDeptWorkDetailList, workComplete, workCorrection, workExtendTime, workClose
+        getZwfwDeptWorkPendingList, getZwfwDeptWorkDetail, workComplete, workCorrection, workExtendTime, workClose
     } from 'api/zwfw/zwfwDeptWorkPending';
     import ElForm from "../../../../node_modules/element-ui/packages/form/src/form";
     import ElFormItem from "../../../../node_modules/element-ui/packages/form/src/form-item";
@@ -399,7 +419,7 @@
                 itemProcessVo: {
                     id: undefined,
                     taskId: '',
-                    limitTime: ''
+                    taskLimitTime: ''
                 },
                 taskForm: [],
                 itemVo: {},
@@ -432,19 +452,16 @@
                     this.listLoading = false;
                 })
             },
-            showDatil(row) {
+            showDetail(row) {
                 this.pretrialNumber = row.pretrialNumber;
                 this.taskId = row.taskId;
                 this.textMapTitle = '部门办事 - ' + row.itemName;
                 this.dialogFormVisible = true;
-                this.getWorkDatil();
-            },
-            getWorkDatil() {
                 const query = {
                     processNumber: this.pretrialNumber,
                     taskId: this.taskId
                 }
-                getZwfwDeptWorkDetailList(query).then(response => {
+                getZwfwDeptWorkDetail(query).then(response => {
                     console.log(response.data);
                     this.approveStepList = response.data.approveStepList;
                     this.itemConditionVoList = response.data.itemConditionVoList;
@@ -460,7 +477,7 @@
                     this.action = '';
                     this.correctionList = response.data.correctionList;
                     this.extendTimeVoList = response.data.extendTimeVoList;
-                })
+                });
             },
             /* 确定提交 */
             submitComplete() {
@@ -505,7 +522,7 @@
             },
             resetTemp() {
                 this.itemProcessVo = {
-                    limitTime: ''
+                    taskLimitTime: ''
                 }
             },
             resetWorkPengingForm() {
@@ -521,6 +538,11 @@
             },
             handleSelectionChange(rows) {
                 this.selectedRows = rows;
+            },
+            print_ycxgzd(pretrialNumber) {
+                if (pretrialNumber != null) {
+                    window.open('/static/zwfw/print/ycxgzd.html?number=' + pretrialNumber);
+                }
             }
         }
     }
