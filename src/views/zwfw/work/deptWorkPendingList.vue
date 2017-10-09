@@ -9,8 +9,8 @@
                         :value="item.value">
                 </el-option>
             </el-select>
-            <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="名称"
-                      v-model="listQuery.name"></el-input>
+            <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="办件号"
+                      v-model="listQuery.pretrialNumber"></el-input>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
         </div>
 
@@ -391,7 +391,7 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
-                    name: undefined,
+                    pretrialNumber: undefined,
                     me: true
                 },
                 options: [
@@ -444,6 +444,9 @@
             ])
         },
         methods: {
+            /**
+            * 刷新列表
+            **/
             getList() {
                 this.listLoading = true;
                 getZwfwDeptWorkPendingList(this.listQuery).then(response => {
@@ -452,6 +455,9 @@
                     this.listLoading = false;
                 })
             },
+            /**
+             * 显示详细
+             * */
             showDetail(row) {
                 this.pretrialNumber = row.pretrialNumber;
                 this.taskId = row.taskId;
@@ -479,7 +485,9 @@
                     this.extendTimeVoList = response.data.extendTimeVoList;
                 });
             },
-            /* 确定提交 */
+            /**
+             * 提交到下一步
+             * */
             submitComplete() {
                 const query = {
                     taskId: this.itemProcessVo.taskId,
@@ -487,9 +495,12 @@
                 }
                 workComplete(query).then(response => {
                     console.log(response.data);
+                    this.dialogFormVisible = false;
                 })
             },
-            /* 确定整改 */
+            /**
+             * 提交整改
+             * */
             submitCorrection() {
                 const query = {
                     taskId: this.itemProcessVo.taskId,
@@ -498,8 +509,12 @@
                 }
                 workCorrection(query).then(response => {
                     console.log(response.data);
+                    this.dialogFormVisible = false;
                 })
             },
+            /**
+             * 提交延期申请
+             * */
             submitExtendTime() {
                 const query = {
                     taskId: this.itemProcessVo.taskId,
@@ -508,8 +523,12 @@
                 }
                 workExtendTime(query).then(response => {
                     console.log(response.data);
+                    this.dialogFormVisible = false;
                 })
             },
+            /**
+             * 提交不予受理
+             * */
             submitClose() {
                 const query = {
                     taskId: this.itemProcessVo.taskId,

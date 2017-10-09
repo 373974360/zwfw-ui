@@ -1,8 +1,13 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="名称"
-                      v-model="listQuery.name"></el-input>
+            <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item" placeholder="办件号"
+                      v-model="listQuery.search"></el-input>
+
+            <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item" placeholder="公司名称"
+                      v-model="listQuery.companyName"></el-input>
+
+
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
         </div>
 
@@ -48,7 +53,7 @@
             </el-table-column>
             <el-table-column align="center" label="整改状态" prop="flagCorrection">
                 <template scope="scope">
-                    <span>{{scope.row.flagCorrection}}</span>
+                    <span>{{scope.row.flagCorrection | enums('YesNo')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="企业名称" prop="companyName">
@@ -329,7 +334,7 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
-                    name: undefined,
+                    search: undefined,
                     me: true
                 },
                 zwfwDeptWorkQuery: {
@@ -397,7 +402,6 @@
             },
             handleSizeChange(val) {
                 this.listQuery.rows = val;
-                this.listQuery.name = null;
                 this.getList();
             },
             handleCurrentChange(val) {
