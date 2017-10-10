@@ -683,13 +683,15 @@
                 this.currentRow = row;
                 this.zwfwItemMaterial = copyProperties(this.zwfwItemMaterial, row);
                 if (this.zwfwItemMaterial.eform == '') {
-                    this.handleRemoveExample();
+                    this.handleRemoveEform();
                 } else {
+                    this.uploadAvatarsEform = [];
                     this.uploadAvatarsEform.push({url: this.zwfwItemMaterial.eform});
                 }
                 if (this.zwfwItemMaterial.example == '') {
                     this.handleRemoveExample();
                 } else {
+                    this.uploadAvatarsExample = [];
                     this.uploadAvatarsExample.push({url: this.zwfwItemMaterial.example});
                 }
                 this.$refs.zwfwMaterialForm.$el[0].disabled = true;
@@ -720,8 +722,9 @@
                 this.resetTemp();
                 this.zwfwItem = copyProperties(this.zwfwItem, row);
                 if (this.zwfwItem.resultExample == '') {
-                    this.handleRemoveExample();
+                    this.handleRemoveResult();
                 } else {
+                    this.uploadAvatarsResult = [];
                     this.uploadAvatarsResult.push({url: this.zwfwItem.resultExample});
                 }
                 this.dialogStatus = 'update';
