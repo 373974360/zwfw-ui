@@ -290,6 +290,9 @@
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
+                <el-form-item label="预审天数" prop="pretrialDays">
+                    <el-input v-model="zwfwItem.pretrialDays"></el-input>
+                </el-form-item>
                 <el-form-item label="中介服务" prop="mediumService">
                     <el-input v-model="zwfwItem.mediumService"></el-input>
                 </el-form-item>
@@ -493,6 +496,7 @@
                     postable: true,
                     versionAvailableTime: '',
                     supervisePhone: '',
+                    pretrialDays: '',
                     implAgency: '',
                     acceptCondition: '',
                     chargeBasis: '',
@@ -550,6 +554,9 @@
                     ],
                     type: [
                         {required: true, message: '请输入事项类型'}
+                    ],
+                    pretrialDays: [
+                        {required: true, message: '请输入预审天数'}
                     ],
                     askPhone: [
                         {required: true, message: '请输入咨询电话'}
@@ -926,7 +933,8 @@
                     mediumService: '',
                     commonRequestion: '',
                     implCode: '',
-                    updateType: ''
+                    updateType: '',
+                    pretrialDays: ''
                 };
             },
             resetZwfwItemForm() {
