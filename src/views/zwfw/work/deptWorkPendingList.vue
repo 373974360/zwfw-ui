@@ -324,10 +324,10 @@
                                     <td>{{h.applyUserName}}</td>
                                     <td>{{h.auditUserName}}</td>
                                     <td>
-                                        <button type="button" class="btn btn-danger"
+                                        <el-button
                                                 v-if="h.timeExtendStatus==1"
                                                 @click="cancelExtendTime(h.id)">撤销申请
-                                        </button>
+                                        </el-button>
                                     </td>
                                 </tr>
                             </table>
@@ -369,18 +369,10 @@
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import {
-        getZwfwDeptWorkPendingList, getZwfwDeptWorkDetail, workComplete, workCorrection, workExtendTime, workClose
+        getZwfwDeptWorkPendingList, getZwfwDeptWorkDetail, workComplete, workCorrection, workExtendTime, workClose , workCancelExtendTime
     } from 'api/zwfw/zwfwDeptWorkPending';
-    import ElForm from "../../../../node_modules/element-ui/packages/form/src/form";
-    import ElFormItem from "../../../../node_modules/element-ui/packages/form/src/form-item";
-    import ElButton from "../../../../node_modules/element-ui/packages/button/src/button";
 
     export default {
-        components: {
-            ElButton,
-            ElFormItem,
-            ElForm
-        },
         name: 'zwfwDeptWorkPending_table',
         data() {
             return {
@@ -450,9 +442,13 @@
             getList() {
                 this.listLoading = true;
                 getZwfwDeptWorkPendingList(this.listQuery).then(response => {
-                    this.zwfwDeptWorkPendingList = response.data.list;
-                    this.total = response.data.total;
-                    this.listLoading = false;
+                    if (response.httpCode === 200) {
+                        this.zwfwDeptWorkPendingList = response.data.list;
+                        this.total = response.data.total;
+                        this.listLoading = false;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                 })
             },
             /**
@@ -468,22 +464,42 @@
                     taskId: this.taskId
                 }
                 getZwfwDeptWorkDetail(query).then(response => {
-                    console.log(response.data);
-                    this.approveStepList = response.data.approveStepList;
-                    this.itemConditionVoList = response.data.itemConditionVoList;
-                    this.itemMaterialVoList = response.data.itemMaterialVoList;
-                    this.itemProcessVo = response.data.itemProcessVo;
-                    this.taskForm = response.data.taskForm;
-                    this.itemVo = response.data.itemVo;
-                    this.member = response.data.member;
-                    this.company = response.data.company;
-                    this.history = response.data.history;
-                    this.users = response.data.users;
-                    this.itemTaskSetting = response.data.itemTaskSetting;
-                    this.action = '';
-                    this.correctionList = response.data.correctionList;
-                    this.extendTimeVoList = response.data.extendTimeVoList;
+                    if (response.httpCode === 200) {
+                        this.approveStepList = response.data.approveStepList;
+                        this.itemConditionVoList = response.data.itemConditionVoList;
+                        this.itemMaterialVoList = response.data.itemMaterialVoList;
+                        this.itemProcessVo = response.data.itemProcessVo;
+                        this.taskForm = response.data.taskForm;
+                        this.itemVo = response.data.itemVo;
+                        this.member = response.data.member;
+                        this.company = response.data.company;
+                        this.history = response.data.history;
+                        this.users = response.data.users;
+                        this.itemTaskSetting = response.data.itemTaskSetting;
+                        this.action = '';
+                        this.correctionList = response.data.correctionList;
+                        this.extendTimeVoList = response.data.extendTimeVoList;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+
                 });
+            },
+            /**
+             * 取消延期申请
+             */
+            cancelExtendTime(id){
+                const query = {
+                    id:id
+                };
+                workCancelExtendTime(query).then(response => {
+                    if (response.httpCode === 200) {
+                        this.dialogFormVisible = false;
+                        this.$message.success('取消成功');
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                })
             },
             /**
              * 提交到下一步
@@ -494,8 +510,12 @@
                     passReason: this.passRemark
                 }
                 workComplete(query).then(response => {
-                    console.log(response.data);
-                    this.dialogFormVisible = false;
+                    if (response.httpCode === 200) {
+                        this.dialogFormVisible = false;
+                        this.$message.success('提交成功');
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                 })
             },
             /**
@@ -508,8 +528,12 @@
                     extendTimeDays: this.extendTimeDays
                 }
                 workCorrection(query).then(response => {
-                    console.log(response.data);
-                    this.dialogFormVisible = false;
+                    if (response.httpCode === 200) {
+                        this.dialogFormVisible = false;
+                        this.$message.success('提交成功');
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                 })
             },
             /**
@@ -522,8 +546,12 @@
                     extendTimeReason: this.extendTimeReason
                 }
                 workExtendTime(query).then(response => {
-                    console.log(response.data);
-                    this.dialogFormVisible = false;
+                    if (response.httpCode === 200) {
+                        this.dialogFormVisible = false;
+                        this.$message.success('提交成功');
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                 })
             },
             /**
@@ -535,8 +563,12 @@
                     closeReason: this.closeReason
                 }
                 workClose(query).then(response => {
-                    console.log(response.data);
-                    this.dialogFormVisible = false;
+                    if (response.httpCode === 200) {
+                        this.dialogFormVisible = false;
+                        this.$message.success('提交成功');
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                 })
             },
             resetTemp() {
