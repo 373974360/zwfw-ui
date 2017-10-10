@@ -48,7 +48,7 @@
             </el-table-column>
             <el-table-column align="center" label="延期工作日">
                 <template scope="scope">
-                    <span>{{scope.row.timeExtendWorkdates | date('YYYY-MM-DD HH:mm:ss')}}</span>
+                    <span>{{scope.row.timeExtendWorkdates}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="延期到">

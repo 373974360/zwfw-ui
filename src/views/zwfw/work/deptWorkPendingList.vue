@@ -495,7 +495,7 @@
                 workCancelExtendTime(query).then(response => {
                     if (response.httpCode === 200) {
                         this.dialogFormVisible = false;
-                        this.$message.success('提交成功');
+                        this.$message.success('取消成功');
                     } else {
                         this.$message.error(response.msg);
                     }
@@ -548,7 +548,7 @@
                 workExtendTime(query).then(response => {
                     if (response.httpCode === 200) {
                         this.dialogFormVisible = false;
-                        this.$message.success('取消成功');
+                        this.$message.success('提交成功');
                     } else {
                         this.$message.error(response.msg);
                     }
