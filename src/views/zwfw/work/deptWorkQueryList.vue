@@ -4,8 +4,24 @@
             <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item" placeholder="办件号"
                       v-model="listQuery.search"></el-input>
 
-            <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item" placeholder="公司名称"
-                      v-model="listQuery.companyName"></el-input>
+
+            <el-select
+                    remote
+                    style="width: 230px;" class="filter-item" placeholder="公司名称"
+                    v-model="listQuery.companyId"
+                    filterable clearable
+                    :remote-method="queryCompanySearch"
+                    @change="handleCompanySelect">
+                <el-option
+                        v-for="item in companyList"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id">
+                </el-option>
+            </el-select>
+
+            <!--<el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item" placeholder="公司名称"-->
+            <!--v-model="listQuery.companyName"></el-input>-->
 
 
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
@@ -322,9 +338,14 @@
     import {
         getZwfwDeptWorkQueryList, getZwfwDeptWorkDetail
     } from 'api/zwfw/zwfwDeptWorkQuery';
+    import Vue from 'vue';
+    import {
+        getAllCompany
+    } from 'api/zwfw/zwfwCompany';
 
     export default {
         name: 'zwfwDeptWorkQuery_table',
+
         data() {
             return {
                 textMapTitle: null,
@@ -334,8 +355,8 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
-                    search: undefined,
-                    me: true
+                    companyId: undefined,
+                    pretrialNumnber: null
                 },
                 zwfwDeptWorkQuery: {
                     id: undefined,
@@ -350,6 +371,7 @@
                     enable: 1,
                     agencyCode: ''
                 },
+                companyList:[],
                 currentRow: null,
                 selectedRows: [],
                 dialogFormVisible: false,
@@ -416,6 +438,27 @@
             },
             resetWorkPengingForm() {
                 this.dialogFormVisible = false;
+            },
+            handleCompanySelect(id) {
+                this.listQuery.companyId = id;
+                this.getList();
+            },
+            queryCompanySearch(queryString) {
+
+                if(queryString.length<2) {
+                    return ;
+                }
+                // 调用 callback 返回建议列表的数据
+                const query = {
+                    name: queryString
+                };
+                getAllCompany(query).then(response => {
+                    if (response.httpCode == 200) {
+                        this.companyList = (response.data);
+                    } else {
+                        this.$message.error("查询失败");
+                    }
+                });
             },
             showDetail(row) {
                 this.pretrialNumber = row.pretrialNumber;
@@ -511,5 +554,28 @@
 
     .s-dialog-title .input-textarea .el-textarea__inner {
         height: 10em;
+    }
+
+    .company-autocomplete {
+
+    li {
+        line-height: normal;
+        padding: 7px;
+
+    .name {
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .addr {
+        font-size: 12px;
+        color: #b4b4b4;
+    }
+
+    .highlighted .addr {
+        color: #ddd;
+    }
+
+    }
     }
 </style>
