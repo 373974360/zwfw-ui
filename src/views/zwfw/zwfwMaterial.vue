@@ -97,7 +97,7 @@
                     <el-input v-model="zwfwMaterial.source"></el-input>
                 </el-form-item>
                 <el-form-item label="材料样本" prop="example">
-                    <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
+                    <el-upload name="uploadFile" list-type="picture-card" :accept="uploadAccepts"
                                :action="uploadAction" :file-list="uploadAvatarsExample"
                                :on-success="handleAvatarExampleSuccess"
                                :before-upload="beforeAvatarUpload"
@@ -106,7 +106,7 @@
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="电子表单" prop="eform">
-                    <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
+                    <el-upload name="uploadFile" list-type="picture-card" :accept="uploadAccepts"
                                :action="uploadAction" :file-list="uploadAvatarsEform"
                                :on-success="handleAvatarEformSuccess"
                                :before-upload="beforeAvatarUpload"
@@ -185,7 +185,8 @@
                     type: [
                         {required: true, message: '请输入材料类型'}
                     ]
-                }
+                },
+                uploadAccepts: '.gif,.jpg,.jpeg,.bmp,.png,.xls,.xlsx,.doc,.docx,.zip,.rar,.pdf'
             }
         },
         created() {
