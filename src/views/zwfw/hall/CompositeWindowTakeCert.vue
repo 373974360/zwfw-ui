@@ -12,10 +12,19 @@
             <el-select v-model="listQuery.itemId" class="filter-item" clearable filterable placeholder="事项筛选">
                 <el-option :key="item.id" v-for="item in itemList" :label="item.name" :value="item.id"/>
             </el-select>
-            <el-select v-model="listQuery.companyId" class="filter-item" clearable filterable placeholder="公司筛选">
-                <el-option :key="item.id" v-for="item in companyList" :label="item.name" :value="item.id"/>
+            <el-select v-model="listQuery.companyId" class="filter-item" filterable
+                       remote
+                       placeholder="请输入公司名称"
+                       :remote-method="remoteMethod">
+                <el-option
+                        v-for="item in optionsName"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id">
+                </el-option>
             </el-select>
-            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="搜索" placement="top-start">
+            <el-tooltip style="margin-left: 10px;    margin-top: 0px;" class="item" effect="dark" content="搜索"
+                        placement="top-start">
                 <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
                     搜索
                 </el-button>
@@ -113,6 +122,7 @@
                 list: null,
                 total: null,
                 listLoading: true,
+                optionsName: [],
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
@@ -160,7 +170,6 @@
         created() {
             this.getList();
             this.getAllItemList();
-            this.getAllCompanyList();
         },
         methods: {
             getList() {
@@ -171,26 +180,31 @@
                     this.listLoading = false;
                 })
             },
+            remoteMethod(query) {
+                if (query !== '') {
+                    const listQueryName = {
+                        name: query
+                    }
+                    getAllCompany(listQueryName).then(response => {
+                        this.optionsName = response.data;
+                        console.log(this.optionsName);
+                    })
+                } else {
+                    this.optionsName = [];
+                }
+            },
             handlePageChange(val) {
                 this.listQuery.page = val;
                 this.getList();
             },
             handleSizeChange(val) {
                 this.listQuery.rows = val;
-//                this.listQuery.itemId = null;
-//                this.listQuery.companyId = null;
                 this.getList();
             },
             getAllItemList() {
                 const query = {};
                 getAllByNameOrbasicCode(query).then(response => {
                     this.itemList = response.data;
-                })
-            },
-            getAllCompanyList() {
-                const query = {};
-                getAllCompany(query).then(response => {
-                    this.companyList = response.data;
                 })
             },
             changeTakeTypePick(row) {
@@ -218,8 +232,6 @@
                 this.dialogFormVisible = true;
             },
             submitTakeTypeExpress() {
-
-
                 this.$refs['validateExpressForm'].validate((valid) => {
                     if (valid) {
                         this.listLoading = true;
