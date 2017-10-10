@@ -29,9 +29,7 @@
             </el-table-column>
             <el-table-column align="center" label="办理事项" prop="itemName">
                 <template scope="scope">
-                    <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
-                        <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.itemName}}</span>
-                    </el-tooltip>
+                    {{scope.row.itemName}}
                 </template>
             </el-table-column>
             <el-table-column align="center" label="当前步骤" prop="currentTaskName">
@@ -92,36 +90,37 @@
                     <input type="hidden" name="taskId" :value='itemProcessVo.taskId'/>
                     <input type="hidden" name="id" :value='itemProcessVo.id'/>
 
-                    <template v-for="field in taskForm">
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                <label v-bind:for="'form_field_'+field.id" class="control-label">{{field.name}}：</label>
-                                <template v-if="field.type=='enum'">
-                                    <select v-bind:name="field.id" class="form-control "
-                                            v-bind:id="'form_field_'+field.id" v-model="field.value">
-                                        <option v-for="(v,k) in field.values" :value="k">{{v}}</option>
-                                    </select>
-                                </template>
-                                <template v-else>
-                                    <input type="text" :name="field.id" v-model="field.value"
-                                           class="form-control" v-bind:id="'form_field_'+field.id"/>
-                                </template>
-                            </div>
-                        </div>
-                    </template>
 
-                    <el-button class="filter-item" type="primary" @click="action='pass'">提交办理</el-button>
-                    <el-button v-if="itemTaskSetting.supportCorrection" class="filter-item" type="primary"
-                               @click="action='correction'" :disabled="itemProcessVo.flagCorrection==1">整改
-                    </el-button>
-                    <el-button v-if="itemTaskSetting.supportExtendTime" class="filter-item" type="primary"
-                               @click="action='extendTime'" :disabled="itemProcessVo.flagCorrection==1">申请延期
-                    </el-button>
-                    <el-button v-if="itemTaskSetting.supportClose" class="filter-item" type="primary"
-                               @click="action='close'">不予处理
-                    </el-button>
-                    <el-form ref="deptWorkPendingForm" :model="itemProcessVo">
-                        <el-form-item v-show="action=='pass'" class="h2-style-show" label="提交办理意见：">
+                    <div style="margin-bottom:20px;">
+                        <el-button class="filter-item" type="primary" @click="action='pass'">提交办理</el-button>
+                        <el-button v-if="itemTaskSetting.supportCorrection" class="filter-item" type="primary"
+                                   @click="action='correction'" :disabled="itemProcessVo.flagCorrection==1">整改
+                        </el-button>
+                        <el-button v-if="itemTaskSetting.supportExtendTime" class="filter-item" type="primary"
+                                   @click="action='extendTime'" :disabled="itemProcessVo.flagCorrection==1">申请延期
+                        </el-button>
+                        <el-button v-if="itemTaskSetting.supportClose" class="filter-item" type="primary"
+                                   @click="action='close'">不予处理
+                        </el-button>
+                    </div>
+
+                    <el-form ref="deptWorkPendingForm" :model="itemProcessVo" label-suffix="：">
+
+                        <el-form-item v-show="action=='pass'" v-for="field in taskForm" :label="field.name">
+                            <template v-if="field.type=='enum'">
+                                <select v-bind:name="'form_'+field.id"
+                                           v-bind:id="'form_field_'+field.id" placeholder="请选择"
+                                           v-model="formData['form_'+field.id]">
+                                    <option v-for="(v,k) in field.values"  :value="k">{{v}}</option>
+                                </select>
+                            </template>
+                            <template v-else>
+                                <el-input v-bind:name="'form_'+field.id"
+                                          v-bind:id="'form_field_'+field.id" v-model="formData['form_'+field.id]"></el-input>
+                            </template>
+                        </el-form-item>
+
+                        <el-form-item v-show="action=='pass'" class="h2-style-show" label="提交办理意见">
                             <el-input v-model="passRemark" type="textarea"></el-input>
                         </el-form-item>
                         <el-button v-show="action=='pass'" style="width: 100%;" type="primary" @click="submitComplete">
@@ -175,7 +174,7 @@
                             <td>{{h.name}}</td>
                             <td>
                                 <table v-if="h.formValue!=null" class="table table-bordered">
-                                    <tr v-for="(k,v) in h.formValue">
+                                    <tr v-for="(v,k) in h.formValue">
                                         <th>{{k}}:</th>
                                         <td>{{v}}</td>
                                     </tr>
@@ -366,7 +365,7 @@
                                             <template v-if="file.url!=null && file.url!=''">
                                                 <a target="_blank"
                                                    v-if="file.fileType == 'doc' || file.fileType == 'docx' || file.fileType == 'xls' || file.fileType == 'xlsx' || file.fileType == 'ppt'"
-                                                   :href="'https://view.officeapps.live.com/op/view.aspx?src='+win.cxt+file.url">[{{index
+                                                   :href="'https://view.officeapps.live.com/op/view.aspx?src='+file.url">[{{index
                                                 + 1}}]</a>
                                                 <a v-else :href="file.url"
                                                    target="_blank">[{{index + 1}}]</a>
@@ -386,9 +385,16 @@
 
 <script>
     import {copyProperties, resetForm} from 'utils';
+    import Qs from 'qs'
     import {mapGetters} from 'vuex';
     import {
-        getZwfwDeptWorkPendingList, getZwfwDeptWorkDetail, workComplete, workCorrection, workExtendTime, workClose , workCancelExtendTime
+        getZwfwDeptWorkPendingList,
+        getZwfwDeptWorkDetail,
+        workComplete,
+        workCorrection,
+        workExtendTime,
+        workClose,
+        workCancelExtendTime
     } from 'api/zwfw/zwfwDeptWorkPending';
 
     export default {
@@ -431,7 +437,9 @@
                     id: undefined,
                     taskId: '',
                     taskLimitTime: ''
+
                 },
+                formData: {},
                 taskForm: [],
                 itemVo: {},
                 member: {},
@@ -456,8 +464,8 @@
         },
         methods: {
             /**
-            * 刷新列表
-            **/
+             * 刷新列表
+             **/
             getList() {
                 this.listLoading = true;
                 getZwfwDeptWorkPendingList(this.listQuery).then(response => {
@@ -507,9 +515,9 @@
             /**
              * 取消延期申请
              */
-            cancelExtendTime(id){
+            cancelExtendTime(id) {
                 const query = {
-                    id:id
+                    id: id
                 };
                 workCancelExtendTime(query).then(response => {
                     if (response.httpCode === 200) {
@@ -524,10 +532,14 @@
              * 提交到下一步
              * */
             submitComplete() {
-                const query = {
+                var form = this.$refs.deptWorkPendingForm;
+//                console.log(Qs.parse($(form.$el).serialize()));
+                console.log(this.formData);
+
+                const query = Object.assign({
                     taskId: this.itemProcessVo.taskId,
                     passReason: this.passRemark
-                }
+                }, this.formData);
                 workComplete(query).then(response => {
                     if (response.httpCode === 200) {
                         this.dialogFormVisible = false;
