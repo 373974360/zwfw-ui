@@ -70,7 +70,7 @@
                             </tr>
                             <tr v-if="itemPretrialVo!=null">
                                 <th>预审号码:</th>
-                                <td>{{itemPretrialVo.number}}</td>
+                                <td>{{itemPretrialVo.pretrialNumber}}</td>
                             </tr>
                             <tr v-else>
                                 <th>预审状态:</th>

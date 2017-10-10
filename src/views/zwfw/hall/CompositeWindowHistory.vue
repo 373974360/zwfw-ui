@@ -98,7 +98,7 @@
                         </tr>
                         <tr v-show="itemPretrialVo!=null">
                             <th>预审号码:</th>
-                            <td>{{itemPretrialVo.id}}</td>
+                            <td>{{itemPretrialVo.pretrialNumber}}</td>
                         </tr>
                         <tr v-show="itemPretrialVo==null">
                             <th>预审状态</th>
