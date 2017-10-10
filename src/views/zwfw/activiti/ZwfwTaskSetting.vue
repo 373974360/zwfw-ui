@@ -91,6 +91,13 @@
                                             prop="dept"
                                             label="地址">
                                     </el-table-column>
+                                    <el-table-column
+                                            prop="dept"
+                                            label="地址">
+                                        <template scope="scope">
+                                            <el-button @click="delCadidateUser(scope.row)">删除</el-button>
+                                        </template>
+                                    </el-table-column>
                                 </el-table>
                             </el-form>
                         </div>
@@ -177,9 +184,11 @@
         getProcessVersionList,
         getUserList
     } from 'api/zwfw/zwfwItemProcess';
+    import ElButton from "../../../../node_modules/element-ui/packages/button/src/button.vue";
 
     export default {
         components: {
+            ElButton,
             Sticky
         },
         name: 'table_demo',
@@ -276,6 +285,7 @@
                 _this.search.userId = value;
             },
             /**
+            /**
              * 添加选中的用户到用户列表中
              * */
             addUserToTask() {
@@ -300,6 +310,7 @@
                             return item.id
                         }).join(',');
                         _this.search.userId = '';
+                        _this.search.searchUser ='';
 //                        console.log(_this.task.taskCandidateUsers);
                         break;
                     }
@@ -319,6 +330,20 @@
                 });
 
             },
+            delCadidateUser(item){
+                var _this = this;
+                var delIndex = -1;
+                for(let i=0;i<_this.candidateUserList.length;i++) {
+                    if(item.id === _this.candidateUserList[i].id) {
+                        delIndex = i;
+                        break;
+                    }
+                }
+                _this.candidateUserList.splice(delIndex, 1);
+                _this.task.taskCandidateUsers = _this.candidateUserList.map(function (item) {
+                    return item.id
+                }).join(',');
+            },
             /**
              * 保存其他设置
              */
@@ -337,9 +362,13 @@
                     supportCorrection: this.task.supportCorrection,
                     supportExtendTime: this.task.supportExtendTime,
                     supportClose: this.task.supportClose
-                }).then(function () {
-                    _this.$message.success('保存成功');
-                }).catch(function () {
+                }).then(function (response) {
+                    if(response.httpCode == 200) {
+                        _this.$message.success('保存成功');
+                    }else{
+                        _this.$message.error(response.msg);
+                    }
+                }).catch(function (e) {
                     _this.$message.error('保存失败');
                 });
             }
@@ -510,9 +539,9 @@
             });
 
             this.flush = function (processDefinitionId, processInstanceId) {
-                _this.loading = true;
                 processDefinitionId = this.search.processDefinitionId;
                 if (this.search.processDefinitionId) {
+                    _this.loading = true;
                     ProcessDiagramGenerator.drawDiagram(processDefinitionId);
                     _this.loading = false;
 
