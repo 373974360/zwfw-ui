@@ -61,12 +61,12 @@
                     <span>{{scope.row.timeExtendStatus | zwfwEnumData('TimeExtendStatus')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="操作">
+            <el-table-column v-if="operatorShow" align="center" label="操作">
                 <template scope="scope">
-                    <div v-show="scope.row.timeExtendStatus == 1"class="filter-container" style="display: flex;">
-                        <el-button class="filter-item" type="primary" @click="agree(scope.row)">同意
+                    <div v-show="scope.row.timeExtendStatus == 1" class="filter-container" style="display: flex;">
+                        <el-button class="filter-item-show" type="primary" @click="agree(scope.row)">同意
                         </el-button>
-                        <el-button class="filter-item" type="primary" @click="disagree(scope.row)">不同意
+                        <el-button class="filter-item-show" type="primary" @click="disagree(scope.row)">不同意
                         </el-button>
                     </div>
                 </template>
@@ -98,6 +98,7 @@
                 zwfwItemProcessExtendTimeList: [],
                 total: null,
                 listLoading: true,
+                operatorShow: true,
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
@@ -137,6 +138,11 @@
         methods: {
             getList() {
                 this.listLoading = true;
+                if (this.listQuery.timeExtendStatus != 1) {
+                    this.operatorShow = false;
+                } else {
+                    this.operatorShow = true;
+                }
                 getZwfwItemProcessExtendTimeList(this.listQuery).then(response => {
                     this.zwfwItemProcessExtendTimeList = response.data.list;
                     this.total = response.data.total;
@@ -190,3 +196,8 @@
         }
     }
 </script>
+<style>
+    .filter-item-show {
+        margin-top: 10px;
+    }
+</style>
