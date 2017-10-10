@@ -91,6 +91,25 @@
                     <h2 class="h2-style-show">审批处理：{{itemProcessVo.currentTaskName}} </h2>
                     <input type="hidden" name="taskId" :value='itemProcessVo.taskId'/>
                     <input type="hidden" name="id" :value='itemProcessVo.id'/>
+
+                    <template v-for="field in taskForm">
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label v-bind:for="'form_field_'+field.id" class="control-label">{{field.name}}：</label>
+                                <template v-if="field.type=='enum'">
+                                    <select v-bind:name="field.id" class="form-control "
+                                            v-bind:id="'form_field_'+field.id" v-model="field.value">
+                                        <option v-for="(v,k) in field.values" :value="k">{{v}}</option>
+                                    </select>
+                                </template>
+                                <template v-else>
+                                    <input type="text" :name="field.id" v-model="field.value"
+                                           class="form-control" v-bind:id="'form_field_'+field.id"/>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
                     <el-button class="filter-item" type="primary" @click="action='pass'">提交办理</el-button>
                     <el-button v-if="itemTaskSetting.supportCorrection" class="filter-item" type="primary"
                                @click="action='correction'" :disabled="itemProcessVo.flagCorrection==1">整改

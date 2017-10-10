@@ -2,10 +2,9 @@
     <div class="app-container calendar-list-container">
         <div class="filter-container">
             <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="预审号"
-                      v-model="listQuery.id" no-match-text="没有找到哦">
+                      v-model="listQuery.pretrialNumber" no-match-text="没有找到哦">
             </el-input>
-            <el-button style="margin-left: 10px;" class="filter-item" type="primary" v-waves icon="search"
-            >搜索
+            <el-button style="margin-left: 10px;" class="filter-item" type="primary" v-waves icon="search" @click="getList" >搜索
             </el-button>
         </div>
         <el-table :data="pretrialList" v-loading.body="listLoading" border fit highlight-current-row
@@ -119,7 +118,7 @@
                                         <template v-if="file.url!=null && file.url!=''">
                                             <a target="_blank"
                                                v-if="file.fileType == 'doc' || file.fileType == 'docx' || file.fileType == 'xls' || file.fileType == 'xlsx' || file.fileType == 'ppt'"
-                                               :href="'https://view.officeapps.live.com/op/view.aspx?src='+win.cxt+file.url">[{{index
+                                               :href="'https://view.officeapps.live.com/op/view.aspx?src='+file.url">[{{index
                                             + 1}}]</a>
                                             <a v-else :href="file.url"
                                                target="_blank">[{{index + 1}}]</a>
@@ -188,7 +187,7 @@
                 total: null,
                 listLoading: true,
                 listQuery: {
-                    id: undefined,
+                    pretrialNumber: undefined,
                     status: 2,
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows
