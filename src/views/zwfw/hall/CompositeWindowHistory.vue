@@ -212,7 +212,7 @@
                                             <span v-if="file.url!=null && file.url!=''">
                                             <a target="_blank"
                                                v-if="file.fileType == 'doc' || file.fileType == 'docx' || file.fileType == 'xls' || file.fileType == 'xlsx' || file.fileType == 'ppt'"
-                                               :href="'https://view.officeapps.live.com/op/view.aspx?src=' + win.cxt + file.url ">[{{index + 1}}]</a>
+                                               :href="'https://view.officeapps.live.com/op/view.aspx?src=' + file.url ">[{{index + 1}}]</a>
                                             <a v-else :href="file.url"
                                                target="_blank">[{{index + 1}}]</a>
                                             </span>
