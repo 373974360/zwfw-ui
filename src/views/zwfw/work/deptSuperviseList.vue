@@ -84,7 +84,8 @@
             </el-pagination>
         </div>
 
-        <el-dialog class="s-dialog-title" :title="textMapTitle" :close-on-click-modal="closeOnClickModal" :visible.sync="dialogFormVisible">
+        <el-dialog class="s-dialog-title" :title="textMapTitle" :close-on-click-modal="closeOnClickModal"
+                   :visible.sync="dialogFormVisible" :before-close="resetDeptSuperviseForm">
             <div>
                 <div>
                     <h3 class="h2-style-show">申请人信息：</h3>
@@ -333,7 +334,6 @@
 </template>
 
 <script>
-    import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import {
         getZwfwDeptSuperviseList, getZwfwDeptWorkDetail, workCancelSupervised, workSetSupervised
@@ -457,10 +457,9 @@
                     enable: 1
                 };
             },
-            resetZwfwLegalPersonForm() {
+            resetDeptSuperviseForm() {
                 this.dialogFormVisible = false;
-                this.resetTemp();
-                resetForm(this, 'zwfwDeptWorkPendingForm');
+                this.tabPaneShow = 'first';
             }
         }
     }
@@ -517,6 +516,7 @@
         background-color: #eef1f6;
 
     }
+
     .s-dialog-title .el-form-item__label {
         font-size: 24px;
     }
