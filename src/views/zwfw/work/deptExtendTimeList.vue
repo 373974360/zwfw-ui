@@ -61,7 +61,7 @@
                     <span>{{scope.row.timeExtendStatus | zwfwEnumData('TimeExtendStatus')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column v-if="operatorShow" align="center" label="操作">
+            <el-table-column v-if="operatorShow" align="center" label="操作" width="180">
                 <template scope="scope">
                     <div v-show="scope.row.timeExtendStatus == 1" class="filter-container" style="display: flex;">
                         <el-button class="filter-item-show" type="primary" @click="agree(scope.row)">同意
