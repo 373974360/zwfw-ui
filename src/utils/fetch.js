@@ -6,6 +6,10 @@ import router from '../router';
 
 let baseURL = '';
 
+export function getZwfwApiHost() {
+    return process.env.ZWFW_API;
+}
+
 export function fetchSys(object) {
     baseURL = process.env.SYS_API;
     return fetch(object);

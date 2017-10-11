@@ -328,6 +328,7 @@
 </template>
 
 <script>
+    import {getZwfwApiHost} from 'utils/fetch';
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import {getZwfwEnums} from 'api/zwfw/zwfwCommon';
@@ -666,12 +667,12 @@
             },
             print_ywsld() {
                 if(this.itemNumber!=null) {
-                    window.open('/static/zwfw/print/ywsld.html?id='+this.itemNumber.id);
+                    window.open(getZwfwApiHost() + '/zwfwHallCompositeWindow/downloadYwsld?numberId='+this.itemNumber.id);
                 }
             },
             print_wlzyd() {
                 if(this.itemNumber!=null) {
-                    window.open('/static/zwfw/print/wlzyd.html?id='+this.itemNumber.id);
+                    window.open(getZwfwApiHost() + '/zwfwHallCompositeWindow/downloadWlzyd?numberId='+this.itemNumber.id);
                 }
             },
             /**
