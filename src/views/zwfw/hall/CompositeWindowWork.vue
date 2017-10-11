@@ -359,8 +359,6 @@
                 itemPretrialVo: {},
                 tabName: 'materialListPanel',
                 itemMaterialVoList: [],
-                approveStepList: [],
-                itemConditionVoList: [],
                 window: {},
                 itemWindowUserName: '',
                 testStatus: '1',
@@ -428,8 +426,6 @@
                             _this.company = data.company;
                             _this.itemPretrialVo = data.itemPretrialVo;
                             _this.itemMaterialVoList = data.itemMaterialVoList;
-                            _this.approveStepList = data.approveStepList;
-                            _this.itemConditionVoList = data.itemConditionVoList;
                             _this.window = data.window;
                             _this.itemWindowUserName = data.itemWindowUserName;
                         } else {
@@ -457,8 +453,6 @@
                             _this.company = data.company;
                             _this.itemPretrialVo = data.itemPretrialVo;
                             _this.itemMaterialVoList = data.itemMaterialVoList;
-                            _this.approveStepList = data.approveStepList;
-                            _this.itemConditionVoList = data.itemConditionVoList;
                             _this.window = data.window;
                             _this.itemWindowUserName = data.itemWindowUserName;
                         } else {
@@ -489,8 +483,6 @@
                             _this.company = data.company;
                             _this.itemPretrialVo = data.itemPretrialVo;
                             _this.itemMaterialVoList = data.itemMaterialVoList;
-                            _this.approveStepList = data.approveStepList;
-                            _this.itemConditionVoList = data.itemConditionVoList;
                             _this.window = data.window;
                             _this.itemWindowUserName = data.itemWindowUserName;
                         }
@@ -505,8 +497,6 @@
                             _this.company = data.company;
                             _this.itemPretrialVo = data.itemPretrialVo;
                             _this.itemMaterialVoList = data.itemMaterialVoList;
-                            _this.approveStepList = data.approveStepList;
-                            _this.itemConditionVoList = data.itemConditionVoList;
                             _this.window = data.window;
                             _this.itemWindowUserName = data.itemWindowUserName;
                         } else {
@@ -571,8 +561,6 @@
                             _this.company = data.company;
                             _this.itemPretrialVo = data.itemPretrialVo;
                             _this.itemMaterialVoList = data.itemMaterialVoList;
-                            _this.approveStepList = data.approveStepList;
-                            _this.itemConditionVoList = data.itemConditionVoList;
                             _this.window = data.window;
                             _this.itemWindowUserName = data.itemWindowUserName;
                         } else {
@@ -621,8 +609,6 @@
                             _this.company = data.company;
                             _this.itemPretrialVo = data.itemPretrialVo;
                             _this.itemMaterialVoList = data.itemMaterialVoList;
-                            _this.approveStepList = data.approveStepList;
-                            _this.itemConditionVoList = data.itemConditionVoList;
                             _this.window = data.window;
                             _this.itemWindowUserName = data.itemWindowUserName;
                         }
@@ -663,8 +649,6 @@
                             _this.company = data.company;
                             _this.itemPretrialVo = data.itemPretrialVo;
                             _this.itemMaterialVoList = data.itemMaterialVoList;
-                            _this.approveStepList = data.approveStepList;
-                            _this.itemConditionVoList = data.itemConditionVoList;
                             _this.window = data.window;
                             _this.itemWindowUserName = data.itemWindowUserName;
                         }
