@@ -182,14 +182,14 @@
                             </td>
                             <!--<td>X</td>-->
                             <td>
-                                <div style="white-space: pre-line">{{h.reason}}</div>
+                                <div style="white-space: pre-line">{{h.reason }}</div>
                             </td>
                             <td>
                                 <template v-if="h.endTime">{{h.endTime | date('YYYY-MM-DD HH:mm')}}
                                 </template>
                             </td>
                             <td>
-                                <template v-if="h.durationInMillis">{{h.durationInMillis}}
+                                <template v-if="h.durationInMillis">{{h.durationInMillis | duration}}
                                 </template>
                             </td>
                             <td>

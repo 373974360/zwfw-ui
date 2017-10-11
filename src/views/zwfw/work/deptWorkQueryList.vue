@@ -139,7 +139,7 @@
                                 </template>
                             </td>
                             <td>
-                                <template v-if="h.durationInMillis">{{h.durationInMillis}}
+                                <template v-if="h.durationInMillis">{{h.durationInMillis | duration}}
                                 </template>
                             </td>
                             <td>

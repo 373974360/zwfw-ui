@@ -88,3 +88,12 @@ export function dicts(value, type) {
         }
     }
 }
+
+/**
+ * 把度过的毫秒数转换为人类的语言
+ * @param value
+ * @returns {*}
+ */
+export function duration(value) {
+    return moment.duration(value).humanize();
+}

@@ -19,6 +19,8 @@ import 'vue-multiselect/dist/vue-multiselect.min.css';// 多选框组件css
 import Sticky from 'components/Sticky'; // 粘性header组件
 import vueWaves from './directive/waves';// 水波纹指令
 import errLog from 'store/errLog';// error log组件
+import moment from 'moment';
+
 // import './mock/dept.js';  // 该项目所有请求使用mockjs模拟
 
 // register globally
@@ -26,6 +28,8 @@ Vue.component('multiselect', Multiselect);
 Vue.component('Sticky', Sticky);
 Vue.use(ElementUI);
 Vue.use(vueWaves);
+
+moment.lang('zh-cn');
 
 // register global utility filters.
 Object.keys(filters).forEach(key => {
