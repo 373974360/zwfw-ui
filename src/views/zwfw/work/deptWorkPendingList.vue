@@ -106,7 +106,7 @@
 
                     <el-form ref="deptWorkPendingForm" :model="itemProcessVo" label-suffix="：">
 
-                        <el-form-item v-show="action=='pass'" v-for="field in taskForm" :label="field.name">
+                        <el-form-item v-show="action=='pass'" v-for="field in taskForm" :label="field.name" :key="field.id">
                             <template v-if="field.type=='enum'">
                                 <select v-bind:name="'form_'+field.id"
                                            v-bind:id="'form_field_'+field.id" placeholder="请选择"
