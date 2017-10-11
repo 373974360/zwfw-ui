@@ -42,9 +42,7 @@
             </el-table-column>
             <el-table-column align="center" label="办理事项" prop="itemName" width="200px">
                 <template scope="scope">
-                    <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
-                        <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.itemName}}</span>
-                    </el-tooltip>
+                        <span >{{scope.row.itemName}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="当前步骤" prop="currentTaskName">
@@ -97,7 +95,7 @@
         </div>
 
         <!--查看-->
-        <el-dialog class="s-dialog-title" :title="textMapTitle" :visible.sync="dialogFormVisible"
+        <el-dialog class="s-dialog-title" size="large"  :title="textMapTitle" :visible.sync="dialogFormVisible"
                    :close-on-click-modal="closeOnClickModal" :before-close="resetWorkPengingForm">
             <div>
                 <div>
@@ -220,7 +218,7 @@
                                     <tr>
                                         <td>整改状态</td>
                                         <td>{{itemProcessVo.flagCorrection | enums('YesNo')}}
-                                            <a v-if="itemProcessVo.flagCorrection==1"
+                                            <a v-if="itemProcessVo.flagCorrection"
                                                target="print" @click="print_ycxgzd(itemProcessVo.pretrialNumber)">打印一次性告知单</a>
                                         </td>
                                     </tr>

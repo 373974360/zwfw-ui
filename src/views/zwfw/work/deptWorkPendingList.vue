@@ -1,7 +1,7 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-select style="bottom: 4px;" v-model="listQuery.me" placeholder="请选择">
+            <el-select style="bottom: 4px;" v-model="listQuery.me" placeholder="请选择" @change="handleFilter">
                 <el-option
                         v-for="item in options"
                         :key="item.value"
@@ -81,8 +81,8 @@
             </el-pagination>
         </div>
         <!--查看-->
-        <el-dialog class="s-dialog-title" :title="textMapTitle" :visible.sync="dialogFormVisible"
-                   :close-on-click-modal="closeOnClickModal" :before-close="resetWorkPengingForm">
+        <el-dialog class="s-dialog-title" size="large" :title="textMapTitle" :visible.sync="dialogFormVisible"
+                   :close-on-click-modal="closeOnClickModal" :before-close="resetWorkPendingForm">
             <div>
                 <div>
                     <!--{{itemProcessVo.currentTaskName}}-->
@@ -94,10 +94,10 @@
                     <div style="margin-bottom:20px;">
                         <el-button class="filter-item" type="primary" @click="action='pass'">提交办理</el-button>
                         <el-button v-if="itemTaskSetting.supportCorrection" class="filter-item" type="primary"
-                                   @click="action='correction'" :disabled="itemProcessVo.flagCorrection==1">整改
+                                   @click="action='correction'" :disabled="itemProcessVo.flagCorrection">整改
                         </el-button>
                         <el-button v-if="itemTaskSetting.supportExtendTime" class="filter-item" type="primary"
-                                   @click="action='extendTime'" :disabled="itemProcessVo.flagCorrection==1">申请延期
+                                   @click="action='extendTime'" :disabled="itemProcessVo.flagCorrection || itemProcessVo.extendTimeApplying ">申请延期
                         </el-button>
                         <el-button v-if="itemTaskSetting.supportClose" class="filter-item" type="primary"
                                    @click="action='close'">不予处理
@@ -106,17 +106,19 @@
 
                     <el-form ref="deptWorkPendingForm" :model="itemProcessVo" label-suffix="：">
 
-                        <el-form-item v-show="action=='pass'" v-for="field in taskForm" :label="field.name" :key="field.id">
+                        <el-form-item v-show="action=='pass'" v-for="field in taskForm" :label="field.name"
+                                      :key="field.id">
                             <template v-if="field.type=='enum'">
                                 <select v-bind:name="'form_'+field.id"
-                                           v-bind:id="'form_field_'+field.id" placeholder="请选择"
-                                           v-model="formData['form_'+field.id]">
-                                    <option v-for="(v,k) in field.values"  :value="k">{{v}}</option>
+                                        v-bind:id="'form_field_'+field.id" placeholder="请选择"
+                                        v-model="formData['form_'+field.id]">
+                                    <option v-for="(v,k) in field.values" :value="k">{{v}}</option>
                                 </select>
                             </template>
                             <template v-else>
                                 <el-input v-bind:name="'form_'+field.id"
-                                          v-bind:id="'form_field_'+field.id" v-model="formData['form_'+field.id]"></el-input>
+                                          v-bind:id="'form_field_'+field.id"
+                                          v-model="formData['form_'+field.id]"></el-input>
                             </template>
                         </el-form-item>
 
@@ -269,7 +271,7 @@
                                     <tr>
                                         <td>整改状态</td>
                                         <td>{{itemProcessVo.flagCorrection | enums('YesNo')}}
-                                            <a v-if="itemProcessVo.flagCorrection==1"
+                                            <a v-if="itemProcessVo.flagCorrection"
                                                target="print" @click="print_ycxgzd(itemProcessVo.pretrialNumber)">打印一次性告知单</a>
                                         </td>
                                     </tr>
@@ -385,7 +387,6 @@
 
 <script>
     import {copyProperties, resetForm} from 'utils';
-    import Qs from 'qs'
     import {mapGetters} from 'vuex';
     import {
         getZwfwDeptWorkPendingList,
@@ -463,6 +464,13 @@
             ])
         },
         methods: {
+
+            /**
+             * 处理搜索条件的变化
+             * */
+            handleFilter() {
+                this.getList();
+            },
             /**
              * 刷新列表
              **/
@@ -486,6 +494,12 @@
                 this.taskId = row.taskId;
                 this.textMapTitle = '部门办事 - ' + row.itemName;
                 this.dialogFormVisible = true;
+
+                this.passRemark = '确认通过';
+                this.correctionReason = '1、\n2、\n3、\n4、\n5、\n';
+                this.closeReason = '1、\n2、\n3、\n4、\n5、\n';
+                this.extendTimeReason = null;
+                this.extendTimeDays = '';
                 const query = {
                     processNumber: this.pretrialNumber,
                     taskId: this.taskId
@@ -523,6 +537,8 @@
                     if (response.httpCode === 200) {
                         this.dialogFormVisible = false;
                         this.$message.success('取消成功');
+                        this.getList();
+
                     } else {
                         this.$message.error(response.msg);
                     }
@@ -544,6 +560,7 @@
                     if (response.httpCode === 200) {
                         this.dialogFormVisible = false;
                         this.$message.success('提交成功');
+                        this.getList();
                     } else {
                         this.$message.error(response.msg);
                     }
@@ -562,6 +579,8 @@
                     if (response.httpCode === 200) {
                         this.dialogFormVisible = false;
                         this.$message.success('提交成功');
+                        this.getList();
+
                     } else {
                         this.$message.error(response.msg);
                     }
@@ -580,6 +599,8 @@
                     if (response.httpCode === 200) {
                         this.dialogFormVisible = false;
                         this.$message.success('提交成功');
+                        this.getList();
+
                     } else {
                         this.$message.error(response.msg);
                     }
@@ -597,6 +618,8 @@
                     if (response.httpCode === 200) {
                         this.dialogFormVisible = false;
                         this.$message.success('提交成功');
+                        this.getList();
+
                     } else {
                         this.$message.error(response.msg);
                     }
@@ -607,7 +630,7 @@
                     taskLimitTime: ''
                 }
             },
-            resetWorkPengingForm() {
+            resetWorkPendingForm() {
                 this.dialogFormVisible = false;
             },
             handleSizeChange(val) {

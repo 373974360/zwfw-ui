@@ -29,7 +29,7 @@ Vue.component('Sticky', Sticky);
 Vue.use(ElementUI);
 Vue.use(vueWaves);
 
-moment.lang('zh-cn');
+moment.locale('zh-cn');
 
 // register global utility filters.
 Object.keys(filters).forEach(key => {
