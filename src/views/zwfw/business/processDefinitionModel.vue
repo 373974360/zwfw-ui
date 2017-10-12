@@ -100,6 +100,9 @@
         getZwfwActivitiModelList, getZwfwActivitiModelEditUrl, getZwfwActivitiModelUploadUrl, createZwfwActivitiModel, deleteZwfwActivitiModel,
         deployZwfwActivitiModel
     } from 'api/zwfw/zwfwActiviti';
+    import {
+        getZwfwApiHost
+    } from 'utils/fetch';
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
 
@@ -240,7 +243,7 @@
                                 this.listLoading = false;
                                 this.$message.success('创建成功');
                                 this.getList();
-                                window.open(response.data.editUrl);
+                                window.open(getZwfwApiHost() + response.data.editUrl);
                             }
                         });
                     } else {
