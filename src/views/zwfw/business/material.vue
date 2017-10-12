@@ -24,7 +24,7 @@
             <el-table-column prop="name" align="center" label="材料名称">
                 <template scope="scope">
                     <el-tooltip content="点击编辑" placement="right" effect="dark">
-                        <span class="link-type" @click='handleUpdateClick(scope.row)'>{{scope.row.name}}</span>
+                        <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
@@ -41,11 +41,6 @@
             <el-table-column prop="electronicMaterial" align="center" label="是否需要电子材料">
                 <template scope="scope">
                     <span>{{scope.row.electronicMaterial | enums('YesNo')}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column v-once prop="source" align="center" label="纸质材料说明（数量和规格）">
-                <template scope="scope">
-                    <span>{{scope.row.paperDescription}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="type" align="center" label="受理标准">
@@ -87,9 +82,6 @@
                             :off-value="false">
                     </el-switch>
                 </el-form-item>
-                <el-form-item label="纸质材料说明（数量和规格）" prop="paperDescription">
-                    <el-input v-model="zwfwMaterial.paperDescription"></el-input>
-                </el-form-item>
                 <el-form-item label="受理标准" prop="acceptStandard">
                     <el-input v-model="zwfwMaterial.acceptStandard"></el-input>
                 </el-form-item>
@@ -97,21 +89,21 @@
                     <el-input v-model="zwfwMaterial.source"></el-input>
                 </el-form-item>
                 <el-form-item label="材料样本" prop="example">
-                    <el-upload name="uploadFile" list-type="picture-card" :accept="uploadAccepts"
+                    <el-upload name="uploadFile"  accept="uploadAccepts"
                                :action="uploadAction" :file-list="uploadAvatarsExample"
                                :on-success="handleAvatarExampleSuccess"
                                :before-upload="beforeAvatarUpload"
                                :on-remove="handleRemoveExample">
-                        <i class="el-icon-plus"></i>
+                        <el-button size="small" type="primary">点击上传</el-button>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="电子表单" prop="eform">
-                    <el-upload name="uploadFile" list-type="picture-card" :accept="uploadAccepts"
+                    <el-upload name="uploadFile"  :accept="uploadAccepts"
                                :action="uploadAction" :file-list="uploadAvatarsEform"
                                :on-success="handleAvatarEformSuccess"
                                :before-upload="beforeAvatarUpload"
                                :on-remove="handleRemoveEform">
-                        <i class="el-icon-plus"></i>
+                        <el-button size="small" type="primary">点击上传</el-button>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="填报须知" prop="notice">
@@ -159,7 +151,6 @@
                     electronicMaterial: true,
                     eform: '',
                     name: '',
-                    paperDescription: '',
                     acceptStandard: '',
                     remark: '',
                     source: '',
@@ -229,21 +220,22 @@
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
             },
-            handleUpdateClick(row) {
+            handleUpdate(row) {
                 this.currentRow = row;
                 this.resetTemp();
                 this.zwfwMaterial = copyProperties(this.zwfwMaterial, row);
                 if (this.zwfwMaterial.eform == '') {
-                    this.handleRemoveExample();
+                    this.handleRemoveEform();
                 } else {
+                    this.uploadAvatarsEform = [];
                     this.uploadAvatarsEform.push({url: this.zwfwMaterial.eform});
                 }
                 if (this.zwfwMaterial.example == '') {
                     this.handleRemoveExample();
                 } else {
+                    this.uploadAvatarsExample = [];
                     this.uploadAvatarsExample.push({url: this.zwfwMaterial.example});
                 }
-                this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
 
@@ -264,9 +256,9 @@
                 this.zwfwMaterial.example = '';
             },
             beforeAvatarUpload(file) {
-                const isLt2M = file.size / 1024 / 1024 < 2;
+                const isLt2M = file.size / 1024 / 1024 < 10;
                 if (!isLt2M) {
-                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                    this.$message.error('上传模板大小不能超过 10MB!');
                 }
                 return isLt2M;
             },
@@ -342,7 +334,6 @@
                     electronicMaterial: true,
                     eform: '',
                     name: '',
-                    paperDescription: '',
                     acceptStandard: '',
                     remark: '',
                     source: '',
@@ -354,6 +345,8 @@
             resetZwfwMaterialForm() {
                 this.dialogFormVisible = false;
                 this.resetTemp();
+                this.uploadAvatarsExample = [];
+                this.uploadAvatarsEform = [];
                 resetForm(this, 'zwfwMaterialForm');
             }
         }

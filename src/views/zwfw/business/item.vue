@@ -174,12 +174,12 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="结果样本" prop="resultExample">
-                    <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
+                    <el-upload name="uploadFile"  accept="uploadAccepts"
                                :action="uploadAction" :file-list="uploadAvatarsResult"
                                :on-success="handleAvatarResultSuccess"
                                :before-upload="beforeAvatarUpload"
                                :on-remove="handleRemoveResult">
-                        <i class="el-icon-plus"></i>
+                        <el-button size="small" type="primary">点击上传</el-button>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="行使层级" prop="handleLevel">
@@ -359,7 +359,7 @@
             </el-table>
             <el-form ref="zwfwMaterialForm" class="small-space" :model="zwfwItemMaterial"
                      label-position="right"
-                     label-width="80px"
+                     label-width="134px"
                      style='width: 80%; margin-left:10%; margin-top: 5%;'
                      :rules="zwfwItemMaterialRules">
                 <el-form-item label="材料名称" prop="name">
@@ -369,7 +369,9 @@
                             remote
                             placeholder="请输入材料名称"
                             :remote-method="remoteMethod"
-                            @change="changeMaterial">
+                            @change="changeMaterial"
+                            :disabled="changeMaterialName">
+
                         <el-option
                                 v-for="item in optionsName"
                                 :key="item.id"
@@ -378,50 +380,71 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="材料类型" prop="type">
-                    <el-input v-model="zwfwItemMaterial.type"></el-input>
+
+                <el-form-item label="纸质材料说明:" prop="paperDescription" v-show="changeMaterialInfo" >
+                    <!--<span>{{zwfwItemMaterial.paperDescription}}</span>-->
+                    <el-input v-model="zwfwItemMaterial.paperDescription" placeholder="数量和规格"></el-input>
                 </el-form-item>
-                <el-form-item label="是否需要电子材料" prop="electronicMaterial">
-                    <el-switch
-                            v-model="zwfwItemMaterial.electronicMaterial"
-                            on-color="#13ce66"
-                            off-color="#ff4949"
-                            :on-value="true"
-                            :off-value="false">
-                    </el-switch>
+                <table>
+                    <tr>
+                        <td>
+                            <el-form-item label="材料类型:" :inline="true" v-show="changeMaterialInfo">
+                                <span >{{zwfwItemMaterial.type}}</span>
+                                <!--<el-input v-model="zwfwItemMaterial.type"></el-input>-->
+                            </el-form-item>
+                        </td>
+                        <td width="100"></td>
+                        <td>
+                            <el-form-item label="是否需要电子材料:" :inline="true" prop="electronicMaterial"
+                                          v-show="changeMaterialInfo" >
+                                <span v-if="electronicMaterial!=null">{{zwfwItemMaterial.electronicMaterial | enums('YesNo')}}</span>
+                                <!--<el-switch-->
+                                <!--v-model="zwfwItemMaterial.electronicMaterial"-->
+                                <!--on-color="#13ce66"-->
+                                <!--off-color="#ff4949"-->
+                                <!--:on-value="true"-->
+                                <!--:off-value="false">-->
+                                <!--</el-switch>-->
+                            </el-form-item>
+                        </td>
+                    </tr>
+                </table>
+
+                <el-form-item label="受理标准:" prop="acceptStandard"  v-show="changeMaterialInfo" >
+                    <span>{{zwfwItemMaterial.acceptStandard}}</span>
+                    <!--<el-input v-model="zwfwItemMaterial.acceptStandard"></el-input>-->
                 </el-form-item>
-                <el-form-item label="纸质材料说明（数量和规格）" prop="paperDescription">
-                    <el-input v-model="zwfwItemMaterial.paperDescription"></el-input>
+                <el-form-item label="来源渠道:"  v-show="changeMaterialInfo" >
+                    <span>{{zwfwItemMaterial.source}}</span>
+                    <!--<el-input v-model="zwfwItemMaterial.source"></el-input>-->
                 </el-form-item>
-                <el-form-item label="受理标准" prop="acceptStandard">
-                    <el-input v-model="zwfwItemMaterial.acceptStandard"></el-input>
+                <el-form-item label="材料样本:" prop="example"  v-show="changeMaterialInfo" >
+                    <span>{{zwfwItemMaterial.example}}</span>
+                    <!--<el-upload name="uploadFile"  accept="uploadAccepts"-->
+                    <!--:action="uploadAction" :file-list="uploadAvatarsExample"-->
+                    <!--:on-success="handleAvatarExampleSuccess"-->
+                    <!--:before-upload="beforeAvatarUpload"-->
+                    <!--:on-remove="handleRemoveExample">-->
+                    <!--<el-button size="small" type="primary">点击上传</el-button>-->
+                    <!--</el-upload>-->
                 </el-form-item>
-                <el-form-item label="来源渠道" prop="source">
-                    <el-input v-model="zwfwItemMaterial.source"></el-input>
+                <el-form-item label="电子表单:" prop="eform"  v-show="changeMaterialInfo" >
+                    <span>{{zwfwItemMaterial.eform}}</span>
+                    <!--<el-upload name="uploadFile"  accept="uploadAccepts"-->
+                    <!--:action="uploadAction" :file-list="uploadAvatarsEform"-->
+                    <!--:on-success="handleAvatarEformSuccess"-->
+                    <!--:before-upload="beforeAvatarUpload"-->
+                    <!--:on-remove="handleRemoveEform">-->
+                    <!--<el-button size="small" type="primary">点击上传</el-button>-->
+                    <!--</el-upload>-->
                 </el-form-item>
-                <el-form-item label="材料样本" prop="example">
-                    <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
-                               :action="uploadAction" :file-list="uploadAvatarsExample"
-                               :on-success="handleAvatarExampleSuccess"
-                               :before-upload="beforeAvatarUpload"
-                               :on-remove="handleRemoveExample">
-                        <i class="el-icon-plus"></i>
-                    </el-upload>
+                <el-form-item label="填报须知:" prop="notice"  v-show="changeMaterialInfo" >
+                    <span>{{zwfwItemMaterial.notice}}</span>
+                    <!--<el-input v-model="zwfwItemMaterial.notice"></el-input>-->
                 </el-form-item>
-                <el-form-item label="电子表单" prop="eform">
-                    <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
-                               :action="uploadAction" :file-list="uploadAvatarsEform"
-                               :on-success="handleAvatarEformSuccess"
-                               :before-upload="beforeAvatarUpload"
-                               :on-remove="handleRemoveEform">
-                        <i class="el-icon-plus"></i>
-                    </el-upload>
-                </el-form-item>
-                <el-form-item label="填报须知" prop="notice">
-                    <el-input v-model="zwfwItemMaterial.notice"></el-input>
-                </el-form-item>
-                <el-form-item label="备注" prop="remark">
-                    <el-input v-model="zwfwItemMaterial.remark"></el-input>
+                <el-form-item label="备注:" prop="remark"  v-show="changeMaterialInfo" >
+                    <span>{{zwfwItemMaterial.remark}}</span>
+                    <!--<el-input v-model="zwfwItemMaterial.remark"></el-input>-->
                 </el-form-item>
             </el-form>
             <div style="text-align: center" slot="footer" class="dialog-footer">
@@ -450,6 +473,9 @@
         name: 'zwfwItem_table',
         data() {
             return {
+                changeMaterialName: false,
+                changeMaterialInfo: false,
+                electronicMaterial: null,
                 zwfwItemList: [],
                 zwfwItemMaterialList: [],
                 ItemMaterial: [],
@@ -566,19 +592,13 @@
                 zwfwItemMaterialRules: {
                     name: [
                         {required: true, message: '请输入材料名称'}
-                    ],
-                    source: [
-                        {required: true, message: '请输入来源渠道'}
-                    ],
-                    type: [
-                        {required: true, message: '请输入材料类型'}
                     ]
-                }
+                },
+                uploadAccepts: '.gif,.jpg,.jpeg,.bmp,.png,.xls,.xlsx,.doc,.docx,.zip,.rar,.pdf'
             }
         },
         created() {
             this.getList();
-            this.getMaterialList();
         },
         computed: {
             ...mapGetters([
@@ -608,16 +628,7 @@
             getItemMaterialListByItemId() {
                 this.listLoading1 = true;
                 getAllItemMaterial(this.currentItem.id).then(response => {
-                    this.getMaterialIds = response.data;
-                    const arr = [];
-                    for (const ids of response.data) {
-                        for (const idList of this.materialList) {
-                            if (idList.id == ids.materialId) {
-                                arr.push(idList);
-                            }
-                        }
-                    }
-                    this.zwfwItemMaterialList = arr;
+                    this.zwfwItemMaterialList = response.data;
                     this.listLoading1 = false;
                 })
             },
@@ -648,21 +659,16 @@
             beforeAvatarUpload(file) {
                 const isLt2M = file.size / 1024 / 1024 < 2;
                 if (!isLt2M) {
-                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                    this.$message.error('上传模板大小不能超过 2MB!');
                 }
                 return isLt2M;
-            },
-            getMaterialList() {
-                const query = {}
-                getAllMaterial(query).then(response => {
-                    this.materialList = response.data;
-                })
             },
             remoteMethod(query) {
                 if (query !== '') {
                     const listQueryName = {
                         name: query
                     }
+                    this.electronicMaterial = '';
                     getAllMaterial(listQueryName).then(response => {
                         this.optionsName = response.data;
                     })
@@ -671,14 +677,16 @@
                 }
             },
             changeMaterial(value) {
-                for (const obj of this.materialList) {
+                for (const obj of this.optionsName) {
                     if (obj.name == value) {
                         this.zwfwItemMaterial = Object.assign({}, obj);
+                        this.changeMaterialInfo = true;
                     }
                 }
             },
             handleUpdateClick(row) {
                 this.currentRow = row;
+                this.resetTemp1();
                 this.zwfwItemMaterial = copyProperties(this.zwfwItemMaterial, row);
                 if (this.zwfwItemMaterial.eform == '') {
                     this.handleRemoveEform();
@@ -692,7 +700,8 @@
                     this.uploadAvatarsExample = [];
                     this.uploadAvatarsExample.push({url: this.zwfwItemMaterial.example});
                 }
-                this.$refs.zwfwMaterialForm.$el[0].disabled = true;
+                this.changeMaterialName = true;
+                this.changeMaterialInfo = true;
             },
             handleSizeChange(val) {
                 this.listQuery.rows = val;
@@ -774,11 +783,12 @@
                         deleteZwfwItemMaterial(this.itemId, ids).then(response => {
                             this.currentItem.itemMaterialCount -= length;
                             this.$message.success('删除成功');
+//                            for (const deleteRow of this.selectedRows) {
+//                                const index = this.zwfwItemMaterialList.indexOf(deleteRow);
+//                                this.zwfwItemMaterialList.splice(index, 1);
+//                            }
+                            this.dialogFormVisible1 = false;
                         })
-                        for (const deleteRow of this.selectedRows) {
-                            const index = this.zwfwItemMaterialList.indexOf(deleteRow);
-                            this.zwfwItemMaterialList.splice(index, 1);
-                        }
                     }).catch(() => {
                         console.dir("取消");
                     });
@@ -803,12 +813,13 @@
             createMaterial() {
                 this.$refs['zwfwMaterialForm'].validate((valid) => {
                     if (valid) {
-                        if (this.$refs.zwfwMaterialForm.$el[0].disabled != true) {
+                        if (this.changeMaterialName != true) {
                             for (let obj of this.zwfwItemMaterialList) {
                                 if (obj.id == this.zwfwItemMaterial.id) {
                                     this.$message.warning('资料已存在');
                                     this.resetTemp1();
                                     resetForm(this, 'zwfwMaterialForm');
+                                    this.changeMaterialInfo = false;
                                     return false;
                                 }
                             }
@@ -828,10 +839,6 @@
                             })
                         } else {
                             const zwfwMaterialList = {
-                                creatTime: undefined,
-                                createBy: undefined,
-                                updateTime: undefined,
-                                updateBy: undefined,
                                 id: this.zwfwItemMaterial.id,
                                 electronicMaterial: this.zwfwItemMaterial.electronicMaterial,
                                 eform: this.zwfwItemMaterial.eform,
@@ -853,7 +860,6 @@
                                 this.uploadAvatarsExample = [];
                                 this.uploadAvatarsEform = [];
                                 this.resetZwfwMaterialForm();
-                                this.$refs.zwfwMaterialForm.$el[0].disabled = false;
                             })
                         }
                     } else {
@@ -940,11 +946,15 @@
             },
             resetZwfwItemForm() {
                 this.dialogFormVisible = false;
+                this.uploadAvatarsResult = [];
                 this.resetTemp();
                 resetForm(this, 'zwfwItemForm');
             },
             resetZwfwMaterialForm() {
                 this.dialogFormVisible1 = false;
+                this.changeMaterialName = false;
+                this.changeMaterialInfo = false;
+                this.electronicMaterial = null;
                 this.resetTemp1();
                 resetForm(this, 'zwfwMaterialForm');
             }
