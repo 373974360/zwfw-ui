@@ -359,8 +359,8 @@
                                     <th>材料</th>
                                     <th width="50">查看</th>
                                 </tr>
-                                <tr v-for="c in itemMaterialVoList">
-                                    <td>{{c.id}}</td>
+                                <tr v-for="(c,index) in itemMaterialVoList">
+                                    <td>{{index+1}}</td>
                                     <td>{{c.name}}</td>
                                     <td>
                                         <template v-for="(file,index) in c.multipleFile">

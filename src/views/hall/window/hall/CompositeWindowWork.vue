@@ -307,7 +307,8 @@
                                     </tr>
                                 </table>
                                 <h3>常见问题:</h3>
-                                <pre class="panel-warning" style="white-space:pre-wrap">{{itemVo.commonRequestion}}</pre>
+                                <pre class="panel-warning"
+                                     style="white-space:pre-wrap">{{itemVo.commonRequestion}}</pre>
                             </div>
                         </el-tab-pane>
                         <el-tab-pane label="内部办理流程描述" name="itemStep">
@@ -380,9 +381,13 @@
                 var _this = this;
                 loginToWindow({
                     windowKey: this.devMockWindowKey
-                }).then(function (data) {
-//                    console.log(data.data.callNumber);
-                    _this.$message.success("登录到窗口");
+                }).then(function (response) {
+                    if (response.httpCode == 200) {
+//                    console.log(response.data.callNumber);
+                        _this.$message.success("登录到窗口");
+                    } else {
+                        _this.$message.error(response.msg);
+                    }
 
                 });
             },
@@ -393,9 +398,13 @@
                 var _this = this;
                 takeNumberByPretrialNumber({
                     pretrialNumber: this.getNumberBy_pretrialNumber
-                }).then(function (data) {
+                }).then(function (response) {
 //                    console.log(data.data.callNumber);
-                    _this.$message.success("抽到的号码是：" + data.data.callNumber);
+                    if (response.httpCode == 200) {
+                        _this.$message.success("抽到的号码是：" + response.data.callNumber);
+                    } else {
+                        _this.$message.error(response.msg);
+                    }
 
                 });
             },
@@ -405,8 +414,12 @@
             takeNumberByItemCode() {
                 takeNumberByItemCode({
                     itemCode: this.getNumberBy_itemCode
-                }).then(function (data) {
-                    _this.$message.success("抽到的号码是：" + data.data.callNumber);
+                }).then(function (response) {
+                    if (response.httpCode == 200) {
+                        _this.$message.success("抽到的号码是：" + response.data.callNumber);
+                    } else {
+                        _this.$message.error(response.msg);
+                    }
                 });
             },
 
@@ -417,10 +430,10 @@
                 let _this = this;
                 queryNumberByCallNumber({
                     hallNumber: this.getNumberBy_hallNumber
-                }).then(function (resp) {
-                    if (resp.httpCode === 200) {
-                        if (resp.data != null) {
-                            let data = resp.data;
+                }).then(function (response) {
+                    if (response.httpCode === 200) {
+                        if (response.data != null) {
+                            let data = response.data;
                             _this.itemNumber = data.itemNumber;
                             _this.itemVo = data.itemVo;
                             _this.member = data.member;
@@ -435,6 +448,8 @@
                                 message: '当前窗口没有正在办理的业务'
                             });
                         }
+                    } else {
+                        _this.$message.error(response.msg);
                     }
                 });
             },
@@ -444,10 +459,10 @@
              */
             queryCurrentNumber() {
                 let _this = this;
-                queryCurrentNumber({}).then(function (resp) {
-                    if (resp.httpCode === 200) {
-                        if (resp.data != null) {
-                            let data = resp.data;
+                queryCurrentNumber({}).then(function (response) {
+                    if (response.httpCode === 200) {
+                        if (response.data != null) {
+                            let data = response.data;
                             _this.itemNumber = data.itemNumber;
                             _this.itemVo = data.itemVo;
                             _this.member = data.member;
@@ -462,6 +477,8 @@
                                 message: '当前窗口没有正在办理的业务'
                             });
                         }
+                    } else {
+                        _this.$message.error(response.msg);
                     }
                 })
             },
@@ -475,37 +492,47 @@
                 if (_this.itemNumber != null) {
                     callNumber({
                         numberId: _this.itemNumber.id
-                    }).then(function (resp) {
-                        let data = resp.data;
-                        if (data != null) {
-                            _this.itemNumber = data.itemNumber;
-                            _this.itemVo = data.itemVo;
-                            _this.member = data.member;
-                            _this.company = data.company;
-                            _this.itemPretrialVo = data.itemPretrialVo;
-                            _this.itemMaterialVoList = data.itemMaterialVoList;
-                            _this.window = data.window;
-                            _this.itemWindowUserName = data.itemWindowUserName;
+                    }).then(function (response) {
+                        if (response.httpCode == 200) {
+                            let data = response.data;
+                            if (data != null) {
+                                _this.itemNumber = data.itemNumber;
+                                _this.itemVo = data.itemVo;
+                                _this.member = data.member;
+                                _this.company = data.company;
+                                _this.itemPretrialVo = data.itemPretrialVo;
+                                _this.itemMaterialVoList = data.itemMaterialVoList;
+                                _this.window = data.window;
+                                _this.itemWindowUserName = data.itemWindowUserName;
+                            }
+                        } else {
+                            _this.$message.error(response.msg);
                         }
+
                     });
                 } else {
-                    callNumber({}).then(function (resp) {
-                        let data = resp.data;
-                        if (data != null) {
-                            _this.itemNumber = data.itemNumber;
-                            _this.itemVo = data.itemVo;
-                            _this.member = data.member;
-                            _this.company = data.company;
-                            _this.itemPretrialVo = data.itemPretrialVo;
-                            _this.itemMaterialVoList = data.itemMaterialVoList;
-                            _this.window = data.window;
-                            _this.itemWindowUserName = data.itemWindowUserName;
+                    callNumber({}).then(function (response) {
+                        if (response.httpCode == 200) {
+                            let data = response.data;
+                            if (data != null) {
+                                _this.itemNumber = data.itemNumber;
+                                _this.itemVo = data.itemVo;
+                                _this.member = data.member;
+                                _this.company = data.company;
+                                _this.itemPretrialVo = data.itemPretrialVo;
+                                _this.itemMaterialVoList = data.itemMaterialVoList;
+                                _this.window = data.window;
+                                _this.itemWindowUserName = data.itemWindowUserName;
+                            } else {
+                                _this.$message({
+                                    showClose: true,
+                                    message: '没有下一个号码了'
+                                });
+                            }
                         } else {
-                            _this.$message({
-                                showClose: true,
-                                message: '没有下一个号码了'
-                            });
+                            _this.$message.error(response.msg);
                         }
+
                     });
                 }
 
@@ -518,10 +545,14 @@
                 let _this = this;
                 welcomeNumber({
                     numberId: _this.itemNumber.id
-                }).then(function (resp) {
-                    let data = resp.data;
-                    if (data != null) {
-                        _this.itemNumber = data.itemNumber;
+                }).then(function (response) {
+                    if (response.httpCode == 200) {
+                        let data = response.data;
+                        if (data != null) {
+                            _this.itemNumber = data.itemNumber;
+                        }
+                    } else {
+                        _this.$message.error(response.msg);
                     }
                 });
             },
@@ -553,22 +584,26 @@
                         remark: this.remark,
                         received: checked_m.join(',')
 
-                    }).then(function (resp) {
-                        let data = resp.data;
-                        if (data != null) {
-                            _this.itemNumber = data.itemNumber;
-                            _this.itemVo = data.itemVo;
-                            _this.member = data.member;
-                            _this.company = data.company;
-                            _this.itemPretrialVo = data.itemPretrialVo;
-                            _this.itemMaterialVoList = data.itemMaterialVoList;
-                            _this.window = data.window;
-                            _this.itemWindowUserName = data.itemWindowUserName;
+                    }).then(function (response) {
+                        if (response.httpCode == 200) {
+                            let data = response.data;
+                            if (data != null) {
+                                _this.itemNumber = data.itemNumber;
+                                _this.itemVo = data.itemVo;
+                                _this.member = data.member;
+                                _this.company = data.company;
+                                _this.itemPretrialVo = data.itemPretrialVo;
+                                _this.itemMaterialVoList = data.itemMaterialVoList;
+                                _this.window = data.window;
+                                _this.itemWindowUserName = data.itemWindowUserName;
+                            } else {
+                                _this.$message({
+                                    showClose: true,
+                                    message: '没有下一个号码了'
+                                });
+                            }
                         } else {
-                            _this.$message({
-                                showClose: true,
-                                message: '没有下一个号码了'
-                            });
+                            _this.$message.error(response.msg);
                         }
 
                     });
@@ -601,19 +636,23 @@
                         numberId: _itemNumber.id,
                         status: 4,
                         remark: this.remark
-                    }).then(function (resp) {
-                        let data = resp.data;
-                        if (data != null) {
-                            _this.itemNumber = data.itemNumber;
-                            _this.itemVo = data.itemVo;
-                            _this.member = data.member;
-                            _this.company = data.company;
-                            _this.itemPretrialVo = data.itemPretrialVo;
-                            _this.itemMaterialVoList = data.itemMaterialVoList;
-                            _this.window = data.window;
-                            _this.itemWindowUserName = data.itemWindowUserName;
-                        }
+                    }).then(function (response) {
+                        if (response.httpCode == 200) {
+                            let data = response.data;
+                            if (data != null) {
+                                _this.itemNumber = data.itemNumber;
+                                _this.itemVo = data.itemVo;
+                                _this.member = data.member;
+                                _this.company = data.company;
+                                _this.itemPretrialVo = data.itemPretrialVo;
+                                _this.itemMaterialVoList = data.itemMaterialVoList;
+                                _this.window = data.window;
+                                _this.itemWindowUserName = data.itemWindowUserName;
+                            }
+                        } else {
+                            _this.$message.error(response.msg);
 
+                        }
                     });
                 }).catch(() => {
                     this.$message({
@@ -641,19 +680,23 @@
                         numberId: _itemNumber.id,
                         status: 5,
                         remark: this.remark
-                    }).then(function (resp) {
-                        let data = resp.data;
-                        if (data != null) {
-                            _this.itemNumber = data.itemNumber;
-                            _this.itemVo = data.itemVo;
-                            _this.member = data.member;
-                            _this.company = data.company;
-                            _this.itemPretrialVo = data.itemPretrialVo;
-                            _this.itemMaterialVoList = data.itemMaterialVoList;
-                            _this.window = data.window;
-                            _this.itemWindowUserName = data.itemWindowUserName;
+                    }).then(function (response) {
+                        if (response.httpCode == 200) {
+                            let data = response.data;
+                            if (data != null) {
+                                _this.itemNumber = data.itemNumber;
+                                _this.itemVo = data.itemVo;
+                                _this.member = data.member;
+                                _this.company = data.company;
+                                _this.itemPretrialVo = data.itemPretrialVo;
+                                _this.itemMaterialVoList = data.itemMaterialVoList;
+                                _this.window = data.window;
+                                _this.itemWindowUserName = data.itemWindowUserName;
+                            }
                         }
-
+                        else {
+                            _this.$message.error(response.msg);
+                        }
                     });
                 }).catch(() => {
                     this.$message({
@@ -666,13 +709,13 @@
                 this.materialSelection = val;
             },
             print_ywsld() {
-                if(this.itemNumber!=null) {
-                    window.open(getZwfwApiHost() + '/zwfwHallCompositeWindow/downloadYwsld?numberId='+this.itemNumber.id);
+                if (this.itemNumber != null) {
+                    window.open(getZwfwApiHost() + '/zwfwHallCompositeWindow/downloadYwsld?numberId=' + this.itemNumber.id);
                 }
             },
             print_wlzyd() {
-                if(this.itemNumber!=null) {
-                    window.open(getZwfwApiHost() + '/zwfwHallCompositeWindow/downloadWlzyd?numberId='+this.itemNumber.id);
+                if (this.itemNumber != null) {
+                    window.open(getZwfwApiHost() + '/zwfwHallCompositeWindow/downloadWlzyd?numberId=' + this.itemNumber.id);
                 }
             },
             /**
