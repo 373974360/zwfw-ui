@@ -7,10 +7,10 @@
             <hr style="height:1px;border:none;border-top:1px solid #555555;"/>
             <div class="filter-container">
                 <el-date-picker style="top: -5px;" v-model="listQuery.startDateCategory" type="date"
-                                placeholder="开始时间" @change="changeDateStartCategory">
+                                placeholder="开始时间" @change="changeDateStartCategory" :clearable="false">
                 </el-date-picker>
                 <el-date-picker style="top: -5px;" v-model="listQuery.endDateCategory" type="date"
-                                placeholder="结束时间" @change="changeDateEndCategory">
+                                placeholder="结束时间" @change="changeDateEndCategory" :clearable="false">
                 </el-date-picker>
                 <el-select v-model="listQuery.categoryIds" class="filter-item" multiple filterable placeholder="选择部门">
                     <el-option :key="item.id" v-for="item in categoryList" :label="item.name" :value="item.id">
@@ -31,10 +31,10 @@
             <hr style="height:1px;border:none;border-top:1px solid #555555;"/>
             <div class="filter-container">
                 <el-date-picker style="top: -5px;" v-model="listQuery.startDateWindow" type="date"
-                                placeholder="开始时间" @change="changeDateStartWindow">
+                                placeholder="开始时间" @change="changeDateStartWindow" :clearable="false">
                 </el-date-picker>
                 <el-date-picker style="top: -5px;" v-model="listQuery.endDateWindow" type="date"
-                                placeholder="结束时间" @change="changeDateEndWindow">
+                                placeholder="结束时间" @change="changeDateEndWindow" :clearable="false">
                 </el-date-picker>
                 <el-select v-model="listQuery.windowIds" class="filter-item" multiple filterable placeholder="选择窗口">
                     <el-option :key="item.id" v-for="item in windowList" :label="item.name" :value="item.id"/>
@@ -54,10 +54,10 @@
             <hr style="height:1px;border:none;border-top:1px solid #555555;"/>
             <div class="filter-container">
                 <el-date-picker style="top: -5px;" v-model="listQuery.startDateUser" type="date"
-                                placeholder="开始时间" @change="changeDateStartUser">
+                                placeholder="开始时间" @change="changeDateStartUser" :clearable="false">
                 </el-date-picker>
                 <el-date-picker style="top: -5px;" v-model="listQuery.endDateUser" type="date"
-                                placeholder="结束时间" @change="changeDateEndUser">
+                                placeholder="结束时间" @change="changeDateEndUser" :clearable="false">
                 </el-date-picker>
                 <el-select v-model="listQuery.userIds" class="filter-item" multiple filterable placeholder="选择用户">
                     <el-option :key="item.id" v-for="item in userList" :label="item.name" :value="item.id"/>
@@ -105,6 +105,7 @@
                     windowIds: undefined,
                     userIds: undefined
                 },
+                clearable_show: false,
                 userList: [],
                 windowList: [],
                 categoryList: [],

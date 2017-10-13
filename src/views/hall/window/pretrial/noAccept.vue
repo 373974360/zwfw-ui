@@ -161,6 +161,9 @@
                                 <td style="white-space:pre-wrap;text-align: left;">{{ItemPretrial.remark}}</td>
                             </tr>
                         </table>
+                        <div  style="margin-top:20px;">
+                            <el-button type="primary" @click="print_ycxgzd">打印一次性告知单</el-button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -168,7 +171,8 @@
     </div>
 </template>
 <script>
-    import {getZwfwItemPretrialList, getPretrialDetail, submitReview} from 'api/zwfw/zwfwItemPretrial';
+    import {getZwfwApiHost} from 'utils/fetch';
+    import {getZwfwItemPretrialList, getPretrialDetail} from 'api/zwfw/zwfwItemPretrial';
     import {mapGetters} from 'vuex';
     import {copyProperties} from 'utils';
 
@@ -241,6 +245,11 @@
                     this.materialList = response.data.pretrialMaterialList;
                     this.ItemPretrial = this.currentItemPretrial;
                 })
+            },
+            print_ycxgzd() {
+                if (this.ItemPretrial != null) {
+                    window.open(getZwfwApiHost() + '/zwfwItemPretrial/downloadYcxgzd?pretrialNumber=' + this.ItemPretrial.pretrialNumber);
+                }
             },
             resetTemp() {
                 this.ItemPretrial = {
