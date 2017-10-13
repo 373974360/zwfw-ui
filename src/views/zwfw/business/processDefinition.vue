@@ -38,20 +38,20 @@
             </el-table-column>
             <el-table-column min-width="50px" align="center" label="是否挂起">
                 <template scope="scope">
-                    <i v-if="scope.row.suspended" class="el-icon-circle-check"></i>
-                    <i v-else class="el-icon-circle-cross"></i>
+                    <i v-if="scope.row.suspended"  style="color:green" class="el-icon-circle-check"></i>
+                    <i v-else class="el-icon-circle-cross" style="color:red" ></i>
                 </template>
             </el-table-column>
             <el-table-column min-width="50px" align="center" label="启动步骤是自定义表单">
                 <template scope="scope" >
-                    <i v-if="scope.row.hasStartFormKey" class="el-icon-circle-check"></i>
-                    <i v-else class="el-icon-circle-cross"></i>
+                    <i v-if="scope.row.hasStartFormKey" style="color:green" class="el-icon-circle-check"></i>
+                    <i v-else class="el-icon-circle-cross" style="color:red"></i>
                 </template>
             </el-table-column>
             <el-table-column min-width="50px" align="center" label="是否有绘图">
                 <template scope="scope">
-                    <i v-if="scope.row.hasGraphicalNotation" class="el-icon-circle-check"></i>
-                    <i v-else class="el-icon-circle-cross"></i>
+                    <i v-if="scope.row.hasGraphicalNotation" style="color:green" class="el-icon-circle-check"></i>
+                    <i v-else class="el-icon-circle-cross" style="color:red"></i>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="描述" width="200">
@@ -59,15 +59,15 @@
                     <span>{{scope.row.description}}</span>
                 </template>
             </el-table-column>
-            <el-table-column
-                    fixed="right"
-                    label="操作"
-                    width="100">
-                <template scope="scope">
-                    <el-button @click="handleView" type="text" size="small">查看</el-button>
-                    <el-button @click="handleCreateInstance" type="text" size="small">创建</el-button>
-                </template>
-            </el-table-column>
+            <!--<el-table-column-->
+                    <!--fixed="right"-->
+                    <!--label="操作"-->
+                    <!--width="100">-->
+                <!--<template scope="scope">-->
+                    <!--<el-button @click="handleView" type="text" size="small">查看</el-button>-->
+                    <!--<el-button @click="handleCreateInstance" type="text" size="small">创建实例</el-button>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
 
         </el-table>
         <!--列表分页-->
@@ -104,7 +104,6 @@
 <script>
     import {
         getZwfwProcessDefinitionList,
-        createZwfwProcessDefinition,
         suspendZwfwProcessDefinition,
         activeZwfwProcessDefinition
     } from 'api/zwfw/zwfwActiviti';
@@ -241,12 +240,7 @@
                     if (valid) {
                         this.addDialogFormVisible = false;
                         this.listLoading = true;
-                        createZwfwProcessDefinition(this.zwfwProcessDefinition).then(response => {
-                            this.listLoading = false;
-                            this.$message.success('创建成功');
-                            this.getList();
-                            window.open(response.data.editUrl);
-                        });
+
                     } else {
                         return false;
                     }

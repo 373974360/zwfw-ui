@@ -516,7 +516,7 @@
                         this.company = response.data.company;
                         this.history = response.data.history;
                         this.users = response.data.users;
-                        this.itemTaskSetting = response.data.itemTaskSetting;
+                        this.itemTaskSetting = response.data.itemTaskSetting || {};
                         this.action = '';
                         this.correctionList = response.data.correctionList;
                         this.extendTimeVoList = response.data.extendTimeVoList;

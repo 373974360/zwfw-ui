@@ -617,6 +617,9 @@
                     this.listLoading = false;
                 })
             },
+            handleFilter(){
+                this.getList();
+            },
             handleMaterialList(item) {
                 this.currentItem = item;
                 this.itemId = item.id;
