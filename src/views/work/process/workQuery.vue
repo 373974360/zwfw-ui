@@ -82,7 +82,7 @@
             </el-table-column>
             <el-table-column>
                 <template scope="scope">
-                    <el-button @click="showDetail(scope.row)">查看</el-button>
+                    <el-button @click="showDetail(scope.row)" type="primary">查看</el-button>
                 </template>
             </el-table-column>
         </el-table>
