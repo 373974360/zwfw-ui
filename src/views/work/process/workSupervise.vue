@@ -84,7 +84,7 @@
             </el-pagination>
         </div>
 
-        <el-dialog class="s-dialog-title" :title="textMapTitle" :close-on-click-modal="closeOnClickModal"
+        <el-dialog size="large" class="s-dialog-title" :title="textMapTitle" :close-on-click-modal="closeOnClickModal"
                    :visible.sync="dialogFormVisible" :before-close="resetDeptSuperviseForm">
             <div>
                 <div>
