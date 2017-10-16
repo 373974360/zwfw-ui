@@ -83,10 +83,10 @@
                     <el-input v-model="zwfwNaturePerson.name"></el-input>
                 </el-form-item>
                 <el-form-item label="身份证号" prop="idcard">
-                    <el-input v-model="zwfwNaturePerson.idcard"></el-input>
+                    <el-input :disabled="readonlyFlag" v-model="zwfwNaturePerson.idcard" @blur="handleIdCard"></el-input>
                 </el-form-item>
                 <el-form-item label="性别" prop="gender">
-                    <el-radio-group v-model="zwfwNaturePerson.gender">
+                    <el-radio-group disabled v-model="zwfwNaturePerson.gender">
                         <el-radio v-for="item in enums['Gender']"
                                   :key="item.code"
                                   :label="item.code"
@@ -96,7 +96,7 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="出生日期" prop="birthday">
-                    <el-date-picker v-model="zwfwNaturePerson.birthday" type="date" placeholder="选择日期" format="yyyy-MM-dd" @change="changeDate"></el-date-picker>
+                    <el-date-picker disabled v-model="zwfwNaturePerson.birthday" type="date" placeholder="选择日期"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="住址" prop="address">
                     <el-input v-model="zwfwNaturePerson.address"></el-input>
@@ -137,9 +137,9 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="resetZwfwNaturePersonForm">取 消</el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
+                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" :loading="btnLoading" @click="create">确 定
                 </el-button>
-                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
+                <el-button v-else type="primary" icon="circle-check" :loading="btnLoading" @Keyup.enter="update" @click="update">确 定
                 </el-button>
             </div>
         </el-dialog>
@@ -148,45 +148,57 @@
 
 <script>
     import {copyProperties, resetForm} from 'utils';
-    import moment from 'moment';
     import {mapGetters} from 'vuex';
+    import { isIdCardNo, validatMobiles } from '../../../utils/validate'
     import {
+        getAllZwfwNaturePerson,
         getZwfwNaturePersonList,
         createZwfwNaturePerson,
         updateZwfwNaturePerson,
         delZwfwNaturePersons
-    } from 'api/zwfw/zwfwNaturePerson';
+    } from '../../../api/zwfw/zwfwNaturePerson';
 
     export default {
         name: 'zwfwNaturePerson_table',
         data() {
-            const validatMobiles = (rule, value, callback) => {
-                if (!/^((13|15|18|14|17)+\d{9})$/.test(value)) {
-                    return callback(new Error('电话号码格式不正确'));
+            const validateIdcard = (rule, value, callback) => {
+                if (this.readonlyFlag) {
+                    callback()
+                    return;
+                }
+                if (!isIdCardNo(value)) {
+                    callback(new Error('身份证号格式不正确，请重新输入'))
+                } else {
+                    this.listQuery.idcard = value
+                    getAllZwfwNaturePerson(this.listQuery).then(response => {
+                        if (response.httpCode === 200 && response.data && response.data.length > 0) {
+                            callback(new Error('身份证号码已存在，请重新输入'))
+                        }
+                        callback()
+                    }).catch(error => {
+                        callback(new Error(error))
+                    })
+                }
+            };
+            const validateMobiles = (rule, value, callback) => {
+                if (!validatMobiles(value)) {
+                    callback(new Error('手机号码格式不正确'));
                 } else {
                     callback();
                 }
             };
-            //身份证验证不完善，同时输入身份证的日期显示在出生日期中
-            const validateIdcard = (rule, value, callback) => {
-                if (!/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/.test(value)) {
-                    return callback(new Error('身份证号码不合法'));
-                } else {
-                    callback();
+            const validatePassword = (rule, value, callback) => {
+                if (this.zwfwNaturePerson.passwordConfirm) {
+                    this.$refs.zwfwNaturePersonForm.validateField('passwordConfirm')
                 }
+                callback()
             };
             const validatePass2 = (rule, value, callback) => {
-                if (this.zwfwNaturePerson.password === '') {
-                    callback();
-                } else {
-                    if (value === '') {
-                        callback(new Error('请再次输入密码'));
-                    } else if (value !== this.zwfwNaturePerson.password) {
-                        callback(new Error('两次输入密码不一致!'));
-                    } else {
-                        callback();
-                    }
+                if (this.zwfwNaturePerson.password && this.zwfwNaturePerson.passwordConfirm
+                    && this.zwfwNaturePerson.password != this.zwfwNaturePerson.passwordConfirm) {
+                    callback(new Error('两次密码输入不同，请重新输入'))
                 }
+                callback()
             };
             return {
                 zwfwNaturePersonList: [],
@@ -201,6 +213,7 @@
                     id: undefined,
                     birthday: '',
                     password: '',
+                    passwordConfirm: '',
                     address: '',
                     gender: 1,
                     idcard: '',
@@ -217,31 +230,34 @@
                 dialogFormVisible: false,
                 dialogStatus: '',
                 dialogLoading: false,
+                btnLoading: false,
+                readonlyFlag: false,
                 zwfwNaturePersonRules: {
-                    birthday: [
-                        {required: true, message: '请输入出生日期'}
+                    name: [
+                        {required: true, message: '请输入姓名', trigger: 'blur'}
                     ],
                     idcard: [
-                        {required: true, validator: validateIdcard}
+                        {required: true, message: '请输入身份证号', trigger: 'blur'},
+                        {validator: validateIdcard, trigger: 'blur'}
                     ],
                     address: [
-                        {required: true, message: '请输入住址'}
+                        {required: true, message: '请输入住址', trigger: 'blur'}
                     ],
                     nation: [
-                        {required: true, message: '请输入民族'}
+                        {required: true, message: '请输入民族', trigger: 'blur'}
                     ],
                     phone: [
-                        {required: true, validator: validatMobiles}
-                    ],
-                    name: [
-                        {required: true, message: '请输入姓名'}
+                        {required: true, message: '请输入联系电话', trigger: 'blur'},
+                        {validator: validateMobiles, trigger: 'blur'}
                     ],
                     password: [
-                        {required: true, message: '请输入密码'},
-                        {min: 6, max: 18, message: '长度在 6 到 18 个字符'}
+                        {required: true, message: '请输入密码', trigger: 'blur'},
+                        {min: 6, max: 18, message: '长度在 6 到 18 个字符', trigger: 'blur'},
+                        {validator: validatePassword, trigger: 'blur'}
                     ],
                     passwordConfirm: [
-                        {required: true, validator: validatePass2}
+                        {required: true, message: '请输入确认密码', trigger: 'blur'},
+                        {validator: validatePass2, trigger: 'blur'}
                     ]
                 }
             }
@@ -257,6 +273,15 @@
             ])
         },
         methods: {
+            handleIdCard() {
+                let idCard = this.zwfwNaturePerson.idcard
+                this.zwfwNaturePerson.birthday = `${idCard.substring(6, 10)}-${idCard.substring(10, 12)}-${idCard.substring(12, 14)}`;
+                if (parseInt(idCard.substr(16, 1)) % 2 === 1) {
+                    this.zwfwNaturePerson.gender = 1
+                } else {
+                    this.zwfwNaturePerson.gender = 0
+                }
+            },
             handleAvatarSuccess(res, file) {
                 this.imageUrl = URL.createObjectURL(file.raw);
             },
@@ -295,12 +320,10 @@
             toggleSelection(row) {
                 this.$refs.zwfwNaturePersonTable.toggleRowSelection(row);
             },
-            changeDate() {
-                this.zwfwNaturePerson.birthday = moment(this.zwfwNaturePerson.birthday).format("YYYY-MM-DD");
-            },
             handleCreate(row) {
                 this.currentRow = row;
                 this.resetTemp();
+                this.readonlyFlag = false;
                 this.zwfwNaturePersonRules.password[0].required = true;
                 this.zwfwNaturePersonRules.passwordConfirm[0].required = true;
                 this.dialogStatus = 'create';
@@ -310,7 +333,8 @@
                 this.currentRow = row;
                 this.resetTemp();
                 this.zwfwNaturePerson = copyProperties(this.zwfwNaturePerson, row);
-                this.zwfwNaturePerson.birthday = new Date(row.birthday).toLocaleDateString().replace(/\//g, "-");
+                this.readonlyFlag = true;
+                this.zwfwNaturePerson.birthday = new Date(row.birthday).toLocaleDateString().replace(/\//g, '-');
                 this.zwfwNaturePerson.password = '';
                 this.zwfwNaturePersonRules.password[0].required = false;
                 this.zwfwNaturePersonRules.passwordConfirm[0].required = false;
@@ -333,29 +357,39 @@
                             ids.push(deleteRow.id);
                         }
                         delZwfwNaturePersons(ids).then(response => {
-                            this.total -= selectCounts;
-                            for (const deleteRow of this.selectedRows) {
-                                const index = this.zwfwNaturePersonList.indexOf(deleteRow);
-                                this.zwfwNaturePersonList.splice(index, 1);
+                            if (response.httpCode === 200) {
+                                this.total -= selectCounts;
+                                for (const deleteRow of this.selectedRows) {
+                                    const index = this.zwfwNaturePersonList.indexOf(deleteRow);
+                                    this.zwfwNaturePersonList.splice(index, 1);
+                                }
+                                this.$message.success('删除成功');
+                                this.listLoading = false;
+                            } else {
+                                this.$message.error('删除失败');
+                                this.listLoading = false;
                             }
-                            this.$message.success('删除成功');
-                            this.listLoading = false;
                         })
                     }).catch(() => {
-                        console.dir("取消");
+                        console.dir('取消');
                     });
                 }
             },
             create() {
                 this.$refs['zwfwNaturePersonForm'].validate((valid) => {
                     if (valid) {
-                        this.dialogFormVisible = false;
-                        this.listLoading = true;
+                        this.btnLoading = true;
                         createZwfwNaturePerson(this.zwfwNaturePerson).then(response => {
-                            this.zwfwNaturePersonList.unshift(response.data);
-                            this.total += 1;
-                            this.$message.success('创建成功');
-                            this.listLoading = false;
+                            if (response.httpCode === 200) {
+                                this.btnLoading = false;
+                                this.zwfwNaturePersonList.unshift(response.data);
+                                this.total += 1;
+                                this.$message.success('创建成功');
+                                this.dialogFormVisible = false;
+                            } else {
+                                this.btnLoading = false;
+                                this.$message.error('创建失败');
+                            }
                         })
                     } else {
                         return false;
@@ -365,12 +399,17 @@
             update() {
                 this.$refs['zwfwNaturePersonForm'].validate((valid) => {
                     if (valid) {
-                        this.dialogFormVisible = false;
-                        this.listLoading = true;
+                        this.btnLoading = true;
                         updateZwfwNaturePerson(this.zwfwNaturePerson).then(response => {
-                            copyProperties(this.currentRow, response.data);
-                            this.$message.success('更新成功');
-                            this.listLoading = false;
+                            if (response.httpCode === 200) {
+                                this.btnLoading = false;
+                                copyProperties(this.currentRow, response.data);
+                                this.$message.success('更新成功');
+                                this.dialogFormVisible = false;
+                            } else {
+                                this.btnLoading = false;
+                                this.$message.error('更新失败');
+                            }
                         })
                     } else {
                         return false;

@@ -1,5 +1,13 @@
 import {fetchZwfw} from 'utils/fetch';
 
+export function getAllZwfwLegalPerson(query) {
+    return fetchZwfw({
+        url: '/zwfwLegalPerson/getAll',
+        method: 'get',
+        params: query
+    });
+}
+
 export function getZwfwLegalPersonList(query) {
     return fetchZwfw({
         url: '/zwfwLegalPerson/list',

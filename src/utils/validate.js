@@ -36,3 +36,33 @@ export function validatMobiles(str) {
     const reg = /^((13|15|18|14|17)+\d{9})$/;
     return reg.test(str);
 }
+
+/* 身份证号码的验证规则*/
+export function isIdCardNo(num) {
+    let len = num.length, re;
+    if (len === 15) {
+        re = new RegExp(/^(\d{6})()?(\d{2})(\d{2})(\d{2})(\d{2})(\w)$/);
+    } else if (len === 18) {
+        re = new RegExp(/^(\d{6})()?(\d{4})(\d{2})(\d{2})(\d{3})(\w)$/);
+    } else {
+        return false;
+    }
+    let a = num.match(re);
+    if (a != null) {
+        let D, B;
+        if (len === 15) {
+            D = new Date(`19${a[3]}/${a[4]}/${a[5]}`);
+            B = D.getYear() == a[3] && (D.getMonth() + 1) == a[4] && D.getDate() == a[5];
+        } else {
+            D = new Date(`${a[3]}/${a[4]}/${a[5]}`);
+            B = D.getFullYear() == a[3] && (D.getMonth() + 1) == a[4] && D.getDate() == a[5];
+        }
+        if (!B) {
+            return false;
+        }
+    }
+    if (!re.test(num)) {
+        return false;
+    }
+    return true;
+}

@@ -1,5 +1,13 @@
 import {fetchZwfw} from 'utils/fetch';
 
+export function getAllZwfwNaturePerson(query) {
+    return fetchZwfw({
+        url: '/zwfwNaturePerson/getAll',
+        method: 'get',
+        params: query
+    });
+}
+
 export function getZwfwNaturePersonList(query) {
     return fetchZwfw({
         url: '/zwfwNaturePerson/list',
@@ -8,7 +16,7 @@ export function getZwfwNaturePersonList(query) {
     });
 }
 
-export function createZwfwNaturePerson(zwfwNaturePersonVo){
+export function createZwfwNaturePerson(zwfwNaturePersonVo) {
     const data = zwfwNaturePersonVo;
     return fetchZwfw({
         url: '/zwfwNaturePerson/add',
@@ -17,7 +25,7 @@ export function createZwfwNaturePerson(zwfwNaturePersonVo){
     })
 }
 
-export function updateZwfwNaturePerson(zwfwNaturePersonVo){
+export function updateZwfwNaturePerson(zwfwNaturePersonVo) {
     const data = zwfwNaturePersonVo;
     return fetchZwfw({
         url: '/zwfwNaturePerson/edit',
