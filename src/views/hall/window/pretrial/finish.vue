@@ -67,19 +67,19 @@
                     <table class="table table-responsive table-bordered">
                         <tr>
                             <th width="140">办事企业/机构</th>
-                            <td>{{company.name}}</td>
+                            <td>{{legalPerson.companyName}}</td>
                             <th width="140">统一社会信用代码</th>
-                            <td>{{company.unifyCode}}</td>
+                            <td>{{legalPerson.companyCode}}</td>
                         </tr>
                         <tr>
                             <th width="140">法人姓名</th>
-                            <td>{{company.legalPerson}}</td>
+                            <td>{{legalPerson.legalPerson}}</td>
                             <th width="140">法人身份证号</th>
-                            <td>{{company.legalPersonCard}}</td>
+                            <td>{{legalPerson.idcard}}</td>
                         </tr>
                         <tr>
                             <th width="140">企业/机构地址</th>
-                            <td colspan="3">{{company.address}}</td>
+                            <td colspan="3">{{legalPerson.registerPlace}}</td>
                         </tr>
                     </table>
                 </div>
@@ -185,7 +185,7 @@
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows
                 },
-                company: [],
+                legalPerson: [],
                 member: [],
                 materialList: [],
                 ItemPretrial: [],
@@ -236,7 +236,7 @@
             getPretrialDetail() {
                 getPretrialDetail(this.itemPretrialId).then(response => {
                     console.log(response.data);
-                    this.company = response.data.company;
+                    this.legalPerson = response.data.legalPerson;
                     this.member = response.data.member;
                     this.materialList = response.data.pretrialMaterialList;
                     this.ItemPretrial = this.currentItemPretrial;

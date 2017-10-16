@@ -64,9 +64,9 @@
                                 <th>申报人联系电话:</th>
                                 <td>{{member.mobilephone}}</td>
                             </tr>
-                            <tr v-show="company!=null">
+                            <tr v-show="legalPerson!=null">
                                 <th>办事企业:</th>
-                                <td>{{company.name}}</td>
+                                <td>{{legalPerson.companyName}}</td>
                             </tr>
                             <tr v-if="itemPretrialVo!=null">
                                 <th>预审号码:</th>
@@ -357,7 +357,7 @@
                 itemNumber: {},
                 itemVo: {},
                 member: {},
-                company: {},
+                legalPerson: {},
                 itemPretrialVo: {},
                 tabName: 'materialListPanel',
                 itemMaterialVoList: [],
