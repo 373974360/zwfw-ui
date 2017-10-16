@@ -92,9 +92,9 @@
                             <th>申报人联系电话:</th>
                             <td>{{member.mobilephone}}</td>
                         </tr>
-                        <tr v-show="company!=null">
+                        <tr v-show="legalPerson!=null">
                             <th>办事企业:</th>
-                            <td>{{company.name}}</td>
+                            <td>{{legalPerson.companyName}}</td>
                         </tr>
                         <tr v-show="itemPretrialVo!=null">
                             <th>预审号码:</th>
@@ -332,7 +332,7 @@
                 windowVo: [],
                 itemPretrialVo: [],
                 member: [],
-                company: [],
+                legalPerson: [],
                 itemVo: [],
                 selectedRows: [],
                 itemMaterialVoList: [],
@@ -394,7 +394,7 @@
                     this.itemNumber = response.data.itemNumber;
                     this.member = response.data.member;
                     this.approveStepList = response.data.approveStepList;
-                    this.company = response.data.company;
+                    this.legalPerson = response.data.legalPerson;
                     this.itemVo = response.data.itemVo;
                     this.itemConditionVoList = response.data.itemConditionVoList;
                     this.itemMaterialVoList = response.data.itemMaterialVoList;

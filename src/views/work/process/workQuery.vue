@@ -8,15 +8,15 @@
             <el-select
                     remote
                     style="width: 230px;" class="filter-item" placeholder="公司名称"
-                    v-model="listQuery.companyId"
+                    v-model="listQuery.companyCode"
                     filterable clearable
                     :remote-method="queryCompanySearch"
                     @change="handleCompanySelect">
                 <el-option
                         v-for="item in companyList"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id">
+                        :key="item.companyCode"
+                        :label="item.companyName"
+                        :value="item.companyCode">
                 </el-option>
             </el-select>
 
@@ -154,19 +154,19 @@
                                     <table class="table table-responsive table-bordered">
                                         <tr>
                                             <th width="140">办事企业/机构</th>
-                                            <td>{{company.name}}</td>
+                                            <td>{{legalPerson.companyName}}</td>
                                             <th width="140">统一社会信用代码</th>
-                                            <td>{{company.unifyCode}}</td>
+                                            <td>{{legalPerson.companyCode}}</td>
                                         </tr>
                                         <tr>
                                             <th width="140">法人姓名</th>
-                                            <td>{{company.legalPerson}}</td>
+                                            <td>{{legalPerson.legalPerson}}</td>
                                             <th width="140">法人身份证号</th>
-                                            <td>{{company.legalPersonCard}}</td>
+                                            <td>{{legalPerson.idcard}}</td>
                                         </tr>
                                         <tr>
                                             <th width="140">企业/机构地址</th>
-                                            <td colspan="3">{{company.address}}</td>
+                                            <td colspan="3">{{legalPerson.registerPlace}}</td>
                                         </tr>
                                     </table>
                                 </div>
@@ -353,8 +353,8 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
-                    companyId: undefined,
-                    pretrialNumnber: null
+                    companyCode: undefined,
+                    pretrialNumber: null
                 },
                 zwfwDeptWorkQuery: {
                     id: undefined,
@@ -392,7 +392,7 @@
                 taskForm: [],
                 itemVo: {},
                 member: {},
-                company: {},
+                legalPerson: {},
                 history: [],
                 users: {},
                 itemTaskSetting: {},
@@ -437,8 +437,8 @@
             resetWorkPengingForm() {
                 this.dialogFormVisible = false;
             },
-            handleCompanySelect(id) {
-                this.listQuery.companyId = id;
+            handleCompanySelect(code) {
+                this.listQuery.companyCode = code;
                 this.getList();
             },
             queryCompanySearch(queryString) {
@@ -476,7 +476,7 @@
                     this.taskForm = response.data.taskForm;
                     this.itemVo = response.data.itemVo;
                     this.member = response.data.member;
-                    this.company = response.data.company;
+                    this.legalPerson = response.data.legalPerson;
                     this.history = response.data.history;
                     this.users = response.data.users;
                     this.itemTaskSetting = response.data.itemTaskSetting;

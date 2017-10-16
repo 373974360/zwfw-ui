@@ -12,7 +12,7 @@
             <el-select v-model="listQuery.itemId" class="filter-item" clearable filterable placeholder="事项筛选">
                 <el-option :key="item.id" v-for="item in itemList" :label="item.name" :value="item.id"/>
             </el-select>
-            <el-select v-model="listQuery.companyId" class="filter-item" filterable
+            <el-select v-model="listQuery.companyCode" class="filter-item" filterable
                        remote
                        placeholder="请输入公司名称"
                        :remote-method="remoteMethod">
@@ -127,7 +127,7 @@
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     itemId: undefined,
-                    companyId: undefined,
+                    companyCode: undefined,
                     flagTakeCert: '0'
                 },
                 options: [

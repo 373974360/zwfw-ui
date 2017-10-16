@@ -208,19 +208,19 @@
                                     <table class="table table-responsive table-bordered">
                                         <tr>
                                             <th width="140">办事企业/机构</th>
-                                            <td>{{company.name}}</td>
+                                            <td>{{legalPerson.companyName}}</td>
                                             <th width="140">统一社会信用代码</th>
-                                            <td>{{company.unifyCode}}</td>
+                                            <td>{{legalPerson.companyCode}}</td>
                                         </tr>
                                         <tr>
                                             <th width="140">法人姓名</th>
-                                            <td>{{company.legalPerson}}</td>
+                                            <td>{{legalPerson.legalPerson}}</td>
                                             <th width="140">法人身份证号</th>
-                                            <td>{{company.legalPersonCard}}</td>
+                                            <td>{{legalPerson.idcard}}</td>
                                         </tr>
                                         <tr>
                                             <th width="140">企业/机构地址</th>
-                                            <td colspan="3">{{company.address}}</td>
+                                            <td colspan="3">{{legalPerson.registerPlace}}</td>
                                         </tr>
                                     </table>
                                 </div>
@@ -444,7 +444,7 @@
                 taskForm: [],
                 itemVo: {},
                 member: {},
-                company: {},
+                legalPerson: {},
                 history: [],
                 users: {},
                 itemTaskSetting: {},
@@ -513,7 +513,7 @@
                         this.taskForm = response.data.taskForm;
                         this.itemVo = response.data.itemVo;
                         this.member = response.data.member;
-                        this.company = response.data.company;
+                        this.legalPerson = response.data.legalPerson;
                         this.history = response.data.history;
                         this.users = response.data.users;
                         this.itemTaskSetting = response.data.itemTaskSetting || {};
