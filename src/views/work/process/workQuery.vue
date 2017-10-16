@@ -217,10 +217,7 @@
                                     </tr>
                                     <tr>
                                         <td>整改状态</td>
-                                        <td>{{itemProcessVo.flagCorrection | enums('YesNo')}}
-                                            <a v-if="itemProcessVo.flagCorrection"
-                                               target="print" @click="print_ycxgzd(itemProcessVo.pretrialNumber)">打印一次性告知单</a>
-                                        </td>
+                                        <td>{{itemProcessVo.flagCorrection | enums('YesNo')}}</td>
                                     </tr>
                                     <tr>
                                         <td>申请办件时间</td>
@@ -323,6 +320,10 @@
                         </el-tab-pane>
                     </el-tabs>
                 </div>
+                <div>
+                    <el-button v-if="itemProcessVo.flagCorrection || itemProcessVo.status == 99"
+                               type="button" @click="print_ycxgzd(itemProcessVo.pretrialNumber)">打印一次性告知单</el-button>
+                </div>
             </div>
         </el-dialog>
 
@@ -340,8 +341,11 @@
     import {
         getAllCompany
     } from 'api/zwfw/zwfwCompany';
+    import {getZwfwApiHost} from 'utils/fetch';
+    import ElButton from "../../../../node_modules/element-ui/packages/button/src/button.vue";
 
     export default {
+        components: {ElButton},
         name: 'zwfwDeptWorkQuery_table',
 
         data() {
@@ -487,9 +491,10 @@
             },
             print_ycxgzd(pretrialNumber) {
                 if (pretrialNumber != null) {
-                    window.open('/static/zwfw/print/ycxgzd.html?number=' + pretrialNumber);
+                    window.open(getZwfwApiHost() + '/zwfwItemPretrial/downloadYcxgzd?pretrialNumber=' + pretrialNumber);
                 }
             }
+
         }
     }
 </script>

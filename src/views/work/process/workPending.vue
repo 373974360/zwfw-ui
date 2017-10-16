@@ -97,7 +97,8 @@
                                    @click="action='correction'" :disabled="itemProcessVo.flagCorrection">整改
                         </el-button>
                         <el-button v-if="itemTaskSetting.supportExtendTime" class="filter-item" type="primary"
-                                   @click="action='extendTime'" :disabled="itemProcessVo.flagCorrection || itemProcessVo.extendTimeApplying ">申请延期
+                                   @click="action='extendTime'"
+                                   :disabled="itemProcessVo.flagCorrection || itemProcessVo.extendTimeApplying ">申请延期
                         </el-button>
                         <el-button v-if="itemTaskSetting.supportClose" class="filter-item" type="primary"
                                    @click="action='close'">不予处理
@@ -270,10 +271,7 @@
                                     </tr>
                                     <tr>
                                         <td>整改状态</td>
-                                        <td>{{itemProcessVo.flagCorrection | enums('YesNo')}}
-                                            <a v-if="itemProcessVo.flagCorrection"
-                                               target="print" @click="print_ycxgzd(itemProcessVo.pretrialNumber)">打印一次性告知单</a>
-                                        </td>
+                                        <td>{{itemProcessVo.flagCorrection | enums('YesNo')}}</td>
                                     </tr>
                                     <tr>
                                         <td>申请办件时间</td>
@@ -360,7 +358,7 @@
                                     <th width="50">查看</th>
                                 </tr>
                                 <tr v-for="(c,index) in itemMaterialVoList">
-                                    <td>{{index+1}}</td>
+                                    <td>{{index + 1}}</td>
                                     <td>{{c.name}}</td>
                                     <td>
                                         <template v-for="(file,index) in c.multipleFile">
@@ -378,6 +376,10 @@
                             </table>
                         </el-tab-pane>
                     </el-tabs>
+                </div>
+                <div>
+                    <el-button v-if="itemProcessVo.flagCorrection || itemProcessVo.status == 99"
+                               type="button" @click="print_ycxgzd(itemProcessVo.pretrialNumber)">打印一次性告知单</el-button>
                 </div>
             </div>
         </el-dialog>
@@ -397,6 +399,8 @@
         workClose,
         workCancelExtendTime
     } from 'api/zwfw/zwfwDeptWorkPending';
+
+    import {getZwfwApiHost} from 'utils/fetch';
 
     export default {
         name: 'zwfwDeptWorkPending_table',
@@ -646,7 +650,7 @@
             },
             print_ycxgzd(pretrialNumber) {
                 if (pretrialNumber != null) {
-                    window.open('/static/zwfw/print/ycxgzd.html?number=' + pretrialNumber);
+                    window.open(getZwfwApiHost() + '/zwfwItemPretrial/downloadYcxgzd?pretrialNumber=' + pretrialNumber);
                 }
             }
         }
