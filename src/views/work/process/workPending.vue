@@ -205,23 +205,23 @@
                     <el-tabs v-model="tabPaneShow" type="card">
                         <el-tab-pane label="申请企业/个人" name="first">
                             <div>
-                                <div>
+                                <div v-if="member.legalPerson!=null">
                                     <table class="table table-responsive table-bordered">
                                         <tr>
                                             <th width="140">办事企业/机构</th>
-                                            <td>{{legalPerson.companyName}}</td>
+                                            <td>{{member.legalPerson.companyName}}</td>
                                             <th width="140">统一社会信用代码</th>
-                                            <td>{{legalPerson.companyCode}}</td>
+                                            <td>{{member.companyCode}}</td>
                                         </tr>
                                         <tr>
                                             <th width="140">法人姓名</th>
-                                            <td>{{legalPerson.legalPerson}}</td>
+                                            <td>{{member.legalPerson.legalPerson}}</td>
                                             <th width="140">法人身份证号</th>
-                                            <td>{{legalPerson.idcard}}</td>
+                                            <td>{{member.legalPerson.idcard}}</td>
                                         </tr>
                                         <tr>
                                             <th width="140">企业/机构地址</th>
-                                            <td colspan="3">{{legalPerson.registerPlace}}</td>
+                                            <td colspan="3">{{member.legalPerson.registerPlace}}</td>
                                         </tr>
                                     </table>
                                 </div>
@@ -448,7 +448,6 @@
                 taskForm: [],
                 itemVo: {},
                 member: {},
-                legalPerson: {},
                 history: [],
                 users: {},
                 itemTaskSetting: {},
@@ -517,7 +516,6 @@
                         this.taskForm = response.data.taskForm;
                         this.itemVo = response.data.itemVo;
                         this.member = response.data.member;
-                        this.legalPerson = response.data.legalPerson;
                         this.history = response.data.history;
                         this.users = response.data.users;
                         this.itemTaskSetting = response.data.itemTaskSetting || {};

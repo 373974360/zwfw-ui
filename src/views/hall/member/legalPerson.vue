@@ -142,7 +142,7 @@
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import moment from 'moment';
-    import { isIdCardNo, validatMobiles } from '../../../utils/validate'
+    import { isIdCardNo, validatMobiles, checkSocialCreditCode } from '../../../utils/validate'
     import {
         getAllZwfwLegalPerson,
         getZwfwLegalPersonList,
@@ -159,8 +159,8 @@
                     callback()
                     return;
                 }
-                if (!/[0-9A-HJ-NPQRTUWXY]{2}\d{6}[0-9A-HJ-NPQRTUWXY]{10}/.test(value) || value.length !== 18) {
-                    return callback(new Error('统一代码由十八位的数字或大写英文字母（不适用I、O、Z、S、V）组成,且第3-8位为数字'));
+                if (!checkSocialCreditCode(value)) {
+                    return callback(new Error('不是有效的社会统一信用代码，请重新输入'));
                 } else {
                     this.listQuery.companyCode = value
                     getAllZwfwLegalPerson(this.listQuery).then(response => {

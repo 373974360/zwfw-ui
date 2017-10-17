@@ -92,9 +92,9 @@
                             <th>申报人联系电话:</th>
                             <td>{{member.mobilephone}}</td>
                         </tr>
-                        <tr v-show="legalPerson!=null">
+                        <tr v-show="member.legalPerson!=null">
                             <th>办事企业:</th>
-                            <td>{{legalPerson.companyName}}</td>
+                            <td>{{member.legalPerson.companyName}}</td>
                         </tr>
                         <tr v-show="itemPretrialVo!=null">
                             <th>预审号码:</th>
@@ -394,7 +394,6 @@
                     this.itemNumber = response.data.itemNumber;
                     this.member = response.data.member;
                     this.approveStepList = response.data.approveStepList;
-                    this.legalPerson = response.data.legalPerson;
                     this.itemVo = response.data.itemVo;
                     this.itemConditionVoList = response.data.itemConditionVoList;
                     this.itemMaterialVoList = response.data.itemMaterialVoList;

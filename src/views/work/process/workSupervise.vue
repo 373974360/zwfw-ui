@@ -357,7 +357,6 @@
                 itemProcessVo: [],
                 correctionList: [],
                 member: [],
-                legalPerson: [],
                 history: [],
                 extendTimeVoList: [],
                 itemConditionVoList: [],
@@ -423,7 +422,6 @@
                     this.taskForm = response.data.taskForm;
                     this.itemVo = response.data.itemVo;
                     this.member = response.data.member;
-                    this.legalPerson = response.data.legalPerson;
                     this.history = response.data.history;
                     this.users = response.data.users;
                     this.correctionList = response.data.correctionList;
