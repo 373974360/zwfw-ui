@@ -56,17 +56,21 @@
                             <!--<td style="color:red"><strong class="font-size:5rem">{{itemNumber.type | enum-->
                             <!--'ItemWindowSupport'}}</strong></td>-->
                             <!--</tr>-->
-                            <tr v-show="member!=null">
+                            <tr v-show="member.naturePerson!=null">
                                 <th>申报人:</th>
-                                <td>{{member.name}}</td>
+                                <td>{{member.naturePerson.name}}</td>
                             </tr>
-                            <tr v-show="member!=null">
+                            <tr v-show="member.naturePerson!=null">
                                 <th>申报人联系电话:</th>
-                                <td>{{member.mobilephone}}</td>
+                                <td>{{member.naturePerson.phone}} </td>
                             </tr>
-                            <tr v-show="legalPerson!=null">
+                            <tr v-show="member.legalPerson!=null">
+                                <th>申报人联系电话:</th>
+                                <td>{{member.legalPerson.phone}} </td>
+                            </tr>
+                            <tr v-show="member.legalPerson!=null">
                                 <th>办事企业:</th>
-                                <td>{{legalPerson.companyName}}</td>
+                                <td>{{member.legalPerson.companyName}}</td>
                             </tr>
                             <tr v-if="itemPretrialVo!=null">
                                 <th>预审号码:</th>

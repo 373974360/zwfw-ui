@@ -89,24 +89,48 @@
             <div>
                 <div>
                     <h3 class="h2-style-show">申请人信息：</h3>
-                    <table class="table table-responsive table-bordered">
-                        <tr>
-                            <td width="140">姓名</td>
-                            <td>{{member.name}}</td>
-                            <td width="140">身份证号</td>
-                            <td>{{member.idNumber}}</td>
-                        </tr>
-                        <tr>
-                            <td width="140">邮箱</td>
-                            <td>{{member.email}}</td>
-                            <td width="140">手机</td>
-                            <td>{{member.mobilephone}}</td>
-                        </tr>
-                        <tr>
-                            <td width="140">地址</td>
-                            <td colspan="3">{{member.address}}</td>
-                        </tr>
-                    </table>
+                    <div>
+                        <div v-if="member.legalPerson!=null">
+                            <table class="table table-responsive table-bordered">
+                                <tr>
+                                    <th width="140">办事企业/机构</th>
+                                    <td>{{member.legalPerson.companyName}}</td>
+                                    <th width="140">统一社会信用代码</th>
+                                    <td>{{member.legalPerson.companyCode}}</td>
+                                </tr>
+                                <tr>
+                                    <th width="140">法人姓名</th>
+                                    <td>{{member.legalPerson.legalPerson}}</td>
+                                    <th width="140">法人身份证号</th>
+                                    <td>{{member.legalPerson.idcard}}</td>
+                                </tr>
+                                <tr>
+                                    <th width="140">企业/机构地址</th>
+                                    <td colspan="3">{{member.legalPerson.registerPlace}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div v-if="member.naturePerson!=null">
+                            <table class="table table-responsive table-bordered">
+                                <tr>
+                                    <th width="140">姓名</th>
+                                    <td>{{member.naturePerson.name}}</td>
+                                    <th width="140">身份证号</th>
+                                    <td>{{member.naturePerson.idNumber}}</td>
+                                </tr>
+                                <tr>
+                                    <th width="140">邮箱</th>
+                                    <td>{{member.email}}</td>
+                                    <th width="140">手机</th>
+                                    <td>{{member.naturePerson.phone}}</td>
+                                </tr>
+                                <tr>
+                                    <th width="140">地址</th>
+                                    <td colspan="3">{{member.naturePerson.address}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <h3 class="h2-style-show">办件进度：</h3>
@@ -311,8 +335,7 @@
                                             <template v-if="file.url!=null && file.url!=''">
                                                 <a target="_blank"
                                                    v-if="file.fileType == 'doc' || file.fileType == 'docx' || file.fileType == 'xls' || file.fileType == 'xlsx' || file.fileType == 'ppt'"
-                                                   :href="'https://view.officeapps.live.com/op/view.aspx?src='+file.url">[{{index
-                                                + 1}}]</a>
+                                                   :href="'https://view.officeapps.live.com/op/view.aspx?src='+file.url">[{{index + 1}}]</a>
                                                 <a v-else :href="file.url"
                                                    target="_blank">[{{index + 1}}]</a>
                                             </template>

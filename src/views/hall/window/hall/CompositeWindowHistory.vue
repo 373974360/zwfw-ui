@@ -85,12 +85,19 @@
                             <td style="color:red">{{itemVo.name}}</td>
                         </tr>
                         <tr>
-                            <th v-show="member!=null">申报人:</th>
-                            <td>{{member.name}}</td>
+                            <th v-show="member.naturePerson!=null">申报人:</th>
+                            <td>{{member.naturePerson.name}}</td>
                         </tr>
-                        <tr v-show="member!=null">
+                        <tr>
                             <th>申报人联系电话:</th>
-                            <td>{{member.mobilephone}}</td>
+                            <td>
+                                <span v-show="member.legalPerson!=null">
+                                    {{member.legalPerson.phone}}
+                                </span>
+                                <span v-show="member.naturePerson!=null">
+                                    {{member.naturePerson.phone}}
+                                </span>
+                            </td>
                         </tr>
                         <tr v-show="member.legalPerson!=null">
                             <th>办事企业:</th>
@@ -315,6 +322,7 @@
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import moment from 'moment';
+
     export default {
         name: 'table_demo',
         data() {
@@ -380,13 +388,13 @@
                 this.getDatilList();
             },
             print_ywsld() {
-                if(this.itemNumber!=null) {
-                    window.open(getZwfwApiHost() + '/zwfwHallCompositeWindow/downloadYwsld?numberId='+this.itemNumber.id);
+                if (this.itemNumber != null) {
+                    window.open(getZwfwApiHost() + '/zwfwHallCompositeWindow/downloadYwsld?numberId=' + this.itemNumber.id);
                 }
             },
             print_wlzyd() {
-                if(this.itemNumber!=null) {
-                    window.open(getZwfwApiHost() + '/zwfwHallCompositeWindow/downloadWlzyd?numberId='+this.itemNumber.id);
+                if (this.itemNumber != null) {
+                    window.open(getZwfwApiHost() + '/zwfwHallCompositeWindow/downloadWlzyd?numberId=' + this.itemNumber.id);
                 }
             },
             getDatilList() {
