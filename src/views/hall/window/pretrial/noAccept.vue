@@ -1,10 +1,10 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="预审号"
+            <el-input @keyup.enter.native="handleFilter" style="width: 300px;" class="filter-item"  placeholder="预审号"
                       v-model="listQuery.pretrialNumber" no-match-text="没有找到哦">
             </el-input>
-            <el-button style="margin-left: 10px;" class="filter-item" type="primary" v-waves icon="search"
+            <el-button style="margin-left: 10px;" class="filter-item" type="primary" v-waves icon="search" @click="getList"
             >搜索
             </el-button>
         </div>
@@ -211,6 +211,9 @@
             ])
         },
         methods: {
+            handleFilter() {
+                this.getList();
+            },
             getList() {
                 this.listLoading = true;
                 getZwfwItemPretrialList(this.listQuery).then(response => {
