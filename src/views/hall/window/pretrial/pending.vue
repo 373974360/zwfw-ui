@@ -4,7 +4,8 @@
             <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="预审号"
                       v-model="listQuery.pretrialNumber" no-match-text="没有找到哦">
             </el-input>
-            <el-button style="margin-left: 10px;" class="filter-item" type="primary" v-waves icon="search" @click="getList" >搜索
+            <el-button style="margin-left: 10px;" class="filter-item" type="primary" v-waves icon="search"
+                       @click="getList">搜索
             </el-button>
         </div>
         <el-table :data="pretrialList" v-loading.body="listLoading" border fit highlight-current-row
@@ -14,9 +15,10 @@
                     <span>{{scope.row.pretrialNumber}}<br/>({{scope.row.itemName}})</span>
                 </template>
             </el-table-column>
-            <el-table-column width="250px" align="center" label="企业名称">
+            <el-table-column width="250px" align="center" label="申请企业（个人）">
                 <template scope="scope">
-                    <span>{{scope.row.companyName}}</span>
+                    <span v-if="scope.row.companyName != null">{{scope.row.companyName}}</span>
+                    <span v-if="scope.row.memberName != null">{{scope.row.memberName}}</span>
                 </template>
             </el-table-column>
             <el-table-column width="200px" align="center" label="提交预审的时间">
@@ -61,45 +63,45 @@
         <el-dialog :close-on-click-modal="closeOnClickModal" :title="titleName" :visible.sync="dialogFormVisible"
                    :before-close="resetItemPretrialForm">
             <div>
-                <div>
+                <div v-if="member.legalPerson != null">
                     <h3>办事企业/机构信息:</h3>
                     <table class="table table-responsive table-bordered">
                         <tr>
                             <th width="140">办事企业/机构</th>
-                            <td>{{legalPerson.companyName}}</td>
+                            <td>{{member.legalPerson.companyName}}</td>
                             <th width="140">统一社会信用代码</th>
-                            <td>{{legalPerson.companyCode}}</td>
+                            <td>{{member.legalPerson.companyCode}}</td>
                         </tr>
                         <tr>
                             <th width="140">法人姓名</th>
-                            <td>{{legalPerson.legalPerson}}</td>
+                            <td>{{member.legalPerson.legalPerson}}</td>
                             <th width="140">法人身份证号</th>
-                            <td>{{legalPerson.idcard}}</td>
+                            <td>{{member.legalPerson.idcard}}</td>
                         </tr>
                         <tr>
                             <th width="140">企业/机构地址</th>
-                            <td colspan="3">{{legalPerson.registerPlace}}</td>
+                            <td colspan="3">{{member.legalPerson.registerPlace}}</td>
                         </tr>
                     </table>
                 </div>
-                <div>
+                <div v-if="member.naturePerson != null">
                     <h3>申请人信息:</h3>
                     <table class="table table-responsive table-bordered">
                         <tr>
                             <th width="140">姓名</th>
-                            <td>{{member.name}}</td>
+                            <td>{{member.naturePerson.name}}</td>
                             <th width="140">身份证号</th>
-                            <td>{{member.idNumber}}</td>
+                            <td>{{member.naturePerson.idcard}}</td>
                         </tr>
                         <tr>
                             <th width="140">邮箱</th>
                             <td>{{member.email}}</td>
                             <th width="140">手机</th>
-                            <td>{{member.mobilephone}}</td>
+                            <td>{{member.naturePerson.phone}}</td>
                         </tr>
                         <tr>
                             <th width="140">地址</th>
-                            <td colspan="3">{{member.address}}</td>
+                            <td colspan="3">{{member.naturePerson.address}}</td>
                         </tr>
                     </table>
                 </div>
@@ -257,7 +259,6 @@
             getPretrialDetail() {
                 getPretrialDetail(this.itemPretrialId).then(response => {
                     console.log(response.data);
-                    this.legalPerson = response.data.legalPerson;
                     this.member = response.data.member;
                     this.materialList = response.data.pretrialMaterialList;
                     this.ItemPretrial = this.currentItemPretrial;
@@ -282,9 +283,12 @@
                             querry.remark = this.passRemark;
                         }
                         submitReview(querry).then(response => {
-                            const index = this.pretrialList.indexOf(this.selectedRows);
-                            this.pretrialList.splice(index, 1);
-                            this.listLoading = false;
+                            if (response.httpCode === 200) {
+                                this.getList();
+                                this.listLoading = false;
+                            } else {
+                                this.$message.error(response.msg);
+                            }
                         })
                     } else {
                         return false;
