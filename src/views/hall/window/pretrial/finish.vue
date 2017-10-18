@@ -103,7 +103,7 @@
                             <th width="140">地址</th>
                             <td colspan="3">{{member.naturePerson.address}}</td>
                         </tr>
-                    </table>
+                    </table>      
                 </div>
                 <div class="table-show">
                     <div class="table-inline">

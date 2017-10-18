@@ -84,34 +84,34 @@
                             <th>办理事项</th>
                             <td style="color:red">{{itemVo.name}}</td>
                         </tr>
-                        <tr>
-                            <th v-show="member.naturePerson!=null">申报人:</th>
+                        <tr v-if="member.naturePerson!=null">
+                            <th >申报人:</th>
                             <td>{{member.naturePerson.name}}</td>
                         </tr>
                         <tr>
                             <th>申报人联系电话:</th>
                             <td>
-                                <span v-show="member.legalPerson!=null">
+                                <span v-if="member.legalPerson!=null">
                                     {{member.legalPerson.phone}}
                                 </span>
-                                <span v-show="member.naturePerson!=null">
+                                <span v-if="member.naturePerson!=null">
                                     {{member.naturePerson.phone}}
                                 </span>
                             </td>
                         </tr>
-                        <tr v-show="member.legalPerson!=null">
+                        <tr v-if="member.legalPerson!=null">
                             <th>办事企业:</th>
                             <td>{{member.legalPerson.companyName}}</td>
                         </tr>
-                        <tr v-show="itemPretrialVo!=null">
+                        <tr v-if="itemPretrialVo!=null">
                             <th>预审号码:</th>
                             <td>{{itemPretrialVo.pretrialNumber}}</td>
                         </tr>
-                        <tr v-show="itemPretrialVo==null">
+                        <tr v-if="itemPretrialVo==null">
                             <th>预审状态</th>
                             <td>没有提交预审</td>
                         </tr>
-                        <tr v-show="itemPretrialVo">
+                        <tr v-if="itemPretrialVo">
                             <th>预审状态:</th>
                             <td>{{itemPretrialVo.status | zwfwEnumData('PretrialStatus')}}</td>
                         </tr>
@@ -339,8 +339,10 @@
                 itemWindowUserName: '',
                 windowVo: [],
                 itemPretrialVo: [],
-                member: [],
-                legalPerson: [],
+                member: {
+                    legalPerson: {},
+                    naturePerson: {}
+                },
                 itemVo: [],
                 selectedRows: [],
                 itemMaterialVoList: [],

@@ -56,19 +56,19 @@
                             <!--<td style="color:red"><strong class="font-size:5rem">{{itemNumber.type | enum-->
                             <!--'ItemWindowSupport'}}</strong></td>-->
                             <!--</tr>-->
-                            <tr v-show="member.naturePerson!=null">
+                            <tr v-if="member.naturePerson!=null">
                                 <th>申报人:</th>
                                 <td>{{member.naturePerson.name}}</td>
                             </tr>
-                            <tr v-show="member.naturePerson!=null">
+                            <tr v-if="member.naturePerson!=null">
                                 <th>申报人联系电话:</th>
                                 <td>{{member.naturePerson.phone}} </td>
                             </tr>
-                            <tr v-show="member.legalPerson!=null">
+                            <tr v-if="member.legalPerson!=null">
                                 <th>申报人联系电话:</th>
                                 <td>{{member.legalPerson.phone}} </td>
                             </tr>
-                            <tr v-show="member.legalPerson!=null">
+                            <tr v-if="member.legalPerson!=null">
                                 <th>办事企业:</th>
                                 <td>{{member.legalPerson.companyName}}</td>
                             </tr>
@@ -360,8 +360,11 @@
                 remark: '',
                 itemNumber: {},
                 itemVo: {},
-                member: {},
-                legalPerson: {},
+                member: {
+                    legalPerson: {},
+                    naturePerson: {}
+                },
+
                 itemPretrialVo: {},
                 tabName: 'materialListPanel',
                 itemMaterialVoList: [],
