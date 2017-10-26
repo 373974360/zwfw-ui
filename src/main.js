@@ -20,6 +20,7 @@ import Sticky from 'components/Sticky'; // 粘性header组件
 import vueWaves from './directive/waves';// 水波纹指令
 import errLog from 'store/errLog';// error log组件
 import moment from 'moment';
+import { getToken } from 'utils/auth';
 
 // import './mock/dept.js';  // 该项目所有请求使用mockjs模拟
 
@@ -47,7 +48,7 @@ function hasPermission(permissions, permissionRoles) {
 const whiteList = ['/login', '/authredirect', '/reset', '/sendpwd'];// 不重定向白名单
 router.beforeEach((to, from, next) => {
     NProgress.start(); // 开启Progress
-    if (store.getters.token) { // 判断是否有token
+    if (getToken()) { // 判断是否有token
         if (to.path === '/login') {
             next({path: '/'});
         } else {

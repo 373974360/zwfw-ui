@@ -2,14 +2,14 @@ import {fetchSys} from 'utils/fetch';
 
 export function getMenuTree() {
     return fetchSys({
-        url: '/sysMenu/getTree',
+        url: '/api/admin/sysMenu/getTree',
         method: 'get'
     });
 }
 
 export function getMenuCascader(id) {
     return fetchSys({
-        url: '/sysMenu/getCascader',
+        url: '/api/admin/sysMenu/getCascader',
         method: 'get',
         params:{id}
     });
@@ -18,7 +18,7 @@ export function getMenuCascader(id) {
 export function createMenu(sysMenuVo) {
     const data = sysMenuVo;
     return fetchSys({
-        url: '/sysMenu/add',
+        url: '/api/admin/sysMenu/add',
         method: 'post',
         data
     })
@@ -27,7 +27,7 @@ export function createMenu(sysMenuVo) {
 export function updateMenu(sysMenuVo) {
     const data = sysMenuVo;
     return fetchSys({
-        url: '/sysMenu/edit',
+        url: '/api/admin/sysMenu/edit',
         method: 'post',
         data
     })
@@ -36,7 +36,7 @@ export function updateMenu(sysMenuVo) {
 export function delMenu(id) {
     const data = {id};
     return fetchSys({
-        url: '/sysMenu/del',
+        url: '/api/admin/sysMenu/del',
         method: 'post',
         data
     })
@@ -45,7 +45,7 @@ export function delMenu(id) {
 export function deleteMenu(id) {
     const data = {id};
     return fetchSys({
-        url: '/sysMenu/delete',
+        url: '/api/admin/sysMenu/delete',
         method: 'post',
         data
     })

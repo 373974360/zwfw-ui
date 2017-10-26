@@ -2,7 +2,7 @@ import {fetchSys} from 'utils/fetch';
 
 export function getSysMessageFiledList(query) {
     return fetchSys({
-        url: '/sysMessageFiled/list',
+        url: '/api/admin/sysMessageFiled/list',
         method: 'get',
         params: query
     });
@@ -10,7 +10,7 @@ export function getSysMessageFiledList(query) {
 
 export function getAllSysMessageFiled() {
     return fetchSys({
-        url: '/sysMessageFiled/getAll',
+        url: '/api/admin/sysMessageFiled/getAll',
         method: 'get'
     });
 }
@@ -18,7 +18,7 @@ export function getAllSysMessageFiled() {
 export function createSysMessageFiled(sysMessageFiledVo){
     const data = sysMessageFiledVo;
     return fetchSys({
-        url: '/sysMessageFiled/add',
+        url: '/api/admin/sysMessageFiled/add',
         method: 'post',
         data
     })
@@ -27,7 +27,7 @@ export function createSysMessageFiled(sysMessageFiledVo){
 export function updateSysMessageFiled(sysMessageFiledVo){
     const data = sysMessageFiledVo;
     return fetchSys({
-        url: '/sysMessageFiled/edit',
+        url: '/api/admin/sysMessageFiled/edit',
         method: 'post',
         data
     })
@@ -35,7 +35,7 @@ export function updateSysMessageFiled(sysMessageFiledVo){
 export function delSysMessageFileds(ids) {
     const data = {ids};
     return fetchSys({
-        url: '/sysMessageFiled/dels',
+        url: '/api/admin/sysMessageFiled/dels',
         method: 'post',
         data
     })
@@ -43,7 +43,7 @@ export function delSysMessageFileds(ids) {
 export function deleteSysMessageFiled(id) {
     const data = {id};
     return fetchSys({
-        url: '/sysMessageFiled/delete',
+        url: '/api/admin/sysMessageFiled/delete',
         method: 'post',
         data
     })

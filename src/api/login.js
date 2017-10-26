@@ -3,7 +3,7 @@ import {fetchSys} from 'utils/fetch';
 export function loginByEmail(userInfo) {
     const data = userInfo;
     return fetchSys({
-        url: '/base/sysLogin',
+        url: '/api/auth/jwt/token',
         method: 'post',
         data
     });
@@ -11,14 +11,14 @@ export function loginByEmail(userInfo) {
 
 export function getInfo() {
     return fetchSys({
-        url: '/sysUser/getMyProfile',
+        url: '/api/admin/sysUser/getMyProfile',
         method: 'get'
     });
 }
 
 export function sendPWD2Email(account){
     return fetchSys({
-        url: '/sysUser/get',
+        url: '/api/admin/sysUser/get',
         method: 'get',
         params: {account}
     });
@@ -26,7 +26,7 @@ export function sendPWD2Email(account){
 
 export function logout() {
     return fetchSys({
-        url: '/base/sysLogout',
+        url: '/api/admin/base/sysLogout',
         method: 'post'
     });
 }

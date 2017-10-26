@@ -1,6 +1,6 @@
 module.exports = {
     NODE_ENV: '"development"',
-    SYS_API: '"http://localhost:7777"',
+    SYS_API: '"http://localhost:8765"',
     ZWFW_API: '"http://127.0.0.1:5555"',
     ZWFW_ACTIVITI_API: '"http://127.0.0.1:9999"',
     TASK_API: '"http://localhost:1111"',

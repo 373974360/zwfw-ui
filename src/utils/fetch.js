@@ -1,6 +1,9 @@
 import axios from 'axios';
 import {Message} from 'element-ui';
 import store from '../store';
+import {
+    getToken
+} from 'utils/auth';
 import Qs from 'qs'
 import router from '../router';
 
@@ -39,22 +42,22 @@ function fetch(object) {
     // 创建axios实例
     const service = axios.create({
         // headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        baseURL: baseURL, // api的base_url
+        // baseURL: baseURL, // api的base_url
         timeout: 1000 * 60 * 5,                  // 请求超时时间  1000 * 60 * 5
-        withCredentials: true,  // 跨域允许cookie
+        // withCredentials: true,  // 跨域允许cookie
         // 请求数据转为json格式 springmvc自动填充
-        transformRequest: [function (data) {
-            if (!data) {
-                data = {}
-            }
-            data = Qs.stringify(data, {arrayFormat: 'brackets'})
-            return data
-        }]
+        // transformRequest: [function (data) {
+        //     if (!data) {
+        //         data = {}
+        //     }
+        //     data = Qs.stringify(data, {arrayFormat: 'brackets'})
+        //     return data
+        // }]
     });
     // request拦截器
     service.interceptors.request.use(config => {
         if (store.getters.token) {
-            config.headers['Base4j-Token'] = store.getters.token; // 让每个请求携带token--['Base4j-Token']为自定义key 请根据实际情况自行修改
+            config.headers['Authorization'] = getToken(); // 让每个请求携带token--['X-Token']为自定义key 请根据实际情况自行修改
         }
         return config;
     }, error => {

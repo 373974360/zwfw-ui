@@ -2,7 +2,7 @@ import {fetchSys} from 'utils/fetch';
 
 export function getDictIndexList(query) {
     return fetchSys({
-        url: '/sysDicIndex/getAll',
+        url: '/api/admin/sysDicIndex/getAll',
         method: 'get',
         params: query
     });
@@ -11,7 +11,7 @@ export function getDictIndexList(query) {
 export function updateDictIndex(sysDictIndex) {
     const data = sysDictIndex;
     return fetchSys({
-        url: '/sysDicIndex/edit',
+        url: '/api/admin/sysDicIndex/edit',
         method: 'post',
         data
     })
@@ -20,7 +20,7 @@ export function updateDictIndex(sysDictIndex) {
 export function createDictIndex(sysDictIndex) {
     const data = sysDictIndex;
     return fetchSys({
-        url: '/sysDicIndex/add',
+        url: '/api/admin/sysDicIndex/add',
         method: 'post',
         data
     })
@@ -29,7 +29,7 @@ export function createDictIndex(sysDictIndex) {
 export function delDictIndex(ids) {
     const data = {ids};
     return fetchSys({
-        url: '/sysDicIndex/dels',
+        url: '/api/admin/sysDicIndex/dels',
         method: 'post',
         data
     })
@@ -38,7 +38,7 @@ export function delDictIndex(ids) {
 
 export function getDictList(query) {
     return fetchSys({
-        url: '/sysDic/getAll',
+        url: '/api/admin/sysDic/getAll',
         method: 'get',
         params: query
     });
@@ -47,7 +47,7 @@ export function getDictList(query) {
 export function updateDict(sysDict) {
     const data = sysDict;
     return fetchSys({
-        url: '/sysDic/edit',
+        url: '/api/admin/sysDic/edit',
         method: 'post',
         data
     })
@@ -56,7 +56,7 @@ export function updateDict(sysDict) {
 export function createDict(sysDict) {
     const data = sysDict;
     return fetchSys({
-        url: '/sysDic/add',
+        url: '/api/admin/sysDic/add',
         method: 'post',
         data
     })
@@ -65,7 +65,7 @@ export function createDict(sysDict) {
 export function delDict(ids) {
     const data = {ids};
     return fetchSys({
-        url: '/sysDic/dels',
+        url: '/api/admin/sysDic/dels',
         method: 'post',
         data
     })

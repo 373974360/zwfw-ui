@@ -25,6 +25,7 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
+                <!--
                 <el-row type="flex" justify="center">
                     <el-col :span="24">
                         <el-form-item prop="captcha">
@@ -35,6 +36,7 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
+                -->
                 <el-row type="flex" justify="center">
                     <el-col :span="24">
                         <el-form-item>
@@ -81,14 +83,14 @@
                 },
                 loginRules: {
                     account: [
-                        {required: true, trigger: 'blur', validator: validateEmail}
+                        {required: true, trigger: 'blur'}
                     ],
                     password: [
                         { min: 6, message: '密码不能小于6位', trigger: 'blur' }
                     ],
-                    captcha: [
-                        { min: 4, max: 4, message: '验证码只能是4位', trigger: 'blur' }
-                    ]
+//                    captcha: [
+//                        { min: 4, max: 4, message: '验证码只能是4位', trigger: 'blur' }
+//                    ]
                 },
                 loading: false,
                 canvas: true

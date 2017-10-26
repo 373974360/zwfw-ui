@@ -1,6 +1,10 @@
 import {loginByEmail, logout, getInfo} from 'api/login';
 import Cookies from 'js-cookie';
-
+import {
+    getToken,
+    setToken,
+    removeToken
+} from 'utils/auth';
 const user = {
     state: {
         user: '',
@@ -9,7 +13,7 @@ const user = {
         code: '',
         uid: undefined,
         auth_type: '',
-        token: Cookies.get('Base4j-Token'),
+        token: getToken(),
         name: '',
         avatar: '',
         introduction: '',
@@ -64,17 +68,23 @@ const user = {
     actions: {
         // 邮箱登录
         LoginByEmail({commit}, userInfo) {
+            commit('SET_TOKEN', '');
+            removeToken();
             return new Promise((resolve, reject) => {
                 loginByEmail(userInfo).then(response => {
                     if (response.httpCode !== 200) {
                         reject(response.msg);
                     } else {
+                        console.dir(response);
                         const data = response.data;
-                        Cookies.set('Base4j-Token', data.token);
-                        commit('SET_TOKEN', data.token);
-                        commit('SET_UID', data.id);
-                        commit('SET_EMAIL', data.account);
+                        setToken(data);
+                        commit('SET_TOKEN', data);
                         resolve();
+                        // Cookies.set('Authorization', data.token);
+                        // commit('SET_TOKEN', data.token);
+                        // commit('SET_UID', data.id);
+                        // commit('SET_EMAIL', data.account);
+                        // resolve();
                     }
                 }).catch(error => {
                     reject(error);
@@ -104,7 +114,7 @@ const user = {
             return new Promise((resolve, reject) => {
                 logout(state.token).then(() => {
                     commit('SET_TOKEN', '');
-                    Cookies.remove('Base4j-Token');
+                    removeToken();
                     resolve();
                 }).catch(error => {
                     reject(error);

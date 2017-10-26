@@ -2,7 +2,7 @@ import {fetchSys} from 'utils/fetch';
 
 export function getSysMessageTemplateList() {
     return fetchSys({
-        url: '/sysMessageTemplate/list',
+        url: '/api/admin/sysMessageTemplate/list',
         method: 'get'
     });
 }
@@ -10,7 +10,7 @@ export function getSysMessageTemplateList() {
 export function createSysMessageTemplate(sysMessageTemplateVo){
     const data = sysMessageTemplateVo;
     return fetchSys({
-        url: '/sysMessageTemplate/add',
+        url: '/api/admin/sysMessageTemplate/add',
         method: 'post',
         data
     })
@@ -19,7 +19,7 @@ export function createSysMessageTemplate(sysMessageTemplateVo){
 export function updateSysMessageTemplate(sysMessageTemplateVo){
     const data = sysMessageTemplateVo;
     return fetchSys({
-        url: '/sysMessageTemplate/edit',
+        url: '/api/admin/sysMessageTemplate/edit',
         method: 'post',
         data
     })
@@ -28,7 +28,7 @@ export function updateSysMessageTemplate(sysMessageTemplateVo){
 export function deleteSysMessageTemplate(template_id) {
     const data = {template_id};
     return fetchSys({
-        url: '/sysMessageTemplate/delete',
+        url: '/api/admin/sysMessageTemplate/delete',
         method: 'post',
         data
     })

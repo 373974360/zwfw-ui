@@ -2,21 +2,21 @@ import {fetchSys, fetchZwfw} from 'utils/fetch';
 
 export function getEnums() {
     return fetchSys({
-        url: '/base/enums',
+        url: '/api/admin/base/enums',
         method: 'get'
     });
 }
 
 export function getDicts() {
     return fetchSys({
-        url: '/base/dicts',
+        url: '/api/admin/base/dicts',
         method: 'get'
     });
 }
 
 export function getZwfwEnums() {
     return fetchZwfw({
-        url: '/zwfw/enums',
+        url: '/api/zwfw/enums',
         method: 'get'
     });
 }
