@@ -173,7 +173,7 @@
 </template>
 <script>
     import {getZwfwApiHost} from 'utils/fetch';
-    import {getZwfwItemPretrialList, getPretrialDetail} from 'api/zwfw/zwfwItemPretrial';
+    import {getZwfwItemPretrialList, getPretrialDetail} from 'api/hall/window/pretrial/itemPretrial';
     import {mapGetters} from 'vuex';
     import {copyProperties} from 'utils';
 

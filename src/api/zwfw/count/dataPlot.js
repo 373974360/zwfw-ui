@@ -1,0 +1,26 @@
+import fetch from 'utils/fetch';
+
+export function plotByCategory(query) {
+    return fetch({
+        url: '/dataPlot/plotByCategory',
+        method: 'get',
+        params: query
+    });
+}
+
+export function plotByWindow(query) {
+    return fetch({
+        url: '/dataPlot/plotByWindow',
+        method: 'get',
+        params: query
+    });
+}
+
+export function plotByUser(query) {
+    return fetch({
+        url: '/dataPlot/plotByUser',
+        method: 'get',
+        params: query
+    });
+}
+

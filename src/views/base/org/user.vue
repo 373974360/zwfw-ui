@@ -142,15 +142,13 @@
 
 
 <script>
-    import {getDeptCascader} from 'api/sys/org/dept';
-    import {getUserList, updateUser, createUser, delUser} from 'api/sys/org/user';
+    import {getDeptCascader} from 'api/base/org/dept';
+    import {getUserList, updateUser, createUser, delUser} from 'api/base/org/user';
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
-    import {delWindowUser} from 'api/zwfw/window';
-    import ElRadio from "../../../../node_modules/element-ui/packages/radio/src/radio";
+    import {delWindowUser} from 'api/hall/lobby/window';
 
     export default {
-        components: {ElRadio},
         name: 'table_demo',
         data() {
             const validatMobiles = (rule, value, callback) => {

@@ -183,12 +183,10 @@
         getProcessList,
         getProcessVersionList,
         getUserList
-    } from 'api/zwfw/zwfwItemProcess';
-    import ElButton from "../../../../node_modules/element-ui/packages/button/src/button.vue";
+    } from 'api/work/process/itemProcess';
 
     export default {
         components: {
-            ElButton,
             Sticky
         },
         name: 'table_demo',

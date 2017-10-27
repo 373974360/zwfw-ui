@@ -106,7 +106,7 @@
         getZwfwProcessDefinitionList,
         suspendZwfwProcessDefinition,
         activeZwfwProcessDefinition
-    } from 'api/zwfw/zwfwActiviti';
+    } from 'api/zwfw/business/activiti';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
 

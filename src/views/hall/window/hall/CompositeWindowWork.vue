@@ -336,7 +336,7 @@
     import {getZwfwApiHost} from 'utils/fetch';
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
-    import {getZwfwEnums} from 'api/zwfw/zwfwCommon';
+    import {getZwfwEnums} from 'api/zwfw/common';
     import {
         takeNumberByPretrialNumber,
         takeNumberByItemCode,
@@ -346,7 +346,7 @@
         callNumber,
         welcomeNumber,
         submitWork
-    } from 'api/zwfw/zwfwCompositeWindow'
+    } from 'api/hall/window/hall/compositeWindow'
 
 
     export default {

@@ -85,7 +85,7 @@
         updateRegistryCenter,
         connectRegistryCenter,
         delRegistryCenter
-    } from 'api/task/registryCenter';
+    } from 'api/base/task/registryCenter';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
 

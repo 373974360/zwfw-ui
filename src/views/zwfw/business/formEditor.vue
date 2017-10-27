@@ -91,7 +91,6 @@
 
 </style>
 <script>
-    import ElIcon from "element-ui/packages/icon/src/icon.vue";
     import draggable from 'vuedraggable';
 
     export default {

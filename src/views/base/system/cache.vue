@@ -67,7 +67,7 @@
 
 
 <script>
-    import {getCacheList,editCache,delCache,flushCache} from 'api/sys/system/cache';
+    import {getCacheList,editCache,delCache,flushCache} from 'api/base/system/cache';
     import jsonEditor from 'components/jsonEditor';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';

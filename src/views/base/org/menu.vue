@@ -61,7 +61,7 @@
 </template>
 <script>
     import TreeGrid from 'components/TreeGrid'
-    import {getMenuTree, getMenuCascader, createMenu, updateMenu, delMenu} from 'api/sys/org/menu';
+    import {getMenuTree, getMenuCascader, createMenu, updateMenu, delMenu} from 'api/base/org/menu';
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import TreeUtil from 'utils/TreeUtil.js';

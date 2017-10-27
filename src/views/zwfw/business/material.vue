@@ -132,7 +132,7 @@
         createZwfwMaterial,
         updateZwfwMaterial,
         delZwfwMaterials
-    } from 'api/zwfw/zwfwMaterial';
+    } from 'api/zwfw/business/material';
 
     export default {
         name: 'zwfwMaterial_table',

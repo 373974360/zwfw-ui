@@ -149,14 +149,14 @@
 <script>
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
-    import { isIdCardNo, validatMobiles } from '../../../utils/validate'
+    import { isIdCardNo, validatMobiles } from 'utils/validate'
     import {
         getAllZwfwNaturePerson,
         getZwfwNaturePersonList,
         createZwfwNaturePerson,
         updateZwfwNaturePerson,
         delZwfwNaturePersons
-    } from '../../../api/zwfw/zwfwNaturePerson';
+    } from 'api/hall/member/naturePerson';
 
     export default {
         name: 'zwfwNaturePerson_table',

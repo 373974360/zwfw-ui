@@ -51,7 +51,7 @@
 
 <script>
     import TreeGrid from 'components/TreeGrid';
-    import {getDeptTree, getDeptCascader, createDept, updateDept, delDept} from 'api/sys/org/dept';
+    import {getDeptTree, getDeptCascader, createDept, updateDept, delDept} from 'api/base/org/dept';
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import TreeUtil from 'utils/TreeUtil.js';

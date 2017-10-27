@@ -105,8 +105,8 @@
 
 
 <script>
-    import {getLogList} from 'api/sys/system/log';
-    import {getAllUser} from 'api/sys/org/user';
+    import {getLogList} from 'api/base/system/log';
+    import {getAllUser} from 'api/base/org/user';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import moment from 'moment';

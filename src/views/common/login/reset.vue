@@ -40,7 +40,7 @@
 
 <script>
     import {isWscnEmail} from 'utils/validate';
-    // import { restPWD } from 'api/login';
+    // import { restPWD } from 'api/common/login/login';
     import doCanvas from 'utils/canvas';
 
     export default {

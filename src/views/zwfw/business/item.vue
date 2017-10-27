@@ -460,13 +460,13 @@
 <script>
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
-    import {getZwfwItemList, createZwfwItem, updateZwfwItem, delZwfwItems} from 'api/zwfw/zwfwItem';
+    import {getZwfwItemList, createZwfwItem, updateZwfwItem, delZwfwItems} from 'api/zwfw/business/item';
     import {
         createZwfwItemMaterial,
         getAllItemMaterial,
         deleteZwfwItemMaterial
-    } from 'api/zwfw/zwfwItemMaterial';
-    import {getAllMaterial, updateZwfwMaterial} from 'api/zwfw/zwfwMaterial';
+    } from 'api/zwfw/business/itemMaterial';
+    import {getAllMaterial, updateZwfwMaterial} from 'api/zwfw/business/material';
 
 
     export default {

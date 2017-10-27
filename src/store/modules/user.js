@@ -1,4 +1,4 @@
-import {loginByEmail, logout, getInfo} from 'api/login';
+import {loginByEmail, logout, getInfo} from 'api/common/login/login';
 import Cookies from 'js-cookie';
 import {
     getToken,

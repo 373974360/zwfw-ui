@@ -82,7 +82,7 @@
     import PanThumb from 'components/PanThumb';
     import MonthKpi from './monthKpi';
     import ArticlesChart from './articlesChart';
-    import {getList} from 'api/article';
+
     import countTo from 'vue-count-to';
     export default {
         name: 'dashboard-editor',

@@ -89,7 +89,7 @@
     import {mapGetters} from 'vuex';
     import {
         getZwfwItemProcessExtendTimeList, workAgree, workDisagree
-    } from 'api/zwfw/zwfwItemProcessExtendTime';
+    } from 'api/work/process/itemProcessExtendTime';
 
     export default {
         name: 'zwfwDeptWorkPending_table',

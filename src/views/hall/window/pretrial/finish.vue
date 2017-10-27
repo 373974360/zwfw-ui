@@ -169,7 +169,7 @@
     </div>
 </template>
 <script>
-    import {getZwfwItemPretrialList, getPretrialDetail, submitReview} from 'api/zwfw/zwfwItemPretrial';
+    import {getZwfwItemPretrialList, getPretrialDetail, submitReview} from 'api/hall/window/pretrial/itemPretrial';
     import {mapGetters} from 'vuex';
     import {copyProperties} from 'utils';
 

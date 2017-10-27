@@ -397,7 +397,7 @@
         workExtendTime,
         workClose,
         workCancelExtendTime
-    } from 'api/zwfw/zwfwDeptWorkPending';
+    } from 'api/work/process/deptWorkPending';
 
     import {getZwfwApiHost} from 'utils/fetch';
 

@@ -88,9 +88,9 @@
         createSysMessageTemplate,
         updateSysMessageTemplate,
         delSysMessageTemplates
-    } from 'api/sys/system/sysMessageTemplate';
+    } from 'api/base/data/messageTemplate';
 
-    import {getAllSysMessageFiled} from 'api/sys/system/sysMessageFiled';
+    import {getAllSysMessageFiled} from 'api/base/data/messageFiled';
 
     export default {
         name: 'sysMessageTemplate_table',

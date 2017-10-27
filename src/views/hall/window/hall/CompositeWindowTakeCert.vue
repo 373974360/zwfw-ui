@@ -109,9 +109,9 @@
 
 
 <script>
-    import {getFinishList, updateTake} from 'api/zwfw/zwfwItemProcess';
-    import {getAllByNameOrbasicCode} from 'api/zwfw/zwfwItem';
-    import {getAllCompany} from 'api/zwfw/zwfwCompany';
+    import {getFinishList, updateTake} from 'api/work/process/itemProcess';
+    import {getAllByNameOrbasicCode} from 'api/zwfw/business/item';
+    import {getAllCompany} from 'api/other/company';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
 

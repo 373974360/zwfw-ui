@@ -145,11 +145,11 @@
         getAllRoleMenus,
         getAllUserRole,
         delRole
-    } from 'api/sys/org/role';
-    import {getMenuTree} from 'api/sys/org/menu';
+    } from 'api/base/org/role';
+    import {getMenuTree} from 'api/base/org/menu';
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
-    import {getDeptNameAndUsers} from 'api/sys/org/user';
+    import {getDeptNameAndUsers} from 'api/base/org/user';
 
     export default {
         name: 'table_demo',

@@ -318,7 +318,7 @@
 
 <script>
     import {getZwfwApiHost} from 'utils/fetch';
-    import {getZwfwItemNumberList, getDatilByItemNumberId} from 'api/zwfw/zwfwItemNumber';
+    import {getZwfwItemNumberList, getDatilByItemNumberId} from 'api/hall/window/hall/itemNumber';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import moment from 'moment';

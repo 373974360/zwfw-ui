@@ -26,7 +26,7 @@
 </template>
 <script>
     import DatePicker from 'components/DatePicker';
-    import {createOrUpdateDate, getHoliday} from 'api/sys/system/holiday';
+    import {createOrUpdateDate, getHoliday} from 'api/base/data/holiday';
     export default {
         name: 'date',
         data() {

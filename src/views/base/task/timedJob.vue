@@ -134,7 +134,7 @@
         enableTask,
         disableTask,
         shutdownTask
-    } from 'api/task/task';
+    } from 'api/base/task/timeJob';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
 

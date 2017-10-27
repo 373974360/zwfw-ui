@@ -82,15 +82,13 @@
     require('echarts/lib/component/title');
     require('echarts/lib/component/visualMap');
     import {mapGetters} from 'vuex';
-    import ElOption from "../../../../node_modules/element-ui/packages/select/src/option";
     import moment from 'moment';
-    import {getAllCategory} from 'api/zwfw/category';
-    import {getAllWindow} from 'api/zwfw/window';
-    import {plotByCategory, plotByWindow, plotByUser} from 'api/zwfw/dataPlot';
-    import {getAllUser} from 'api/sys/org/user';
+    import {getAllCategory} from 'api/zwfw/business/category';
+    import {getAllWindow} from 'api/hall/lobby/window';
+    import {plotByCategory, plotByWindow, plotByUser} from 'api/zwfw/count/dataPlot';
+    import {getAllUser} from 'api/base/org/user';
 
     export default {
-        components: {ElOption},
         name: 'table_demo',
         data() {
             return {

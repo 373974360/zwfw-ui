@@ -335,16 +335,14 @@
     import {mapGetters} from 'vuex';
     import {
         getZwfwDeptWorkQueryList, getZwfwDeptWorkDetail
-    } from 'api/zwfw/zwfwDeptWorkQuery';
+    } from 'api/work/process/deptWorkQuery';
     import Vue from 'vue';
     import {
         getAllCompany
-    } from 'api/zwfw/zwfwCompany';
+    } from 'api/other/company';
     import {getZwfwApiHost} from 'utils/fetch';
-    import ElButton from "../../../../node_modules/element-ui/packages/button/src/button.vue";
 
     export default {
-        components: {ElButton},
         name: 'zwfwDeptWorkQuery_table',
 
         data() {

@@ -31,7 +31,7 @@
 
 <script>
     import {isWscnEmail} from 'utils/validate';
-    import {sendPWD2Email} from 'api/login';
+    import {sendPWD2Email} from 'api/common/login/login';
     import doCanvas from 'utils/canvas';
 
     export default {

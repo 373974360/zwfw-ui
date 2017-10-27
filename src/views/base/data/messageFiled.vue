@@ -88,7 +88,7 @@
         createSysMessageFiled,
         updateSysMessageFiled,
         delSysMessageFileds
-    } from 'api/sys/system/sysMessageFiled';
+    } from 'api/base/data/messageFiled';
 
     export default {
         name: 'sysMessageFiled_table',

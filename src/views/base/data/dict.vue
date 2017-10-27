@@ -146,7 +146,7 @@
     </div>
 </template>
 <script>
-    import {getDictIndexList,updateDictIndex,createDictIndex,delDictIndex,getDictList,updateDict,createDict,delDict} from "api/sys/system/dict";
+    import {getDictIndexList,updateDictIndex,createDictIndex,delDictIndex,getDictList,updateDict,createDict,delDict} from "api/base/data/dict";
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     export default{

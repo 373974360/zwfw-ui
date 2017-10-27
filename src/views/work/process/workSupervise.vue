@@ -360,7 +360,7 @@
     import {mapGetters} from 'vuex';
     import {
         getZwfwDeptSuperviseList, getZwfwDeptWorkDetail, workCancelSupervised, workSetSupervised
-    } from 'api/zwfw/zwfwDeptSupervise';
+    } from 'api/zwfw/business/deptSupervise';
 
     export default {
         name: 'zwfwDeptWorkPending_table',

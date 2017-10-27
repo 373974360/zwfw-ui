@@ -122,9 +122,9 @@
 
 <script>
     import TreeGrid from 'components/TreeGrid';
-    import {getCategoryTree, getCategoryCascader, createCategory, updateCategory, delCategory} from 'api/zwfw/category';
-    import {getAllByNameOrbasicCode} from 'api/zwfw/zwfwItem';
-    import {getAllCategoeyItem, createZwfwCategoryItem, deleteZwfwCategoryItem} from 'api/zwfw/zwfwCategoryItem';
+    import {getCategoryTree, getCategoryCascader, createCategory, updateCategory, delCategory} from 'api/zwfw/business/category';
+    import {getAllByNameOrbasicCode} from 'api/zwfw/business/item';
+    import {getAllCategoeyItem, createZwfwCategoryItem, deleteZwfwCategoryItem} from 'api/zwfw/business/categoryItem';
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import TreeUtil from 'utils/TreeUtil.js';

@@ -216,11 +216,11 @@
         getAllItemWindow,
         createZwfwWindowItem,
         deleteZwfwWindowItem
-    } from 'api/zwfw/window';
+    } from 'api/hall/lobby/window';
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
-    import {getDeptNameAndUsers} from 'api/sys/org/user';
-    import {getAllByNameOrbasicCode} from 'api/zwfw/zwfwItem';
+    import {getDeptNameAndUsers} from 'api/base/org/user';
+    import {getAllByNameOrbasicCode} from 'api/zwfw/business/item';
 
     export default {
         name: 'table_demo',

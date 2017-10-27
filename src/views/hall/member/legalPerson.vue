@@ -142,14 +142,14 @@
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import moment from 'moment';
-    import { isIdCardNo, validatMobiles, checkSocialCreditCode } from '../../../utils/validate'
+    import { isIdCardNo, validatMobiles, checkSocialCreditCode } from 'utils/validate'
     import {
         getAllZwfwLegalPerson,
         getZwfwLegalPersonList,
         createZwfwLegalPerson,
         updateZwfwLegalPerson,
         delZwfwLegalPersons
-    } from '../../../api/zwfw/zwfwLegalPerson';
+    } from 'api/hall/member/legalPerson';
 
     export default {
         name: 'zwfwLegalPerson_table',

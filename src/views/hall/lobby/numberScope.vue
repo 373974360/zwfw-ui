@@ -169,10 +169,10 @@
         getAllItemNumberScope,
         createZwfwNumberScopeItem,
         deleteZwfwNumberScopeItem
-    } from 'api/zwfw/zwfwNumberScope';
+    } from 'api/hall/lobby/numberScope';
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
-    import {getAllByNameOrbasicCode} from 'api/zwfw/zwfwItem';
+    import {getAllByNameOrbasicCode} from 'api/zwfw/business/item';
 
     export default {
         name: 'table_demo',

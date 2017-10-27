@@ -99,7 +99,7 @@
     import {
         getZwfwActivitiModelList, getZwfwActivitiModelEditUrl, getZwfwActivitiModelUploadUrl, createZwfwActivitiModel, deleteZwfwActivitiModel,
         deployZwfwActivitiModel
-    } from 'api/zwfw/zwfwActiviti';
+    } from 'api/zwfw/business/activiti';
     import {
         getZwfwApiHost
     } from 'utils/fetch';
