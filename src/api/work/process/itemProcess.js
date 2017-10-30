@@ -13,7 +13,7 @@ export function getOtherSetting(processDefinitionId,
         processDefinitionId, taskDefinitionKey
     };
     return fetch({
-        url: '/api/zwfw/ItemProcess/getOtherSetting',
+        url: '/api/zwfw/itemProcess/getOtherSetting',
         method: 'get',
         params: data
     });
@@ -26,7 +26,7 @@ export function getOtherSetting(processDefinitionId,
  */
 export function saveOtherSetting(data) {
     return fetch({
-        url: '/api/zwfw/ItemProcess/saveOtherSetting',
+        url: '/api/zwfw/itemProcess/saveOtherSetting',
         method: 'post',
         params: data
     });
@@ -43,7 +43,7 @@ export function getTaskUsers(processDefinitionId, taskDefinitionKey) {
         processDefinitionId, taskDefinitionKey
     };
     return fetch({
-        url: '/api/zwfw/ItemProcess/getTaskUsers',
+        url: '/api/zwfw/itemProcess/getTaskUsers',
         method: 'get',
         params: data
     });
@@ -63,7 +63,7 @@ export function saveCandidateUser(processDefinitionId,
         processDefinitionId, taskDefinitionKey, users
     };
     return fetch({
-        url: '/api/zwfw/ItemProcess/saveCandidateUser',
+        url: '/api/zwfw/itemProcess/saveCandidateUser',
         method: 'post',
         params: data
     });
@@ -75,7 +75,7 @@ export function saveCandidateUser(processDefinitionId,
  */
 export function getProcessList() {
     return fetch({
-        url: '/api/zwfw/ItemProcess/getProcessList',
+        url: '/api/zwfw/itemProcess/getProcessList',
         method: 'get'
     })
 }
@@ -88,7 +88,7 @@ export function getProcessList() {
 export function getProcessVersionList(processDefinitionKey) {
     const data = {processDefinitionKey}
     return fetch({
-        url: '/api/zwfw/ItemProcess/getProcessVersionList',
+        url: '/api/zwfw/itemProcess/getProcessVersionList',
         method: 'get',
         params: data
     });
@@ -101,7 +101,7 @@ export function getProcessVersionList(processDefinitionKey) {
 export function getUserList() {
     const data = {}
     return fetch({
-        url: '/api/zwfw/ItemProcess/getUserList',
+        url: '/api/zwfw/itemProcess/getUserList',
         method: 'get',
         params: data
     });

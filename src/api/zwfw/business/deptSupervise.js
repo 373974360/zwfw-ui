@@ -3,7 +3,7 @@ import fetch from 'utils/fetch';
 export function getZwfwDeptSuperviseList(q) {
 
     return fetch({
-        url: '/api/zwfw/ItemProcessWork/getZwfwDeptWorkList',
+        url: '/api/zwfw/itemProcessWork/getZwfwDeptWorkList',
         method: 'get',
         params: q
     });
@@ -11,7 +11,7 @@ export function getZwfwDeptSuperviseList(q) {
 
 export function getZwfwDeptWorkDetail(query) {
     return fetch({
-        url: '/api/zwfw/ItemProcessWork/getZwfwDeptWorkDetail',
+        url: '/api/zwfw/itemProcessWork/getZwfwDeptWorkDetail',
         method: 'get',
         params: query
     });
@@ -20,7 +20,7 @@ export function getZwfwDeptWorkDetail(query) {
 export function workSetSupervised(query) {
     const data = query;
     return fetch({
-        url: '/api/zwfw/ItemProcessWork/workSetSupervised',
+        url: '/api/zwfw/itemProcessWork/workSetSupervised',
         method: 'post',
         data
     })
@@ -29,7 +29,7 @@ export function workSetSupervised(query) {
 export function workCancelSupervised(query) {
     const data = query;
     return fetch({
-        url: '/api/zwfw/ItemProcessWork/workCancelSupervised',
+        url: '/api/zwfw/itemProcessWork/workCancelSupervised',
         method: 'post',
         data
     })
