@@ -1,9 +1,7 @@
 import axios from 'axios';
 import {Message} from 'element-ui';
 import store from '../store';
-import {
-    getToken
-} from 'utils/auth';
+import {getToken} from 'utils/auth';
 import Qs from 'qs'
 import router from '../router';
 
@@ -63,7 +61,7 @@ service.interceptors.response.use(
             }
         } else {
             code = response.data.httpCode;
-            if (code === 401 || code == 40101) {
+            if (code === 401 || code === 40101) {
                 Message({
                     message: "登录超时，请重新登录",
                     type: 'error',

@@ -1,17 +1,17 @@
 import fetch from 'utils/fetch';
 
-export function getZwfwDeptSuperviseList(q) {
+export function getDeptSuperviseList(q) {
 
     return fetch({
-        url: '/api/zwfw/itemProcessWork/getZwfwDeptWorkList',
+        url: '/api/zwfw/itemProcessWork/getDeptWorkList',
         method: 'get',
         params: q
     });
 }
 
-export function getZwfwDeptWorkDetail(query) {
+export function getDeptWorkDetail(query) {
     return fetch({
-        url: '/api/zwfw/itemProcessWork/getZwfwDeptWorkDetail',
+        url: '/api/zwfw/itemProcessWork/getDeptWorkDetail',
         method: 'get',
         params: query
     });

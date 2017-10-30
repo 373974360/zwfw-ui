@@ -359,7 +359,7 @@
 <script>
     import {mapGetters} from 'vuex';
     import {
-        getZwfwDeptSuperviseList, getZwfwDeptWorkDetail, workCancelSupervised, workSetSupervised
+        getDeptSuperviseList, getDeptWorkDetail, workCancelSupervised, workSetSupervised
     } from 'api/zwfw/business/deptSupervise';
 
     export default {
@@ -407,7 +407,7 @@
         methods: {
             getList() {
                 this.listLoading = true;
-                getZwfwDeptSuperviseList(this.listQuery).then(response => {
+                getDeptSuperviseList(this.listQuery).then(response => {
                     this.list = response.data.list;
                     this.total = response.data.total;
                     this.listLoading = false;
@@ -437,7 +437,7 @@
                     processNumber: this.pretrialNumber,
                     taskId: this.taskId
                 }
-                getZwfwDeptWorkDetail(query).then(response => {
+                getDeptWorkDetail(query).then(response => {
                     console.log(response.data);
                     this.itemConditionVoList = response.data.itemConditionVoList;
                     this.itemMaterialVoList = response.data.itemMaterialVoList;
