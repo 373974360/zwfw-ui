@@ -2,7 +2,7 @@ import fetch from 'utils/fetch';
 
 export function getZwfwItemPretrialList(query) {
     return fetch({
-        url: '/api/zwfw/ItemPretrial/list',
+        url: '/api/zwfw/itemPretrial/list',
         method: 'get',
         params: query
     });
@@ -10,7 +10,7 @@ export function getZwfwItemPretrialList(query) {
 
 export function getPretrialDetail(id) {
     return fetch({
-        url: '/api/zwfw/ItemPretrial/getPretrialDetail',
+        url: '/api/zwfw/itemPretrial/getPretrialDetail',
         method: 'get',
         params: {id}
     });
@@ -18,7 +18,7 @@ export function getPretrialDetail(id) {
 
 export function getZwfwItemPretrialCascader(id) {
     return fetch({
-        url: '/api/zwfw/ItemPretrial/getCascader',
+        url: '/api/zwfw/itemPretrial/getCascader',
         method: 'get',
         params: {id}
     });
@@ -27,7 +27,7 @@ export function getZwfwItemPretrialCascader(id) {
 export function createZwfwItemPretrial(zwfwCategoryVo) {
     const data = zwfwCategoryVo;
     return fetch({
-        url: '/api/zwfw/ItemPretrial/add',
+        url: '/api/zwfw/itemPretrial/add',
         method: 'post',
         data
     })

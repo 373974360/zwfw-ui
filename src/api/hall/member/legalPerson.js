@@ -2,7 +2,7 @@ import fetch from 'utils/fetch';
 
 export function getAllZwfwLegalPerson(query) {
     return fetch({
-        url: '/api/zwfw/LegalPerson/getAll',
+        url: '/api/zwfw/legalPerson/getAll',
         method: 'get',
         params: query
     });
@@ -10,7 +10,7 @@ export function getAllZwfwLegalPerson(query) {
 
 export function getZwfwLegalPersonList(query) {
     return fetch({
-        url: '/api/zwfw/LegalPerson/list',
+        url: '/api/zwfw/legalPerson/list',
         method: 'get',
         params: query
     });
@@ -19,7 +19,7 @@ export function getZwfwLegalPersonList(query) {
 export function createZwfwLegalPerson(zwfwLegalPersonVo){
     const data = zwfwLegalPersonVo;
     return fetch({
-        url: '/api/zwfw/LegalPerson/add',
+        url: '/api/zwfw/legalPerson/add',
         method: 'post',
         data
     })
@@ -28,7 +28,7 @@ export function createZwfwLegalPerson(zwfwLegalPersonVo){
 export function updateZwfwLegalPerson(zwfwLegalPersonVo){
     const data = zwfwLegalPersonVo;
     return fetch({
-        url: '/api/zwfw/LegalPerson/edit',
+        url: '/api/zwfw/legalPerson/edit',
         method: 'post',
         data
     })
@@ -36,7 +36,7 @@ export function updateZwfwLegalPerson(zwfwLegalPersonVo){
 export function delZwfwLegalPersons(ids) {
     const data = {ids};
     return fetch({
-        url: '/api/zwfw/LegalPerson/dels',
+        url: '/api/zwfw/legalPerson/dels',
         method: 'post',
         data
     })
@@ -44,7 +44,7 @@ export function delZwfwLegalPersons(ids) {
 export function deleteZwfwLegalPerson(id) {
     const data = {id};
     return fetch({
-        url: '/api/zwfw/LegalPerson/delete',
+        url: '/api/zwfw/legalPerson/delete',
         method: 'post',
         data
     })

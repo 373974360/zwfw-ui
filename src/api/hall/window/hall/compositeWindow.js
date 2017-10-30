@@ -7,7 +7,7 @@ import fetch from 'utils/fetch';
  */
 export function takeNumberByPretrialNumber(query) {
     return fetch({
-        url: '/api/zwfw/HallCompositeWindow/mockGetNumber',
+        url: '/api/zwfw/hallCompositeWindow/mockGetNumber',
         method: 'post',
         params: query
     });
@@ -20,7 +20,7 @@ export function takeNumberByPretrialNumber(query) {
  */
 export function takeNumberByItemCode(query) {
     return fetch({
-        url: '/api/zwfw/HallCompositeWindow/mockGetNumber',
+        url: '/api/zwfw/hallCompositeWindow/mockGetNumber',
         method: 'post',
         params: query
     })
@@ -33,7 +33,7 @@ export function takeNumberByItemCode(query) {
  */
 export function queryNumberByCallNumber(query) {
     return fetch({
-        url: '/api/zwfw/HallCompositeWindow/query',
+        url: '/api/zwfw/hallCompositeWindow/query',
         method: 'post',
         params: query
     })
@@ -46,7 +46,7 @@ export function queryNumberByCallNumber(query) {
  */
 export function queryCurrentNumber(query) {
     return fetch({
-        url: '/api/zwfw/HallCompositeWindow/query',
+        url: '/api/zwfw/hallCompositeWindow/query',
         method: 'post',
         params: query
     })
@@ -59,7 +59,7 @@ export function queryCurrentNumber(query) {
  */
 export function loginToWindow(query) {
     return fetch({
-        url: '/api/zwfw/HallCompositeWindow/loginToWindow',
+        url: '/api/zwfw/hallCompositeWindow/loginToWindow',
         method: 'post',
         params: query
     })
@@ -72,7 +72,7 @@ export function loginToWindow(query) {
  */
 export function callNumber(query) {
     return fetch({
-        url: '/api/zwfw/HallCompositeWindow/callNumber',
+        url: '/api/zwfw/hallCompositeWindow/callNumber',
         method: 'post',
         params: query
     });
@@ -85,7 +85,7 @@ export function callNumber(query) {
  */
 export function welcomeNumber(query) {
     return fetch({
-        url: '/api/zwfw/HallCompositeWindow/welcomeNumber',
+        url: '/api/zwfw/hallCompositeWindow/welcomeNumber',
         method: 'post',
         params: query
     });
@@ -96,7 +96,7 @@ export function welcomeNumber(query) {
  * */
 export function submitWork(query) {
     return fetch({
-        url: '/api/zwfw/HallCompositeWindow/submitWork',
+        url: '/api/zwfw/hallCompositeWindow/submitWork',
         method: 'post',
         params: query
     });
