@@ -2,7 +2,7 @@ import fetch from 'utils/fetch';
 
 export function getZwfwItemMaterialList(query) {
     return fetch({
-        url: '/api/zwfw/ItemMaterial/list',
+        url: '/api/zwfw/itemMaterial/list',
         method: 'get',
         params: query
     });
@@ -11,7 +11,7 @@ export function getZwfwItemMaterialList(query) {
 export function createZwfwItemMaterial(zwfwItemMaterialVo){
     const data = zwfwItemMaterialVo;
     return fetch({
-        url: '/api/zwfw/ItemMaterial/add',
+        url: '/api/zwfw/itemMaterial/add',
         method: 'post',
         data
     })
@@ -20,7 +20,7 @@ export function createZwfwItemMaterial(zwfwItemMaterialVo){
 export function updateZwfwItemMaterial(zwfwCategoryItemVo){
     const data = zwfwCategoryItemVo;
     return fetch({
-        url: '/api/zwfw/ItemMaterial/edit',
+        url: '/api/zwfw/itemMaterial/edit',
         method: 'post',
         data
     })
@@ -28,7 +28,7 @@ export function updateZwfwItemMaterial(zwfwCategoryItemVo){
 export function delZwfwItemMaterial(ids) {
     const data = {ids};
     return fetch({
-        url: '/api/zwfw/ItemMaterial/dels',
+        url: '/api/zwfw/itemMaterial/dels',
         method: 'post',
         data
     })
@@ -36,14 +36,14 @@ export function delZwfwItemMaterial(ids) {
 export function deleteZwfwItemMaterial(itemId, ids) {
     const data = {itemId, ids};
     return fetch({
-        url: '/api/zwfw/ItemMaterial/delete',
+        url: '/api/zwfw/itemMaterial/delete',
         method: 'post',
         data
     })
 }
 export function getAllItemMaterial(itemId) {
     return fetch({
-        url: '/api/zwfw/ItemMaterial/getAll',
+        url: '/api/zwfw/itemMaterial/getAll',
         method: 'get',
         params: {itemId}
     })

@@ -185,6 +185,9 @@
         getUserList
     } from 'api/work/process/itemProcess';
 
+    import {getZwfwApiHost} from 'utils/fetch';
+
+
     export default {
         components: {
             Sticky
@@ -511,9 +514,9 @@
             };
 
             ActivitiRest.options = {
-                processInstanceHighLightsUrl: process.env.ZWFW_ACTIVITI_API + "/zwfw/activiti/service/process-instance/{processInstanceId}/highlights?callback=?",
-                processDefinitionUrl: process.env.ZWFW_ACTIVITI_API + "/zwfw/activiti/service/process-definition/{processDefinitionId}/diagram-layout?callback=?",
-                processDefinitionByKeyUrl: process.env.ZWFW_ACTIVITI_API + "/zwfw/activiti/service/process-definition/{processDefinitionKey}/diagram-layout?callback=?"
+                processInstanceHighLightsUrl: getZwfwApiHost() + "/zwfw/activiti/service/process-instance/{processInstanceId}/highlights?callback=?",
+                processDefinitionUrl: getZwfwApiHost() + "/zwfw/activiti/service/process-definition/{processDefinitionId}/diagram-layout?callback=?",
+                processDefinitionByKeyUrl: getZwfwApiHost() + "/zwfw/activiti/service/process-definition/{processDefinitionKey}/diagram-layout?callback=?"
             };
 
             ProcessDiagramGenerator.processDiagrams = {};

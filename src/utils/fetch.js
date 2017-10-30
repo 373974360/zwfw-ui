@@ -63,7 +63,7 @@ service.interceptors.response.use(
             }
         } else {
             code = response.data.httpCode;
-            if (code === 401) {
+            if (code === 401 || code == 40101) {
                 Message({
                     message: "登录超时，请重新登录",
                     type: 'error',

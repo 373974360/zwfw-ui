@@ -6,7 +6,7 @@ import fetch from 'utils/fetch';
 export function getZwfwDeptWorkQueryList(q) {
 
     return fetch({
-        url: '/api/zwfw/ItemProcessWork/getZwfwDeptWorkList',
+        url: '/api/zwfw/itemProcessWork/getDeptWorkList',
         method: 'get',
         params: q
     });
@@ -19,7 +19,7 @@ export function getZwfwDeptWorkQueryList(q) {
  */
 export function getZwfwDeptWorkDetail(query) {
     return fetch({
-        url: '/api/zwfw/ItemProcessWork/getZwfwDeptWorkDetail',
+        url: '/api/zwfw/itemProcessWork/getDeptWorkDetail',
         method: 'get',
         params: query
     });

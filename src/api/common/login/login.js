@@ -16,7 +16,7 @@ export function getInfo() {
     });
 }
 
-export function sendPWD2Email(account){
+export function sendPWD2Email(account) {
     return fetch({
         url: '/api/admin/sysUser/get',
         method: 'get',
@@ -26,7 +26,7 @@ export function sendPWD2Email(account){
 
 export function logout() {
     return fetch({
-        url: '/api/admin/base/sysLogout',
+        url: '/api/auth/jwt/invalid',
         method: 'post'
     });
 }
