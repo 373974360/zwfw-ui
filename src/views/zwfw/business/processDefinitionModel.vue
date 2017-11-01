@@ -193,10 +193,14 @@
                             ids.push(deleteRow.id);
                         }
                         deleteZwfwActivitiModel(ids).then(response => {
-                            this.listLoading = false;
-                            console.log(response);
-                            this.total -= selectCounts;
-                            this.$message.success('删除成功');
+                            if (response.httpCode === 200) {
+                                this.listLoading = false;
+                                console.log(response);
+                                this.total -= selectCounts;
+                                this.$message.success('删除成功');
+                            }else{
+                                this.$message.error(response.msg);
+                            }
 
                         });
                         this.getList();
@@ -206,6 +210,7 @@
                 }
             },
             handleDeploy() {
+                var _this = this;
                 const selectCounts = this.selectedRows.length;
                 if (this.selectedRows.length === 0) {
                     this.$message.warning('请选择需要操作的记录');
@@ -220,10 +225,14 @@
                             ids.push(deployRow.id);
                         }
                         deployZwfwActivitiModel(ids).then(response => {
-                            console.log(response);
-                            this.listLoading = false;
-                            this.$message.success('发布成功');
-                            this.getList();
+                            if (response.httpCode === 200) {
+                                this.listLoading = false;
+                                this.$message.success('发布成功');
+                                this.getList();
+                            }else{
+                                this.$message.error(response.msg);
+                            }
+
                         });
                     }).catch((e) => {
                         console.log('发生错误', e);
@@ -240,6 +249,8 @@
                                 this.listLoading = false;
                                 this.$message.success('创建成功');
                                 this.getList();
+                            }else{
+                                this.$message.error(response.msg);
                             }
                         });
                     } else {

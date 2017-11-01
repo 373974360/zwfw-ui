@@ -185,8 +185,6 @@
         getUserList
     } from 'api/work/process/itemProcess';
 
-    import {getZwfwApiHost} from 'utils/fetch';
-
 
     export default {
         components: {
@@ -286,7 +284,7 @@
                 _this.search.userId = value;
             },
             /**
-            /**
+             /**
              * 添加选中的用户到用户列表中
              * */
             addUserToTask() {
@@ -311,7 +309,7 @@
                             return item.id
                         }).join(',');
                         _this.search.userId = '';
-                        _this.search.searchUser ='';
+                        _this.search.searchUser = '';
 //                        console.log(_this.task.taskCandidateUsers);
                         break;
                     }
@@ -331,11 +329,11 @@
                 });
 
             },
-            delCadidateUser(item){
+            delCadidateUser(item) {
                 var _this = this;
                 var delIndex = -1;
-                for(let i=0;i<_this.candidateUserList.length;i++) {
-                    if(item.id === _this.candidateUserList[i].id) {
+                for (let i = 0; i < _this.candidateUserList.length; i++) {
+                    if (item.id === _this.candidateUserList[i].id) {
                         delIndex = i;
                         break;
                     }
@@ -364,9 +362,9 @@
                     supportExtendTime: this.task.supportExtendTime,
                     supportClose: this.task.supportClose
                 }).then(function (response) {
-                    if(response.httpCode == 200) {
+                    if (response.httpCode == 200) {
                         _this.$message.success('保存成功');
-                    }else{
+                    } else {
                         _this.$message.error(response.msg);
                     }
                 }).catch(function (e) {
@@ -464,17 +462,18 @@
                                     const data = response.data;
                                     const c = data.setting;
 //                                    console.log(c);
-                                    if (c) {
-                                        _this.task.beginNotifyTarget = c.beginNotifyTarget;
-                                        _this.task.beginNotifyTemplate = c.beginNotifyTemplate;
-                                        _this.task.completeNotifyTarget = c.completeNotifyTarget;
-                                        _this.task.completeNotifyTemplate = c.completeNotifyTemplate;
-                                        _this.task.defaultTimeLimit = c.defaultTimeLimit;
-                                        _this.task.supportClose = c.supportClose;
-                                        _this.task.frontName = c.frontName;
-                                        _this.task.supportCorrection = c.supportCorrection;
-                                        _this.task.supportExtendTime = c.supportExtendTime;
-                                        _this.task.taskCandidateUsers = c.taskCandidateUsers;
+                                    if (c && Object.keys(c).length > 0) {
+                                        Object.assign(_this.task, c);
+//                                        _this.task.beginNotifyTarget = c.beginNotifyTarget;
+//                                        _this.task.beginNotifyTemplate = c.beginNotifyTemplate;
+//                                        _this.task.completeNotifyTarget = c.completeNotifyTarget;
+//                                        _this.task.completeNotifyTemplate = c.completeNotifyTemplate;
+//                                        _this.task.defaultTimeLimit = c.defaultTimeLimit;
+//                                        _this.task.supportClose = c.supportClose;
+//                                        _this.task.frontName = c.frontName;
+//                                        _this.task.supportCorrection = c.supportCorrection;
+//                                        _this.task.supportExtendTime = c.supportExtendTime;
+//                                        _this.task.taskCandidateUsers = c.taskCandidateUsers;
                                     }
                                     // 设置可选模板列表
                                     if (data.messageTemplate) {
@@ -514,9 +513,9 @@
             };
 
             ActivitiRest.options = {
-                processInstanceHighLightsUrl: getZwfwApiHost() + "/zwfw/activiti/service/process-instance/{processInstanceId}/highlights?callback=?",
-                processDefinitionUrl: getZwfwApiHost() + "/zwfw/activiti/service/process-definition/{processDefinitionId}/diagram-layout?callback=?",
-                processDefinitionByKeyUrl: getZwfwApiHost() + "/zwfw/activiti/service/process-definition/{processDefinitionKey}/diagram-layout?callback=?"
+                processInstanceHighLightsUrl: "/api/zwfw/activiti/service/process-instance/{processInstanceId}/highlights?callback=?",
+                processDefinitionUrl: "/api/zwfw/activiti/service/process-definition/{processDefinitionId}/diagram-layout?callback=?",
+                processDefinitionByKeyUrl: "/api/zwfw/activiti/service/process-definition/{processDefinitionKey}/diagram-layout?callback=?"
             };
 
             ProcessDiagramGenerator.processDiagrams = {};

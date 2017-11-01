@@ -717,12 +717,12 @@
             },
             print_ywsld() {
                 if (this.itemNumber != null) {
-                    window.open(getZwfwApiHost() + '/zwfwHallCompositeWindow/downloadYwsld?numberId=' + this.itemNumber.id);
+                    window.open('/api/zwfw/zwfwHallCompositeWindow/downloadYwsld?numberId=' + this.itemNumber.id);
                 }
             },
             print_wlzyd() {
                 if (this.itemNumber != null) {
-                    window.open(getZwfwApiHost() + '/zwfwHallCompositeWindow/downloadWlzyd?numberId=' + this.itemNumber.id);
+                    window.open('/api/zwfw/zwfwHallCompositeWindow/downloadWlzyd?numberId=' + this.itemNumber.id);
                 }
             },
             /**
