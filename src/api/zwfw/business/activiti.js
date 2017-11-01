@@ -1,7 +1,7 @@
 import fetch from 'utils/fetch';
 import _ from 'lodash';
 
-let getZwfwApiHost = fetch.getZwfwApiHost;
+// let getZwfwApiHost = fetch.getZwfwApiHost;
 
 
 /**
@@ -21,7 +21,7 @@ export function getZwfwActivitiModelList(query) {
  * @param id
  */
 export function getZwfwActivitiModelEditUrl(id) {
-    return getZwfwApiHost() + '/modeler.html?modelId=' + id;
+    return '/static/modeler.html?modelId=' + id;
 }
 
 /**
@@ -29,7 +29,7 @@ export function getZwfwActivitiModelEditUrl(id) {
  * @param id
  */
 export function getZwfwActivitiModelUploadUrl() {
-    return getZwfwApiHost() + '/zwfw/activiti/model/upload';
+    return '/api/zwfw/activiti/model/upload';
 }
 
 /**
