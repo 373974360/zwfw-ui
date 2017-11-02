@@ -120,14 +120,14 @@
                                     <el-input v-model="task.frontName" placeholder="请输入内容"></el-input>
                                 </el-form-item>
                                 <el-form-item label="默认时限天数：">
-                                    <el-input-number v-model="task.defaultTimeLimit" :min="1"
+                                    <el-input-number v-model="task.defaultTimeLimit" :min="0"
                                                      :max="999"></el-input-number>
                                 </el-form-item>
                                 <el-form-item label="任务开始通知：">
                                     <el-select v-model="task.beginNotifyTarget" placeholder="请选择">
-                                        <el-option label="不通知" value="0"></el-option>
-                                        <el-option label="申请办件的注册用户" value="1"></el-option>
-                                        <el-option label="下一个步骤的工作人员" value="2"></el-option>
+                                        <el-option label="不通知" :value="0"></el-option>
+                                        <el-option label="申请办件的注册用户" :value="1"></el-option>
+                                        <el-option label="下一个步骤的工作人员" :value="2"></el-option>
                                     </el-select>
                                 </el-form-item>
                                 <el-form-item label="开始时通知模板：">
@@ -144,9 +144,9 @@
 
                                 <el-form-item label="任务结束通知：">
                                     <el-select v-model="task.completeNotifyTarget" placeholder="请选择">
-                                        <el-option label="不通知" value="0"></el-option>
-                                        <el-option label="申请办件的注册用户" value="1"></el-option>
-                                        <el-option label="下一个步骤的工作人员" value="2"></el-option>
+                                        <el-option label="不通知" :value="0"></el-option>
+                                        <el-option label="申请办件的注册用户" :value="1"></el-option>
+                                        <el-option label="下一个步骤的工作人员" :value="2"></el-option>
                                     </el-select>
                                 </el-form-item>
                                 <el-form-item label="结束通知模板：">
@@ -263,6 +263,8 @@
              */
             loadProcessDefinitionVersionList() {
                 const _this = this;
+                this.search.processDefinitionId = '';
+                _this.processDefinitionVersionList = [];
                 getProcessVersionList(this.search.processDefinitionKey).then((response) => {
                     _this.processDefinitionVersionList = response.data;
                 });
@@ -355,9 +357,9 @@
                     defaultTimeLimit: this.task.defaultTimeLimit,
                     frontName: this.task.frontName,
                     beginNotifyTemplate: this.task.beginNotifyTemplate,
-                    beginNotifyTarget: this.task.beginNotifyTarget,
+                    beginNotifyTarget: this.task.beginNotifyTarget || 0,
                     completeNotifyTemplate: this.task.completeNotifyTemplate,
-                    completeNotifyTarget: this.task.completeNotifyTarget,
+                    completeNotifyTarget: this.task.completeNotifyTarget || 0,
                     supportCorrection: this.task.supportCorrection,
                     supportExtendTime: this.task.supportExtendTime,
                     supportClose: this.task.supportClose
@@ -447,9 +449,9 @@
                                     frontName: '',
                                     defaultTimeLimit: '',
                                     completeNotifyTemplate: '',
-                                    completeNotifyTarget: '',
+                                    completeNotifyTarget: 0,
                                     beginNotifyTemplate: '',
-                                    beginNotifyTarget: ''
+                                    beginNotifyTarget: 0
                                 };
 
                                 _this.task.taskDefinitionKey = contextObject.id;
