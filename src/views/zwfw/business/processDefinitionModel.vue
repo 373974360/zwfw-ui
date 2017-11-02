@@ -195,7 +195,8 @@
                         deleteZwfwActivitiModel(ids).then(response => {
                             if (response.httpCode === 200) {
                                 this.listLoading = false;
-                                console.log(response);
+//                                console.log(response);
+                                this.getList();
                                 this.total -= selectCounts;
                                 this.$message.success('删除成功');
                             }else{
