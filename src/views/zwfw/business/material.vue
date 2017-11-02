@@ -89,21 +89,29 @@
                     <el-input v-model="zwfwMaterial.source"></el-input>
                 </el-form-item>
                 <el-form-item label="材料样本" prop="example">
-                    <el-upload name="uploadFile"  accept="uploadAccepts"
+                    <el-upload name="uploadFile" accept="uploadAccepts"
+                               ref="upload"
                                :action="uploadAction" :file-list="uploadAvatarsExample"
                                :on-success="handleAvatarExampleSuccess"
                                :before-upload="beforeAvatarUpload"
-                               :on-remove="handleRemoveExample">
-                        <el-button size="small" type="primary">点击上传</el-button>
+                               :on-remove="handleRemoveExample"
+                               :auto-upload="false">
+                        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="电子表单" prop="eform">
-                    <el-upload name="uploadFile"  :accept="uploadAccepts"
+                    <el-upload name="uploadFile" :accept="uploadAccepts"
+                               ref="upload"
                                :action="uploadAction" :file-list="uploadAvatarsEform"
+                               :headers="uploadHeaders"
+                               :with-credentials="true"
                                :on-success="handleAvatarEformSuccess"
                                :before-upload="beforeAvatarUpload"
-                               :on-remove="handleRemoveEform">
-                        <el-button size="small" type="primary">点击上传</el-button>
+                               :on-remove="handleRemoveEform"
+                               :auto-upload="false">
+                        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="填报须知" prop="notice">
@@ -133,7 +141,6 @@
         updateZwfwMaterial,
         delZwfwMaterials
     } from 'api/zwfw/business/material';
-
     export default {
         name: 'zwfwMaterial_table',
         data() {
@@ -163,7 +170,8 @@
                 dialogFormVisible: false,
                 dialogStatus: '',
                 dialogLoading: false,
-                uploadAction: process.env.SYS_API + '/sysUpload/',
+                uploadAction: '/api/admin/base/sysUpload/',
+//                uploadAction: '/api/zwfw/web/pretrial/upload/',
                 uploadAvatarsEform: [],
                 uploadAvatarsExample: [],
                 zwfwMaterialRules: {
@@ -188,9 +196,15 @@
                 'textMap',
                 'enums',
                 'closeOnClickModal'
-            ])
+            ]),
+            uploadHeaders(){
+               return { 'Authorization': this.$store.getters.token}
+            }
         },
         methods: {
+            submitUpload(){
+                this.$refs.upload.submit();
+            },
             getList() {
                 this.listLoading = true;
                 getZwfwMaterialList(this.listQuery).then(response => {

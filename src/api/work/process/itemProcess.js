@@ -109,7 +109,7 @@ export function getUserList() {
 
 export function getFinishList(query) {
     return fetch({
-        url: '/api/zwfw/HallCompositeWindowCert/finish_list',
+        url: '/api/zwfw/hallCompositeWindowCert/finish_list',
         method: 'get',
         params: query
     });
@@ -117,7 +117,7 @@ export function getFinishList(query) {
 export function updateTake(query) {
     const data = query;
     return fetch({
-        url: '/api/zwfw/HallCompositeWindowCert/update_take',
+        url: '/api/zwfw/hallCompositeWindowCert/update_take',
         method: 'post',
         data
     })
