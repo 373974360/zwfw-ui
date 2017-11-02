@@ -91,7 +91,7 @@
                    :close-on-click-modal="closeOnClickModal" :before-close="resetZwfwItemForm">
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem" label-position="right"
                      label-width="134px"
-                     style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="zwfwItemRules">
+                     style='width: 80%; ' v-loading="dialogLoading" :rules="zwfwItemRules">
                 <el-form-item label="事项名称" prop="name">
                     <el-input v-model="zwfwItem.name"></el-input>
                 </el-form-item>
