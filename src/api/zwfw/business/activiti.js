@@ -112,3 +112,18 @@ export function activeZwfwProcessDefinition(id) {
         params: data
     })
 }
+
+/**
+ * 删除已经部署的流程定义
+ * @param id
+ */
+export function deleteZwfwProcessDefinition(id) {
+
+    const data = {id: _.isArray(id) ? id.join('#') : id};
+
+    return fetch({
+        url: '/api/zwfw/activiti/pd/delete',
+        method: 'post',
+        params: data
+    })
+}

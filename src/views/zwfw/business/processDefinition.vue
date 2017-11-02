@@ -16,6 +16,8 @@
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleActive" type="danger" icon="check">
                 激活
             </el-button>
+            <el-button class="filter-item " style="margin-left: 10px;" @click="handleDelete" type="danger" icon="remove">删除
+            </el-button>
         </div>
         <!--表格-->
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row
@@ -38,12 +40,12 @@
             </el-table-column>
             <el-table-column min-width="50px" align="center" label="是否挂起">
                 <template scope="scope">
-                    <i v-if="scope.row.suspended"  style="color:green" class="el-icon-circle-check"></i>
-                    <i v-else class="el-icon-circle-cross" style="color:red" ></i>
+                    <i v-if="scope.row.suspended" style="color:green" class="el-icon-circle-check"></i>
+                    <i v-else class="el-icon-circle-cross" style="color:red"></i>
                 </template>
             </el-table-column>
             <el-table-column min-width="50px" align="center" label="启动步骤是自定义表单">
-                <template scope="scope" >
+                <template scope="scope">
                     <i v-if="scope.row.hasStartFormKey" style="color:green" class="el-icon-circle-check"></i>
                     <i v-else class="el-icon-circle-cross" style="color:red"></i>
                 </template>
@@ -60,13 +62,13 @@
                 </template>
             </el-table-column>
             <!--<el-table-column-->
-                    <!--fixed="right"-->
-                    <!--label="操作"-->
-                    <!--width="100">-->
-                <!--<template scope="scope">-->
-                    <!--<el-button @click="handleView" type="text" size="small">查看</el-button>-->
-                    <!--<el-button @click="handleCreateInstance" type="text" size="small">创建实例</el-button>-->
-                <!--</template>-->
+            <!--fixed="right"-->
+            <!--label="操作"-->
+            <!--width="100">-->
+            <!--<template scope="scope">-->
+            <!--<el-button @click="handleView" type="text" size="small">查看</el-button>-->
+            <!--<el-button @click="handleCreateInstance" type="text" size="small">创建实例</el-button>-->
+            <!--</template>-->
             <!--</el-table-column>-->
 
         </el-table>
@@ -105,7 +107,8 @@
     import {
         getZwfwProcessDefinitionList,
         suspendZwfwProcessDefinition,
-        activeZwfwProcessDefinition
+        activeZwfwProcessDefinition,
+        deleteZwfwProcessDefinition
     } from 'api/zwfw/business/activiti';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
@@ -228,6 +231,34 @@
                             console.log(response);
                             this.listLoading = false;
                             this.$message.success('激活成功');
+                            this.getList();
+                        });
+                    }).catch((e) => {
+                        console.log('发生错误', e);
+                    });
+                }
+            },
+            /**
+             * 删除
+             */
+            handleDelete() {
+                const selectCounts = this.selectedRows.length;
+                if (this.selectedRows.length === 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将删除流程定义和所有此流程的实例, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        const ids = new Array();
+                        for (const deployRow of this.selectedRows) {
+                            ids.push(deployRow.id);
+                        }
+                        deleteZwfwProcessDefinition(ids).then(response => {
+                            console.log(response);
+                            this.listLoading = false;
+                            this.$message.success('删除成功');
                             this.getList();
                         });
                     }).catch((e) => {
