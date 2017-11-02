@@ -14,7 +14,7 @@
             </el-button>
             <el-upload
                     class="upload-bpmn-file"
-                    :multiple="false"
+                    :multiple="true"
                     :show-file-list="false"
                     :action="getUploadUrl"
             :on-success="onUploadSuccess"
