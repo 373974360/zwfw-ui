@@ -175,11 +175,14 @@
                 </el-form-item>
                 <el-form-item label="结果样本" prop="resultExample">
                     <el-upload name="uploadFile"  accept="uploadAccepts"
+                               ref="upload"
                                :action="uploadAction" :file-list="uploadAvatarsResult"
                                :on-success="handleAvatarResultSuccess"
                                :before-upload="beforeAvatarUpload"
-                               :on-remove="handleRemoveResult">
-                        <el-button size="small" type="primary">点击上传</el-button>
+                               :on-remove="handleRemoveResult"
+                               :auto-upload="false">
+                        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="行使层级" prop="handleLevel">
@@ -560,7 +563,7 @@
                 dialogFormVisible1: false,
                 dialogStatus: '',
                 dialogLoading: false,
-                uploadAction: process.env.SYS_API + '/sysUpload/',
+                uploadAction: '/api/admin/base/sysUpload/',
                 uploadAvatarsExample: [],
                 uploadAvatarsEform: [],
                 uploadAvatarsResult: [],
@@ -569,8 +572,8 @@
                         {required: true, message: '请输入事项名称'}
                     ],
                     basicCode: [
-                        {required: true, message: '请输入基本编码'},
-                        {min: 10, max: 10, message: '基本编码长度是10位'}
+                        {required: true, message: '请输入基本编码'}
+//                        {min: 10, max: 10, message: '基本编码长度是10位'}
                     ],
                     implCode: [
                         {required: true, message: '请输入实施编码'},
@@ -609,6 +612,9 @@
             ])
         },
         methods: {
+            submitUpload(){
+                this.$refs.upload.submit();
+            },
             getList() {
                 this.listLoading = true;
                 getZwfwItemList(this.listQuery).then(response => {

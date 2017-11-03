@@ -224,7 +224,7 @@
                 dialogFormVisible: false,
                 dialogStatus: '',
                 dialogLoading: false,
-                uploadAction: process.env.SYS_API + '/sysUpload/',
+                uploadAction:  '/api/admin/base/sysUpload/',
                 uploadAvatars: []
             }
         },
