@@ -15,71 +15,71 @@ import System from '../views/common/login/system';
 
 /************************基础信息管理系统************************/
 /* index */
-const BaseSystem = () => import('../views/base/index');
+const BaseSystem = () => import('../views/baseSystem/index');
 /* 组织机构 */
-const Dept = () => import('../views/base/org/dept');
-const User = () => import('../views/base/org/user');
-const Menu = () => import('../views/base/org/menu');
-const Role = () => import('../views/base/org/role');
+const Dept = () => import('../views/baseSystem/org/dept');
+const User = () => import('../views/baseSystem/org/user');
+const Menu = () => import('../views/baseSystem/org/menu');
+const Role = () => import('../views/baseSystem/org/role');
 /* 数据管理 */
-const MessageFiled = () => import('../views/base/data/messageFiled');
-const MessageTemplate = () => import('../views/base/data/messageTemplate');
-const Dict = () => import('../views/base/data/dict');
-const MetadataType = () => import('../views/base/data/metadataType');
-const Holiday = () => import('../views/base/data/holiday');
+const MessageFiled = () => import('../views/baseSystem/data/messageFiled');
+const MessageTemplate = () => import('../views/baseSystem/data/messageTemplate');
+const Dict = () => import('../views/baseSystem/data/dic');
+const MetadataType = () => import('../views/baseSystem/data/metadataType');
+const Holiday = () => import('../views/baseSystem/data/holiday');
 /* 系统管理 */
-const Cache = () => import('../views/base/system/cache');
-const Log = () => import('../views/base/system/log');
+const Cache = () => import('../views/baseSystem/setting/cache');
+const Log = () => import('../views/baseSystem/setting/log');
 /* 定时任务 */
-const RegistryCenter = () => import('../views/base/task/registryCenter');
-const TimedJob = () => import('../views/base/task/timedJob');
+const RegistryCenter = () => import('../views/baseSystem/task/registryCenter');
+const TimedJob = () => import('../views/baseSystem/task/timedJob');
 
 /************************大厅综合管理系统************************/
 /* index */
-const HallSystem = () => import('../views/hall/index');
+const HallSystem = () => import('../views/hallSystem/index');
 /* 大厅管理 */
-const Window = () => import('../views/hall/lobby/window');
-const NumberScope = () => import('../views/hall/lobby/numberScope');
+const Window = () => import('../views/hallSystem/lobby/window');
+const NumberScope = () => import('../views/hallSystem/lobby/numberScope');
 /* 会员管理 */
-const NaturePerson = () => import('../views/hall/member/naturePerson');
-const LegalPerson = () => import('../views/hall/member/legalPerson');
+const NaturePerson = () => import('../views/hallSystem/member/naturePerson');
+const LegalPerson = () => import('../views/hallSystem/member/legalPerson');
 /* 综合窗口 */
-const CompositeWindowWork = () => import('../views/hall/window/hall/CompositeWindowWork');  /* 窗口收件*/
-const CompositeWindowHistory = () => import('../views/hall/window/hall/CompositeWindowHistory');    /* 受理记录*/
-const CompositeWindowTakeCert = () => import('../views/hall/window/hall/CompositeWindowTakeCert');  /* 办结取件*/
-const Pending = () => import('../views/hall/window/pretrial/pending'); /* 未预审 */
-const Finish = () => import('../views/hall/window/pretrial/finish');   /* 已预审 */
-const Correction = () => import('../views/hall/window/pretrial/correction');   /* 预审整改 */
-const NoAccept = () => import('../views/hall/window/pretrial/noAccept');   /* 预审未受理 */
-const WindowWork = () => import('../views/hall/window/street/windowWork');    /* 街办收件 */
-const WindowHistory = () => import('../views/hall/window/street/windowHistory');  /* 街办查询 */
+const WindowAccept = () => import('../views/hallSystem/window/receive/windowAccept');  /* 窗口收件*/
+const Record = () => import('../views/hallSystem/window/receive/record');    /* 收件记录*/
+const TakeAway = () => import('../views/hallSystem/window/receive/takeAway');  /* 办结取件*/
+const Pending = () => import('../views/hallSystem/window/pretrial/pending'); /* 未预审 */
+const Finish = () => import('../views/hallSystem/window/pretrial/finish');   /* 已预审 */
+const Correction = () => import('../views/hallSystem/window/pretrial/correction');   /* 预审整改 */
+const NoAccept = () => import('../views/hallSystem/window/pretrial/noAccept');   /* 预审未受理 */
+const WindowWork = () => import('../views/hallSystem/window/street/windowWork');    /* 街办收件 */
+const WindowHistory = () => import('../views/hallSystem/window/street/windowHistory');  /* 街办查询 */
 
 /************************政务服务管理系统************************/
 /* index */
-const ZwfwSystem = () => import('../views/zwfw/index');
+const ZwfwSystem = () => import('../views/zwfwSystem/index');
 /* 业务管理 */
-const Category = () => import('../views/zwfw/business/category');
-const Material = () => import('../views/zwfw/business/material');
-const Item = () => import('../views/zwfw/business/item');
-const ProcessDefinitionModel = () => import('../views/zwfw/business/processDefinitionModel');
-const ProcessDefinition = () => import('../views/zwfw/business/processDefinition');
-const TaskSetting = () => import('../views/zwfw/business/taskSetting');
-const FormEditor = () => import('../views/zwfw/business/formEditor');
+const Category = () => import('../views/zwfwSystem/business/category');
+const Material = () => import('../views/zwfwSystem/business/material');
+const Item = () => import('../views/zwfwSystem/business/item');
+const ProcessDefinitionModel = () => import('../views/zwfwSystem/business/processDefinitionModel');
+const ProcessDefinition = () => import('../views/zwfwSystem/business/processDefinition');
+const TaskSetting = () => import('../views/zwfwSystem/business/taskSetting');
+const FormEditor = () => import('../views/zwfwSystem/business/formEditor');
 /* 统计分析 */
-const CallCount = () => import('../views/zwfw/count/callCount');
+const CallCount = () => import('../views/zwfwSystem/count/callCount');
 
 /************************政务服务办理系统************************/
 /* index */
-const WorkSystem = () => import('../views/work/index');
+const WorkSystem = () => import('../views/workSystem/index');
 /* 办件管理 */
-const WorkPending = () => import('../views/work/process/workPending'); /* 待办事项 */
-const WorkQuery = () => import('../views/work/process/workQuery'); /* 办件查询 */
-const WorkExtendTime = () => import('../views/work/process/workExtendTime');   /* 延期审核管理 */
-const WorkSupervise = () => import('../views/work/process/workSupervise'); /* 督办管理 */
+const WorkPending = () => import('../views/workSystem/process/workPending'); /* 待办事项 */
+const WorkQuery = () => import('../views/workSystem/process/workQuery'); /* 办件查询 */
+const WorkExtendTime = () => import('../views/workSystem/process/workExtendTime');   /* 延期审核管理 */
+const WorkSupervise = () => import('../views/workSystem/process/workSupervise'); /* 督办管理 */
 
 /************************共享数据管理系统************************/
 /* index */
-const DataShareSystem = () => import('../views/dataShare/index');
+const DataShareSystem = () => import('../views/dataShareSystem/index');
 
 /* error page */
 const Err404 = () => import('../views/common/error/404');
@@ -119,6 +119,7 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: '/baseSystem/index',
         name: '基础信息管理系统',
+        meta: {permission: ''},
         hidden: true,
         children: [{path: 'index', component: BaseSystem}]
     },
@@ -177,7 +178,7 @@ export const asyncRouterMap = [
                 meta: {permission: ''}
             },
             {
-                path: 'dict',
+                path: 'dic',
                 component: Dict,
                 name: '数据字典',
                 meta: {permission: ''}
@@ -304,9 +305,9 @@ export const asyncRouterMap = [
             {path: 'finish', component: Finish, name: '已预审件'},
             {path: 'correction', component: Correction, name: '整改件'},
             {path: 'noAccept', component: NoAccept, name: '不予受理件'},
-            {path: 'work', component: CompositeWindowWork, name: '窗口收件'},
-            {path: 'history', component: CompositeWindowHistory, name: '受理记录'},
-            {path: 'takeCert', component: CompositeWindowTakeCert, name: '办结取件'},
+            {path: 'work', component: WindowAccept, name: '窗口收件'},
+            {path: 'history', component: Record, name: '受理记录'},
+            {path: 'takeCert', component: TakeAway, name: '办结取件'},
             {path: 'windowWork', component: WindowWork, name: '街办收件'},
             {path: 'windowHistory', component: WindowHistory, name: '办件查询'},
             /*{

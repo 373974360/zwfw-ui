@@ -86,6 +86,8 @@
         }
         .pan-btn{
             margin: 0;
+            display: inline-block;
+            width: 70%;
         }
     }
 </style>

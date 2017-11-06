@@ -11,14 +11,14 @@ export function loginByEmail(userInfo) {
 
 export function getInfo() {
     return fetch({
-        url: '/api/admin/sysUser/getMyProfile',
+        url: '/api/baseSystem/org/user/getMyProfile',
         method: 'get'
     });
 }
 
 export function sendPWD2Email(account) {
     return fetch({
-        url: '/api/admin/sysUser/get',
+        url: '/api/baseSystem/org/user/get',
         method: 'get',
         params: {account}
     });

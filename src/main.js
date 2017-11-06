@@ -56,7 +56,7 @@ router.beforeEach((to, from, next) => {
                 store.dispatch('SetEnums');
                 next();
             }
-            if (store.getters.dicts.length === 0) {
+            if (store.getters.dics.length === 0) {
                 store.dispatch('SetDicts');
                 next();
             }

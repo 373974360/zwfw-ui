@@ -70,8 +70,8 @@ export function zwfwEnumData(value, type) {
         return '';
     }
 }
-export function dicts(value, type) {
-    var array = app.state.dicts[type];
+export function dics(value, type) {
+    var array = app.state.dics[type];
     var result = array.filter(function (item) {
         return item.code === value;
     });

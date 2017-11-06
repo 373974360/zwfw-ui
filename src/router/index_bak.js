@@ -23,7 +23,7 @@ const Role = () => import('../views/sys/org/role');
 const Holiday = () => import('../views/sys/system/holiday');
 const Log = () => import('../views/sys/system/log');
 const Cache = () => import('../views/sys/system/cache');
-const Dict = () => import('../views/sys/system/dict');
+const Dict = () => import('../views/sys/system/dic');
 const MetadataType = () => import('../views/sys/system/metadataType');
 const SysMessageFiled = () => import('../views/sys/system/sysMessageFiled');
 const SysMessageTemplate = () => import('../views/sys/system/SysMessageTemplate');
@@ -188,7 +188,7 @@ export const asyncRouterMap = [
         icon: 'system',
         children: [
             {path: 'metadataType', component: MetadataType, name: '元数据类型'},
-            {path: 'dict', component: Dict, name: '数据字典'},
+            {path: 'dic', component: Dict, name: '数据字典'},
             {path: 'cache', component: Cache, name: '缓存管理'},
             {path: 'sysMessageFiled', component: SysMessageFiled, name: '短信字段管理'},
             {path: 'sysMessageTemplate', component: SysMessageTemplate, name: '短信模板管理'},
