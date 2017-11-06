@@ -19,7 +19,7 @@ const app = {
             opened: !+Cookies.get('sidebarStatus')
         },
         enums: [],
-        dicts: [],
+        dics: [],
         zwfwEnumData: [],
         theme: 'default',
         livenewsChannels: Cookies.get('livenewsChannels') || '[]',
@@ -41,8 +41,8 @@ const app = {
         SET_ZWFWEDATADATA: (state, enums) => {
             state.zwfwEnumData = enums;
         },
-        SET_DICTS: (state, dicts) => {
-            state.dicts = dicts;
+        SET_DICTS: (state, dics) => {
+            state.dics = dics;
         }
     },
     actions: {
@@ -93,12 +93,12 @@ const app = {
                     if (response.httpCode !== 200) {
                         reject(response.msg);
                     } else {
-                        let dicts = {};
+                        let dics = {};
                         let result = response.data;
                         for (let obj of result) {
-                            dicts[obj.name] = obj.value;
+                            dics[obj.name] = obj.value;
                         }
-                        commit('SET_DICTS', dicts);
+                        commit('SET_DICTS', dics);
                     }
                 }).catch(error => {
                     reject(error);

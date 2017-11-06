@@ -56,7 +56,7 @@ Signavio.I18N.Editor.Linking.BrokenLink = "The link is broken!";
 Signavio.I18N.Editor.Linking.PreviewTitle = "Preview";
 
 if(!Signavio.I18N.Glossary_Support) { Signavio.I18N.Glossary_Support = {}; }
-Signavio.I18N.Glossary_Support.renameEmpty = "No dictionary entry";
+Signavio.I18N.Glossary_Support.renameEmpty = "No dicionary entry";
 Signavio.I18N.Glossary_Support.renameLoading = "Searching...";
 
 /** New Language Properties: 08.09.2009*/

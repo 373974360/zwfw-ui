@@ -86,7 +86,7 @@
         createZwfwCategoryItem,
         updateZwfwCategoryItem,
         delZwfwCategoryItems
-    } from 'api/zwfw/zwfwCategoryItem';
+    } from 'api/zwfwSystem/zwfwCategoryItem';
 
     export default {
         name: 'zwfwCategoryItem_table',

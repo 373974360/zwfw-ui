@@ -16,7 +16,7 @@ export function getDicts() {
 
 export function getZwfwEnums() {
     return fetch({
-        url: '/api/zwfwSystem/common/zwfwEnums',
+        url: '/api/zwfw/common/zwfwEnums',
         method: 'get'
     });
 }

@@ -152,7 +152,7 @@
 <script>
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
-    import {getZwfwCompanyList, createZwfwCompany, updateZwfwCompany, delZwfwCompanys} from 'api/zwfw/zwfwCompany';
+    import {getZwfwCompanyList, createZwfwCompany, updateZwfwCompany, delZwfwCompanys} from 'api/zwfwSystem/zwfwCompany';
 
     export default {
         name: 'zwfwCompany_table',
