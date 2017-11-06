@@ -33,7 +33,7 @@
             </el-table-column>
             <el-table-column prop="sysDeptVo.name" align="center" label="部门">
                 <template scope="scope">
-                    <span v-if="scope.row.sysDeptVo.name">{{scope.row.sysDeptVo.name}}</span>
+                    <span v-if="scope.row.sysDeptVo">{{scope.row.sysDeptVo.name}}</span>
                     <span v-else></span>
                 </template>
             </el-table-column>
