@@ -2,7 +2,7 @@ import fetch from 'utils/fetch';
 
 export function getZwfwMaterialList(query) {
     return fetch({
-        url: '/api/zwfw/material/list',
+        url: '/api/zwfwSystem/business/material/list',
         method: 'get',
         params: query
     });
@@ -11,7 +11,7 @@ export function getZwfwMaterialList(query) {
 export function createZwfwMaterial(zwfwMaterialVo) {
     const data = zwfwMaterialVo;
     return fetch({
-        url: '/api/zwfw/material/add',
+        url: '/api/zwfwSystem/business/material/add',
         method: 'post',
         data
     })
@@ -20,7 +20,7 @@ export function createZwfwMaterial(zwfwMaterialVo) {
 export function updateZwfwMaterial(zwfwMaterialVo) {
     const data = zwfwMaterialVo;
     return fetch({
-        url: '/api/zwfw/material/edit',
+        url: '/api/zwfwSystem/business/material/edit',
         method: 'post',
         data
     })

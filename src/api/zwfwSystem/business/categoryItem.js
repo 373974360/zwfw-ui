@@ -2,7 +2,7 @@ import fetch from 'utils/fetch';
 
 export function getZwfwCategoryItemList(query) {
     return fetch({
-        url: '/api/zwfw/categoryItem/list',
+        url: '/api/zwfwSystem/business/categoryItem/list',
         method: 'get',
         params: query
     });
@@ -11,7 +11,7 @@ export function getZwfwCategoryItemList(query) {
 export function createZwfwCategoryItem(zwfwCategoryItemVo){
     const data = zwfwCategoryItemVo;
     return fetch({
-        url: '/api/zwfw/categoryItem/add',
+        url: '/api/zwfwSystem/business/categoryItem/add',
         method: 'post',
         data
     })
@@ -20,7 +20,7 @@ export function createZwfwCategoryItem(zwfwCategoryItemVo){
 export function updateZwfwCategoryItem(zwfwCategoryItemVo){
     const data = zwfwCategoryItemVo;
     return fetch({
-        url: '/api/zwfw/categoryItem/edit',
+        url: '/api/zwfwSystem/business/categoryItem/edit',
         method: 'post',
         data
     })

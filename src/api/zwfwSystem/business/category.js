@@ -2,7 +2,7 @@ import fetch from 'utils/fetch';
 
 export function getCategoryList(query) {
     return fetch({
-        url: '/api/zwfw/category/list',
+        url: '/api/zwfwSystem/business/category/list',
         method: 'get',
         params: query
     });
@@ -10,14 +10,14 @@ export function getCategoryList(query) {
 
 export function getCategoryTree() {
     return fetch({
-        url: '/api/zwfw/category/getTree',
+        url: '/api/zwfwSystem/business/category/getTree',
         method: 'get'
     });
 }
 
 export function getCategoryCascader(id) {
     return fetch({
-        url: '/api/zwfw/category/getCascader',
+        url: '/api/zwfwSystem/business/category/getCascader',
         method: 'get',
         params: {id}
     });
