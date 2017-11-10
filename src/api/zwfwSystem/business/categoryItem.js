@@ -28,7 +28,7 @@ export function updateZwfwCategoryItem(zwfwCategoryItemVo){
 export function delZwfwCategoryItems(ids) {
     const data = {ids};
     return fetch({
-        url: '/api/zwfw/categoryItem/dels',
+        url: '/api/zwfwSystem/business/categoryItem/dels',
         method: 'post',
         data
     })
@@ -36,14 +36,14 @@ export function delZwfwCategoryItems(ids) {
 export function deleteZwfwCategoryItem(categoryId, ids) {
     const data = {categoryId, ids};
     return fetch({
-        url: '/api/zwfw/categoryItem/delete',
+        url: '/api/zwfwSystem/business/categoryItem/delete',
         method: 'post',
         data
     })
 }
 export function getAllCategoeyItem(categoryId) {
     return fetch({
-        url: '/api/zwfw/categoryItem/getAll',
+        url: '/api/zwfwSystem/business/categoryItem/getAll',
         method: 'get',
         params: {categoryId}
     })

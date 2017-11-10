@@ -28,7 +28,7 @@ export function updateZwfwItem(zwfwItemVo) {
 export function delZwfwItems(ids) {
     const data = {ids};
     return fetch({
-        url: '/api/zwfw/item/dels',
+        url: '/api/zwfwSystem/business/item/dels',
         method: 'post',
         data
     })
@@ -36,14 +36,14 @@ export function delZwfwItems(ids) {
 export function deleteZwfwItem(id) {
     const data = {id};
     return fetch({
-        url: '/api/zwfw/item/delete',
+        url: '/api/zwfwSystem/business/item/delete',
         method: 'post',
         data
     })
 }
 export function getAllByNameOrbasicCode(query) {
     return fetch({
-        url: '/api/zwfw/item/getAll',
+        url: '/api/zwfwSystem/business/item/getAll',
         method: 'get',
         params: query
     })

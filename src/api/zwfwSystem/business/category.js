@@ -26,7 +26,7 @@ export function getCategoryCascader(id) {
 export function createCategory(zwfwCategoryVo) {
     const data = zwfwCategoryVo;
     return fetch({
-        url: '/api/zwfw/category/add',
+        url: '/api/zwfwSystem/business/category/add',
         method: 'post',
         data
     })
@@ -35,7 +35,7 @@ export function createCategory(zwfwCategoryVo) {
 export function updateCategory(zwfwCategoryVo) {
     const data = zwfwCategoryVo;
     return fetch({
-        url: '/api/zwfw/category/edit',
+        url: '/api/zwfwSystem/business/category/edit',
         method: 'post',
         data
     })
@@ -43,7 +43,7 @@ export function updateCategory(zwfwCategoryVo) {
 export function delCategory(id) {
     const data = {id};
     return fetch({
-        url: '/api/zwfw/category/del',
+        url: '/api/zwfwSystem/business/category/del',
         method: 'post',
         data
     })
@@ -52,7 +52,7 @@ export function delCategory(id) {
 export function deleteCategory(id) {
     const data = {id};
     return fetch({
-        url: '/api/zwfw/category/delete',
+        url: '/api/zwfwSystem/business/category/delete',
         method: 'post',
         data
     })
@@ -60,7 +60,7 @@ export function deleteCategory(id) {
 
 export function getAllCategory() {
     return fetch({
-        url: '/api/zwfw/category/getAll',
+        url: '/api/zwfwSystem/business/category/getAll',
         mothod: 'get'
     });
 }
