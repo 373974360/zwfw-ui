@@ -28,7 +28,7 @@ export function updateZwfwMaterial(zwfwMaterialVo) {
 export function delZwfwMaterials(ids) {
     const data = {ids};
     return fetch({
-        url: '/api/zwfw/material/dels',
+        url: '/api/zwfwSystem/business/material/dels',
         method: 'post',
         data
     })
@@ -36,14 +36,14 @@ export function delZwfwMaterials(ids) {
 export function deleteZwfwMaterial(id) {
     const data = {id};
     return fetch({
-        url: '/api/zwfw/material/delete',
+        url: '/api/zwfwSystem/business/material/delete',
         method: 'post',
         data
     })
 }
 export function getAllMaterial(query) {
     return fetch({
-        url: '/api/zwfw/material/getAll',
+        url: '/api/zwfwSystem/business/material/getAll',
         method: 'get',
         params: query
     })
