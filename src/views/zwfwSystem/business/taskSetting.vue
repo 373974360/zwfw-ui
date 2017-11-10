@@ -515,9 +515,9 @@
             };
 
             ActivitiRest.options = {
-                processInstanceHighLightsUrl: "/api/zwfw/activiti/service/process-instance/{processInstanceId}/highlights?callback=?",
-                processDefinitionUrl: "/api/zwfw/activiti/service/process-definition/{processDefinitionId}/diagram-layout?callback=?",
-                processDefinitionByKeyUrl: "/api/zwfw/activiti/service/process-definition/{processDefinitionKey}/diagram-layout?callback=?"
+                processInstanceHighLightsUrl: "/api/workSystem/activiti/service/process-instance/{processInstanceId}/highlights?callback=?",
+                processDefinitionUrl: "/api/workSystem/activiti/service/process-definition/{processDefinitionId}/diagram-layout?callback=?",
+                processDefinitionByKeyUrl: "/api/workSystem/activiti/service/process-definition/{processDefinitionKey}/diagram-layout?callback=?"
             };
 
             ProcessDiagramGenerator.processDiagrams = {};

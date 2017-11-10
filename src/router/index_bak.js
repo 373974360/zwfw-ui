@@ -33,18 +33,18 @@ const Category = () => import('../views/zwfw/category');
 const Item = () => import('../views/zwfw/zwfwItem');
 const Window = () => import('../views/zwfw/window');
 const Material = () => import('../views/zwfw/zwfwMaterial');
-const FormEditor = () => import('../views/zwfw/formEditor/editor');
+const FormEditor = () => import('../views/workSystem/formEditor/editor');
 const LegalPerson = () => import('../views/zwfw/zwfwLegalPerson');
 const NaturePerson = () => import('../views/zwfw/zwfwNaturePerson');
-const ZwfwProcessDefinitionModel = () => import('../views/zwfw/activiti/zwfwProcessDefinitionModel');
-const ZwfwProcessDefinition = () => import('../views/zwfw/activiti/ZwfwProcessDefinition');
-const ZwfwTaskSetting = () => import('../views/zwfw/activiti/ZwfwTaskSetting');
+const ZwfwProcessDefinitionModel = () => import('../views/workSystem/activiti/zwfwProcessDefinitionModel');
+const ZwfwProcessDefinition = () => import('../views/workSystem/activiti/ZwfwProcessDefinition');
+const ZwfwTaskSetting = () => import('../views/workSystem/activiti/ZwfwTaskSetting');
 const ZwfwNumberScope = () => import('../views/zwfw/zwfwNumberScope');
 
 /* 部门待办列表*/
-const DeptWorkPendingList = () => import('../views/zwfw/work/deptWorkPendingList');
+const DeptWorkPendingList = () => import('../views/workSystem/work/deptWorkPendingList');
 /* 部门办件查询*/
-const DeptWorkQueryList = () => import('../views/zwfw/work/deptWorkQueryList');
+const DeptWorkQueryList = () => import('../views/workSystem/work/deptWorkQueryList');
 
 
 /* 综合窗口 - 窗口收件*/
@@ -54,9 +54,9 @@ const CompositeWindowHistory = () => import('../views/zwfw/hall/CompositeWindowH
 /* 综合窗口 - 办结取件*/
 const CompositeWindowTakeCert = () => import('../views/zwfw/hall/CompositeWindowTakeCert');
 /* 办件管理 - 延期审核管理*/
-const DeptWorkExtendTimeList = () => import('../views/zwfw/work/deptExtendTimeList');
+const DeptWorkExtendTimeList = () => import('../views/workSystem/work/deptExtendTimeList');
 /* 办件管理 - 督办管理*/
-const DeptWorkSuperviseList = () => import('../views/zwfw/work/deptSuperviseList');
+const DeptWorkSuperviseList = () => import('../views/workSystem/work/deptSuperviseList');
 
 
 /* 定时任务 */
@@ -67,10 +67,10 @@ const Task = () => import('../views/task/task');
 const Call = () => import('../views/zwfw/count/call');
 
 /* 网上预审 */
-const Pending = () => import('../views/zwfw/pretrial/pending');
-const Finish = () => import('../views/zwfw/pretrial/finish');
-const Correction = () => import('../views/zwfw/pretrial/correction');
-const NoAccept = () => import('../views/zwfw/pretrial/noAccept');
+const Pending = () => import('../views/workSystem/pretrial/pending');
+const Finish = () => import('../views/workSystem/pretrial/finish');
+const Correction = () => import('../views/workSystem/pretrial/correction');
+const NoAccept = () => import('../views/workSystem/pretrial/noAccept');
 /* 街办业务 */
 const WindowWork = () => import('../views/streetoffice/windowWork');
 const WindowHistory = () => import('../views/streetoffice/windowHistory');

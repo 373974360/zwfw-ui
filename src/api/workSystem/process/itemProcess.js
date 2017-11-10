@@ -13,7 +13,7 @@ export function getOtherSetting(processDefinitionId,
         processDefinitionId, taskDefinitionKey
     };
     return fetch({
-        url: '/api/zwfw/itemProcess/getOtherSetting',
+        url: '/api/workSystem/itemProcess/getOtherSetting',
         method: 'get',
         params: data
     });
@@ -26,7 +26,7 @@ export function getOtherSetting(processDefinitionId,
  */
 export function saveOtherSetting(data) {
     return fetch({
-        url: '/api/zwfw/itemProcess/saveOtherSetting',
+        url: '/api/workSystem/itemProcess/saveOtherSetting',
         method: 'post',
         params: data
     });
@@ -43,7 +43,7 @@ export function getTaskUsers(processDefinitionId, taskDefinitionKey) {
         processDefinitionId, taskDefinitionKey
     };
     return fetch({
-        url: '/api/zwfw/itemProcess/getTaskUsers',
+        url: '/api/workSystem/itemProcess/getTaskUsers',
         method: 'get',
         params: data
     });
@@ -63,7 +63,7 @@ export function saveCandidateUser(processDefinitionId,
         processDefinitionId, taskDefinitionKey, users
     };
     return fetch({
-        url: '/api/zwfw/itemProcess/saveCandidateUser',
+        url: '/api/workSystem/itemProcess/saveCandidateUser',
         method: 'post',
         params: data
     });
@@ -75,7 +75,7 @@ export function saveCandidateUser(processDefinitionId,
  */
 export function getProcessList() {
     return fetch({
-        url: '/api/zwfw/itemProcess/getProcessList',
+        url: '/api/workSystem/itemProcess/getProcessList',
         method: 'get'
     })
 }
@@ -88,7 +88,7 @@ export function getProcessList() {
 export function getProcessVersionList(processDefinitionKey) {
     const data = {processDefinitionKey}
     return fetch({
-        url: '/api/zwfw/itemProcess/getProcessVersionList',
+        url: '/api/workSystem/itemProcess/getProcessVersionList',
         method: 'get',
         params: data
     });
@@ -101,7 +101,7 @@ export function getProcessVersionList(processDefinitionKey) {
 export function getUserList() {
     const data = {}
     return fetch({
-        url: '/api/zwfw/itemProcess/getUserList',
+        url: '/api/workSystem/itemProcess/getUserList',
         method: 'get',
         params: data
     });
@@ -109,7 +109,7 @@ export function getUserList() {
 
 export function getFinishList(query) {
     return fetch({
-        url: '/api/zwfw/hallCompositeWindowCert/finish_list',
+        url: '/api/workSystem/hallCompositeWindowCert/finish_list',
         method: 'get',
         params: query
     });
@@ -117,7 +117,7 @@ export function getFinishList(query) {
 export function updateTake(query) {
     const data = query;
     return fetch({
-        url: '/api/zwfw/hallCompositeWindowCert/update_take',
+        url: '/api/workSystem/hallCompositeWindowCert/update_take',
         method: 'post',
         data
     })
