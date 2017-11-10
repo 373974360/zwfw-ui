@@ -250,7 +250,7 @@
             },
             print_ycxgzd() {
                 if (this.ItemPretrial != null) {
-                    window.open('/api/zwfw/zwfwItemPretrial/downloadYcxgzd?pretrialNumber=' + this.ItemPretrial.pretrialNumber);
+                    window.open('/api/workSystem/zwfwItemPretrial/downloadYcxgzd?pretrialNumber=' + this.ItemPretrial.pretrialNumber);
                 }
             },
             resetTemp() {

@@ -486,7 +486,7 @@
             },
             print_ycxgzd(pretrialNumber) {
                 if (pretrialNumber != null) {
-                    window.open('/api/zwfw/zwfwItemPretrial/downloadYcxgzd?pretrialNumber=' + pretrialNumber);
+                    window.open('/api/workSystem/zwfwItemPretrial/downloadYcxgzd?pretrialNumber=' + pretrialNumber);
                 }
             }
 

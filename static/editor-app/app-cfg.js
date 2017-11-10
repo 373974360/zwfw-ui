@@ -21,5 +21,5 @@
 var ACTIVITI = ACTIVITI || {};
 
 ACTIVITI.CONFIG = {
-    contextRoot: '/api/zwfw/activiti'
+    contextRoot: '/api/workSystem/activiti'
 };

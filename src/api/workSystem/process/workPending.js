@@ -8,7 +8,7 @@ import fetch from 'utils/fetch';
 export function getZwfwDeptWorkPendingList(q) {
 
     return fetch({
-        url: '/api/zwfw/itemProcessWork/getDeptWorkPendingList',
+        url: '/api/workSystem/itemProcessWork/getDeptWorkPendingList',
         method: 'get',
         params: q
     });
@@ -16,7 +16,7 @@ export function getZwfwDeptWorkPendingList(q) {
 
 export function getZwfwDeptWorkDetail(query) {
     return fetch({
-        url: '/api/zwfw/itemProcessWork/getDeptWorkDetail',
+        url: '/api/workSystem/itemProcessWork/getDeptWorkDetail',
         method: 'get',
         params: query
     });
@@ -25,7 +25,7 @@ export function getZwfwDeptWorkDetail(query) {
 export function workComplete(query) {
     const data = query;
     return fetch({
-        url: '/api/zwfw/itemProcessWork/workComplete',
+        url: '/api/workSystem/itemProcessWork/workComplete',
         method: 'post',
         data
     })
@@ -34,7 +34,7 @@ export function workComplete(query) {
 export function workCorrection(query) {
     const data = query;
     return fetch({
-        url: '/api/zwfw/itemProcessWork/workCorrection',
+        url: '/api/workSystem/itemProcessWork/workCorrection',
         method: 'post',
         data
     })
@@ -43,7 +43,7 @@ export function workCorrection(query) {
 export function workExtendTime(query) {
     const data = query;
     return fetch({
-        url: '/api/zwfw/itemProcessWork/workExtendTime',
+        url: '/api/workSystem/itemProcessWork/workExtendTime',
         method: 'post',
         data
     })
@@ -52,7 +52,7 @@ export function workExtendTime(query) {
 export function workClose(query) {
     const data = query;
     return fetch({
-        url: '/api/zwfw/itemProcessWork/workClose',
+        url: '/api/workSystem/itemProcessWork/workClose',
         method: 'post',
         data
     })
@@ -61,7 +61,7 @@ export function workClose(query) {
 export function workCancelExtendTime(query) {
     const data = query;
     return fetch({
-        url: '/api/zwfw/itemProcessWork/workCancelExtendTime',
+        url: '/api/workSystem/itemProcessWork/workCancelExtendTime',
         method: 'post',
         data
     })

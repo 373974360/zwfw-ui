@@ -10,7 +10,7 @@ import _ from 'lodash';
  */
 export function getZwfwActivitiModelList(query) {
     return fetch({
-        url: '/api/zwfw/activiti/model/list',
+        url: '/api/workSystem/activiti/model/list',
         method: 'get',
         params: query
     });
@@ -29,7 +29,7 @@ export function getZwfwActivitiModelEditUrl(id) {
  * @param id
  */
 export function getZwfwActivitiModelUploadUrl() {
-    return '/api/zwfw/activiti/model/upload';
+    return '/api/workSystem/activiti/model/upload';
 }
 
 /**
@@ -38,7 +38,7 @@ export function getZwfwActivitiModelUploadUrl() {
  */
 export function createZwfwActivitiModel(data) {
     return fetch({
-        url: '/api/zwfw/activiti/model/add',
+        url: '/api/workSystem/activiti/model/add',
         method: 'post',
         params: data
     });
@@ -51,7 +51,7 @@ export function createZwfwActivitiModel(data) {
 export function deleteZwfwActivitiModel(id) {
     const data = {id: _.isArray(id) ? id.join('#') : id};
     return fetch({
-        url: '/api/zwfw/activiti/model/delete',
+        url: '/api/workSystem/activiti/model/delete',
         method: 'post',
         params: data
     });
@@ -64,7 +64,7 @@ export function deleteZwfwActivitiModel(id) {
 export function deployZwfwActivitiModel(id) {
     const data = {id: _.isArray(id) ? id.join('#') : id};
     return fetch({
-        url: '/api/zwfw/activiti/model/deploy',
+        url: '/api/workSystem/activiti/model/deploy',
         method: 'post',
         params: data
     });
@@ -76,7 +76,7 @@ export function deployZwfwActivitiModel(id) {
  */
 export function getZwfwProcessDefinitionList(query) {
     return fetch({
-        url: '/api/zwfw/activiti/pd/list',
+        url: '/api/workSystem/activiti/pd/list',
         method: 'get',
         params: query
     });
@@ -91,7 +91,7 @@ export function suspendZwfwProcessDefinition(id) {
     const data = {id: _.isArray(id) ? id.join('#') : id};
 
     return fetch({
-        url: '/api/zwfw/activiti/pd/suspend',
+        url: '/api/workSystem/activiti/pd/suspend',
         method: 'post',
         params: data
     })
@@ -107,7 +107,7 @@ export function activeZwfwProcessDefinition(id) {
     const data = {id: _.isArray(id) ? id.join('#') : id};
 
     return fetch({
-        url: '/api/zwfw/activiti/pd/active',
+        url: '/api/workSystem/activiti/pd/active',
         method: 'post',
         params: data
     })
@@ -122,7 +122,7 @@ export function deleteZwfwProcessDefinition(id) {
     const data = {id: _.isArray(id) ? id.join('#') : id};
 
     return fetch({
-        url: '/api/zwfw/activiti/pd/delete',
+        url: '/api/workSystem/activiti/pd/delete',
         method: 'post',
         params: data
     })
