@@ -66,7 +66,7 @@ const ProcessDefinition = () => import('../views/zwfwSystem/business/processDefi
 const TaskSetting = () => import('../views/zwfwSystem/business/taskSetting');
 const FormEditor = () => import('../views/zwfwSystem/business/formEditor');
 /* 统计分析 */
-const CallCount = () => import('../views/zwfwSystem/count/callCount');
+const CallCount = () => import('../views/hallSystem/count/callCount');
 
 /************************政务服务办理系统************************/
 /* index */

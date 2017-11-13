@@ -36,7 +36,7 @@ export function delWindow(ids) {
 }
 export function getAllWindow() {
     return fetch({
-        url: '/api/zwfw/window/getAll',
+        url: '/api/hallSystem/window/getAll',
         mothod: 'get'
     });
 }

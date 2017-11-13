@@ -85,7 +85,7 @@
     import moment from 'moment';
     import {getAllCategory} from 'api/zwfwSystem/business/category';
     import {getAllWindow} from 'api/hallSystem/lobby/window';
-    import {plotByCategory, plotByWindow, plotByUser} from 'api/zwfwSystem/count/dataPlot';
+    import {plotByCategory, plotByWindow, plotByUser} from 'api/hallSystem/count/dataPlot';
     import {getAllUser} from 'api/baseSystem/org/user';
 
     export default {
