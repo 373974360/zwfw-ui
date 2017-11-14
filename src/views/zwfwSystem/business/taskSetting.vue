@@ -322,6 +322,7 @@
              */
             saveCandidateUser() {
                 var _this = this;
+                console.log(this.task)
                 saveCandidateUser(this.processDefinitionId, this.task.taskDefinitionKey, this.candidateUserList.map(function (item) {
                     return item.id
                 })).then(function (response) {
@@ -425,15 +426,17 @@
                                     name: contextObject.getProperty('name'),
                                     processDefinitionId: canvas.processDefinitionId
                                 }).show();
+
+
 //
 //
 //
 //
 
-//                                getTaskUsers(canvas.processDefinitionId, contextObject.id).then(response => {
-//                                    const data = response.data;
-//                                    _this.candidateUserList = data;
-//                                });
+                                getTaskUsers(canvas.processDefinitionId, contextObject.id).then(response => {
+                                    const data = response.data;
+                                    _this.candidateUserList = data;
+                                });
 
                                 _this.task = {
                                     name: '',
@@ -454,7 +457,6 @@
                                     beginNotifyTarget: 0
                                 };
 
-                                _this.task.taskDefinitionKey = contextObject.id;
                                 _this.task.name = contextObject.getProperty('name');
                                 _this.processDefinitionId = canvas.processDefinitionId;
                                 _this.task.taskCandidateUsers = '';
@@ -466,6 +468,8 @@
 //                                    console.log(c);
                                     if (c && Object.keys(c).length > 0) {
                                         Object.assign(_this.task, c);
+                                        _this.task.taskDefinitionKey = contextObject.id;
+
 //                                        _this.task.beginNotifyTarget = c.beginNotifyTarget;
 //                                        _this.task.beginNotifyTemplate = c.beginNotifyTemplate;
 //                                        _this.task.completeNotifyTarget = c.completeNotifyTarget;
