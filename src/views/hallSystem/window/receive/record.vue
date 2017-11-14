@@ -85,7 +85,7 @@
                             <td style="color:red">{{itemVo.name}}</td>
                         </tr>
                         <tr v-if="member.naturePerson!=null">
-                            <th >申报人:</th>
+                            <th>申报人:</th>
                             <td>{{member.naturePerson.name}}</td>
                         </tr>
                         <tr>
@@ -411,7 +411,7 @@
                     this.itemPretrialVo = response.data.itemPretrialVo;
                     this.windowVo = response.data.windowVo;
                     this.itemWindowUserName = response.data.itemWindowUserName;
-                })
+                });
             },
             resetTemp() {
                 this.itemNumber = {

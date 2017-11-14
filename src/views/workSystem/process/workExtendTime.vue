@@ -178,7 +178,7 @@
                         this.zwfwItemProcessExtendTimeList.splice(index, 1);
                         this.$message.success('保存成功');
                     } else {
-                        this.$message.error('审批失败');
+                        this.$message.error(response.msg ||'审批失败');
                     }
                 })
             },
@@ -189,7 +189,7 @@
                         this.zwfwItemProcessExtendTimeList.splice(index, 1);
                         this.$message.success('保存成功');
                     } else {
-                        this.$message.error('审批失败');
+                        this.$message.error(response.msg || '审批失败');
                     }
                 })
             }

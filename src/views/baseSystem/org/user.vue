@@ -224,7 +224,7 @@
                 dialogFormVisible: false,
                 dialogStatus: '',
                 dialogLoading: false,
-                uploadAction:  '/api/admin/base/sysUpload/',
+                uploadAction:  '/api/common/upload',
                 uploadAvatars: []
             }
         },
