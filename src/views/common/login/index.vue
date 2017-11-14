@@ -6,6 +6,7 @@
                      label-width="0px"
                      class="card-box login-form">
                 <h3 class="title">西安德雅通科技有限公司</h3>
+                <el-input type="hidden" v-model="loginForm.random"></el-input>
                 <el-row type="flex" justify="center">
                     <el-col :span="24">
                         <el-form-item prop="account">
@@ -25,18 +26,16 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <!--
                 <el-row type="flex" justify="center">
                     <el-col :span="24">
                         <el-form-item prop="captcha">
                             <span class="svg-container"><wscn-icon-svg icon-class="yanzhengma"/></span>
-                            <el-input type="text" v-model="loginForm.captcha" @keyup.enter.native="handleLogin"
+                            <el-input type="text" v-model="loginForm.verifyCode" @keyup.enter.native="handleLogin"
                                       placeholder="验证码"></el-input>
                             <img class="captcha" :src="loginForm.imgUrl" @click.self="changeCaptcha">
                         </el-form-item>
                     </el-col>
                 </el-row>
-                -->
                 <el-row type="flex" justify="center">
                     <el-col :span="24">
                         <el-form-item>
@@ -78,8 +77,9 @@
                 loginForm: {
                     account: '373974360@qq.com',
                     password: '',
-                    captcha: '',
-                    imgUrl: ''
+                    verifyCode: '',
+                    imgUrl: '',
+                    random: '',
                 },
                 loginRules: {
                     account: [
@@ -88,10 +88,11 @@
                     password: [
                         { min: 6, message: '密码不能小于6位', trigger: 'blur' }
                     ],
-//                    captcha: [
-//                        { min: 4, max: 4, message: '验证码只能是4位', trigger: 'blur' }
-//                    ]
+                    verifyCode: [
+                        { min: 4, max: 4, message: '验证码只能是4位', trigger: 'blur' }
+                    ]
                 },
+
                 loading: false,
                 canvas: true
             }
@@ -120,7 +121,8 @@
                 });
             },
             changeCaptcha() {
-                this.loginForm.imgUrl = process.env.SYS_API + '/base/getVerifyCode?' + Math.random();
+                this.loginForm.random = Math.random();
+                this.loginForm.imgUrl = '/api/common/getVerifyCode?random=' + this.loginForm.random;
             }
         },
         mounted() {

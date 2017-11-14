@@ -991,7 +991,7 @@ angular.mock.dump = function(object) {
     });
 
     $scope.saveMessage = function(message) {
-      var headers = { 'Authorization': authToken };
+      var headers = { 'User-Authorization': authToken };
       $scope.status = 'Saving...';
 
       $http.post('/add-msg.py', message, { headers: headers } ).success(function(response) {
@@ -1064,7 +1064,7 @@ angular.mock.dump = function(object) {
          $httpBackend.expectPOST('/add-msg.py', undefined, function(headers) {
            // check if the header was send, if it wasn't the expectation won't
            // match the request and the test will fail
-           return headers['Authorization'] == 'xxx';
+           return headers['User-Authorization'] == 'xxx';
          }).respond(201, '');
 
          $rootScope.saveMessage('whatever');

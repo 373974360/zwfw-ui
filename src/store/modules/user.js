@@ -80,7 +80,7 @@ const user = {
                         setToken(data);
                         commit('SET_TOKEN', data);
                         resolve();
-                        // Cookies.set('Authorization', data.token);
+                        // Cookies.set('User-Authorization', data.token);
                         // commit('SET_TOKEN', data.token);
                         // commit('SET_UID', data.id);
                         // commit('SET_EMAIL', data.account);

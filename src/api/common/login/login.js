@@ -3,7 +3,7 @@ import fetch from 'utils/fetch';
 export function loginByEmail(userInfo) {
     const data = userInfo;
     return fetch({
-        url: '/api/auth/jwt/token',
+        url: '/api/auth/userJwt/token',
         method: 'post',
         data
     });
@@ -26,7 +26,7 @@ export function sendPWD2Email(account) {
 
 export function logout() {
     return fetch({
-        url: '/api/auth/jwt/invalid',
+        url: '/api/auth/userJwt/invalid',
         method: 'post'
     });
 }

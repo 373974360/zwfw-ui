@@ -198,7 +198,7 @@
                 'closeOnClickModal'
             ]),
             uploadHeaders(){
-               return { 'Authorization': this.$store.getters.token}
+               return { 'User-Authorization': this.$store.getters.token}
             }
         },
         methods: {
