@@ -2,7 +2,7 @@ import fetch from 'src/utils/fetch';
 
 export function getNumberScopeList(query) {
     return fetch({
-        url: '/api/zwfw/numberScope/list',
+        url: '/api/hallSystem/numberScope/list',
         method: 'get',
         params: query
     });
@@ -11,7 +11,7 @@ export function getNumberScopeList(query) {
 export function createZwfwNumberScope(zwfwNumberScopeVo) {
     const data = zwfwNumberScopeVo;
     return fetch({
-        url: '/api/zwfw/numberScope/add',
+        url: '/api/hallSystem/numberScope/add',
         method: 'post',
         data
     })
@@ -20,7 +20,7 @@ export function createZwfwNumberScope(zwfwNumberScopeVo) {
 export function updateZwfwNumberScope(zwfwNumberScopeVo) {
     const data = zwfwNumberScopeVo;
     return fetch({
-        url: '/api/zwfw/numberScope/edit',
+        url: '/api/hallSystem/numberScope/edit',
         method: 'post',
         data
     })
@@ -28,7 +28,7 @@ export function updateZwfwNumberScope(zwfwNumberScopeVo) {
 export function delZwfwNumberScope(ids) {
     const data = {ids};
     return fetch({
-        url: '/api/zwfw/numberScope/dels',
+        url: '/api/hallSystem/numberScope/dels',
         method: 'post',
         data
     })
@@ -37,7 +37,7 @@ export function delZwfwNumberScope(ids) {
 export function deleteZwfwNumberScope(id) {
     const data = {id};
     return fetch({
-        url: '/api/zwfw/numberScope/delete',
+        url: '/api/hallSystem/numberScope/delete',
         method: 'post',
         data
     })
@@ -45,7 +45,7 @@ export function deleteZwfwNumberScope(id) {
 
 export function getAllItemNumberScope(query) {
     return fetch({
-        url: '/api/zwfw/numberScopeItem/getAll',
+        url: '/api/hallSystem/numberScopeItem/getAll',
         method: 'get',
         params: query
     })
@@ -54,7 +54,7 @@ export function getAllItemNumberScope(query) {
 export function createZwfwNumberScopeItem(zwfwNumberScopeItemVo) {
     const data = zwfwNumberScopeItemVo;
     return fetch({
-        url: '/api/zwfw/numberScopeItem/add',
+        url: '/api/hallSystem/numberScopeItem/add',
         method: 'post',
         data
     })
@@ -63,7 +63,7 @@ export function createZwfwNumberScopeItem(zwfwNumberScopeItemVo) {
 export function deleteZwfwNumberScopeItem(numberScopeId, ids) {
     const data = {numberScopeId, ids};
     return fetch({
-        url: '/api/zwfw/numberScopeItem/delete',
+        url: '/api/hallSystem/numberScopeItem/delete',
         method: 'post',
         data
     })

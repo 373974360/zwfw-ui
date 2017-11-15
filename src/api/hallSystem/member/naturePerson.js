@@ -2,7 +2,7 @@ import fetch from 'utils/fetch';
 
 export function getAllZwfwNaturePerson(query) {
     return fetch({
-        url: '/api/zwfw/naturePerson/getAll',
+        url: '/api/hallSystem/naturePerson/getAll',
         method: 'get',
         params: query
     });
@@ -10,7 +10,7 @@ export function getAllZwfwNaturePerson(query) {
 
 export function getZwfwNaturePersonList(query) {
     return fetch({
-        url: '/api/zwfw/naturePerson/list',
+        url: '/api/hallSystem/naturePerson/list',
         method: 'get',
         params: query
     });
@@ -19,7 +19,7 @@ export function getZwfwNaturePersonList(query) {
 export function createZwfwNaturePerson(zwfwNaturePersonVo) {
     const data = zwfwNaturePersonVo;
     return fetch({
-        url: '/api/zwfw/naturePerson/add',
+        url: '/api/hallSystem/naturePerson/add',
         method: 'post',
         data
     })
@@ -28,7 +28,7 @@ export function createZwfwNaturePerson(zwfwNaturePersonVo) {
 export function updateZwfwNaturePerson(zwfwNaturePersonVo) {
     const data = zwfwNaturePersonVo;
     return fetch({
-        url: '/api/zwfw/naturePerson/edit',
+        url: '/api/hallSystem/naturePerson/edit',
         method: 'post',
         data
     })
@@ -36,7 +36,7 @@ export function updateZwfwNaturePerson(zwfwNaturePersonVo) {
 export function delZwfwNaturePersons(ids) {
     const data = {ids};
     return fetch({
-        url: '/api/zwfw/naturePerson/dels',
+        url: '/api/hallSystem/naturePerson/dels',
         method: 'post',
         data
     })
@@ -44,7 +44,7 @@ export function delZwfwNaturePersons(ids) {
 export function deleteZwfwNaturePerson(id) {
     const data = {id};
     return fetch({
-        url: '/api/zwfw/naturePerson/delete',
+        url: '/api/hallSystem/naturePerson/delete',
         method: 'post',
         data
     })

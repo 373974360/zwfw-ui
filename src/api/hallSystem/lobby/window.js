@@ -2,7 +2,7 @@ import fetch from 'utils/fetch';
 
 export function getWindowList(query) {
     return fetch({
-        url: '/api/zwfw/window/list',
+        url: '/api/hallSystem/window/list',
         method: 'get',
         params: query
     });
@@ -11,7 +11,7 @@ export function getWindowList(query) {
 export function createWindow(zwfwWindowUserVo) {
     const data = zwfwWindowUserVo;
     return fetch({
-        url: '/api/zwfw/window/add',
+        url: '/api/hallSystem/window/add',
         method: 'post',
         data
     })
@@ -20,7 +20,7 @@ export function createWindow(zwfwWindowUserVo) {
 export function updateWindow(zwfwWindowUserVo) {
     const data = zwfwWindowUserVo;
     return fetch({
-        url: '/api/zwfw/window/edit',
+        url: '/api/hallSystem/window/edit',
         method: 'post',
         data
     })
@@ -29,7 +29,7 @@ export function updateWindow(zwfwWindowUserVo) {
 export function delWindow(ids) {
     const data = {ids};
     return fetch({
-        url: '/api/zwfw/window/dels',
+        url: '/api/hallSystem/window/dels',
         method: 'post',
         data
     })
@@ -44,7 +44,7 @@ export function getAllWindow() {
 export function delWindowUser(ids) {
     const data = {ids};
     return fetch({
-        url: '/api/zwfw/windowUser/delete',
+        url: '/api/hallSystem/windowUser/delete',
         method: 'post',
         data
     })
@@ -53,7 +53,7 @@ export function delWindowUser(ids) {
 export function createUserWindow(windowId, userIds) {
     const data = {windowId, userIds};
     return fetch({
-        url: '/api/zwfw/windowUser/addList',
+        url: '/api/hallSystem/windowUser/addList',
         method: 'post',
         data
     })
@@ -62,7 +62,7 @@ export function createUserWindow(windowId, userIds) {
 export function createZwfwWindowItem(zwfwWindowItemVo) {
     const data = zwfwWindowItemVo;
     return fetch({
-        url: '/api/zwfw/windowItem/add',
+        url: '/api/hallSystem/windowItem/add',
         method: 'post',
         data
     })
@@ -70,7 +70,7 @@ export function createZwfwWindowItem(zwfwWindowItemVo) {
 
 export function getAllUserWindow(windowId) {
     return fetch({
-        url: '/api/zwfw/windowUser/getAll',
+        url: '/api/hallSystem/windowUser/getAll',
         method: 'get',
         params: {windowId}
     })
@@ -78,7 +78,7 @@ export function getAllUserWindow(windowId) {
 
 export function getAllItemWindow(windowId) {
     return fetch({
-        url: '/api/zwfw/windowItem/getAll',
+        url: '/api/hallSystem/windowItem/getAll',
         method: 'get',
         params: {windowId}
     })
@@ -87,7 +87,7 @@ export function getAllItemWindow(windowId) {
 export function deleteZwfwWindowItem(windowId, ids) {
     const data = {windowId, ids};
     return fetch({
-        url: '/api/zwfw/windowItem/delete',
+        url: '/api/hallSystem/windowItem/delete',
         method: 'post',
         data
     })
