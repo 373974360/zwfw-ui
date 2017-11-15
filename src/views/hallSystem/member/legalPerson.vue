@@ -364,6 +364,7 @@
             create() {
                 this.$refs['zwfwLegalPersonForm'].validate((valid) => {
                     if (valid) {
+
                         this.btnLoading = true;
                         createZwfwLegalPerson(this.zwfwLegalPerson).then(response => {
                             if (response.httpCode === 200) {

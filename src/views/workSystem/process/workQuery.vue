@@ -77,7 +77,7 @@
             </el-table-column>
             <el-table-column prop="enable" class-name="status-col" label="状态">
                 <template scope="scope">
-                    <span>{{scope.row.status | zwfwEnumData('ItemProcessStatus')}}</span>
+                    <span>{{scope.row.status | enums('ItemProcessStatus')}}</span>
                 </template>
             </el-table-column>
             <el-table-column>
@@ -281,7 +281,7 @@
                                     <td>{{h.timeExtendToDate | date('YYYY-MM-DD HH:mm')}}</td>
                                     <td>{{h.taskName}}</td>
                                     <td>{{h.reason}}</td>
-                                    <td>{{h.timeExtendStatus | zwfwEnumData('TimeExtendStatus')}}</td>
+                                    <td>{{h.timeExtendStatus | enums('TimeExtendStatus')}}</td>
                                     <td>{{h.applyUserName}}</td>
                                     <td>{{h.auditUserName}}</td>
                                     <td>

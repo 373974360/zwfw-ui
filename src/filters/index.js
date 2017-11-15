@@ -55,21 +55,6 @@ export function enums(value, type) {
         return '';
     }
 }
-export function zwfwEnumData(value, type) {
-    var array = app.state.zwfwEnumData[type];
-    if(!array) {
-        console.warn('没有枚举类型' + type);
-        return '';
-    }
-    var result = array.filter(function (item) {
-        return item.code === value;
-    });
-    if (result[0]) {
-        return result[0].value || value;
-    } else {
-        return '';
-    }
-}
 export function dics(value, type) {
     var array = app.state.dics[type];
     var result = array.filter(function (item) {

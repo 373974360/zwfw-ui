@@ -82,12 +82,12 @@
                             </tr>
                             <tr v-if="itemPretrialVo!=null">
                                 <th>预审状态:</th>
-                                <td>{{itemPretrialVo.status | zwfwEnumData('PretrialStatus')}}
+                                <td>{{itemPretrialVo.status | enums('PretrialStatus')}}
                                 </td>
                             </tr>
                             <tr>
                                 <th>排号状态:</th>
-                                <td style="color:red">{{itemNumber.status | zwfwEnumData('ItemNumberStatus')}}
+                                <td style="color:red">{{itemNumber.status | enums('ItemNumberStatus')}}
                                 </td>
                             </tr>
                             <tr v-if="itemNumber.status!=6">
@@ -718,12 +718,12 @@
             },
             print_ywsld() {
                 if (this.itemNumber != null) {
-                    window.open('/api/zwfw/zwfwHallCompositeWindow/downloadYwsld?numberId=' + this.itemNumber.id);
+                    window.open('/api/hallSystem/hallCompositeWindow/downloadYwsld?numberId=' + this.itemNumber.id);
                 }
             },
             print_wlzyd() {
                 if (this.itemNumber != null) {
-                    window.open('/api/zwfw/zwfwHallCompositeWindow/downloadWlzyd?numberId=' + this.itemNumber.id);
+                    window.open('/api/hallSystem/hallCompositeWindow/downloadWlzyd?numberId=' + this.itemNumber.id);
                 }
             },
             /**

@@ -114,6 +114,7 @@ export function getFinishList(query) {
         params: query
     });
 }
+
 export function updateTake(query) {
     const data = query;
     return fetch({
