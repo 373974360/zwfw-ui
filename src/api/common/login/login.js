@@ -16,6 +16,13 @@ export function getInfo() {
     });
 }
 
+export function refreshToken() {
+    return fetch({
+        url: '/api/auth/userJwt/refresh',
+        method: 'get'
+    });
+}
+
 export function sendPWD2Email(account) {
     return fetch({
         url: '/api/baseSystem/org/user/get',

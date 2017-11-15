@@ -11,6 +11,7 @@
                 <h3 class="title">发送验证码至邮箱</h3>
             </div>
             <el-form-item prop="account">
+                <span class="svg-container"><wscn-icon-svg icon-class="youxiang"/></span>
                 <el-input name="account" type="text" v-model="resetForm.account"
                           placeholder="邮箱"></el-input>
             </el-form-item>
@@ -81,52 +82,71 @@
 </script>
 
 <style rel="stylesheet/scss" lang="scss">
+    @import "src/styles/mixin.scss";
+
     canvas {
         position: fixed;
     }
-
     .sendpwd-container {
-        height: 100vh;
-        background-color: #2d3a4b;
+        .el-icon-arrow-left{
+            color: #ffffff;
+        }
+        input:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0px 1000px #293444 inset !important;
+            -webkit-text-fill-color: #3E3E3E !important;
+        }
+        input {
+            background: #293444;
+        }
+        @include relative;
+        height:100vh;
+        background-color: #324057;
+        .back-icon {
+            float: left;
+            margin-top: 5px;
+        }
+        .reset-form {
+            position: absolute;
+            left: 0;
+            right: 0;
+            width: 350px;
+            padding: 35px 35px 15px 35px;
+            margin: 170px auto;
+        }
+        input {
+            background: transparent;
+            border: 0px;
+            -webkit-appearance: none;
+            border-radius: 0px;
+            padding: 12px 5px 12px 15px;
+            color: #FFFFFF;
+            height: 47px;
+        }
+        .card-box {
+            padding: 20px;
+            margin-bottom: 20px;
+            width: 430px;
+        }
+        .title {
+            margin: 0px auto 20px auto;
+            text-align: center;
+            color: #FFFFFF;
+        }
+        .el-input {
+            display: inline-block;
+            height: 47px;
+            width: 85%;
+        }
+        .svg-container {
+            padding: 6px 5px 6px 15px;
+            color: #889aa4;
+        }
+        .el-form-item {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            color: #454545;
+        }
     }
-
-    input:-webkit-autofill {
-        -webkit-box-shadow: 0 0 0px 1000px #293444 inset !important;
-        -webkit-text-fill-color: #3E3E3E !important;
-    }
-
-    .back-icon {
-        float: left;
-        margin-top: 5px;
-    }
-
-    .reset-form {
-        position: absolute;
-        left: 0;
-        right: 0;
-        width: 350px;
-        padding: 35px 35px 15px 35px;
-        margin: 170px auto;
-    }
-
-    .card-box {
-        padding: 20px;
-        box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.06), 0 1px 0px 0 rgba(0, 0, 0, 0.02);
-        -webkit-border-radius: 5px;
-        border-radius: 5px;
-        -moz-border-radius: 5px;
-        background-clip: padding-box;
-        margin-bottom: 20px;
-        background-color: #F9FAFC;
-        width: 400px;
-        border: 2px solid #8492A6;
-    }
-
-    .title {
-        margin: 0px auto 40px auto;
-        text-align: center;
-        color: #505458;
-    }
-
 
 </style>
