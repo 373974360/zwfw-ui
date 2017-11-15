@@ -103,7 +103,7 @@
                             <th width="140">地址</th>
                             <td colspan="3">{{member.naturePerson.address}}</td>
                         </tr>
-                    </table>      
+                    </table>
                 </div>
                 <div class="table-show">
                     <div class="table-inline">
@@ -182,7 +182,7 @@
                 listLoading: true,
                 listQuery: {
                     pretrialNumber: undefined,
-                    status: 4,
+                    inStatus: 'PASS',
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows
                 },

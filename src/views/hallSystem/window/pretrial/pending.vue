@@ -184,7 +184,7 @@
                 listLoading: true,
                 listQuery: {
                     pretrialNumber: undefined,
-                    status: 2,
+                    inStatus: 'PENDING',
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows
                 },

@@ -186,7 +186,7 @@
                 listLoading: true,
                 listQuery: {
                     pretrialNumber: undefined,
-                    status: 3,
+                    inStatus: 'REJECT',
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows
                 },

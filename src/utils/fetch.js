@@ -67,9 +67,10 @@ service.interceptors.response.use(
                     type: 'error',
                     duration: 5 * 1000
                 });
+
                 // 登出
                 store.dispatch('LogOut').then(() => {
-                    router.push({path: '/login'})
+                    router.push({path: '/login'});
                 });
             }
             if (code === 403) {
