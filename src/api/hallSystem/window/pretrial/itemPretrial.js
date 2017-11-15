@@ -36,7 +36,7 @@ export function createZwfwItemPretrial(zwfwCategoryVo) {
 export function submitReview(zwfwCategoryVo) {
     const data = zwfwCategoryVo;
     return fetch({
-        url: '/api/workSystem/ItemPretrial/submitReview',
+        url: '/api/workSystem/itemPretrial/submitReview',
         method: 'post',
         data
     })
@@ -44,7 +44,7 @@ export function submitReview(zwfwCategoryVo) {
 export function delZwfwItemPretrial(id) {
     const data = {id};
     return fetch({
-        url: '/api/workSystem/ItemPretrial/del',
+        url: '/api/workSystem/itemPretrial/del',
         method: 'post',
         data
     })
