@@ -58,7 +58,7 @@
             </el-table-column>
             <el-table-column prop="enable" class-name="status-col" label="状态">
                 <template scope="scope">
-                    <span>{{scope.row.timeExtendStatus | zwfwEnumData('TimeExtendStatus')}}</span>
+                    <span>{{scope.row.timeExtendStatus | enums('TimeExtendStatus')}}</span>
                 </template>
             </el-table-column>
             <el-table-column v-if="operatorShow" align="center" label="操作" width="180">

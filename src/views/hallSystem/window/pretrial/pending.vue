@@ -38,7 +38,7 @@
             </el-table-column>
             <el-table-column width="250px" align="center" label="状态">
                 <template scope="scope">
-                    <span>{{scope.row.status | zwfwEnumData('PretrialStatus')}}</span>
+                    <span>{{scope.row.status | enums('PretrialStatus')}}</span>
                 </template>
             </el-table-column>
             <el-table-column width="250px" align="center" label="备注">
@@ -224,7 +224,7 @@
             ...mapGetters([
                 'textMap',
                 'enums',
-                'zwfwEnumData',
+                'enums',
                 'closeOnClickModal'
             ])
         },

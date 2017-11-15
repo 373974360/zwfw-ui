@@ -20,7 +20,6 @@ const app = {
         },
         enums: [],
         dics: [],
-        zwfwEnumData: [],
         theme: 'default',
         livenewsChannels: Cookies.get('livenewsChannels') || '[]',
         closeOnClickModal: false,
@@ -39,7 +38,7 @@ const app = {
             state.enums = enums;
         },
         SET_ZWFWEDATADATA: (state, enums) => {
-            state.zwfwEnumData = enums;
+            state.enums = enums;
         },
         SET_DICTS: (state, dics) => {
             state.dics = dics;
@@ -62,24 +61,6 @@ const app = {
                             enums[obj.name] = obj.value;
                         }
                         commit('SET_ENUMS', enums);
-                    }
-                }).catch(error => {
-                    reject(error);
-                });
-            });
-        },
-        SetZwfwEnumData({commit}) {
-            return new Promise((resolve, reject) => {
-                getZwfwEnums().then(response => {
-                    if (response.httpCode !== 200) {
-                        reject(response.msg);
-                    } else {
-                        const zwfwEnumData = {};
-                        const result = response.data;
-                        for (const obj of result) {
-                            zwfwEnumData[obj.name] = obj.value;
-                        }
-                        commit('SET_ZWFWEDATADATA', zwfwEnumData);
                     }
                 }).catch(error => {
                     reject(error);

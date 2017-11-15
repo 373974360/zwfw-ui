@@ -60,10 +60,6 @@ router.beforeEach((to, from, next) => {
                 store.dispatch('SetDicts');
                 next();
             }
-            // if(store.getters.zwfwEnumData.length === 0){
-            //     store.dispatch('SetZwfwEnumData');
-            //     next();
-            // }
             if (store.getters.permissions.length === 0) { // 判断当前用户是否已拉取完user_info信息
                 store.dispatch('GetInfo').then(res => { // 拉取user_info
                     const permissions = res.data.permissions;

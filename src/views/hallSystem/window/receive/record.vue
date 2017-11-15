@@ -54,7 +54,7 @@
             </el-table-column>
             <el-table-column align="center" label="状态">
                 <template scope="scope">
-                    <span>{{scope.row.status | zwfwEnumData('ItemNumberStatus')}}</span>
+                    <span>{{scope.row.status | enums('ItemNumberStatus')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作">
@@ -113,11 +113,11 @@
                         </tr>
                         <tr v-if="itemPretrialVo">
                             <th>预审状态:</th>
-                            <td>{{itemPretrialVo.status | zwfwEnumData('PretrialStatus')}}</td>
+                            <td>{{itemPretrialVo.status | enums('PretrialStatus')}}</td>
                         </tr>
                         <tr>
                             <th>排号状态</th>
-                            <td style="color:red">{{itemNumber.status | zwfwEnumData('ItemNumberStatus')}}</td>
+                            <td style="color:red">{{itemNumber.status | enums('ItemNumberStatus')}}</td>
                         </tr>
                         <tr>
                             <th>备注</th>
@@ -391,12 +391,12 @@
             },
             print_ywsld() {
                 if (this.itemNumber != null) {
-                    window.open('/api/zwfw/zwfwHallCompositeWindow/downloadYwsld?numberId=' + this.itemNumber.id);
+                    window.open('/api/hallSystem/hallCompositeWindow/downloadYwsld?numberId=' + this.itemNumber.id);
                 }
             },
             print_wlzyd() {
                 if (this.itemNumber != null) {
-                    window.open('/api/zwfw/zwfwHallCompositeWindow/downloadWlzyd?numberId=' + this.itemNumber.id);
+                    window.open('/api/hallSystem/hallCompositeWindow/downloadWlzyd?numberId=' + this.itemNumber.id);
                 }
             },
             getDatilList() {
