@@ -107,18 +107,26 @@ export function getUserList() {
     });
 }
 
+/**
+ * 查询办件完成的列表
+ * @param query
+ */
 export function getFinishList(query) {
     return fetch({
-        url: '/api/workSystem/hallCompositeWindowCert/finish_list',
+        url: '/api/hallSystem/hallCompositeWindowCert/finish_list',
         method: 'get',
         params: query
     });
 }
 
+/**
+ * 更新为已收件
+ * @param query
+ */
 export function updateTake(query) {
     const data = query;
     return fetch({
-        url: '/api/workSystem/hallCompositeWindowCert/update_take',
+        url: '/api/hallSystem/hallCompositeWindowCert/update_take',
         method: 'post',
         data
     })
