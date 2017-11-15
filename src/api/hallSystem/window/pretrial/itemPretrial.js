@@ -2,7 +2,7 @@ import fetch from 'utils/fetch';
 
 export function getZwfwItemPretrialList(query) {
     return fetch({
-        url: '/api/hallSystem/itemPretrial/list',
+        url: '/api/workSystem/itemPretrial/list',
         method: 'get',
         params: query
     });
@@ -10,7 +10,7 @@ export function getZwfwItemPretrialList(query) {
 
 export function getPretrialDetail(id) {
     return fetch({
-        url: '/api/hallSystem/itemPretrial/getPretrialDetail',
+        url: '/api/workSystem/itemPretrial/getPretrialDetail',
         method: 'get',
         params: {id}
     });
@@ -18,7 +18,7 @@ export function getPretrialDetail(id) {
 
 export function getZwfwItemPretrialCascader(id) {
     return fetch({
-        url: '/api/hallSystem/itemPretrial/getCascader',
+        url: '/api/workSystem/itemPretrial/getCascader',
         method: 'get',
         params: {id}
     });
@@ -27,7 +27,7 @@ export function getZwfwItemPretrialCascader(id) {
 export function createZwfwItemPretrial(zwfwCategoryVo) {
     const data = zwfwCategoryVo;
     return fetch({
-        url: '/api/hallSystem/itemPretrial/add',
+        url: '/api/workSystem/itemPretrial/add',
         method: 'post',
         data
     })
@@ -36,7 +36,7 @@ export function createZwfwItemPretrial(zwfwCategoryVo) {
 export function submitReview(zwfwCategoryVo) {
     const data = zwfwCategoryVo;
     return fetch({
-        url: '/api/hallSystem/ItemPretrial/submitReview',
+        url: '/api/workSystem/ItemPretrial/submitReview',
         method: 'post',
         data
     })
@@ -44,7 +44,7 @@ export function submitReview(zwfwCategoryVo) {
 export function delZwfwItemPretrial(id) {
     const data = {id};
     return fetch({
-        url: '/api/hallSystem/ItemPretrial/del',
+        url: '/api/workSystem/ItemPretrial/del',
         method: 'post',
         data
     })
@@ -53,7 +53,7 @@ export function delZwfwItemPretrial(id) {
 export function deleteZwfwItemPretrial(id) {
     const data = {id};
     return fetch({
-        url: '/api/hallSystem/Category/delete',
+        url: '/api/workSystem/Category/delete',
         method: 'post',
         data
     })
@@ -61,7 +61,7 @@ export function deleteZwfwItemPretrial(id) {
 
 export function getAllZwfwItemPretrial() {
     return fetch({
-        url: '/api/hallSystem/Category/getAll',
+        url: '/api/workSystem/Category/getAll',
         mothod: 'get'
     });
 }

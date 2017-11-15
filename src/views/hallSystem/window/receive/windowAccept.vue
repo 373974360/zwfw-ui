@@ -419,6 +419,7 @@
              * 抽号 - 根据事项编码
              */
             takeNumberByItemCode() {
+                let _this = this;
                 takeNumberByItemCode({
                     itemCode: this.getNumberBy_itemCode
                 }).then(function (response) {
