@@ -11,22 +11,26 @@
                 <h3 class="title">重设密码</h3>
             </div>
             <el-form-item prop="account">
+                <span class="svg-container"><wscn-icon-svg icon-class="youxiang"/></span>
                 <el-input name="account" type="text" v-model="resetForm.account"
                           placeholder="邮箱"></el-input>
             </el-form-item>
             <el-form-item prop="code">
+                <span class="svg-container"><wscn-icon-svg icon-class="yanzhengma"/></span>
                 <el-input name="code" type="text" v-model="resetForm.code"
                           placeholder="验证码"></el-input>
             </el-form-item>
             <el-form-item prop="password">
+                <span class="svg-container"><wscn-icon-svg icon-class="mima"/></span>
                 <el-input name="password" :type="passwordType" v-model="resetForm.password"
                           placeholder="密码"></el-input>
             </el-form-item>
             <el-form-item prop="checkPass">
+                <span class="svg-container"><wscn-icon-svg icon-class="mima"/></span>
                 <el-input name="checkPass" :type="passwordType"
                           v-model="resetForm.checkPass"
                           placeholder="确认密码"></el-input>
-                <span class="svg-container"  @click="togglePasswordType"><wscn-icon-svg icon-class="yanjing"/></span>
+                <span class="showPwd"  @click="togglePasswordType"><wscn-icon-svg icon-class="yanjing"/></span>
             </el-form-item>
 
             <el-form-item style="width:100%;">
@@ -140,13 +144,17 @@
     canvas {
         position: fixed;
     }
-
     .reset-container {
+        .el-icon-arrow-left{
+            color: #ffffff;
+        }
         input:-webkit-autofill {
             -webkit-box-shadow: 0 0 0px 1000px #293444 inset !important;
             -webkit-text-fill-color: #3E3E3E !important;
         }
-
+        input {
+            background: #293444;
+        }
         @include relative;
         height:100vh;
         background-color: #324057;
@@ -154,13 +162,6 @@
             float: left;
             margin-top: 5px;
         }
-
-        .svg-container {
-            position: absolute;
-            right: -18px;
-            top: 3px;
-        }
-
         .reset-form {
             position: absolute;
             left: 0;
@@ -169,24 +170,45 @@
             padding: 35px 35px 15px 35px;
             margin: 170px auto;
         }
-
+        input {
+            background: transparent;
+            border: 0px;
+            -webkit-appearance: none;
+            border-radius: 0px;
+            padding: 12px 5px 12px 15px;
+            color: #FFFFFF;
+            height: 47px;
+        }
         .card-box {
             padding: 20px;
-            box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.06), 0 1px 0px 0 rgba(0, 0, 0, 0.02);
-            -webkit-border-radius: 5px;
-            border-radius: 5px;
-            -moz-border-radius: 5px;
-            background-clip: padding-box;
             margin-bottom: 20px;
-            background-color: #F9FAFC;
-            width: 400px;
-            border: 2px solid #8492A6;
+            width: 430px;
         }
-
         .title {
-            margin: 0px auto 40px auto;
+            margin: 0px auto 20px auto;
             text-align: center;
-            color: #505458;
+            color: #FFFFFF;
+        }
+        .el-input {
+            display: inline-block;
+            height: 47px;
+            width: 85%;
+        }
+        .svg-container {
+            padding: 6px 5px 6px 15px;
+            color: #889aa4;
+        }
+        .el-form-item {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            color: #454545;
+        }
+        .showPwd{
+            color: #707a8a;
+            position: absolute;
+            right: 10px;
+            top: 8px;
         }
     }
 

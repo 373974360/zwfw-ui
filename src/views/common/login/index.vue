@@ -11,7 +11,7 @@
                     <el-col :span="24">
                         <el-form-item prop="account">
                             <span class="svg-container"><wscn-icon-svg icon-class="youxiang"/></span>
-                            <el-input type="text" v-model="loginForm.account" autoComplete="on"
+                            <el-input type="text" v-model="loginForm.account" autoComplete="off"
                                       placeholder="帐号"></el-input>
                         </el-form-item>
                     </el-col>
@@ -22,7 +22,7 @@
                             <span class="svg-container"><wscn-icon-svg icon-class="mima"/></span>
                             <el-input type="password" @keyup.enter.native="handleLogin"
                                       v-model="loginForm.password"
-                                      autoComplete="on" placeholder="密码"></el-input>
+                                      autoComplete="off" placeholder="密码"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -31,7 +31,7 @@
                         <el-form-item prop="captcha">
                             <span class="svg-container"><wscn-icon-svg icon-class="yanzhengma"/></span>
                             <el-input type="text" v-model="loginForm.verifyCode" @keyup.enter.native="handleLogin"
-                                      placeholder="验证码"></el-input>
+                                      placeholder="验证码" autoComplete="off"></el-input>
                             <img class="captcha" :src="loginForm.imgUrl" @click.self="changeCaptcha">
                         </el-form-item>
                     </el-col>
@@ -83,13 +83,14 @@
                 },
                 loginRules: {
                     account: [
-                        {required: true, trigger: 'blur'}
+                        {required: true,message: '账号不能为空', trigger: 'blur'},
+                        {validator: validateEmail,trigger: 'blur'}
                     ],
                     password: [
-                        { min: 6, message: '密码不能小于6位', trigger: 'blur' }
+                        {min: 6, message: '密码不能小于6位', trigger: 'blur'}
                     ],
                     verifyCode: [
-                        { min: 4, max: 4, message: '验证码只能是4位', trigger: 'blur' }
+                        {min: 4, max: 4, message: '验证码只能是4位', trigger: 'blur'}
                     ]
                 },
 
@@ -130,7 +131,7 @@
             this.changeCaptcha();
             const _this = this;
             window.onresize = function () {
-                if(_this.canvas){
+                if (_this.canvas) {
                     doCanvas();
                 }
             }
@@ -140,11 +141,9 @@
 
 <style rel="stylesheet/scss" lang="scss">
     @import 'src/styles/mixin.scss';
-
     canvas {
         position: fixed;
     }
-
     .login {
         position: fixed;
         display: flex;
@@ -154,24 +153,22 @@
         left: 0;
         background-color: #2d3a4b;
     }
-
     .login-container {
-
         input:-webkit-autofill {
-            -webkit-box-shadow: 0 0 0px 1000px #e0e1e2 inset !important;
-            -webkit-text-fill-color: #000000 !important;
+            -webkit-box-shadow: 0 0 0px 1000px #283443 inset !important;
+            -webkit-text-fill-color: #ffffff !important;
+            background-color: rgba(0, 0, 0, 0.1);
+            caret-color: #ffffff;
         }
-
         input {
             background: transparent;
             border: 0px;
             -webkit-appearance: none;
             border-radius: 0px;
             padding: 12px 5px 12px 15px;
-            color: #000000;
+            color: #FFFFFF;
             height: 47px;
         }
-
         .login-form {
             position: absolute;
             left: 0;
@@ -180,44 +177,31 @@
             padding: 35px 35px 15px 35px;
             margin: 170px auto;
         }
-
         .card-box {
             padding: 20px;
-            box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.06), 0 1px 0px 0 rgba(0, 0, 0, 0.02);
-            -webkit-border-radius: 5px;
-            border-radius: 5px;
-            -moz-border-radius: 5px;
-            background-clip: padding-box;
             margin-bottom: 20px;
-            background-color: #F9FAFC;
             width: 430px;
-            border: 2px solid #8492A6;
         }
-
         .title {
-            margin: 0px auto 28px auto;
+            margin: 0px auto;
             text-align: center;
-            color: #505458;
+            color: #FFFFFF;
         }
-
         .el-input {
             display: inline-block;
             height: 47px;
             width: 85%;
         }
-
         .svg-container {
             padding: 6px 5px 6px 15px;
             color: #889aa4;
         }
-
         .el-form-item {
             border: 1px solid rgba(255, 255, 255, 0.1);
             background: rgba(0, 0, 0, 0.1);
             border-radius: 5px;
             color: #454545;
         }
-
         .captcha {
             width: 70px;
             height: 35px;
@@ -226,12 +210,10 @@
             top: 6px;
             cursor: pointer;
         }
-
         .forget-pwd {
-            color: #000;
+            color: #ffffff;
             font-size: small;
             margin-right: 10px;
         }
-
     }
 </style>

@@ -1,5 +1,4 @@
-import {loginByEmail, logout, getInfo} from 'api/common/login/login';
-import Cookies from 'js-cookie';
+import {loginByEmail,refreshToken, logout, getInfo} from 'api/common/login/login';
 import {
     getToken,
     setToken,
@@ -75,7 +74,6 @@ const user = {
                     if (response.httpCode !== 200) {
                         reject(response.msg);
                     } else {
-                        console.dir(response);
                         const data = response.data;
                         setToken(data);
                         commit('SET_TOKEN', data);
@@ -109,10 +107,24 @@ const user = {
             });
         },
 
+        //刷新token
+        RefreshToken({commit, state}){
+            return new Promise((resolve, reject) => {
+                refreshToken().then(response => {
+                    const data = response.data;
+                    setToken(data);
+                    commit('SET_TOKEN', data);
+                    resolve();
+                }).catch(error => {
+                    reject(error);
+                });
+            });
+        },
+
         // 登出
         LogOut({commit, state}) {
             return new Promise((resolve, reject) => {
-                logout(state.token).then(() => {
+                logout().then(() => {
                     commit('SET_TOKEN', '');
                     removeToken();
                     resolve();

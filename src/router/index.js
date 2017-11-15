@@ -119,7 +119,7 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: '/baseSystem/index',
         name: '基础信息管理系统',
-        meta: {permission: ''},
+        meta: {permission: 'baseSystem:admin'},
         hidden: true,
         children: [{path: 'index', component: BaseSystem}]
     },
@@ -127,7 +127,7 @@ export const asyncRouterMap = [
         path: '/org',
         redirect: 'noredirect',
         name: '组织机构',
-        meta: {permission: ''},
+        meta: {permission: 'baseSystem:org:admin'},
         icon: 'zuzhi',
         component: Layout,
         children: [
@@ -135,25 +135,25 @@ export const asyncRouterMap = [
                 path: 'dept',
                 component: Dept,
                 name: '部门管理 ',
-                meta: {permission: ''}
+                meta: {permission: 'baseSystem:org:dept:list'}
             },
             {
                 path: 'user',
                 component: User,
                 name: '用户管理',
-                meta: {permission: ''}
+                meta: {permission: 'baseSystem:org:user:list'}
             },
             {
                 path: 'menu',
                 component: Menu,
                 name: '菜单管理',
-                meta: {permission: ''}
+                meta: {permission: 'baseSystem:org:menu:list'}
             },
             {
                 path: 'role',
                 component: Role,
                 name: '角色管理',
-                meta: {permission: ''}
+                meta: {permission: 'baseSystem:org:role:list'}
             }
         ]
     },
@@ -161,7 +161,7 @@ export const asyncRouterMap = [
         path: '/data',
         redirect: 'noredirect',
         name: '数据管理',
-        meta: {permission: ''},
+        meta: {permission: 'baseSystem:data:admin'},
         icon: 'data',
         component: Layout,
         children: [
@@ -169,39 +169,39 @@ export const asyncRouterMap = [
                 path: 'messageFiled',
                 component: MessageFiled,
                 name: '短信字段管理',
-                meta: {permission: ''}
+                meta: {permission: 'baseSystem:data:messageFiled:list'}
             },
             {
                 path: 'messageTemplate',
                 component: MessageTemplate,
                 name: '短信模板管理',
-                meta: {permission: ''}
+                meta: {permission: 'baseSystem:data:messageTemplate:list'}
             },
             {
-                path: 'dic',
+                path: 'dict',
                 component: Dict,
                 name: '数据字典',
-                meta: {permission: ''}
+                meta: {permission: 'baseSystem:data:dicIndex:list'}
             },
             {
                 path: 'metadataType',
                 component: MetadataType,
                 name: '元数据类型',
-                meta: {permission: ''}
+                meta: {permission: 'baseSystem:data:metadataType:list'}
             },
             {
                 path: 'holiday',
                 component: Holiday,
                 name: '节假日管理',
-                meta: {permission: ''}
+                meta: {permission: 'baseSystem:data:holiday:list'}
             }
         ]
     },
     {
-        path: 'system',
+        path: 'setting',
         redirect: 'noredirect',
         name: '系统管理',
-        meta: {permission: ''},
+        meta: {permission: 'baseSystem:setting:admin'},
         icon: 'system',
         component: Layout,
         children: [
@@ -209,34 +209,13 @@ export const asyncRouterMap = [
                 path: 'cache',
                 component: Cache,
                 name: '缓存管理',
-                meta: {permission: ''}
+                meta: {permission: 'baseSystem:setting:cache:list'}
             },
             {
                 path: 'log',
                 component: Log,
                 name: '日志管理',
-                meta: {permission: ''}
-            }
-        ]
-    },
-    {
-        path: '/task',
-        component: Layout,
-        redirect: 'noredirect',
-        name: '任务管理',
-        icon: 'ling',
-        children: [
-            {
-                path: 'registryCenter',
-                component: RegistryCenter,
-                name: '注册中心',
-                meta: {permission: ''}
-            },
-            {
-                path: 'timedJob',
-                component: TimedJob,
-                name: '定时任务',
-                meta: {permission: ''}
+                meta: {permission: 'baseSystem:setting:log:list'}
             }
         ]
     },
@@ -246,6 +225,7 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: '/hallSystem/index',
         name: '大厅综合管理系统',
+        meta: {permission: 'hallSystem:admin'},
         hidden: true,
         children: [{path: 'index', component: HallSystem}]
     },
@@ -253,7 +233,7 @@ export const asyncRouterMap = [
         path: '/lobby',
         redirect: 'noredirect',
         name: '大厅管理',
-        meta: {permission: ''},
+        meta: {permission: 'hallSystem:lobby:admin'},
         icon: 'lobby',
         component: Layout,
         children: [
@@ -261,13 +241,13 @@ export const asyncRouterMap = [
                 path: 'window',
                 component: Window,
                 name: '窗口管理 ',
-                meta: {permission: ''}
+                meta: {permission: 'hallSystem:lobby:window:list'}
             },
             {
                 path: 'numberScope',
                 component: NumberScope,
                 name: '抽号管理',
-                meta: {permission: ''}
+                meta: {permission: 'hallSystem:lobby:numberScope:list'}
             }
         ]
     },
@@ -275,7 +255,7 @@ export const asyncRouterMap = [
         path: '/member',
         redirect: 'noredirect',
         name: '会员管理',
-        meta: {permission: ''},
+        meta: {permission: 'hallSystem:member:admin'},
         icon: 'member',
         component: Layout,
         children: [
@@ -283,13 +263,13 @@ export const asyncRouterMap = [
                 path: 'naturePerson',
                 component: NaturePerson,
                 name: '自然人管理 ',
-                meta: {permission: ''}
+                meta: {permission: 'hallSystem:member:naturePerson:list'}
             },
             {
                 path: 'legalPerson',
                 component: LegalPerson,
                 name: '法人管理',
-                meta: {permission: ''}
+                meta: {permission: 'hallSystem:member:legalPerson:list'}
             }
         ]
     },
@@ -297,31 +277,86 @@ export const asyncRouterMap = [
         path: '/window',
         redirect: 'noredirect',
         name: '综合窗口',
-        meta: {permission: ''},
+        meta: {permission: 'hallSystem:window:admin'},
         icon: 'window',
         component: Layout,
         children: [
-            {path: 'pending', component: Pending, name: '待预审件 '},
-            {path: 'finish', component: Finish, name: '已预审件'},
-            {path: 'correction', component: Correction, name: '整改件'},
-            {path: 'noAccept', component: NoAccept, name: '不予受理件'},
-            {path: 'work', component: WindowAccept, name: '窗口收件'},
-            {path: 'history', component: Record, name: '受理记录'},
-            {path: 'takeCert', component: TakeAway, name: '办结取件'},
-            {path: 'windowWork', component: WindowWork, name: '街办收件'},
-            {path: 'windowHistory', component: WindowHistory, name: '办件查询'},
-            /*{
-                path: 'pending',
-                component: Pending,
-                name: '预审管理 ',
-                meta: {permission: ''}
+            {
+                path: 'pretrial',
+                component: Layout,
+                name: '预审管理',
+                meta: {permission: 'hallSystem:window:pretrial:admin'},
+				children: [
+					{
+						path: 'pending',
+						component: Pending,
+						name: '待预审件',
+						meta: {permission: 'hallSystem:window:pretrial:pending:list'}
+					},
+					{
+						path: 'correction',
+						component: Correction,
+						name: '整改件',
+						meta: {permission: 'hallSystem:window:pretrial:correction:list'}
+					},
+					{
+						path: 'noAccept',
+						component: NoAccept,
+						name: '不予受理件',
+						meta: {permission: 'hallSystem:window:pretrial:noAccept:list'}
+					},
+					{
+						path: 'finish',
+						component: Finish,
+						name: '已预审件',
+						meta: {permission: 'hallSystem:window:pretrial:finish:list'}
+					}
+				]
             },
             {
-                path: 'work',
-                component: CompositeWindowWork,
+                path: 'receive',
+                component: Layout,
                 name: '收件管理',
-                meta: {permission: ''}
-            }*/
+                meta: {permission: 'hallSystem:window:receive:admin'},
+				children: [
+					{
+						path: 'windowAccept',
+						component: WindowAccept,
+						name: '窗口收件',
+						meta: {permission: 'hallSystem:window:receive:windowAccept:list'}
+					},
+					{
+						path: 'record',
+						component: Record,
+						name: '收件记录',
+						meta: {permission: 'hallSystem:window:receive:record:list'}
+					},
+					{
+						path: 'takeAway',
+						component: TakeAway,
+						name: '办结取件',
+						meta: {permission: 'hallSystem:window:receive:takeAway:list'}
+					}
+				]
+            },
+			{path: 'windowWork', component: WindowWork, name: '街办收件'},
+            {path: 'windowHistory', component: WindowHistory, name: '办件查询'}
+        ]
+    },
+    {
+        path: '/count',
+        redirect: 'noredirect',
+        name: '统计分析',
+        meta: {permission: 'hallSystem:count:admin'},
+        icon: 'count',
+        component: Layout,
+        children: [
+            {
+                path: 'callCount',
+                component: CallCount,
+                name: '叫号统计 ',
+                meta: {permission: 'hallSystem:count:callCount:list'}
+            }
         ]
     },
     /************************政务服务管理系统************************/
@@ -330,6 +365,7 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: '/zwfwSystem/index',
         name: '政务服务管理系统',
+		meta: {permission: 'zwfwSystem:admin'},
         hidden: true,
         children: [{path: 'index', component: ZwfwSystem}]
     },
@@ -337,7 +373,7 @@ export const asyncRouterMap = [
         path: '/business',
         redirect: 'noredirect',
         name: '业务管理',
-        meta: {permission: ''},
+        meta: {permission: 'zwfwSystem:business:admin'},
         icon: 'business',
         component: Layout,
         children: [
@@ -345,59 +381,43 @@ export const asyncRouterMap = [
                 path: 'category',
                 component: Category,
                 name: '事项分类管理 ',
-                meta: {permission: ''}
+                meta: {permission: 'zwfwSystem:business:category:list'}
             },
             {
                 path: 'material',
                 component: Material,
                 name: '材料管理',
-                meta: {permission: ''}
+                meta: {permission: 'zwfwSystem:business:material:list'}
             },
             {
                 path: 'item',
                 component: Item,
                 name: '事项管理',
-                meta: {permission: ''}
+                meta: {permission: 'zwfwSystem:business:item:list'}
             },
             {
                 path: 'processDefinitionModel',
                 component: ProcessDefinitionModel,
                 name: '流程模型编辑',
-                meta: {permission: ''}
+                meta: {permission: 'zwfwSystem:business:processDefinitionModel:list'}
             },
             {
                 path: 'processDefinition',
                 component: ProcessDefinition,
                 name: '已部署流程管理',
-                meta: {permission: ''}
+                meta: {permission: 'zwfwSystem:business:processDefinition:list'}
             },
             {
                 path: 'taskSetting',
                 component: TaskSetting,
                 name: '审批节点管理',
-                meta: {permission: ''}
+                meta: {permission: 'zwfwSystem:business:taskSetting:list'}
             },
             {
                 path: 'formEditor',
                 component: FormEditor,
                 name: '表单编辑器',
-                meta: {permission: ''}
-            }
-        ]
-    },
-    {
-        path: '/count',
-        redirect: 'noredirect',
-        name: '统计分析',
-        meta: {permission: ''},
-        icon: 'count',
-        component: Layout,
-        children: [
-            {
-                path: 'callCount',
-                component: CallCount,
-                name: '叫号统计 ',
-                meta: {permission: ''}
+                meta: {permission: 'zwfwSystem:business:formEditor:list'}
             }
         ]
     },
@@ -407,6 +427,7 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: '/workSystem/index',
         name: '政务业务办理系统',
+		meta: {permission: 'workSystem:admin'},
         hidden: true,
         children: [{path: 'index', component: WorkSystem}]
     },
@@ -414,7 +435,7 @@ export const asyncRouterMap = [
         path: '/process',
         redirect: 'noredirect',
         name: '办件管理',
-        meta: {permission: ''},
+        meta: {permission: 'workSystem:process:admin'},
         icon: 'process',
         component: Layout,
         children: [
@@ -422,25 +443,25 @@ export const asyncRouterMap = [
                 path: 'workPending',
                 component: WorkPending,
                 name: '待办事项 ',
-                meta: {permission: ''}
+                meta: {permission: 'workSystem:process:workPending:list'}
             },
             {
                 path: 'workQuery',
                 component: WorkQuery,
                 name: '办件查询',
-                meta: {permission: ''}
+                meta: {permission: 'workSystem:process:workQuery:list'}
             },
             {
                 path: 'workExtendTime',
                 component: WorkExtendTime,
                 name: '延期批准',
-                meta: {permission: ''}
+                meta: {permission: 'workSystem:process:workExtendTime:list'}
             },
             {
                 path: 'workSupervise',
                 component: WorkSupervise,
                 name: '督办管理',
-                meta: {permission: ''}
+                meta: {permission: 'workSystem:process:workSupervise:list'}
             }
         ]
     },
@@ -450,6 +471,7 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: '/dataShareSystem/index',
         name: '共享数据管理系统',
+		meta: {permission: 'dataShareSystem:admin'},
         hidden: true,
         children: [{path: 'index', component: DataShareSystem}]
     },
