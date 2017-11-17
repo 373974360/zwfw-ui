@@ -32,7 +32,8 @@
                 userThreeNum: [],
                 userFourNum: [],
                 userFiveNum: [],
-                userZeroNum: []
+                userZeroNum: [],
+                userSatisfactionRates: []
             }
         },
         computed: {
@@ -57,6 +58,7 @@
                     this.userFourNum = [];
                     this.userFiveNum = [];
                     this.userZeroNum = [];
+                    this.userSatisfactionRates = [];
                     for (let user of userData) {
                         this.userName.push(user.userName);
                         this.userOneNum.push(user.onetotal);
@@ -65,6 +67,7 @@
                         this.userFourNum.push(user.fourtotal);
                         this.userFiveNum.push(user.fivetotal);
                         this.userZeroNum.push(0);
+                        this.userSatisfactionRates.push(user.satisfactionRate);
                     }
                     const e = echarts.init(document.getElementById('staffSatisfaction'));
                     e.setOption({
@@ -91,12 +94,25 @@
                         xAxis: [
                             {
                                 type: 'category',
+                                axisLabel: {
+                                    interval: 0,
+                                    rotate: 30
+                                },
                                 data: this.userName
                             }
                         ],
                         yAxis: [
                             {
                                 type: 'value'
+                            },
+                            {
+                                type: 'value',
+                                min: 0,
+                                max: 100,
+                                interval: 10,
+                                axisLabel: {
+                                    formatter: '{value} %'
+                                }
                             }
                         ],
                         series: [
@@ -135,6 +151,12 @@
                                 type: 'bar',
                                 stack: '总分',
                                 data: this.userZeroNum
+                            },
+                            {
+                                name: '满意率',
+                                type: 'line',
+                                yAxisIndex: 1,
+                                data: this.userSatisfactionRates
                             }
                         ]
                     })

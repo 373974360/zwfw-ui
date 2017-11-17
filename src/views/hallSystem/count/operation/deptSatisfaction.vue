@@ -40,13 +40,15 @@
                 deptFourNum: [],
                 deptFiveNum: [],
                 deptZeroNum: [],
+                deptSatisfactionRates: [],
                 windowName: [],
                 windowOneNum: [],
                 windowTwoNum: [],
                 windowThreeNum: [],
                 windowFourNum: [],
                 windowFiveNum: [],
-                windowZeroNum: []
+                windowZeroNum: [],
+                windowSatisfactionRates: []
             }
         },
         computed: {
@@ -72,6 +74,7 @@
                         this.deptFourNum = [];
                         this.deptFiveNum = [];
                         this.deptZeroNum = [];
+                        this.deptSatisfactionRates = [];
                         for (let dept of deptData) {
                             this.deptName.push(dept.deptName);
                             this.deptOneNum.push(dept.onetotal);
@@ -80,6 +83,7 @@
                             this.deptFourNum.push(dept.fourtotal);
                             this.deptFiveNum.push(dept.fivetotal);
                             this.deptZeroNum.push(0);
+                            this.deptSatisfactionRates.push(dept.satisfactionRate);
                         }
                         const e = echarts.init(document.getElementById('deptSatisfaction'));
                         e.setOption({
@@ -112,6 +116,15 @@
                             yAxis: [
                                 {
                                     type: 'value'
+                                },
+                                {
+                                    type: 'value',
+                                    min: 0,
+                                    max: 100,
+                                    interval: 10,
+                                    axisLabel: {
+                                        formatter: '{value} %'
+                                    }
                                 }
                             ],
                             series: [
@@ -150,6 +163,12 @@
                                     type: 'bar',
                                     stack: '总分',
                                     data: this.deptZeroNum
+                                },
+                                {
+                                    name: '满意率',
+                                    type: 'line',
+                                    yAxisIndex: 1,
+                                    data: this.deptSatisfactionRates
                                 }
                             ]
                         })
@@ -165,6 +184,7 @@
                         this.windowFourNum = [];
                         this.windowFiveNum = [];
                         this.windowZeroNum = [];
+                        this.windowSatisfactionRates = [];
                         for (let window of windowData) {
                             this.windowName.push(window.windowName);
                             this.windowOneNum.push(window.onetotal);
@@ -173,6 +193,7 @@
                             this.windowFourNum.push(window.fourtotal);
                             this.windowFiveNum.push(window.fivetotal);
                             this.windowZeroNum.push(0);
+                            this.windowSatisfactionRates.push(window.satisfactionRate);
                         }
                         const e = echarts.init(document.getElementById('deptSatisfaction'));
                         e.setOption({
@@ -205,6 +226,15 @@
                             yAxis: [
                                 {
                                     type: 'value'
+                                },
+                                {
+                                    type: 'value',
+                                    min: 0,
+                                    max: 100,
+                                    interval: 10,
+                                    axisLabel: {
+                                        formatter: '{value} %'
+                                    }
                                 }
                             ],
                             series: [
@@ -243,6 +273,12 @@
                                     type: 'bar',
                                     stack: '总分',
                                     data: this.windowZeroNum
+                                },
+                                {
+                                    name: '满意率',
+                                    type: 'line',
+                                    yAxisIndex: 1,
+                                    data: this.windowSatisfactionRates
                                 }
                             ]
                         })
