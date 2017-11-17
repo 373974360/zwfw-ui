@@ -12,7 +12,7 @@ const app = {
             view: '查看',
             associateMenu: '关联权限',
             associateUser: '关联用户',
-            associateMaterial: '关联资料',
+            associateMaterial: '关联材料',
             associateItem: '关联事项'
         },
         sidebar: {

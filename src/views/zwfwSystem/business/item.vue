@@ -20,7 +20,7 @@
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="事项名称" prop="name">
+            <el-table-column align="left" label="事项名称" prop="name">
                 <template scope="scope">
                     <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
@@ -34,7 +34,7 @@
             </el-table-column>
             <el-table-column align="center" label="事项类型" prop="type">
                 <template scope="scope">
-                    <span>{{scope.row.type}}</span>
+                    <span>{{scope.row.type | dics('sslx')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="办件类型" prop="processType">
@@ -46,12 +46,12 @@
             </el-table-column>
             <el-table-column align="center" label="承诺办结时间" prop="promiseEndTime">
                 <template scope="scope">
-                    <span>{{scope.row.promiseEndTime}}</span>
+                    <span>{{scope.row.promiseEndTime}} 工作日</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="法定办结时限" prop="legalEndTime">
                 <template scope="scope">
-                    <span>{{scope.row.legalEndTime}}</span>
+                    <span>{{scope.row.legalEndTime}} 工作日</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="办理形式" prop="handleType">
@@ -73,7 +73,7 @@
                     <el-badge :value="scope.row.itemMaterialCount" class="item">
                         <el-button class="filter-item" style="margin-left: 10px;" @click="handleMaterialList(scope.row)"
                                    type="primary" size="small">
-                            关联资料
+                            办件材料
                         </el-button>
                     </el-badge>
                 </template>
@@ -164,7 +164,7 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="事项类型" prop="type">
-                    <el-select v-model="zwfwItem.type" placeholder="请选择事项类型">
+                    <el-select v-model="zwfwItem.type" placeholder="请选择事项类型" style="width:100%">
                         <el-option
                                 v-for="item in dics['sslx']"
                                 :key="item.code"
@@ -183,6 +183,7 @@
                                :auto-upload="false">
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                         <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+                        <el-button style="margin-left: 10px;" size="small" type="info" @click="showResultExample">查看图片</el-button>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="行使层级" prop="handleLevel">
@@ -319,7 +320,7 @@
         </el-dialog>
 
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible1"
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible1" size="large"
                    :close-on-click-modal="closeOnClickModal" :before-close="resetZwfwMaterialForm">
             <div class="filter-container">
                 <el-button class="filter-item" style="margin-left: 10px;" @click="handleDeleteOne" type="danger"
@@ -337,7 +338,7 @@
                         <span>{{scope.row.id}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="name" align="center" label="材料名称" width="100">
+                <el-table-column prop="name" align="left" label="材料名称" width="400" >
                     <template scope="scope">
                         <el-tooltip content="点击编辑" placement="right" effect="dark">
                             <span class="link-type" @click='handleUpdateClick(scope.row)'>{{scope.row.name}}</span>
@@ -346,12 +347,12 @@
                 </el-table-column>
                 <el-table-column prop="type" align="center" label="材料类型" width="100">
                     <template scope="scope">
-                        <span>{{scope.row.type}}</span>
+                        <span>{{scope.row.type | dics('cllx')}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column v-once prop="source" align="center" label="来源渠道">
                     <template scope="scope">
-                        <span>{{scope.row.source}}</span>
+                        <span>{{scope.row.source | dics('sxsqclly')}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="electronicMaterial" align="center" label="是否需要电子材料">
@@ -373,7 +374,7 @@
                             placeholder="请输入材料名称"
                             :remote-method="remoteMethod"
                             @change="changeMaterial"
-                            :disabled="changeMaterialName">
+                            :disabled="changeMaterialName" style="width:100%">
 
                         <el-option
                                 v-for="item in optionsName"
@@ -392,7 +393,7 @@
                     <tr>
                         <td>
                             <el-form-item label="材料类型:" :inline="true" v-show="changeMaterialInfo">
-                                <span >{{zwfwItemMaterial.type}}</span>
+                                <span >{{zwfwItemMaterial.type | dics('cllx')}}</span>
                                 <!--<el-input v-model="zwfwItemMaterial.type"></el-input>-->
                             </el-form-item>
                         </td>
@@ -418,7 +419,7 @@
                     <!--<el-input v-model="zwfwItemMaterial.acceptStandard"></el-input>-->
                 </el-form-item>
                 <el-form-item label="来源渠道:"  v-show="changeMaterialInfo" >
-                    <span>{{zwfwItemMaterial.source}}</span>
+                    <span>{{zwfwItemMaterial.source | dics('sxsqclly')}}</span>
                     <!--<el-input v-model="zwfwItemMaterial.source"></el-input>-->
                 </el-form-item>
                 <el-form-item label="材料样本:" prop="example"  v-show="changeMaterialInfo" >
@@ -432,7 +433,7 @@
                     <!--</el-upload>-->
                 </el-form-item>
                 <el-form-item label="电子表单:" prop="eform"  v-show="changeMaterialInfo" >
-                    <span>{{zwfwItemMaterial.eform}}</span>
+                    <span>{{zwfwItemMaterial.eform==1?'支持':'不支持'}}</span>
                     <!--<el-upload name="uploadFile"  accept="uploadAccepts"-->
                     <!--:action="uploadAction" :file-list="uploadAvatarsEform"-->
                     <!--:on-success="handleAvatarEformSuccess"-->
@@ -563,7 +564,7 @@
                 dialogFormVisible1: false,
                 dialogStatus: '',
                 dialogLoading: false,
-                uploadAction: '/api/admin/base/sysUpload/',
+                uploadAction: '/api/common/upload',
                 uploadAvatarsExample: [],
                 uploadAvatarsEform: [],
                 uploadAvatarsResult: [],
@@ -614,6 +615,11 @@
         methods: {
             submitUpload(){
                 this.$refs.upload.submit();
+            },
+            showResultExample(){
+                if(this.zwfwItem.resultExample) {
+                    window.open(this.zwfwItem.resultExample);
+                }
             },
             getList() {
                 this.listLoading = true;
@@ -741,7 +747,7 @@
                     this.handleRemoveResult();
                 } else {
                     this.uploadAvatarsResult = [];
-                    this.uploadAvatarsResult.push({url: this.zwfwItem.resultExample});
+                    this.uploadAvatarsResult.push({url: this.zwfwItem.resultExample , name:'结果样本'});
                 }
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;

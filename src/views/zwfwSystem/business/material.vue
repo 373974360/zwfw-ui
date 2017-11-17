@@ -30,12 +30,12 @@
             </el-table-column>
             <el-table-column prop="type" align="center" label="材料类型">
                 <template scope="scope">
-                    <span>{{scope.row.type}}</span>
+                    <span>{{scope.row.type | dics('cllx')}}</span>
                 </template>
             </el-table-column>
             <el-table-column v-once prop="source" align="center" label="来源渠道">
                 <template scope="scope">
-                    <span>{{scope.row.source}}</span>
+                    <span>{{scope.row.source | dics('sxsqclly')}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="electronicMaterial" align="center" label="是否需要电子材料">
@@ -71,7 +71,14 @@
                     <el-input v-model="zwfwMaterial.name"></el-input>
                 </el-form-item>
                 <el-form-item label="材料类型" prop="type">
-                    <el-input v-model="zwfwMaterial.type"></el-input>
+                        <el-select v-model="zwfwMaterial.type" placeholder="请选择材料类型">
+                            <el-option
+                                    v-for="item in dics['cllx']"
+                                    :key="item.code"
+                                    :label="item.value"
+                                    :value="item.value">
+                            </el-option>
+                        </el-select>
                 </el-form-item>
                 <el-form-item label="是否需要电子材料" prop="electronicMaterial">
                     <el-switch
@@ -86,23 +93,32 @@
                     <el-input v-model="zwfwMaterial.acceptStandard"></el-input>
                 </el-form-item>
                 <el-form-item label="来源渠道" prop="source">
-                    <el-input v-model="zwfwMaterial.source"></el-input>
+                    <el-select v-model="zwfwMaterial.source" placeholder="请选择来源渠道" style="width:100%">
+                        <el-option
+                                v-for="item in dics['sxsqclly']"
+                                :key="item.code"
+                                :label="item.value"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="材料样本" prop="example">
                     <el-upload name="uploadFile" accept="uploadAccepts"
-                               ref="upload"
+                               ref="uploadExample"
                                :action="uploadAction" :file-list="uploadAvatarsExample"
                                :on-success="handleAvatarExampleSuccess"
                                :before-upload="beforeAvatarUpload"
                                :on-remove="handleRemoveExample"
                                :auto-upload="false">
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+                        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUploadExample">上传到服务器</el-button>
+                        <el-button style="margin-left: 10px;" size="small" type="info" @click="showMaterialExample">查看图片</el-button>
+
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="电子表单" prop="eform">
                     <el-upload name="uploadFile" :accept="uploadAccepts"
-                               ref="upload"
+                               ref="uploadEform"
                                :action="uploadAction" :file-list="uploadAvatarsEform"
                                :headers="uploadHeaders"
                                :with-credentials="true"
@@ -111,7 +127,9 @@
                                :on-remove="handleRemoveEform"
                                :auto-upload="false">
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+                        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUploadEform">上传到服务器</el-button>
+                        <el-button style="margin-left: 10px;" size="small" type="info" @click="showEformFile">点击下载</el-button>
+
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="填报须知" prop="notice">
@@ -170,7 +188,7 @@
                 dialogFormVisible: false,
                 dialogStatus: '',
                 dialogLoading: false,
-                uploadAction: '/api/admin/base/sysUpload/',
+                uploadAction: '/api/common/upload',
 //                uploadAction: '/api/zwfw/web/pretrial/upload/',
                 uploadAvatarsEform: [],
                 uploadAvatarsExample: [],
@@ -195,6 +213,7 @@
             ...mapGetters([
                 'textMap',
                 'enums',
+                'dics',
                 'closeOnClickModal'
             ]),
             uploadHeaders(){
@@ -202,8 +221,11 @@
             }
         },
         methods: {
-            submitUpload(){
-                this.$refs.upload.submit();
+            submitUploadExample(){
+                this.$refs.uploadExample.submit();
+            },
+            submitUploadEform(){
+                this.$refs.uploadEform.submit();
             },
             getList() {
                 this.listLoading = true;
@@ -257,6 +279,16 @@
                 fileList.length = 0;
                 fileList.push(file);
                 this.zwfwMaterial.eform = res.url;
+            },
+            showMaterialExample(){
+                if(this.zwfwMaterial.example) {
+                    window.open(this.zwfwMaterial.example);
+                }
+            },
+            showEformFile(){
+                if(this.zwfwMaterial.eform) {
+                    window.open(this.zwfwMaterial.eform);
+                }
             },
             handleRemoveEform() {
                 this.zwfwMaterial.eform = '';

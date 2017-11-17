@@ -112,7 +112,7 @@
                 </el-table-column>
                 <el-table-column align="center" label="事项类型" prop="type">
                     <template scope="scope">
-                        <span>{{scope.row.type}}</span>
+                        <span>{{scope.row.type | dics('sslx')}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="办件类型" prop="processType">
