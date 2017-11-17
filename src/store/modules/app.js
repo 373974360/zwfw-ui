@@ -23,7 +23,9 @@ const app = {
         theme: 'default',
         livenewsChannels: Cookies.get('livenewsChannels') || '[]',
         closeOnClickModal: false,
-        loadedEnums: []
+        loadedEnums: [],
+        currentSystem: Cookies.get('CurrentSystem'),
+        routeComplete: false
     },
     mutations: {
         TOGGLE_SIDEBAR: state => {
@@ -42,6 +44,9 @@ const app = {
         },
         SET_DICTS: (state, dics) => {
             state.dics = dics;
+        },
+        SET_SYSTEM:(state, currentSystem) =>{
+            state.currentSystem = currentSystem;
         }
     },
     actions: {
@@ -85,6 +90,12 @@ const app = {
                     reject(error);
                 });
             });
+        },
+        SetSystem({commit}, data) {
+            return new Promise(resolve => {
+                commit('SET_SYSTEM', data);
+                resolve();
+            })
         }
     }
 };

@@ -80,6 +80,13 @@ service.interceptors.response.use(
                     duration: 5 * 1000
                 });
             }
+            if (code === 500) {
+                Message({
+                    message: "系统错误，请联系管理员",
+                    type: 'error',
+                    duration: 5 * 1000
+                });
+            }
             const refreshtoken = response.headers.refresh_token;
             if(refreshtoken){
                 // 刷新token

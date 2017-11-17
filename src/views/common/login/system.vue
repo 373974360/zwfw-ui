@@ -2,25 +2,25 @@
     <div class="login">
         <canvas id="canvas"></canvas>
         <div class="system">
-            <div class="systemItem">
+            <div class="systemItem" v-if="hasPermission('baseSystem:admin')">
                 <wscn-icon-svg icon-class="baseSystem"/>
-                <router-link class="pan-btn light-blue-btn" to="/baseSystem">基础信息管理系统</router-link>
+                <router-link class="pan-btn light-blue-btn" to="/baseSystem/index">基础信息管理系统</router-link>
             </div>
-            <div class="systemItem">
+            <div class="systemItem" v-if="hasPermission('hallSystem:admin')">
                 <wscn-icon-svg icon-class="hallSystem"/>
-                <router-link class="pan-btn light-blue-btn" to="/hallSystem">大厅综合管理系统</router-link>
+                <router-link class="pan-btn light-blue-btn" to="/hallSystem/index">大厅综合管理系统</router-link>
             </div>
-            <div class="systemItem">
+            <div class="systemItem" v-if="hasPermission('zwfwSystem:admin')">
                 <wscn-icon-svg icon-class="zwfwSystem"/>
-                <router-link class="pan-btn light-blue-btn" to="/zwfwSystem">政务服务管理系统</router-link>
+                <router-link class="pan-btn light-blue-btn" to="/zwfwSystem/index">政务服务管理系统</router-link>
             </div>
-            <div class="systemItem">
+            <div class="systemItem" v-if="hasPermission('workSystem:admin')">
                 <wscn-icon-svg icon-class="workSystem"/>
-                <router-link class="pan-btn light-blue-btn" to="/workSystem">政务业务办理系统</router-link>
+                <router-link class="pan-btn light-blue-btn" to="/workSystem/index">政务业务办理系统</router-link>
             </div>
-            <div class="systemItem">
+            <div class="systemItem" v-if="hasPermission('dataShareSystem:admin')">
                 <wscn-icon-svg icon-class="dataShareSystem"/>
-                <router-link class="pan-btn light-blue-btn" to="/dataShareSystem">共享数据管理系统</router-link>
+                <router-link class="pan-btn light-blue-btn" to="/dataShareSystem/index">共享数据管理系统</router-link>
             </div>
         </div>
 
@@ -29,6 +29,7 @@
 
 <script>
     import doCanvas from 'utils/canvas';
+    import {mapGetters} from 'vuex';
 
     export default {
         name: 'login',
@@ -38,7 +39,16 @@
             };
         },
         methods: {
-
+            hasPermission(system){
+                if(this.permissions.length > 0){
+                    return this.permissions.some(permission => permission.indexOf(system) >= 0);
+                }
+            }
+        },
+        computed: {
+            ...mapGetters([
+                'permissions',
+            ])
         },
         mounted() {
             doCanvas();
@@ -79,7 +89,7 @@
             float: left;
             display: inline-block;
         }
-        .wscn-icon{
+        .system .wscn-icon{
             width: 6em;
             height:6em;
             margin-bottom: 1em;

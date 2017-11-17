@@ -3,42 +3,41 @@
         <el-col :span="8">
             <div class="grid-content ">
                 <div style="padding:10px">
-                    <el-input v-model="getNumberBy_pretrialNumber" placeholder="输入预审抽号">
-                        <el-button slot="append" type="primary" @click="takeNumberByPretrialNumber">已预审抽号</el-button>
-                    </el-input>
-
-                    <div style="margin: 20px 0;"></div>
-
-                    <el-input v-model="getNumberBy_itemCode" placeholder="输入事项编码">
-                        <el-button slot="append" type="primary" @click="takeNumberByItemCode">未预审抽号</el-button>
-                    </el-input>
-
-                    <div style="margin: 20px 0;"></div>
-                    <el-input v-model="devMockWindowKey" placeholder="输入窗口key">
-                        <el-button slot="append" type="primary" @click="loginToWindow">登录到窗口</el-button>
-                    </el-input>
-                    <el-input v-model="getNumberBy_hallNumber" placeholder="输入呼叫号查看办理事项">
-                        <el-button slot="append" type="primary" @click="queryNumberByCallNumber">按呼叫号查询</el-button>
-                    </el-input>
-
-                    <div style="margin: 20px 0;"></div>
-
-                    <el-button-group>
-                        <el-button v-if="itemNumber == null || itemNumber.status==1" type="primary" @click="callNumber">
-                            叫号
-                        </el-button>
-                        <el-button type="primary" @click="queryCurrentNumber">查询当前业务</el-button>
-                        <el-button v-if="itemNumber.status==2" type="primary"
-                                   v-bind:disabled="itemNumber.applyFinishTime!=null"
-                                   @click="welcomeNumber" title="仅限测试使用">
-                            模拟欢迎
-                        </el-button>
-                        <el-button v-if="itemNumber.status==2" type="primary"
-                                   v-bind:disabled="itemNumber.applyFinishTime!=null"
-                                   @click="skip" title="申请人未到达窗口时跳过">
-                            跳过
-                        </el-button>
-                    </el-button-group>
+                    <el-row type="flex" justify="center">
+                        <el-input v-model="getNumberBy_pretrialNumber" placeholder="输入预审抽号">
+                            <el-button slot="append" type="primary" @click="takeNumberByPretrialNumber">已预审抽号
+                            </el-button>
+                        </el-input>
+                    </el-row>
+                    <el-row type="flex" justify="center">
+                        <el-input v-model="getNumberBy_itemCode" placeholder="输入事项编码">
+                            <el-button slot="append" type="primary" @click="takeNumberByItemCode">未预审抽号</el-button>
+                        </el-input>
+                    </el-row>
+                    <el-row type="flex" justify="center">
+                        <el-input v-model="devMockWindowKey" placeholder="输入窗口key">
+                            <el-button slot="append" type="primary" @click="loginToWindow">登录到窗口</el-button>
+                        </el-input>
+                    </el-row>
+                    <el-row type="flex" justify="center">
+                        <el-input v-model="getNumberBy_hallNumber" placeholder="输入呼叫号查看办理事项">
+                            <el-button slot="append" @click="queryNumberByCallNumber">按呼叫号查询</el-button>
+                        </el-input>
+                    </el-row>
+                    <el-button v-if="itemNumber == null || itemNumber.status==1" type="primary" @click="callNumber">
+                        叫号
+                    </el-button>
+                    <el-button type="primary" @click="queryCurrentNumber">查询当前业务</el-button>
+                    <el-button v-if="itemNumber.status==2" type="primary"
+                               v-bind:disabled="itemNumber.applyFinishTime!=null"
+                               @click="welcomeNumber" title="仅限测试使用">
+                        模拟欢迎
+                    </el-button>
+                    <el-button v-if="itemNumber.status==2" type="primary"
+                               v-bind:disabled="itemNumber.applyFinishTime!=null"
+                               @click="skip" title="申请人未到达窗口时跳过">
+                        跳过
+                    </el-button>
 
 
                     <div id="numberInfo" v-show="itemNumber!=null">
@@ -62,11 +61,11 @@
                             </tr>
                             <tr v-if="member.naturePerson!=null">
                                 <th>申报人联系电话:</th>
-                                <td>{{member.naturePerson.phone}} </td>
+                                <td>{{member.naturePerson.phone}}</td>
                             </tr>
                             <tr v-if="member.legalPerson!=null">
                                 <th>申报人联系电话:</th>
-                                <td>{{member.legalPerson.phone}} </td>
+                                <td>{{member.legalPerson.phone}}</td>
                             </tr>
                             <tr v-if="member.legalPerson!=null">
                                 <th>办事企业:</th>
@@ -162,7 +161,7 @@
                 <div style="padding:10px">
                     <el-tabs v-model="tabName" type="card" @tab-click="handleTabClick">
                         <el-tab-pane label="所需资料" name="materialListPanel">
-                            <el-table
+                            <el-table id="materiaTable"
                                     ref="itemMaterialVoList"
                                     :data="itemMaterialVoList"
                                     height="400"
@@ -250,7 +249,7 @@
                             <div id="itemInfo">
                                 <table>
                                     <tr>
-                                        <th>办理事项</th>
+                                        <th width="150">办理事项</th>
                                         <td>{{itemVo.name}}</td>
                                     </tr>
                                     <tr>
@@ -752,11 +751,13 @@
         line-height: 30px;
         border: 1px solid #bfcbd9;
         padding: 6px;
+        font-weight: normal;
     }
 
     #numberInfo table th {
-        text-align: left;
+        text-align: center;
         background-color: #eef1f6;
+        font-size: 14px;
     }
 
     #itemInfo table {
@@ -768,14 +769,23 @@
         line-height: 30px;
         border: 1px solid #bfcbd9;
         padding: 6px;
+        font-size: 14px;
+    }
+    #itemInfo table td{
+        text-indent: 2em;
     }
 
     #itemInfo table th {
-        text-align: left;
+        text-align: center;
         background-color: #eef1f6;
-
+        font-weight: normal;
     }
-
+    #materiaTable th{
+        font-weight: normal;
+    }
+    #materiaTable th div{
+        text-align: center;
+    }
     #itemStepInfo table {
         width: 100%;
         margin-top: 20px;

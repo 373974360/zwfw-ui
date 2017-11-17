@@ -21,6 +21,7 @@ import vueWaves from './directive/waves'; // 水波纹指令
 import errLog from 'store/errLog'; // error log组件
 import moment from 'moment';
 import {getToken} from 'utils/auth';
+import Cookies from 'js-cookie';
 
 // import './mock/dept.js';  // 该项目所有请求使用mockjs模拟
 
@@ -60,9 +61,9 @@ router.beforeEach((to, from, next) => {
                 store.dispatch('SetDicts');
                 next();
             }
-            if (store.getters.permissions.length === 0) { // 判断当前用户是否已拉取完user_info信息
-                store.dispatch('GetInfo').then(res => { // 拉取user_info
-                    const permissions = res.data.permissions;
+            if (store.getters.permissions.length === 0) { //判断当前用户是否已拉取完user_info信息
+                store.dispatch('GetInfo').then(() => {
+                    const permissions = store.getters.permissions;
                     store.dispatch('GenerateRoutes', {permissions}).then(() => { // 生成可访问的路由表
                         router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
                         next(to.path); // hack方法 确保addRoutes已完成
@@ -71,13 +72,25 @@ router.beforeEach((to, from, next) => {
                     console.log(err);
                 });
             } else {
-                // 没有动态改变权限的需求可直接next() 删除下方权限判断 ↓
-                if (hasPermission(store.getters.permissions, to.meta.permission)) {
-                    next();//
-                } else {
-                    next({path: '/401', query: {noGoBack: true}});
+                //设置当前系统，用来动态输出路由
+                if(to.path.indexOf("System") >= 0){
+                    const currentSystem = to.path.substr(1,to.path.indexOf("/index") - 1);
+                    Cookies.set('CurrentSystem',currentSystem);
+                    if(store.getters.addRouters.length <= 0){
+                        const permissions = store.getters.permissions;
+                        store.dispatch('GenerateRoutes', {permissions}).then(() => { // 生成可访问的路由表
+                            router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
+                            next(to.path); // hack方法 确保addRoutes已完成
+                        })
+                    }
+                    next();
                 }
-                // 可删 ↑
+                if(to.path == "/" && store.getters.addRouters.length > 0){
+                    store.dispatch('GenerateRoutes').then(() => { // 生成可访问的路由表
+                        next(to.path); // hack方法 确保addRoutes已完成
+                    });
+                }
+                next();
             }
         }
     } else {

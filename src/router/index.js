@@ -3,6 +3,7 @@ import Router from 'vue-router';
 
 /* 后台布局 */
 import Layout from '../views/common/layout/Layout';
+import AppMain from '../views/common/layout/AppMain';
 
 /* 登录 */
 import Login from '../views/common/login/';
@@ -102,7 +103,47 @@ export const constantRouterMap = [
     {path: '/sendpwd', component: SendPWD, hidden: true},
     {path: '/reset', component: Reset, hidden: true},
     {path: '/404', component: Err404, hidden: true},
-    {path: '/401', component: Err401, hidden: true}
+    {path: '/401', component: Err401, hidden: true},
+    {
+        path: '/baseSystem',
+        component: Layout,
+        name: '基础信息管理系统',
+        meta: {permission: 'baseSystem:admin'},
+        hidden: true,
+        children: [{path: 'index', component: BaseSystem}]
+    },
+    {
+        path: '/hallSystem',
+        component: Layout,
+        name: '大厅综合管理系统',
+        meta: {permission: 'hallSystem:admin'},
+        hidden: true,
+        children: [{path: 'index', component: HallSystem}]
+    },
+    {
+        path: '/zwfwSystem',
+        component: Layout,
+        name: '政务服务管理系统',
+        meta: {permission: 'zwfwSystem:admin'},
+        hidden: true,
+        children: [{path: 'index', component: ZwfwSystem}]
+    },
+    {
+        path: '/workSystem',
+        component: Layout,
+        name: '政务业务办理系统',
+        meta: {permission: 'workSystem:admin'},
+        hidden: true,
+        children: [{path: 'index', component: WorkSystem}]
+    },
+    {
+        path: '/dataShareSystem',
+        component: Layout,
+        name: '共享数据管理系统',
+        meta: {permission: 'dataShareSystem:admin'},
+        hidden: true,
+        children: [{path: 'index', component: DataShareSystem}]
+    }
 ]
 
 export default new Router({
@@ -114,15 +155,6 @@ export default new Router({
 export const asyncRouterMap = [
 
     /************************基础信息管理系统************************/
-    {
-        path: '/baseSystem',
-        component: Layout,
-        redirect: '/baseSystem/index',
-        name: '基础信息管理系统',
-        meta: {permission: 'baseSystem:admin'},
-        hidden: true,
-        children: [{path: 'index', component: BaseSystem}]
-    },
     {
         path: '/org',
         redirect: 'noredirect',
@@ -198,7 +230,7 @@ export const asyncRouterMap = [
         ]
     },
     {
-        path: 'setting',
+        path: '/setting',
         redirect: 'noredirect',
         name: '系统管理',
         meta: {permission: 'baseSystem:setting:admin'},
@@ -220,15 +252,6 @@ export const asyncRouterMap = [
         ]
     },
     /************************大厅综合管理系统************************/
-    {
-        path: '/hallSystem',
-        component: Layout,
-        redirect: '/hallSystem/index',
-        name: '大厅综合管理系统',
-        meta: {permission: 'hallSystem:admin'},
-        hidden: true,
-        children: [{path: 'index', component: HallSystem}]
-    },
     {
         path: '/lobby',
         redirect: 'noredirect',
@@ -282,8 +305,8 @@ export const asyncRouterMap = [
         component: Layout,
         children: [
             {
-                path: 'pretrial',
-                component: Layout,
+                path: '/pretrial',
+                component: AppMain,
                 name: '预审管理',
                 meta: {permission: 'hallSystem:window:pretrial:admin'},
 				children: [
@@ -314,8 +337,8 @@ export const asyncRouterMap = [
 				]
             },
             {
-                path: 'receive',
-                component: Layout,
+                path: '/receive',
+                component: AppMain,
                 name: '收件管理',
                 meta: {permission: 'hallSystem:window:receive:admin'},
 				children: [
@@ -360,15 +383,6 @@ export const asyncRouterMap = [
         ]
     },
     /************************政务服务管理系统************************/
-    {
-        path: '/zwfwSystem',
-        component: Layout,
-        redirect: '/zwfwSystem/index',
-        name: '政务服务管理系统',
-		meta: {permission: 'zwfwSystem:admin'},
-        hidden: true,
-        children: [{path: 'index', component: ZwfwSystem}]
-    },
     {
         path: '/business',
         redirect: 'noredirect',
@@ -423,15 +437,6 @@ export const asyncRouterMap = [
     },
     /************************政务业务办理系统************************/
     {
-        path: '/workSystem',
-        component: Layout,
-        redirect: '/workSystem/index',
-        name: '政务业务办理系统',
-		meta: {permission: 'workSystem:admin'},
-        hidden: true,
-        children: [{path: 'index', component: WorkSystem}]
-    },
-    {
         path: '/process',
         redirect: 'noredirect',
         name: '办件管理',
@@ -466,15 +471,7 @@ export const asyncRouterMap = [
         ]
     },
     /************************共享数据管理系统************************/
-    {
-        path: '/dataShareSystem',
-        component: Layout,
-        redirect: '/dataShareSystem/index',
-        name: '共享数据管理系统',
-		meta: {permission: 'dataShareSystem:admin'},
-        hidden: true,
-        children: [{path: 'index', component: DataShareSystem}]
-    },
+
     /*************************404页面******************************/
     {path: '*', redirect: '/404', hidden: true}
 ];

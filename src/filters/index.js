@@ -74,6 +74,12 @@ export function dics(value, type) {
     }
 }
 
+export function stringToJson(value){
+    if(value){
+        return JSON.parse(value);
+    }
+}
+
 /**
  * 把度过的毫秒数转换为人类的语言
  * @param value

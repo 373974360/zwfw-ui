@@ -48,7 +48,7 @@
                 </el-form-item>
                 <el-form-item label="Value">
                     <div class="editor-container">
-                        <json-editor ref="jsonEditor" v-model="redisResult.value"></json-editor>
+                        <json-editor ref="jsonEditor" :value="redisResult.value | stringToJson"></json-editor>
                     </div>
                 </el-form-item>
                 <el-form-item label="类型">
