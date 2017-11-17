@@ -20,7 +20,7 @@
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="事项名称" prop="name">
+            <el-table-column align="left" label="事项名称" prop="name">
                 <template scope="scope">
                     <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
@@ -46,7 +46,7 @@
             </el-table-column>
             <el-table-column align="center" label="承诺办结时间" prop="promiseEndTime">
                 <template scope="scope">
-                    <span>{{scope.row.promiseEndTime}}</span>
+                    <span>{{scope.row.promiseEndTime}} 天</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="法定办结时限" prop="legalEndTime">
@@ -164,7 +164,7 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="事项类型" prop="type">
-                    <el-select v-model="zwfwItem.type" placeholder="请选择事项类型">
+                    <el-select v-model="zwfwItem.type" placeholder="请选择事项类型" style="width:100%">
                         <el-option
                                 v-for="item in dics['sslx']"
                                 :key="item.code"
@@ -319,7 +319,7 @@
         </el-dialog>
 
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible1"
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible1" size="large"
                    :close-on-click-modal="closeOnClickModal" :before-close="resetZwfwMaterialForm">
             <div class="filter-container">
                 <el-button class="filter-item" style="margin-left: 10px;" @click="handleDeleteOne" type="danger"
@@ -337,7 +337,7 @@
                         <span>{{scope.row.id}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="name" align="center" label="材料名称" width="100">
+                <el-table-column prop="name" align="left" label="材料名称" width="400" >
                     <template scope="scope">
                         <el-tooltip content="点击编辑" placement="right" effect="dark">
                             <span class="link-type" @click='handleUpdateClick(scope.row)'>{{scope.row.name}}</span>
@@ -346,12 +346,12 @@
                 </el-table-column>
                 <el-table-column prop="type" align="center" label="材料类型" width="100">
                     <template scope="scope">
-                        <span>{{scope.row.type}}</span>
+                        <span>{{scope.row.type | dics('cllx')}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column v-once prop="source" align="center" label="来源渠道">
                     <template scope="scope">
-                        <span>{{scope.row.source}}</span>
+                        <span>{{scope.row.source | dics('sxsqclly')}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="electronicMaterial" align="center" label="是否需要电子材料">
@@ -373,7 +373,7 @@
                             placeholder="请输入材料名称"
                             :remote-method="remoteMethod"
                             @change="changeMaterial"
-                            :disabled="changeMaterialName">
+                            :disabled="changeMaterialName" style="width:100%">
 
                         <el-option
                                 v-for="item in optionsName"
@@ -392,7 +392,7 @@
                     <tr>
                         <td>
                             <el-form-item label="材料类型:" :inline="true" v-show="changeMaterialInfo">
-                                <span >{{zwfwItemMaterial.type}}</span>
+                                <span >{{zwfwItemMaterial.type | dics('cllx')}}</span>
                                 <!--<el-input v-model="zwfwItemMaterial.type"></el-input>-->
                             </el-form-item>
                         </td>
@@ -418,7 +418,7 @@
                     <!--<el-input v-model="zwfwItemMaterial.acceptStandard"></el-input>-->
                 </el-form-item>
                 <el-form-item label="来源渠道:"  v-show="changeMaterialInfo" >
-                    <span>{{zwfwItemMaterial.source}}</span>
+                    <span>{{zwfwItemMaterial.source | dics('sxsqclly')}}</span>
                     <!--<el-input v-model="zwfwItemMaterial.source"></el-input>-->
                 </el-form-item>
                 <el-form-item label="材料样本:" prop="example"  v-show="changeMaterialInfo" >
@@ -432,7 +432,7 @@
                     <!--</el-upload>-->
                 </el-form-item>
                 <el-form-item label="电子表单:" prop="eform"  v-show="changeMaterialInfo" >
-                    <span>{{zwfwItemMaterial.eform}}</span>
+                    <span>{{zwfwItemMaterial.eform==1?'支持':'不支持'}}</span>
                     <!--<el-upload name="uploadFile"  accept="uploadAccepts"-->
                     <!--:action="uploadAction" :file-list="uploadAvatarsEform"-->
                     <!--:on-success="handleAvatarEformSuccess"-->

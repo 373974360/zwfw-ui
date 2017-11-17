@@ -71,7 +71,14 @@
                     <el-input v-model="zwfwMaterial.name"></el-input>
                 </el-form-item>
                 <el-form-item label="材料类型" prop="type">
-                    <el-input v-model="zwfwMaterial.type"></el-input>
+                        <el-select v-model="zwfwMaterial.type" placeholder="请选择材料类型">
+                            <el-option
+                                    v-for="item in dics['cllx']"
+                                    :key="item.code"
+                                    :label="item.value"
+                                    :value="item.value">
+                            </el-option>
+                        </el-select>
                 </el-form-item>
                 <el-form-item label="是否需要电子材料" prop="electronicMaterial">
                     <el-switch
@@ -195,6 +202,7 @@
             ...mapGetters([
                 'textMap',
                 'enums',
+                'dics',
                 'closeOnClickModal'
             ]),
             uploadHeaders(){
