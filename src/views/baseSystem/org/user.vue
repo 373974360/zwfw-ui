@@ -31,9 +31,9 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column prop="sysDeptVo.name" align="center" label="部门">
+            <el-table-column prop="deptVo.name" align="center" label="部门">
                 <template scope="scope">
-                    <span v-if="scope.row.sysDeptVo">{{scope.row.sysDeptVo.name}}</span>
+                    <span v-if="scope.row.deptVo">{{scope.row.deptVo.name}}</span>
                     <span v-else></span>
                 </template>
             </el-table-column>
@@ -187,7 +187,7 @@
                     id: undefined,
                     deptId: '',
                     name: '',
-                    sysDeptVo: {},
+                    deptVo: {},
                     sex: 1,
                     phone: '',
                     avatar: '',
@@ -238,10 +238,10 @@
             ]),
             updateModel: function () {
                 let result = [];
-                if (this.sysUser.sysDeptVo.treePosition) {
-                    result = (this.sysUser.sysDeptVo.treePosition + '&' + this.sysUser.sysDeptVo.id).split('&');
+                if (this.sysUser.deptVo.treePosition) {
+                    result = (this.sysUser.deptVo.treePosition + '&' + this.sysUser.deptVo.id).split('&');
                 } else {
-                    result = [this.sysUser.sysDeptVo.id + ''];
+                    result = [this.sysUser.deptVo.id + ''];
                 }
                 return result;
             }
@@ -407,7 +407,7 @@
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
-                        this.sysUser.sysDeptVo = {};
+                        this.sysUser.deptVo = {};
                         updateUser(this.sysUser).then(response => {
                             copyProperties(this.currentRow, response.data);
                             this.$message.success('更新成功');
@@ -423,7 +423,7 @@
                     id: undefined,
                     deptId: '',
                     name: '',
-                    sysDeptVo: {},
+                    deptVo: {},
                     sex: 1,
                     phone: '',
                     avatar: '',
