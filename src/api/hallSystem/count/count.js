@@ -118,3 +118,28 @@ export function dataPlotCountByHour(query) {
         params: query
     });
 }
+
+
+/**
+ * 查询窗口等待事件排行
+ * @param query
+ */
+export function dataPlotTopWaitWindow(query) {
+    return fetch({
+        url: '/api/hallSystem/count/statistics/dataPlotTopWaitWindow',
+        method: 'get',
+        params: query
+    });
+}
+
+/**
+ * 查询事项等待事件排行
+ * @param query
+ */
+export function dataPlotTopWaitItem(query) {
+    return fetch({
+        url: '/api/hallSystem/count/statistics/dataPlotTopWaitItem',
+        method: 'get',
+        params: query
+    });
+}
