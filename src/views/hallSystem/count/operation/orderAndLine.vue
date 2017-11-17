@@ -1,21 +1,25 @@
 <template>
-    <el-row style="padding:20px;">
+    <el-row style="padding:20px;" :gutter="20">
+
+        <el-col :span="24">
+            <h3>窗口排队等待时长 TOP5 </h3>
+        </el-col>
         <el-col :span="12">
             <div class="grid-content">
                 <el-table :data="windowWaitTopListAsc" v-loading.body="windowWaitTopListLoading" border fit
                           highlight-current-row
                 >
-                    <el-table-column align="center" label="窗口" width="200">
+                    <el-table-column align="center" label="窗口" >
                         <template scope="scope">
                             <span>{{scope.row.windowName}}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column align="center" label="所属部门" width="200">
+                    <el-table-column align="center" label="所属部门" >
                         <template scope="scope">
                             <span>{{scope.row.deptName}}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column align="center" label="平均等待时间" width="200">
+                    <el-table-column align="center" label="平均等待时间" >
                         <template scope="scope">
                             <span>{{scope.row.avgtime * 1000 | duration}}</span>
                         </template>
@@ -23,45 +27,51 @@
                 </el-table>
             </div>
         </el-col>
-        <el-col :span="12">
+
+
+        <el-col :span="12" >
             <div class="grid-content">
                 <el-table :data="windowWaitTopListDesc" v-loading.body="windowWaitTopListLoading" border fit
                           highlight-current-row
                 >
-                    <el-table-column align="center" label="窗口" width="200">
+                    <el-table-column align="center" label="窗口" >
                         <template scope="scope">
                             <span>{{scope.row.windowName}}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column align="center" label="所属部门" width="200">
+                    <el-table-column align="center" label="所属部门" >
                         <template scope="scope">
                             <span>{{scope.row.deptName}}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column align="center" label="平均等待时间" width="200">
+                    <el-table-column align="center" label="平均等待时间" >
                         <template scope="scope">
                             <span>{{scope.row.avgtime * 1000 | duration}}</span>
                         </template>
                     </el-table-column>
                 </el-table>
             </div>
+        </el-col>
+
+        <el-col :span="24">
+            <h3>事项排队等待时长 TOP5 </h3>
         </el-col>
         <el-col :span="12">
             <div class="grid-content">
                 <el-table :data="itemWaitTopListAsc" v-loading.body="itemWaitTopListLoading" border fit
                           highlight-current-row
                 >
-                    <el-table-column align="center" label="事项" width="200">
+                    <el-table-column align="center" label="事项" >
                         <template scope="scope">
                             <div style="height:2em;overflow:hidden">{{scope.row.itemName}}</div>
                         </template>
                     </el-table-column>
-                    <el-table-column align="center" label="所属部门" width="200">
+                    <el-table-column align="center" label="所属部门" >
                         <template scope="scope">
                             <div>{{scope.row.deptName}}</div>
                         </template>
                     </el-table-column>
-                    <el-table-column align="center" label="平均等待时间" width="200">
+                    <el-table-column align="center" label="平均等待时间" >
                         <template scope="scope">
                             <span>{{scope.row.avgtime * 1000 | duration}}</span>
                         </template>
@@ -75,17 +85,17 @@
                 <el-table :data="itemWaitTopListDesc" v-loading.body="itemWaitTopListLoading" border fit
                           highlight-current-row
                 >
-                    <el-table-column align="center" label="事项" width="200">
+                    <el-table-column align="center" label="事项" >
                         <template scope="scope">
                             <div style="height:2em;overflow:hidden">{{scope.row.itemName}}</div>
                         </template>
                     </el-table-column>
-                    <el-table-column align="center" label="所属部门" width="200">
+                    <el-table-column align="center" label="所属部门" >
                         <template scope="scope">
                             <div>{{scope.row.deptName}}</div>
                         </template>
                     </el-table-column>
-                    <el-table-column align="center" label="平均等待时间" width="200">
+                    <el-table-column align="center" label="平均等待时间" >
                         <template scope="scope">
                             <span>{{scope.row.avgtime * 1000 | duration}}</span>
                         </template>
