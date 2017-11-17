@@ -121,7 +121,7 @@
                 </el-table-column>
                 <el-table-column align="center" label="事项类型" prop="type">
                     <template scope="scope">
-                        <span>{{scope.row.type | dics('sslx')}}</span>
+                        <span>{{scope.row.type }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="办件类型" prop="processType">
@@ -151,7 +151,7 @@
                             remote
                             placeholder="请输入事项名称或基本编码"
                             :remote-method="remoteMethod"
-                            @change="changeMaterial">
+                            @change="changeMaterial" style="width:100%">
                         <el-option
                                 v-for="item in optionsName"
                                 :key="item.id"
