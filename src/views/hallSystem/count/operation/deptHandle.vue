@@ -96,7 +96,7 @@
                     const e = echarts.init(document.getElementById('deptHandle'));
                     e.setOption({
                         title: {
-                            text: '窗口受理量'
+                            text: '部门受理量'
                         },
                         tooltip: {
                             trigger: 'axis'
