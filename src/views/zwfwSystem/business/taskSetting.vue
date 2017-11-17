@@ -1,5 +1,5 @@
 <template>
-    <el-row :gutter="20">
+    <el-row :gutter="20" style="padding:10px;">
         <el-col :span="14">
             <div class="grid-content">
                 <!--流程选择和流程的显示区域-->
@@ -76,7 +76,7 @@
 
                                 <el-table
                                         :data="candidateUserList"
-                                        style="width: 100%;margin-top:14px;">
+                                        style="margin-top:14px;">
                                     <el-table-column
                                             prop="id"
                                             label="编号"
@@ -93,7 +93,7 @@
                                     </el-table-column>
                                     <el-table-column
                                             prop="dept"
-                                            label="地址">
+                                            label="操作">
                                         <template scope="scope">
                                             <el-button @click="delCadidateUser(scope.row)">删除</el-button>
                                         </template>

@@ -100,7 +100,9 @@
                     <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
                                :action="uploadAction" :file-list="uploadAvatars"
                                :on-success="handleAvatarSuccess"
+                               :on-error="handlerAvatarError"
                                :before-upload="beforeAvatarUpload"
+                               :show-file-list="false"
                                :on-remove="handleRemove">
                         <i class="el-icon-plus"></i>
                     </el-upload>
@@ -224,7 +226,7 @@
                 dialogFormVisible: false,
                 dialogStatus: '',
                 dialogLoading: false,
-                uploadAction:  '/api/common/upload',
+                uploadAction: '/api/common/upload',
                 uploadAvatars: []
             }
         },
@@ -303,7 +305,7 @@
                 this.sysUser.password = '';
                 this.sysUserRules1.password[0].required = false;
                 this.sysUserRules1.passwordConfirm[0].required = false;
-                this.uploadAvatars.push({url:this.sysUser.avatar});
+                this.uploadAvatars.push({url: this.sysUser.avatar});
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
@@ -315,10 +317,32 @@
                     this.listLoading = false;
                 })
             },
+
+            /**
+             *
+             * 后台返回响应就会触发
+             *
+             */
             handleAvatarSuccess(res, file, fileList) {
-                fileList.length = 0;
-                fileList.push(file);
-                this.sysUser.avatar = res.url;
+                console.log(res);
+                if (res.httpCode === 200) {
+                    fileList.length = 0;
+                    fileList.push(file);
+                    this.sysUser.avatar = res.url;
+                    this.$message.success("上传成功");
+                } else {
+                    this.$message.error("上传失败");
+                }
+            },
+            /**
+             * 网络无法联通时会触发，其他的场景没有进入
+             * @param err
+             * @param file
+             * @param fileList
+             */
+            handlerAvatarError(err, file, fileList) {
+                console.log(err);
+                this.$message.error("网络不稳定，上传失败");
             },
             beforeAvatarUpload(file) {
                 const isLt2M = file.size / 1024 / 1024 < 2;

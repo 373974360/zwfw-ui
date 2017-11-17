@@ -38,7 +38,7 @@ export function delRole(ids) {
 export function createRoleMenus(roleId, menuIds) {
     const data = {roleId, menuIds};
     return fetch({
-        url: '/api/admin/sysRoleMenu/addList',
+        url: '/api/baseSystem/org/roleMenu/addList',
         method: 'post',
         data
     })
@@ -47,7 +47,7 @@ export function createRoleMenus(roleId, menuIds) {
 export function createUserRole(roleId, userIds) {
     const data = {roleId, userIds};
     return fetch({
-        url: '/api/admin/sysUserRole/addList',
+        url: '/api/baseSystem/org/userRole/addList',
         method: 'post',
         data
     })
@@ -55,14 +55,14 @@ export function createUserRole(roleId, userIds) {
 
 export function getAllRoleMenus(roleId) {
     return fetch({
-        url: '/api/admin/sysRoleMenu/getAll',
+        url: '/api/baseSystem/org/roleMenu/getAll',
         method: 'get',
         params: {roleId}
     })
 }
 export function getAllUserRole(roleId) {
     return fetch({
-        url: '/api/admin/sysUserRole/getAll',
+        url: '/api/baseSystem/org/userRole/getAll',
         method: 'get',
         params: {roleId}
     })

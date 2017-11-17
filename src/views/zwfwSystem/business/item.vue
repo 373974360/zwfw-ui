@@ -834,7 +834,9 @@
                             }
                             const query = {
                                 itemId: this.itemId,
-                                materialId: this.zwfwItemMaterial.id
+                                materialId: this.zwfwItemMaterial.id,
+                                paperDescription: this.zwfwItemMaterial.paperDescription,
+
                             }
                             this.listLoading1 = true;
                             createZwfwItemMaterial(query).then(response => {
