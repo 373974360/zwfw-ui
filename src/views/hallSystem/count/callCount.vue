@@ -19,7 +19,7 @@
                 <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="统计" placement="top-start">
                     <el-button class="filter-item" type="primary" v-waves icon="search" @click="doCategoryPlot">
                         统计
-                    </el-button>
+                    </el-button> 
                 </el-tooltip>
             </div>
             <div class="className" id="plotbyCategory"></div>
@@ -79,6 +79,7 @@
     require('echarts/lib/chart/pie');
     require('echarts/lib/chart/line');
     require('echarts/lib/component/tooltip');
+    require('echarts/lib/component/legend');
     require('echarts/lib/component/title');
     require('echarts/lib/component/visualMap');
     import {mapGetters} from 'vuex';
