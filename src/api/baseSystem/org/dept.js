@@ -8,6 +8,14 @@ export function getDeptList(query) {
     });
 }
 
+export function getAllDept(query) {
+    return fetch({
+        url: '/api/baseSystem/org/dept/getAll',
+        method: 'get',
+        params: query
+    })
+}
+
 export function getDeptTree() {
     return fetch({
         url: '/api/baseSystem/org/dept/getTree',
