@@ -3,6 +3,7 @@ import Router from 'vue-router';
 
 /* 后台布局 */
 import Layout from '../views/common/layout/Layout';
+import AppMain from '../views/common/layout/AppMain';
 
 /* 登录 */
 import Login from '../views/common/login/';
@@ -274,7 +275,7 @@ export const asyncRouterMap = [
         ]
     },
     {
-        path: '/window',
+        path: 'window',
         redirect: 'noredirect',
         name: '综合窗口',
         meta: {permission: 'hallSystem:window:admin'},
@@ -282,9 +283,9 @@ export const asyncRouterMap = [
         component: Layout,
         children: [
             {
-                path: 'pretrial',
-                component: Layout,
+                path: '/pretrial',
                 name: '预审管理',
+                component: AppMain,
                 meta: {permission: 'hallSystem:window:pretrial:admin'},
 				children: [
 					{
