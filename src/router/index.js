@@ -68,6 +68,12 @@ const TaskSetting = () => import('../views/zwfwSystem/business/taskSetting');
 const FormEditor = () => import('../views/zwfwSystem/business/formEditor');
 /* 统计分析 */
 const CallCount = () => import('../views/hallSystem/count/callCount');
+const OrderAndLine = () => import('../views/hallSystem/count/operation/orderAndLine');
+const WindowHandle = () => import('../views/hallSystem/count/operation/windowHandle');
+const DeptHandle = () => import('../views/hallSystem/count/operation/deptHandle');
+const StaffSatisfaction = () => import('../views/hallSystem/count/operation/staffSatisfaction');
+const DeptSatisfaction = () => import('../views/hallSystem/count/operation/deptSatisfaction');
+const Business = () => import('../views/hallSystem/count/approval/business');
 
 /************************政务服务办理系统************************/
 /* index */
@@ -352,6 +358,58 @@ export const asyncRouterMap = [
         icon: 'count',
         component: Layout,
         children: [
+            {
+                path: '/operation',
+                component: AppMain,
+                name: '大厅日常运营',
+                meta: {permission: 'hallSystem:count:operation:admin'},
+                children: [
+                    {
+                        path: 'orderAndLine',
+                        component: OrderAndLine,
+                        name: '预约排队统计',
+                        meta: {permission: 'hallSystem:count:operation:orderAndLine:list'}
+                    },
+                    {
+                        path: 'windowHandle',
+                        component: WindowHandle,
+                        name: '窗口受理量',
+                        meta: {permission: 'hallSystem:count:operation:windowHandle:list'}
+                    },
+                    {
+                        path: 'deptHandle',
+                        component: DeptHandle,
+                        name: '部门受理量',
+                        meta: {permission: 'hallSystem:count:operation:deptHandle:list'}
+                    },
+                    {
+                        path: 'staffSatisfaction',
+                        component: StaffSatisfaction,
+                        name: '五星级服务员',
+                        meta: {permission: 'hallSystem:count:operation:staffSatisfaction:list'}
+                    },
+                    {
+                        path: 'deptSatisfaction',
+                        component: DeptSatisfaction,
+                        name: '服务满意度统计',
+                        meta: {permission: 'hallSystem:count:operation:deptSatisfaction:list'}
+                    }
+                ]
+            },
+            {
+                path: '/approval',
+                component: AppMain,
+                name: '受理审批分析',
+                meta: {permission: 'hallSystem:count:approval:admin'},
+                children: [
+                    {
+                        path: 'business',
+                        component: Business,
+                        name: '业务审批统计分析',
+                        meta: {permission: 'hallSystem:count:approval:business:list'}
+                    }
+                ]
+            },
             {
                 path: 'callCount',
                 component: CallCount,
