@@ -102,7 +102,7 @@
                                :on-success="handleAvatarSuccess"
                                :on-error="handlerAvatarError"
                                :before-upload="beforeAvatarUpload"
-                               :show-file-list="false"
+                               :show-file-list="true"
                                :on-remove="handleRemove">
                         <i class="el-icon-plus"></i>
                     </el-upload>
@@ -325,7 +325,7 @@
              */
             handleAvatarSuccess(res, file, fileList) {
                 console.log(res);
-                if (res.httpCode === 200) {
+                if (res.state === 'SUCCESS') {
                     fileList.length = 0;
                     fileList.push(file);
                     this.sysUser.avatar = res.url;
