@@ -30,12 +30,12 @@
             </el-table-column>
             <el-table-column prop="type" align="center" label="材料类型">
                 <template scope="scope">
-                    <span>{{scope.row.type}}</span>
+                    <span>{{scope.row.type | dics('cllx')}}</span>
                 </template>
             </el-table-column>
             <el-table-column v-once prop="source" align="center" label="来源渠道">
                 <template scope="scope">
-                    <span>{{scope.row.source}}</span>
+                    <span>{{scope.row.source | dics('sxsqclly')}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="electronicMaterial" align="center" label="是否需要电子材料">
