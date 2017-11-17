@@ -46,12 +46,12 @@
             </el-table-column>
             <el-table-column align="center" label="承诺办结时间" prop="promiseEndTime">
                 <template scope="scope">
-                    <span>{{scope.row.promiseEndTime}} 天</span>
+                    <span>{{scope.row.promiseEndTime}} 工作日</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="法定办结时限" prop="legalEndTime">
                 <template scope="scope">
-                    <span>{{scope.row.legalEndTime}}</span>
+                    <span>{{scope.row.legalEndTime}} 工作日</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="办理形式" prop="handleType">
@@ -73,7 +73,7 @@
                     <el-badge :value="scope.row.itemMaterialCount" class="item">
                         <el-button class="filter-item" style="margin-left: 10px;" @click="handleMaterialList(scope.row)"
                                    type="primary" size="small">
-                            关联资料
+                            办件材料
                         </el-button>
                     </el-badge>
                 </template>
@@ -183,6 +183,7 @@
                                :auto-upload="false">
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                         <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+                        <el-button style="margin-left: 10px;" size="small" type="info" @click="showResultExample">查看图片</el-button>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="行使层级" prop="handleLevel">
@@ -563,7 +564,7 @@
                 dialogFormVisible1: false,
                 dialogStatus: '',
                 dialogLoading: false,
-                uploadAction: '/api/admin/base/sysUpload/',
+                uploadAction: '/api/common/upload',
                 uploadAvatarsExample: [],
                 uploadAvatarsEform: [],
                 uploadAvatarsResult: [],
@@ -614,6 +615,11 @@
         methods: {
             submitUpload(){
                 this.$refs.upload.submit();
+            },
+            showResultExample(){
+                if(this.zwfwItem.resultExample) {
+                    window.open(this.zwfwItem.resultExample);
+                }
             },
             getList() {
                 this.listLoading = true;
@@ -741,7 +747,7 @@
                     this.handleRemoveResult();
                 } else {
                     this.uploadAvatarsResult = [];
-                    this.uploadAvatarsResult.push({url: this.zwfwItem.resultExample});
+                    this.uploadAvatarsResult.push({url: this.zwfwItem.resultExample , name:'结果样本'});
                 }
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
