@@ -18,7 +18,9 @@
                     </el-button>
                 </el-tooltip>
             </div>
+            <div class="splitBar"></div>
             <div class="className" id="deptHandle"></div>
+            <div class="splitBar"></div>
             <div class="className" id="deptWait"></div>
         </div>
     </div>
@@ -30,6 +32,8 @@
     require('echarts/lib/chart/pie');
     require('echarts/lib/chart/line');
     require('echarts/lib/component/tooltip');
+    require('echarts/lib/component/legend');
+    require('echarts/lib/component/toolbox');
     require('echarts/lib/component/title');
     require('echarts/lib/component/visualMap');
     import {mapGetters} from 'vuex';
@@ -98,6 +102,9 @@
                         title: {
                             text: '部门受理量'
                         },
+                        legend: {
+                            data: ['受理量']
+                        },
                         tooltip: {
                             trigger: 'axis'
                         },
@@ -120,12 +127,15 @@
                         ],
                         yAxis: [
                             {
-                                type: 'value'
+                                type: 'value',
+                                name: '单位：件',
+                                nameLocation: 'center',
+                                nameRotate: 90
                             }
                         ],
                         series: [
                             {
-                                name: '受理量（件）',
+                                name: '受理量',
                                 type: 'bar',
                                 data: this.handleNum
                             }
@@ -139,12 +149,15 @@
                     this.waitNum = [];
                     for (let wait of waitData) {
                         this.waitDeptName.push(wait.deptName);
-                        this.waitNum.push(wait.total);
+                        this.waitNum.push(wait.avgtime);
                     }
                     const e = echarts.init(document.getElementById('deptWait'));
                     e.setOption({
                         title: {
                             text: '平均等待时长'
+                        },
+                        legend: {
+                            data: ['等待时长']
                         },
                         tooltip: {
                             trigger: 'axis'
@@ -168,12 +181,15 @@
                         ],
                         yAxis: [
                             {
-                                type: 'value'
+                                type: 'value',
+                                name: '单位：分钟',
+                                nameLocation: 'center',
+                                nameRotate: 90
                             }
                         ],
                         series: [
                             {
-                                name: '等待时长（分钟）',
+                                name: '等待时长',
                                 type: 'bar',
                                 data: this.waitNum
                             }
@@ -206,6 +222,10 @@
 
     .className {
         width: 1614px;
-        height: 240px
+        height: 540px
+    }
+
+    .splitBar {
+        height: 60px;
     }
 </style>

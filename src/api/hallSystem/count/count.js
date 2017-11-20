@@ -100,13 +100,26 @@ export function dataPlotHandleByProcess(query) {
  *超期件、整改件、督办件
  * @param query
  */
-export function dataPlotflagByProcess(query) {
+export function dataPlotFlagByProcess(query) {
     return fetch({
         url: '/api/hallSystem/count/statistics/dataPlotflagByProcess',
         method: 'get',
         params: query
     });
 }
+
+/**
+ * 业务量、超期率、正常办结率
+ * @param query
+ */
+export function dataPlotBusinessByProcess(query) {
+    return fetch({
+        url: '/api/hallSystem/count/statistics/dataPlotBusinessByProcess',
+        method: 'get',
+        params: query
+    })
+}
+
 /**
  * 时间段内排队数、等待时长业务审批统计---办理中、已办结
  * @param query

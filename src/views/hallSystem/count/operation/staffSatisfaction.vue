@@ -96,7 +96,7 @@
                                 type: 'category',
                                 axisLabel: {
                                     interval: 0,
-                                    rotate: 30
+                                    rotate: 45
                                 },
                                 data: this.userName
                             }
