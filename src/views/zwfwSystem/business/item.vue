@@ -174,7 +174,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="结果样本" prop="resultExample">
-                    <el-upload name="uploadFile"  accept="uploadAccepts"
+                    <el-upload name="uploadFile" accept="uploadAccepts"
                                ref="upload"
                                :action="uploadAction" :file-list="uploadAvatarsResult"
                                :on-success="handleAvatarResultSuccess"
@@ -182,8 +182,10 @@
                                :on-remove="handleRemoveResult"
                                :auto-upload="false">
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
-                        <el-button style="margin-left: 10px;" size="small" type="info" @click="showResultExample">查看图片</el-button>
+                        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器
+                        </el-button>
+                        <el-button style="margin-left: 10px;" size="small" type="info" @click="showResultExample">查看图片
+                        </el-button>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="行使层级" prop="handleLevel">
@@ -297,6 +299,18 @@
                 <el-form-item label="预审天数" prop="pretrialDays">
                     <el-input v-model="zwfwItem.pretrialDays"></el-input>
                 </el-form-item>
+                <el-form-item label="预审人员">
+                    <el-select style="width:100%" v-model="zwfwItem.pretrialUserIdsArray" remote
+                               :remote-method="queryUser"
+                               multiple filterable placeholder="请选择">
+                        <el-option
+                                v-for="u in allUserList"
+                                :key="u.id"
+                                :label="u.name + ' (工号：' + u.empNo +')'"
+                                :value="u.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="中介服务" prop="mediumService">
                     <el-input v-model="zwfwItem.mediumService"></el-input>
                 </el-form-item>
@@ -338,7 +352,7 @@
                         <span>{{scope.row.id}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="name" align="left" label="材料名称" width="400" >
+                <el-table-column prop="name" align="left" label="材料名称" width="400">
                     <template scope="scope">
                         <el-tooltip content="点击编辑" placement="right" effect="dark">
                             <span class="link-type" @click='handleUpdateClick(scope.row)'>{{scope.row.name}}</span>
@@ -385,7 +399,7 @@
                     </el-select>
                 </el-form-item>
 
-                <el-form-item label="纸质材料说明:" prop="paperDescription" v-show="changeMaterialInfo" >
+                <el-form-item label="纸质材料说明:" prop="paperDescription" v-show="changeMaterialInfo">
                     <!--<span>{{zwfwItemMaterial.paperDescription}}</span>-->
                     <el-input v-model="zwfwItemMaterial.paperDescription" placeholder="数量和规格"></el-input>
                 </el-form-item>
@@ -393,14 +407,14 @@
                     <tr>
                         <td>
                             <el-form-item label="材料类型:" :inline="true" v-show="changeMaterialInfo">
-                                <span >{{zwfwItemMaterial.type | dics('cllx')}}</span>
+                                <span>{{zwfwItemMaterial.type | dics('cllx')}}</span>
                                 <!--<el-input v-model="zwfwItemMaterial.type"></el-input>-->
                             </el-form-item>
                         </td>
                         <td width="100"></td>
                         <td>
                             <el-form-item label="是否需要电子材料:" :inline="true" prop="electronicMaterial"
-                                          v-show="changeMaterialInfo" >
+                                          v-show="changeMaterialInfo">
                                 <span v-if="electronicMaterial!=null">{{zwfwItemMaterial.electronicMaterial | enums('YesNo')}}</span>
                                 <!--<el-switch-->
                                 <!--v-model="zwfwItemMaterial.electronicMaterial"-->
@@ -414,15 +428,15 @@
                     </tr>
                 </table>
 
-                <el-form-item label="受理标准:" prop="acceptStandard"  v-show="changeMaterialInfo" >
+                <el-form-item label="受理标准:" prop="acceptStandard" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.acceptStandard}}</span>
                     <!--<el-input v-model="zwfwItemMaterial.acceptStandard"></el-input>-->
                 </el-form-item>
-                <el-form-item label="来源渠道:"  v-show="changeMaterialInfo" >
+                <el-form-item label="来源渠道:" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.source | dics('sxsqclly')}}</span>
                     <!--<el-input v-model="zwfwItemMaterial.source"></el-input>-->
                 </el-form-item>
-                <el-form-item label="材料样本:" prop="example"  v-show="changeMaterialInfo" >
+                <el-form-item label="材料样本:" prop="example" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.example}}</span>
                     <!--<el-upload name="uploadFile"  accept="uploadAccepts"-->
                     <!--:action="uploadAction" :file-list="uploadAvatarsExample"-->
@@ -432,8 +446,8 @@
                     <!--<el-button size="small" type="primary">点击上传</el-button>-->
                     <!--</el-upload>-->
                 </el-form-item>
-                <el-form-item label="电子表单:" prop="eform"  v-show="changeMaterialInfo" >
-                    <span>{{zwfwItemMaterial.eform==1?'支持':'不支持'}}</span>
+                <el-form-item label="电子表单:" prop="eform" v-show="changeMaterialInfo">
+                    <span>{{zwfwItemMaterial.eform == 1 ? '支持' : '不支持'}}</span>
                     <!--<el-upload name="uploadFile"  accept="uploadAccepts"-->
                     <!--:action="uploadAction" :file-list="uploadAvatarsEform"-->
                     <!--:on-success="handleAvatarEformSuccess"-->
@@ -442,11 +456,11 @@
                     <!--<el-button size="small" type="primary">点击上传</el-button>-->
                     <!--</el-upload>-->
                 </el-form-item>
-                <el-form-item label="填报须知:" prop="notice"  v-show="changeMaterialInfo" >
+                <el-form-item label="填报须知:" prop="notice" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.notice}}</span>
                     <!--<el-input v-model="zwfwItemMaterial.notice"></el-input>-->
                 </el-form-item>
-                <el-form-item label="备注:" prop="remark"  v-show="changeMaterialInfo" >
+                <el-form-item label="备注:" prop="remark" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.remark}}</span>
                     <!--<el-input v-model="zwfwItemMaterial.remark"></el-input>-->
                 </el-form-item>
@@ -464,13 +478,18 @@
 <script>
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
-    import {getZwfwItemList, createZwfwItem, updateZwfwItem, delZwfwItems} from 'api/zwfwSystem/business/item';
+    import {
+        getZwfwItemList, createZwfwItem, updateZwfwItem, delZwfwItems,
+        getPretrialUserListByItemId,
+        updatePretrialUserList
+    } from 'api/zwfwSystem/business/item';
     import {
         createZwfwItemMaterial,
         getAllItemMaterial,
         deleteZwfwItemMaterial
     } from 'api/zwfwSystem/business/itemMaterial';
     import {getAllMaterial, updateZwfwMaterial} from 'api/zwfwSystem/business/material';
+    import {getAllUser} from 'api/baseSystem/org/user';
 
 
     export default {
@@ -537,7 +556,8 @@
                     mediumService: '',
                     commonRequestion: '',
                     implCode: '',
-                    updateType: ''
+                    updateType: '',
+                    pretrialUserIds: []
                 },
                 zwfwItemMaterial: {
                     id: undefined,
@@ -577,8 +597,8 @@
 //                        {min: 10, max: 10, message: '基本编码长度是10位'}
                     ],
                     implCode: [
-                        {required: true, message: '请输入实施编码'},
-                        {min: 24, max: 24, message: '实施编码长度是24位'}
+                        {required: true, message: '请输入实施编码'}
+//                        {min: 24, max: 24, message: '实施编码长度是24位'}
                     ],
                     type: [
                         {required: true, message: '请输入事项类型'}
@@ -598,11 +618,19 @@
                         {required: true, message: '请输入材料名称'}
                     ]
                 },
-                uploadAccepts: '.gif,.jpg,.jpeg,.bmp,.png,.xls,.xlsx,.doc,.docx,.zip,.rar,.pdf'
+                uploadAccepts: '.gif,.jpg,.jpeg,.bmp,.png,.xls,.xlsx,.doc,.docx,.zip,.rar,.pdf',
+                allUserList: []
             }
         },
         created() {
             this.getList();
+
+            //用于加载根据部门分组的用户列表，用来在设置预审用户时使用
+            this.allUserList = [];
+
+        },
+        mounted() {
+
         },
         computed: {
             ...mapGetters([
@@ -613,11 +641,19 @@
             ])
         },
         methods: {
-            submitUpload(){
+            queryUser(keywords) {
+                console.log(keywords);
+                getAllUser({
+                    name: keywords
+                }).then(response => {
+                    this.allUserList = response.data;
+                });
+            },
+            submitUpload() {
                 this.$refs.upload.submit();
             },
-            showResultExample(){
-                if(this.zwfwItem.resultExample) {
+            showResultExample() {
+                if (this.zwfwItem.resultExample) {
                     window.open(this.zwfwItem.resultExample);
                 }
             },
@@ -627,9 +663,9 @@
                     this.zwfwItemList = response.data.list;
                     this.total = response.data.total;
                     this.listLoading = false;
-                })
+                });
             },
-            handleFilter(){
+            handleFilter() {
                 this.getList();
             },
             handleMaterialList(item) {
@@ -747,10 +783,19 @@
                     this.handleRemoveResult();
                 } else {
                     this.uploadAvatarsResult = [];
-                    this.uploadAvatarsResult.push({url: this.zwfwItem.resultExample , name:'结果样本'});
+                    this.uploadAvatarsResult.push({url: this.zwfwItem.resultExample, name: '结果样本'});
                 }
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
+                //查询事项绑定的预审用户
+                getPretrialUserListByItemId(this.zwfwItem.id).then(response => {
+                    if (response.httpCode === 200) {
+                        this.allUserList = response.data;
+                        this.zwfwItem.pretrialUserIdsArray = response.data.map(function (o) {
+                            return o.id;
+                        });
+                    }
+                });
             },
             handleDelete(row) {
                 if (this.selectedRows == 0) {
@@ -889,10 +934,17 @@
                     if (valid) {
                         this.listLoading = true;
                         this.dialogFormVisible = false;
+                        this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIdsArray.join(',');
                         updateZwfwItem(this.zwfwItem).then(response => {
-                            copyProperties(this.currentRow, response.data);
-                            this.$message.success('更新成功');
+                            if (response.httpCode == 200) {
+                                copyProperties(this.currentRow, response.data);
+                                this.$message.success('更新成功');
+                            } else {
+                                this.$message.error(response.msg);
+                            }
+
                             this.listLoading = false;
+
 
                         })
                     } else {
@@ -958,7 +1010,8 @@
                     commonRequestion: '',
                     implCode: '',
                     updateType: '',
-                    pretrialDays: ''
+                    pretrialDays: '',
+                    pretrialUserIdsArray: []
                 };
             },
             resetZwfwItemForm() {

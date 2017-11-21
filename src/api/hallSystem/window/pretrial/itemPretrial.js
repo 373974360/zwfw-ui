@@ -62,6 +62,8 @@ export function deleteZwfwItemPretrial(id) {
 export function getAllZwfwItemPretrial() {
     return fetch({
         url: '/api/workSystem/Category/getAll',
-        mothod: 'get'
+        method: 'get'
     });
 }
+
+
