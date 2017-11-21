@@ -87,6 +87,12 @@
                         endDate: this.listQuery.endDateCategory,
                         itemIds: itemId
                     }
+                } else {
+                    query = {
+                        startDate: this.listQuery.startDateCategory,
+                        endDate: this.listQuery.endDateCategory,
+                        itemIds: this.listQuery.itemIds
+                    }
                 }
                 dataPlotByDept(query).then(response => {
                     console.log('deptHandle:', response);
@@ -142,7 +148,7 @@
                         ]
                     })
                 })
-                dataPlotAvgBydeptId(this.listQuery).then(response => {
+                dataPlotAvgBydeptId(query).then(response => {
                     console.log('deptWait:', response)
                     const waitData = response.data;
                     this.waitDeptName = [];
