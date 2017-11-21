@@ -51,7 +51,7 @@ export function dataPlotAvgByWindowId(query) {
  */
 export function getPlotFiveStarByUser(query) {
     return fetch({
-        url: '/api/hallSystem/count/statistics/PlotFiveStarByUser',
+        url: '/api/hallSystem/count/statistics/plotFiveStarByUser',
         method: 'get',
         params: query
     });
@@ -102,7 +102,7 @@ export function dataPlotHandleByProcess(query) {
  */
 export function dataPlotFlagByProcess(query) {
     return fetch({
-        url: '/api/hallSystem/count/statistics/dataPlotflagByProcess',
+        url: '/api/hallSystem/count/statistics/dataPlotFlagByProcess',
         method: 'get',
         params: query
     });

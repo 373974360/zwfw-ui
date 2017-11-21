@@ -14,11 +14,11 @@
                     <el-option :key="item.id" v-for="item in windowList" :label="item.name" :value="item.id">
                     </el-option>
                 </el-select>
-                <el-date-picker style="top: -5px;" v-model="listQuery.startDate" type="date"
-                                placeholder="开始时间" @change="changeDateStart" :clearable="false">
+                <el-date-picker style="top: -5px;" v-model="listQuery.startDate" type="datetime" :editable="false"
+                                placeholder="开始时间" @change="formatStartDate" :clearable="false" format="yyyy-MM-dd HH:mm">
                 </el-date-picker>
-                <el-date-picker style="top: -5px;" v-model="listQuery.endDate" type="date"
-                                placeholder="结束时间" @change="changeDateEnd" :clearable="false">
+                <el-date-picker style="top: -5px;" v-model="listQuery.endDate" type="datetime" :editable="false"
+                                placeholder="结束时间" @change="formatEndDate" :clearable="false" format="yyyy-MM-dd HH:mm">
                 </el-date-picker>
                 <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="统计" placement="top-start">
                     <el-button class="filter-item" type="primary" v-waves icon="search" @click="doPlot">
@@ -45,7 +45,7 @@
     require('echarts/lib/component/title');
     require('echarts/lib/component/visualMap');
     import {mapGetters} from 'vuex';
-    import moment from 'moment';
+    import {date} from '../../../../filters'
     import {getAllByNameOrbasicCode} from '../../../../api/zwfwSystem/business/item'
     import {getAllDept} from '../../../../api/baseSystem/org/dept'
     import {getAllWindow} from '../../../../api/hallSystem/lobby/window';
@@ -59,7 +59,7 @@
                     itemIds: [],
                     deptIds: [],
                     windowIds: [],
-                    startDate: moment(new Date()).format('YYYY-MM-DD'),
+                    startDate: undefined,
                     endDate: undefined
                 },
                 itemListQuery: {
@@ -108,7 +108,7 @@
             },
             reloadItemList() {
                 this.getItemList();
-                this.itemListQuery.itemIds = [];
+                this.listQuery.itemIds = [];
             },
             doPlot() {
                 dataPlotByWindow(this.listQuery).then(response => {
@@ -164,7 +164,7 @@
                             }
                         ]
                     })
-                })
+                });
                 dataPlotAvgByWindowId(this.listQuery).then(response => {
                     console.log('windowWait:', response)
                     const waitData = response.data;
@@ -220,19 +220,11 @@
                     })
                 })
             },
-            changeDateStart() {
-                if (this.listQuery.startDate == null || this.listQuery.startDate == '') {
-                    this.listQuery.startDate = [];
-                } else {
-                    this.listQuery.startDate = moment(this.listQuery.startDate).format('YYYY-MM-DD');
-                }
+            formatStartDate() {
+                this.listQuery.startDate = date(this.listQuery.startDate, 'YYYY-MM-DD HH:mm')
             },
-            changeDateEnd() {
-                if (this.listQuery.endDate == null || this.listQuery.endDate == '') {
-                    this.listQuery.endDate = [];
-                } else {
-                    this.listQuery.endDate = moment(this.listQuery.endDate).format('YYYY-MM-DD');
-                }
+            formatEndDate() {
+                this.listQuery.endDate = date(this.listQuery.endDate, 'YYYY-MM-DD HH:mm')
             }
         }
     }
