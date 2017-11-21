@@ -1,5 +1,5 @@
 <template>
-    <div class="order-line">
+    <div class="app-container order-line">
         <div class="card-container">
             <div class="sum-msg">今日累计抽号排队数：{{}}人次</div>
             <el-row>
@@ -28,11 +28,11 @@
                     <el-option :key="item.id" v-for="item in itemList" :label="item.name" :value="item.id">
                     </el-option>
                 </el-select>
-                <el-select v-model="listQuery.deptIds" class="filter-item" multiple filterable placeholder="选择部门" @change="reloadItemList">
+                <el-select v-model="listQuery.deptIds" class="filter-item" multiple filterable placeholder="选择部门" @change="reloadItemUserList">
                     <el-option :key="item.id" v-for="item in deptList" :label="item.name" :value="item.id">
                     </el-option>
                 </el-select>
-                <el-select v-model="listQuery.windowIds" class="filter-item" multiple filterable placeholder="选择窗口" @change="reloadItemList">
+                <el-select v-model="listQuery.windowIds" class="filter-item" multiple filterable placeholder="选择窗口" @change="reloadItemUserList">
                     <el-option :key="item.id" v-for="item in windowList" :label="item.name" :value="item.id">
                     </el-option>
                 </el-select>
@@ -40,11 +40,11 @@
                     <el-option :key="item.id" v-for="item in userList" :label="item.name" :value="item.id">
                     </el-option>
                 </el-select>
-                <el-date-picker style="top: -5px;" v-model="listQuery.startDate" type="date"
-                                placeholder="开始时间" @change="changeDateStart" :clearable="false">
+                <el-date-picker style="top: -5px;" v-model="listQuery.startDate" type="datetime" :editable="false"
+                                placeholder="开始时间" :clearable="false" format="yyyy-MM-dd HH:mm" @change="formatStartDate">
                 </el-date-picker>
-                <el-date-picker style="top: -5px;" v-model="listQuery.endDate" type="date"
-                                placeholder="结束时间" @change="changeDateEnd" :clearable="false">
+                <el-date-picker style="top: -5px;" v-model="listQuery.endDate" type="datetime" :editable="false"
+                                placeholder="结束时间" :clearable="false" format="yyyy-MM-dd HH:mm" @change="formatEndDate">
                 </el-date-picker>
                 <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="统计" placement="top-start">
                     <el-button class="filter-item" type="primary" v-waves icon="search" @click="doPlot">
@@ -54,7 +54,6 @@
             </div>
             <div class="className" id="lineWaitTime"></div>
         </div>
-        <div class="splitBar"></div>
         <div class="line-top5">
             <div class="title">排队等待时长 Top 5</div>
             <el-radio-group v-model="tableDataType" @change="reloadTableData">
@@ -62,97 +61,105 @@
                 <el-radio-button label="2">按事项</el-radio-button>
             </el-radio-group>
             <el-row style="padding:20px;" :gutter="20">
-                <el-col :span="12">
-                    <div class="grid-content">
-                        <el-table :data="windowWaitTopListAsc" v-loading.body="windowWaitTopListLoading" border fit
-                                  highlight-current-row>
-                            <el-table-column align="center" label="窗口" >
-                                <template scope="scope">
-                                    <span>{{scope.row.windowName}}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column align="center" label="所属部门" >
-                                <template scope="scope">
-                                    <span>{{scope.row.deptName}}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column align="center" label="平均等待时间" >
-                                <template scope="scope">
-                                    <span>{{scope.row.avgtime * 1000 | duration}}</span>
-                                </template>
-                            </el-table-column>
-                        </el-table>
-                    </div>
-                </el-col>
+                <div v-show="windowDisplay">
+                    <el-col :span="12">
+                        <div class="grid-content">
+                            <el-table :data="windowWaitTopListAsc" v-loading.body="windowWaitTopListLoading" border fit
+                                      highlight-current-row>
+                                <el-table-column type="index" label="排名" width="80" align="center"></el-table-column>
+                                <el-table-column align="center" label="窗口" >
+                                    <template scope="scope">
+                                        <span>{{scope.row.windowName}}</span>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column align="center" label="所属部门" >
+                                    <template scope="scope">
+                                        <span>{{scope.row.deptName}}</span>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column align="center" label="平均等待时间" >
+                                    <template scope="scope">
+                                        <span>{{scope.row.avgtime * 1000 | duration}}</span>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                    </el-col>
 
-                <el-col :span="12" >
-                    <div class="grid-content">
-                        <el-table :data="windowWaitTopListDesc" v-loading.body="windowWaitTopListLoading" border fit
-                                  highlight-current-row>
-                            <el-table-column align="center" label="窗口" >
-                                <template scope="scope">
-                                    <span>{{scope.row.windowName}}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column align="center" label="所属部门" >
-                                <template scope="scope">
-                                    <span>{{scope.row.deptName}}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column align="center" label="平均等待时间" >
-                                <template scope="scope">
-                                    <span>{{scope.row.avgtime * 1000 | duration}}</span>
-                                </template>
-                            </el-table-column>
-                        </el-table>
-                    </div>
-                </el-col>
+                    <el-col :span="12" >
+                        <div class="grid-content">
+                            <el-table :data="windowWaitTopListDesc" v-loading.body="windowWaitTopListLoading" border fit
+                                      highlight-current-row>
+                                <el-table-column type="index" label="排名" width="80" align="center"></el-table-column>
+                                <el-table-column align="center" label="窗口" >
+                                    <template scope="scope">
+                                        <span>{{scope.row.windowName}}</span>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column align="center" label="所属部门" >
+                                    <template scope="scope">
+                                        <span>{{scope.row.deptName}}</span>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column align="center" label="平均等待时间" >
+                                    <template scope="scope">
+                                        <span>{{scope.row.avgtime * 1000 | duration}}</span>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                    </el-col>
+                </div>
 
-                <el-col :span="12">
-                    <div class="grid-content">
-                        <el-table :data="itemWaitTopListAsc" v-loading.body="itemWaitTopListLoading" border fit
-                                  highlight-current-row>
-                            <el-table-column align="center" label="事项" >
-                                <template scope="scope">
-                                    <div style="height:2em;overflow:hidden">{{scope.row.itemName}}</div>
-                                </template>
-                            </el-table-column>
-                            <el-table-column align="center" label="所属部门" >
-                                <template scope="scope">
-                                    <div>{{scope.row.deptName}}</div>
-                                </template>
-                            </el-table-column>
-                            <el-table-column align="center" label="平均等待时间" >
-                                <template scope="scope">
-                                    <span>{{scope.row.avgtime * 1000 | duration}}</span>
-                                </template>
-                            </el-table-column>
-                        </el-table>
-                    </div>
-                </el-col>
+                <div v-show="itemDisplay">
+                    <el-col :span="12">
+                        <div class="grid-content">
+                            <el-table :data="itemWaitTopListAsc" v-loading.body="itemWaitTopListLoading" border fit
+                                      highlight-current-row>
+                                <el-table-column type="index" label="排名" width="80" align="center"></el-table-column>
+                                <el-table-column align="center" label="事项" >
+                                    <template scope="scope">
+                                        <div style="height:2em;overflow:hidden">{{scope.row.itemName}}</div>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column align="center" label="所属部门" >
+                                    <template scope="scope">
+                                        <div>{{scope.row.deptName}}</div>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column align="center" label="平均等待时间" >
+                                    <template scope="scope">
+                                        <span>{{scope.row.avgtime * 1000 | duration}}</span>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                    </el-col>
 
-                <el-col :span="12">
-                    <div class="grid-content">
-                        <el-table :data="itemWaitTopListDesc" v-loading.body="itemWaitTopListLoading" border fit
-                                  highlight-current-row>
-                            <el-table-column align="center" label="事项" >
-                                <template scope="scope">
-                                    <div style="height:2em;overflow:hidden">{{scope.row.itemName}}</div>
-                                </template>
-                            </el-table-column>
-                            <el-table-column align="center" label="所属部门" >
-                                <template scope="scope">
-                                    <div>{{scope.row.deptName}}</div>
-                                </template>
-                            </el-table-column>
-                            <el-table-column align="center" label="平均等待时间" >
-                                <template scope="scope">
-                                    <span>{{scope.row.avgtime * 1000 | duration}}</span>
-                                </template>
-                            </el-table-column>
-                        </el-table>
-                    </div>
-                </el-col>
+                    <el-col :span="12">
+                        <div class="grid-content">
+                            <el-table :data="itemWaitTopListDesc" v-loading.body="itemWaitTopListLoading" border fit
+                                      highlight-current-row>
+                                <el-table-column type="index" label="排名" width="80" align="center"></el-table-column>
+                                <el-table-column align="center" label="事项" >
+                                    <template scope="scope">
+                                        <div style="height:2em;overflow:hidden">{{scope.row.itemName}}</div>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column align="center" label="所属部门" >
+                                    <template scope="scope">
+                                        <div>{{scope.row.deptName}}</div>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column align="center" label="平均等待时间" >
+                                    <template scope="scope">
+                                        <span>{{scope.row.avgtime * 1000 | duration}}</span>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                    </el-col>
+                </div>
             </el-row>
         </div>
     </div>
@@ -166,7 +173,7 @@
     require('echarts/lib/component/title');
     require('echarts/lib/component/visualMap');
     import {mapGetters} from 'vuex';
-    import moment from 'moment';
+    import {date} from '../../../../filters'
     import {getAllByNameOrbasicCode} from '../../../../api/zwfwSystem/business/item'
     import {getAllDept} from '../../../../api/baseSystem/org/dept'
     import {getAllWindow} from '../../../../api/hallSystem/lobby/window';
@@ -183,18 +190,24 @@
                     deptIds: [],
                     windowIds: [],
                     userIds: [],
-                    startDate: moment(new Date()).format('YYYY-MM-DD'),
+                    startDate: undefined,
                     endDate: undefined
                 },
                 itemListQuery: {
                     itemDepartments: '',
                     itemWindows: ''
                 },
+                userListQuery: {
+                    userDepartments: '',
+                    userWindows: ''
+                },
                 tableDataType: '1',
                 itemList: [],
                 windowList: [],
                 deptList: [],
                 userList: [],
+                windowDisplay: true,
+                itemDisplay: false,
                 lineNum: [],
                 waitTime: [],
                 windowWaitTopListAsc: [],
@@ -206,6 +219,13 @@
             }
         },
         created() {
+            this.listQuery.startDate = this.getTodayFirst();
+            this.listQuery.endDate = this.getTodayLast();
+            this.getDeptList();
+            this.getWindowList();
+            this.getItemList();
+            this.getUserList();
+            this.doPlot();
             this.lineWaitTimeTop5()
         },
         methods: {
@@ -226,14 +246,30 @@
                     this.itemList = response.data
                 })
             },
+            getUserList() {
+                this.userListQuery.userDepartments = this.listQuery.deptIds.join();
+                this.userListQuery.userWindows = this.listQuery.windowIds.join();
+                getAllUser(this.userListQuery).then(response => {
+                    this.userList = response.data
+                })
+            },
+            reloadItemUserList() {
+                this.reloadItemList();
+                this.reloadUserList();
+            },
             reloadItemList() {
                 this.getItemList();
-                this.itemListQuery.itemIds = [];
+                this.listQuery.itemIds = [];
+            },
+            reloadUserList() {
+                this.getUserList();
+                this.listQuery.userIds = [];
             },
             reloadTableData() {
                 this.lineWaitTimeTop5()
             },
             doPlot() {
+                console.log(this.listQuery)
                 dataPlotCountByHour(this.listQuery).then(response => {
                     console.log(response)
                     const lineWaitData = response.data;
@@ -285,6 +321,7 @@
                             {
                                 name: '等待时长',
                                 type: 'bar',
+                                yAxisIndex: 1,
                                 data: this.waitTime
                             }
                         ]
@@ -292,36 +329,49 @@
                 })
             },
             lineWaitTimeTop5() {
-                dataPlotTopWaitWindow({
-                    startTime: '2016-01-01 00:00:00',
-                    endTime: '2017-11-01 00:00:00',
-                    asc: true
-                }).then(response => {
+                if (this.tableDataType == 1) {
+                    this.loadTop5WindowData();
+                    this.windowDisplay = true;
+                    this.itemDisplay = false;
+                } else {
+                    this.loadTop5ItemData();
+                    this.windowDisplay = false;
+                    this.itemDisplay = true;
+                }
+            },
+            loadTop5WindowData() {
+                dataPlotTopWaitWindow(this.listQuery).then(response => {
                     this.windowWaitTopListLoading = false;
                     if (response.httpCode === 200) {
-
                         this.windowWaitTopListAsc = response.data.asc;
                         this.windowWaitTopListDesc = response.data.desc;
-
                     } else {
                         this.$message.error("加载失败");
                     }
                 });
-                dataPlotTopWaitItem({
-                    startTime: '2016-01-01 00:00:00',
-                    endTime: '2017-11-01 00:00:00',
-                    asc: true
-                }).then(response => {
+            },
+            loadTop5ItemData() {
+                dataPlotTopWaitItem(this.listQuery).then(response => {
                     this.itemWaitTopListLoading = false;
                     if (response.httpCode === 200) {
-
                         this.itemWaitTopListAsc = response.data.asc;
                         this.itemWaitTopListDesc = response.data.desc;
-
                     } else {
                         this.$message.error("加载失败");
                     }
                 });
+            },
+            getTodayFirst() {
+                return date(new Date().setHours(0, 0), 'YYYY-MM-DD HH:mm');
+            },
+            getTodayLast() {
+                return date(new Date().setHours(23, 59), 'YYYY-MM-DD HH:mm');
+            },
+            formatStartDate() {
+                this.listQuery.startDate = date(this.listQuery.startDate, 'YYYY-MM-DD HH:mm')
+            },
+            formatEndDate() {
+                this.listQuery.endDate = date(this.listQuery.endDate, 'YYYY-MM-DD HH:mm')
             }
         }
     }

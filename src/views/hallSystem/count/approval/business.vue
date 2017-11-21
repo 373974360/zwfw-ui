@@ -32,11 +32,11 @@
             </div>
             <div class="splitBar"></div>
             <div class="filter-container">
-                <el-date-picker style="top: -5px;" v-model="listQuery.startDate" type="date"
-                                placeholder="开始时间" @change="changeDateStart" :clearable="false">
+                <el-date-picker style="top: -5px;" v-model="listQuery.startDate" type="datetime" :editable="false"
+                                placeholder="开始时间" :clearable="false" format="yyyy-MM-dd HH:mm" @change="formatStartDate">
                 </el-date-picker>
-                <el-date-picker style="top: -5px;" v-model="listQuery.endDate" type="date"
-                                placeholder="结束时间" @change="changeDateEnd" :clearable="false">
+                <el-date-picker style="top: -5px;" v-model="listQuery.endDate" type="datetime" :editable="false"
+                                placeholder="结束时间" :clearable="false" format="yyyy-MM-dd HH:mm" @change="formatEndDate">
                 </el-date-picker>
                 <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="统计" placement="top-start">
                     <el-button class="filter-item" type="primary" v-waves icon="search" @click="doPlot">
@@ -47,14 +47,14 @@
             <div class="className" id="handleNum"></div>
             <div class="splitBar"></div>
             <div class="filter-container">
-                <el-date-picker style="top: -5px;" v-model="listQuery.startDate" type="date"
-                                placeholder="开始时间" @change="changeDateStart" :clearable="false">
+                <el-date-picker style="top: -5px;" v-model="listQuery2.startDate" type="date" :editable="false"
+                                placeholder="开始时间" :clearable="false" format="yyyy-MM-dd HH:mm" @change="formatStartDate2">
                 </el-date-picker>
-                <el-date-picker style="top: -5px;" v-model="listQuery.endDate" type="date"
-                                placeholder="结束时间" @change="changeDateEnd" :clearable="false">
+                <el-date-picker style="top: -5px;" v-model="listQuery2.endDate" type="date" :editable="false"
+                                placeholder="结束时间" :clearable="false" format="yyyy-MM-dd HH:mm" @change="formatEndDate2">
                 </el-date-picker>
                 <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="统计" placement="top-start">
-                    <el-button class="filter-item" type="primary" v-waves icon="search" @click="doPlot">
+                    <el-button class="filter-item" type="primary" v-waves icon="search" @click="doPlot2">
                         统计
                     </el-button>
                 </el-tooltip>
@@ -75,25 +75,29 @@
     require('echarts/lib/component/title');
     require('echarts/lib/component/visualMap');
     import {mapGetters} from 'vuex';
-    import moment from 'moment';
+    import {date} from '../../../../filters';
     import {dataPlotPendingByPretrial, dataPlotHandleByProcess, dataPlotFlagByProcess, dataPlotBusinessByProcess} from '../../../../api/hallSystem/count/count'
 
     export default {
         name: 'table_demo',
         data() {
             return {
-                listQuery: {
-                    startDate: undefined,
-                    endDate: undefined
-                },
                 pending: undefined,
                 handling: undefined,
                 finish: undefined,
                 closed: undefined,
+                listQuery: {
+                    startDate: undefined,
+                    endDate: undefined
+                },
                 deptName: [],
                 timeoutNum: [],
                 superviedNum: [],
                 correctionNum: [],
+                listQuery2: {
+                    startDate: undefined,
+                    endDate: undefined
+                },
                 deptName2: [],
                 businessNum: [],
                 timeoutRate: [],
@@ -108,8 +112,13 @@
             ])
         },
         created() {
+            this.listQuery.startDate = this.getCurrentMonthFirst();
+            this.listQuery.endDate = this.getCurrentMonthLast();
+            this.listQuery2.startDate = this.getCurrentMonthFirst();
+            this.listQuery2.endDate = this.getCurrentMonthLast();
             this.approvalPlot();
             this.doPlot();
+            this.doPlot2();
         },
         methods: {
             approvalPlot() {
@@ -197,7 +206,9 @@
                         ]
                     })
                 })
-                dataPlotBusinessByProcess(this.listQuery).then(response => {
+            },
+            doPlot2() {
+                dataPlotBusinessByProcess(this.listQuery2).then(response => {
                     console.log('handleRate:', response);
                     const handleRateData = response.data;
                     this.deptName2 = [];
@@ -271,19 +282,31 @@
                     })
                 })
             },
-            changeDateStart() {
-                if (this.listQuery.startDate == null || this.listQuery.startDate == '') {
-                    this.listQuery.startDate = [];
-                } else {
-                    this.listQuery.startDate = moment(this.listQuery.startDate).format('YYYY-MM-DD');
-                }
+            getCurrentMonthFirst() {
+                let today = new Date();
+                today.setDate(1);
+                today.setHours(0, 0)
+                return date(today, 'YYYY-MM-DD HH:mm');
             },
-            changeDateEnd() {
-                if (this.listQuery.endDate == null || this.listQuery.endDate == '') {
-                    this.listQuery.endDate = [];
-                } else {
-                    this.listQuery.endDate = moment(this.listQuery.endDate).format('YYYY-MM-DD');
-                }
+            getCurrentMonthLast() {
+                let today = new Date();
+                let currentMonth = today.getMonth();
+                let nextMonth = ++currentMonth;
+                let nextMonthFirstDay = new Date(today.getFullYear(), nextMonth, 1);
+                let oneDay = 1000 * 60 * 60 * 24;
+                return date(new Date(nextMonthFirstDay - oneDay).setHours(23, 59), 'YYYY-MM-DD HH:mm');
+            },
+            formatStartDate() {
+                this.listQuery.startDate = date(this.listQuery.startDate, 'YYYY-MM-DD HH:mm')
+            },
+            formatEndDate() {
+                this.listQuery.endDate = date(this.listQuery.endDate, 'YYYY-MM-DD HH:mm')
+            },
+            formatStartDate2() {
+                this.listQuery2.startDate = date(this.listQuery2.startDate, 'YYYY-MM-DD HH:mm')
+            },
+            formatEndDate2() {
+                this.listQuery2.endDate = date(this.listQuery2.endDate, 'YYYY-MM-DD HH:mm')
             }
         }
     }
