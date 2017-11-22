@@ -156,9 +156,7 @@
                         yAxis: [
                             {
                                 type: 'value',
-                                name: '单位：件',
-                                nameLocation: 'center',
-                                nameRotate: 90
+                                name: '单位：件'
                             }
                         ],
                         series: [
@@ -209,9 +207,7 @@
                         yAxis: [
                             {
                                 type: 'value',
-                                name: '单位：分钟',
-                                nameLocation: 'center',
-                                nameRotate: 90
+                                name: '单位：分钟'
                             }
                         ],
                         series: [

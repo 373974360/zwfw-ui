@@ -82,10 +82,9 @@
         name: 'table_demo',
         data() {
             return {
-                pending: undefined,
-                inProgress: undefined,
-                finish: undefined,
-                closed: undefined,
+                pending: '',
+                inProgress: '',
+                finish: '',
                 listQuery: {
                     startDate: undefined,
                     endDate: undefined

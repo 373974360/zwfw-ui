@@ -171,6 +171,8 @@
     require('echarts/lib/chart/pie');
     require('echarts/lib/chart/line');
     require('echarts/lib/component/tooltip');
+    require('echarts/lib/component/legend');
+    require('echarts/lib/component/toolbox');
     require('echarts/lib/component/title');
     require('echarts/lib/component/visualMap');
     import {date} from '../../../../filters'
@@ -185,9 +187,9 @@
         name: 'orderAndLine',
         data() {
             return {
-                todayCount: undefined,
-                currentWait: undefined,
-                avgWaitTime: undefined,
+                todayCount: '',
+                currentWait: '',
+                avgWaitTime: '',
                 listQuery: {
                     itemIds: undefined,
                     deptIds: undefined,
@@ -341,10 +343,12 @@
                         ],
                         yAxis: [
                             {
-                                type: 'value'
+                                type: 'value',
+                                name: '人'
                             },
                             {
-                                type: 'value'
+                                type: 'value',
+                                name: '分钟'
                             }
                         ],
                         series: [
