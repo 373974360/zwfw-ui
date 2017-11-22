@@ -7,25 +7,25 @@
                     <el-col :span="8">
                         <el-card>
                             <div class="card-title">待审批<span>（件）</span></div>
-                            <div class="card-value">{{pending}}</div>
-                            <div class="card-detail">同比：{{}}</div>
-                            <div class="card-detail">环比：{{}}</div>
+                            <div class="card-value">{{pending.total}}</div>
+                            <div class="card-detail">同比：{{pending.yoy}}%</div>
+                            <div class="card-detail">环比：{{pending.mom}}%</div>
                         </el-card>
                     </el-col>
                     <el-col :span="8">
                         <el-card>
                             <div class="card-title">办理中<span>（件）</span></div>
-                            <div class="card-value">{{handling}}</div>
-                            <div class="card-detail">同比：{{}}</div>
-                            <div class="card-detail">环比：{{}}</div>
+                            <div class="card-value">{{inProgress.total}}</div>
+                            <div class="card-detail">同比：{{inProgress.yoy}}%</div>
+                            <div class="card-detail">环比：{{inProgress.mom}}%</div>
                         </el-card>
                     </el-col>
                     <el-col :span="8">
                         <el-card>
                             <div class="card-title">已办结<span>（件）</span></div>
-                            <div class="card-value">{{finish}}</div>
-                            <div class="card-detail">同比：{{}}</div>
-                            <div class="card-detail">环比：{{}}</div>
+                            <div class="card-value">{{finish.total}}</div>
+                            <div class="card-detail">同比：{{finish.yoy}}%</div>
+                            <div class="card-detail">环比：{{finish.mom}}%</div>
                         </el-card>
                     </el-col>
                 </el-row>
@@ -76,14 +76,14 @@
     require('echarts/lib/component/visualMap');
     import {mapGetters} from 'vuex';
     import {date} from '../../../../filters';
-    import {dataPlotPendingByPretrial, dataPlotHandleByProcess, dataPlotFlagByProcess, dataPlotBusinessByProcess} from '../../../../api/hallSystem/count/count'
+    import {dataPlotProcessCount, dataPlotFlagByProcess, dataPlotBusinessByProcess} from '../../../../api/hallSystem/count/count'
 
     export default {
         name: 'table_demo',
         data() {
             return {
                 pending: undefined,
-                handling: undefined,
+                inProgress: undefined,
                 finish: undefined,
                 closed: undefined,
                 listQuery: {
@@ -122,27 +122,18 @@
         },
         methods: {
             approvalPlot() {
-                dataPlotPendingByPretrial().then(response => {
-                    console.log('pending:', response)
-                    const pengdingData = response.data[0]
-                    this.pending = pengdingData.pendingTotal
-                })
-                dataPlotHandleByProcess().then(response => {
-                    console.log('handle:', response)
-                    for (let handleData of response.data) {
-                        if (handleData.status == 10) {
-                            this.handling = handleData.total
-                        } else if (handleData.status == 15) {
-                            this.finish = handleData.total
-                        } else if (handleData.status == 99) {
-                            this.closed = handleData.total
-                        }
+                dataPlotProcessCount().then(response => {
+                    if (response.httpCode === 200) {
+                        this.pending = response.data.pending;
+                        this.inProgress = response.data.inProgress;
+                        this.finish = response.data.finish;
+                    } else {
+                        this.$message.error('数据加载失败');
                     }
                 })
             },
             doPlot() {
                 dataPlotFlagByProcess(this.listQuery).then(response => {
-                    console.log('handleNum:', response);
                     const handleNumData = response.data;
                     this.deptName = [];
                     this.timeoutNum = [];
@@ -209,7 +200,6 @@
             },
             doPlot2() {
                 dataPlotBusinessByProcess(this.listQuery2).then(response => {
-                    console.log('handleRate:', response);
                     const handleRateData = response.data;
                     this.deptName2 = [];
                     this.businessNum = [];

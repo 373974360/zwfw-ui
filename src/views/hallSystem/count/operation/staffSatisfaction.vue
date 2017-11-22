@@ -49,7 +49,6 @@
         methods: {
             doPlot() {
                 getPlotFiveStarByUser().then(response => {
-                    console.log('userSatisfaction:', response);
                     const userData = response.data;
                     this.userName = [];
                     this.userOneNum = [];

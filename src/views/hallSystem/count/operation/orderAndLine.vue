@@ -1,22 +1,22 @@
 <template>
     <div class="app-container order-line">
         <div class="card-container">
-            <div class="sum-msg">今日累计抽号排队数：{{}}人次</div>
+            <div class="sum-msg">今日累计抽号排队数：{{todayCount.total}}人次</div>
             <el-row>
                 <el-col :span="8">
                     <el-card>
                         <div class="card-title">当前等待人数<span>（人）</span></div>
-                        <div class="card-value">{{}}</div>
-                        <div class="card-detail">同比：{{}}</div>
-                        <div class="card-detail">环比：{{}}</div>
+                        <div class="card-value">{{currentWait.total}}</div>
+                        <div class="card-detail">同比：{{currentWait.yoy}}%</div>
+                        <div class="card-detail">环比：{{currentWait.mom}}%</div>
                     </el-card>
                 </el-col>
                 <el-col :span="8">
                     <el-card>
                         <div class="card-title">平均等待时长<span>（分钟）</span></div>
-                        <div class="card-value">{{}}</div>
-                        <div class="card-detail">同比：{{}}</div>
-                        <div class="card-detail">环比：{{}}</div>
+                        <div class="card-value">{{avgWaitTime.total}}</div>
+                        <div class="card-detail">同比：{{avgWaitTime.yoy}}%</div>
+                        <div class="card-detail">环比：{{avgWaitTime.mom}}%</div>
                     </el-card>
                 </el-col>
             </el-row>
@@ -24,19 +24,19 @@
         <div class="splitBar"></div>
         <div class="chart-container">
             <div class="filter-container">
-                <el-select v-model="listQuery.itemIds" class="filter-item" multiple filterable placeholder="选择事项">
+                <el-select v-model="checkItemIds" class="filter-item" multiple filterable placeholder="选择事项">
                     <el-option :key="item.id" v-for="item in itemList" :label="item.name" :value="item.id">
                     </el-option>
                 </el-select>
-                <el-select v-model="listQuery.deptIds" class="filter-item" multiple filterable placeholder="选择部门" @change="reloadItemUserList">
+                <el-select v-model="checkDeptIds" class="filter-item" multiple filterable placeholder="选择部门" @change="reloadItemUserList">
                     <el-option :key="item.id" v-for="item in deptList" :label="item.name" :value="item.id">
                     </el-option>
                 </el-select>
-                <el-select v-model="listQuery.windowIds" class="filter-item" multiple filterable placeholder="选择窗口" @change="reloadItemUserList">
+                <el-select v-model="checkWindowIds" class="filter-item" multiple filterable placeholder="选择窗口" @change="reloadItemUserList">
                     <el-option :key="item.id" v-for="item in windowList" :label="item.name" :value="item.id">
                     </el-option>
                 </el-select>
-                <el-select v-model="listQuery.userIds" class="filter-item" multiple filterable placeholder="选择人员">
+                <el-select v-model="checkUserIds" class="filter-item" multiple filterable placeholder="选择人员">
                     <el-option :key="item.id" v-for="item in userList" :label="item.name" :value="item.id">
                     </el-option>
                 </el-select>
@@ -54,9 +54,10 @@
             </div>
             <div class="className" id="lineWaitTime"></div>
         </div>
+        <div class="splitBar"></div>
         <div class="line-top5">
             <div class="title">排队等待时长 Top 5</div>
-            <el-radio-group v-model="tableDataType" @change="reloadTableData">
+            <el-radio-group v-model="tableDataType" @change="lineWaitTimeTop5">
                 <el-radio-button label="1">按窗口</el-radio-button>
                 <el-radio-button label="2">按事项</el-radio-button>
             </el-radio-group>
@@ -172,27 +173,33 @@
     require('echarts/lib/component/tooltip');
     require('echarts/lib/component/title');
     require('echarts/lib/component/visualMap');
-    import {mapGetters} from 'vuex';
     import {date} from '../../../../filters'
     import {getAllByNameOrbasicCode} from '../../../../api/zwfwSystem/business/item'
     import {getAllDept} from '../../../../api/baseSystem/org/dept'
     import {getAllWindow} from '../../../../api/hallSystem/lobby/window';
     import {getAllUser} from '../../../../api/baseSystem/org/user';
-    import {dataPlotCountByHour, dataPlotTopWaitWindow, dataPlotTopWaitItem} from '../../../../api/hallSystem/count/count';
+    import {dataPlotQueueCount, dataPlotCountByHour, dataPlotTopWaitWindow, dataPlotTopWaitItem} from '../../../../api/hallSystem/count/count';
 
 
     export default {
         name: 'orderAndLine',
         data() {
             return {
+                todayCount: undefined,
+                currentWait: undefined,
+                avgWaitTime: undefined,
                 listQuery: {
-                    itemIds: [],
-                    deptIds: [],
-                    windowIds: [],
-                    userIds: [],
+                    itemIds: undefined,
+                    deptIds: undefined,
+                    windowIds: undefined,
+                    userIds: undefined,
                     startDate: undefined,
                     endDate: undefined
                 },
+                checkItemIds: [],
+                checkDeptIds: [],
+                checkWindowIds: [],
+                checkUserIds: [],
                 itemListQuery: {
                     itemDepartments: '',
                     itemWindows: ''
@@ -221,12 +228,12 @@
         created() {
             this.listQuery.startDate = this.getTodayFirst();
             this.listQuery.endDate = this.getTodayLast();
+            this.plotQueueCount();
             this.getDeptList();
             this.getWindowList();
             this.getItemList();
             this.getUserList();
             this.doPlot();
-            this.lineWaitTimeTop5()
         },
         methods: {
             getDeptList() {
@@ -240,15 +247,15 @@
                 })
             },
             getItemList() {
-                this.itemListQuery.itemDepartments = this.listQuery.deptIds.join();
-                this.itemListQuery.itemWindows = this.listQuery.windowIds.join();
+                this.itemListQuery.itemDepartments = this.checkDeptIds.join();
+                this.itemListQuery.itemWindows = this.checkWindowIds.join();
                 getAllByNameOrbasicCode(this.itemListQuery).then(response => {
                     this.itemList = response.data
                 })
             },
             getUserList() {
-                this.userListQuery.userDepartments = this.listQuery.deptIds.join();
-                this.userListQuery.userWindows = this.listQuery.windowIds.join();
+                this.userListQuery.userDepartments = this.checkDeptIds.join();
+                this.userListQuery.userWindows = this.checkWindowIds.join();
                 getAllUser(this.userListQuery).then(response => {
                     this.userList = response.data
                 })
@@ -265,20 +272,48 @@
                 this.getUserList();
                 this.listQuery.userIds = [];
             },
-            reloadTableData() {
-                this.lineWaitTimeTop5()
+            plotQueueCount() {
+                dataPlotQueueCount().then(response => {
+                    if (response.httpCode === 200) {
+                        this.todayCount = response.data.todayCount;
+                        this.currentWait = response.data.currentWait;
+                        this.avgWaitTime = response.data.avgWaitTime;
+                    } else {
+                        this.$message.error('数据加载失败');
+                    }
+                })
             },
             doPlot() {
-                console.log(this.listQuery)
+                this.listQuery.itemIds = this.checkItemIds.join();
+                this.listQuery.deptIds = this.checkDeptIds.join();
+                this.listQuery.windowIds = this.checkWindowIds.join();
+                this.listQuery.userIds = this.checkUserIds.join();
                 dataPlotCountByHour(this.listQuery).then(response => {
-                    console.log(response)
                     const lineWaitData = response.data;
                     this.lineNum = [];
                     this.waitTime = [];
-                    for (let lintWait of lineWaitData) {
-                        this.lineNum.push(lintWait.total)
-                        this.waitTime.push(lintWait.total)
-                    }
+                    this.lineNum.push(
+                        lineWaitData.count_wait_hour_8,
+                        lineWaitData.count_wait_hour_9,
+                        lineWaitData.count_wait_hour_10,
+                        lineWaitData.count_wait_hour_11,
+                        lineWaitData.count_wait_hour_12,
+                        lineWaitData.count_wait_hour_13,
+                        lineWaitData.count_wait_hour_14,
+                        lineWaitData.count_wait_hour_15,
+                        lineWaitData.count_wait_hour_16,
+                        lineWaitData.count_wait_hour_17);
+                    this.waitTime.push(
+                        lineWaitData.avg_wait_hour_8,
+                        lineWaitData.avg_wait_hour_9,
+                        lineWaitData.avg_wait_hour_10,
+                        lineWaitData.avg_wait_hour_11,
+                        lineWaitData.avg_wait_hour_12,
+                        lineWaitData.avg_wait_hour_13,
+                        lineWaitData.avg_wait_hour_14,
+                        lineWaitData.avg_wait_hour_15,
+                        lineWaitData.avg_wait_hour_16,
+                        lineWaitData.avg_wait_hour_17);
                     const e = echarts.init(document.getElementById('lineWaitTime'));
                     e.setOption({
                         legend: {
@@ -301,7 +336,7 @@
                         xAxis: [
                             {
                                 type: 'category',
-                                data: ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00']
+                                data: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00']
                             }
                         ],
                         yAxis: [
@@ -320,13 +355,14 @@
                             },
                             {
                                 name: '等待时长',
-                                type: 'bar',
+                                type: 'line',
                                 yAxisIndex: 1,
                                 data: this.waitTime
                             }
                         ]
                     })
-                })
+                });
+                this.lineWaitTimeTop5();
             },
             lineWaitTimeTop5() {
                 if (this.tableDataType == 1) {
@@ -346,7 +382,7 @@
                         this.windowWaitTopListAsc = response.data.asc;
                         this.windowWaitTopListDesc = response.data.desc;
                     } else {
-                        this.$message.error("加载失败");
+                        this.$message.error('加载失败');
                     }
                 });
             },
@@ -357,7 +393,7 @@
                         this.itemWaitTopListAsc = response.data.asc;
                         this.itemWaitTopListDesc = response.data.desc;
                     } else {
-                        this.$message.error("加载失败");
+                        this.$message.error('加载失败');
                     }
                 });
             },
@@ -408,6 +444,13 @@
                     font-size: 16px;
                     text-align: center;
                 }
+            }
+        }
+
+        .chart-container {
+            .className {
+                width: 1614px;
+                height: 540px;
             }
         }
 
