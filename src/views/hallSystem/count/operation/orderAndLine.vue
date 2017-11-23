@@ -240,26 +240,42 @@
         methods: {
             getDeptList() {
                 getAllDept().then(response => {
-                    this.deptList = response.data;
+                    if (response.httpCode === 200) {
+                        this.deptList = response.data;
+                    } else {
+                        this.$message.error('部门信息加载失败')
+                    }
                 })
             },
             getWindowList() {
                 getAllWindow().then(response => {
-                    this.windowList = response.data;
+                    if (response.httpCode === 200) {
+                        this.windowList = response.data;
+                    } else {
+                        this.$message.error('窗口信息加载失败')
+                    }
                 })
             },
             getItemList() {
                 this.itemListQuery.itemDepartments = this.checkDeptIds.join();
                 this.itemListQuery.itemWindows = this.checkWindowIds.join();
                 getAllByNameOrbasicCode(this.itemListQuery).then(response => {
-                    this.itemList = response.data
+                    if (response.httpCode === 200) {
+                        this.itemList = response.data
+                    } else {
+                        this.$message.error('事项信息加载失败')
+                    }
                 })
             },
             getUserList() {
                 this.userListQuery.userDepartments = this.checkDeptIds.join();
                 this.userListQuery.userWindows = this.checkWindowIds.join();
                 getAllUser(this.userListQuery).then(response => {
-                    this.userList = response.data
+                    if (response.httpCode === 200) {
+                        this.userList = response.data
+                    } else {
+                        this.$message.error('人员信息加载失败')
+                    }
                 })
             },
             reloadItemUserList() {
@@ -291,80 +307,84 @@
                 this.listQuery.windowIds = this.checkWindowIds.join();
                 this.listQuery.userIds = this.checkUserIds.join();
                 dataPlotCountByHour(this.listQuery).then(response => {
-                    const lineWaitData = response.data;
-                    this.lineNum = [];
-                    this.waitTime = [];
-                    this.lineNum.push(
-                        lineWaitData.count_wait_hour_8,
-                        lineWaitData.count_wait_hour_9,
-                        lineWaitData.count_wait_hour_10,
-                        lineWaitData.count_wait_hour_11,
-                        lineWaitData.count_wait_hour_12,
-                        lineWaitData.count_wait_hour_13,
-                        lineWaitData.count_wait_hour_14,
-                        lineWaitData.count_wait_hour_15,
-                        lineWaitData.count_wait_hour_16,
-                        lineWaitData.count_wait_hour_17);
-                    this.waitTime.push(
-                        lineWaitData.avg_wait_hour_8,
-                        lineWaitData.avg_wait_hour_9,
-                        lineWaitData.avg_wait_hour_10,
-                        lineWaitData.avg_wait_hour_11,
-                        lineWaitData.avg_wait_hour_12,
-                        lineWaitData.avg_wait_hour_13,
-                        lineWaitData.avg_wait_hour_14,
-                        lineWaitData.avg_wait_hour_15,
-                        lineWaitData.avg_wait_hour_16,
-                        lineWaitData.avg_wait_hour_17);
-                    const e = echarts.init(document.getElementById('lineWaitTime'));
-                    e.setOption({
-                        legend: {
-                            data: ['排队数', '等待时长']
-                        },
-                        tooltip: {
-                            trigger: 'axis'
-                        },
-                        toolbox: {
-                            show: true,
-                            feature: {
-                                mark: {show: true},
-                                dataView: {show: true, readOnly: false},
-                                magicType: {show: true, type: ['line', 'bar']},
-                                restore: {show: true},
-                                saveAsImage: {show: true}
-                            }
-                        },
-                        calculable: true,
-                        xAxis: [
-                            {
-                                type: 'category',
-                                data: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00']
-                            }
-                        ],
-                        yAxis: [
-                            {
-                                type: 'value',
-                                name: '人'
+                    if (response.httpCode === 200) {
+                        const lineWaitData = response.data;
+                        this.lineNum = [];
+                        this.waitTime = [];
+                        this.lineNum.push(
+                            lineWaitData.count_wait_hour_8,
+                            lineWaitData.count_wait_hour_9,
+                            lineWaitData.count_wait_hour_10,
+                            lineWaitData.count_wait_hour_11,
+                            lineWaitData.count_wait_hour_12,
+                            lineWaitData.count_wait_hour_13,
+                            lineWaitData.count_wait_hour_14,
+                            lineWaitData.count_wait_hour_15,
+                            lineWaitData.count_wait_hour_16,
+                            lineWaitData.count_wait_hour_17);
+                        this.waitTime.push(
+                            lineWaitData.avg_wait_hour_8,
+                            lineWaitData.avg_wait_hour_9,
+                            lineWaitData.avg_wait_hour_10,
+                            lineWaitData.avg_wait_hour_11,
+                            lineWaitData.avg_wait_hour_12,
+                            lineWaitData.avg_wait_hour_13,
+                            lineWaitData.avg_wait_hour_14,
+                            lineWaitData.avg_wait_hour_15,
+                            lineWaitData.avg_wait_hour_16,
+                            lineWaitData.avg_wait_hour_17);
+                        const e = echarts.init(document.getElementById('lineWaitTime'));
+                        e.setOption({
+                            legend: {
+                                data: ['排队数', '等待时长']
                             },
-                            {
-                                type: 'value',
-                                name: '分钟'
-                            }
-                        ],
-                        series: [
-                            {
-                                name: '排队数',
-                                type: 'bar',
-                                data: this.lineNum
+                            tooltip: {
+                                trigger: 'axis'
                             },
-                            {
-                                name: '等待时长',
-                                type: 'line',
-                                yAxisIndex: 1,
-                                data: this.waitTime
-                            }
-                        ]
-                    })
+                            toolbox: {
+                                show: true,
+                                feature: {
+                                    mark: {show: true},
+                                    dataView: {show: true, readOnly: false},
+                                    magicType: {show: true, type: ['line', 'bar']},
+                                    restore: {show: true},
+                                    saveAsImage: {show: true}
+                                }
+                            },
+                            calculable: true,
+                            xAxis: [
+                                {
+                                    type: 'category',
+                                    data: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00']
+                                }
+                            ],
+                            yAxis: [
+                                {
+                                    type: 'value',
+                                    name: '人'
+                                },
+                                {
+                                    type: 'value',
+                                    name: '分钟'
+                                }
+                            ],
+                            series: [
+                                {
+                                    name: '排队数',
+                                    type: 'bar',
+                                    data: this.lineNum
+                                },
+                                {
+                                    name: '等待时长',
+                                    type: 'line',
+                                    yAxisIndex: 1,
+                                    data: this.waitTime
+                                }
+                            ]
+                        })
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
                 });
                 this.lineWaitTimeTop5();
             },

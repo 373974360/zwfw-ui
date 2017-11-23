@@ -237,9 +237,13 @@
             getList() {
                 this.listLoading = true;
                 getNumberScopeList(this.listQuery).then(response => {
-                    this.list = response.data.list;
-                    this.total = response.data.total;
                     this.listLoading = false;
+                    if (response.httpCode === 200) {
+                        this.list = response.data.list;
+                        this.total = response.data.total;
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
                 })
             },
             handleSelectionChange(row) {
@@ -282,8 +286,12 @@
                         }
                         delZwfwNumberScope(ids).then(response => {
                             this.listLoading = false;
-                            this.total -= selectCounts;
-                            this.$message.success('删除成功');
+                            if (response.httpCode === 200) {
+                                this.total -= selectCounts;
+                                this.$message.success('删除成功');
+                            } else {
+                                this.$message.error('删除失败')
+                            }
                         })
                         for (const deleteRow of this.selectedRows) {
                             const index = this.list.indexOf(deleteRow);
@@ -300,10 +308,14 @@
                         this.addDialogFormVisible = false;
                         this.listLoading = true;
                         createZwfwNumberScope(this.zwfwNumberScope).then(response => {
-                            this.list.unshift(response.data);
-                            this.total += 1;
-                            this.$message.success('创建成功');
                             this.listLoading = false;
+                            if (response.httpCode === 200) {
+                                this.list.unshift(response.data);
+                                this.total += 1;
+                                this.$message.success('创建成功');
+                            } else {
+                                this.$message.error('创建失败')
+                            }
                         })
                     } else {
                         return false;
@@ -316,9 +328,13 @@
                         this.addDialogFormVisible = false;
                         this.listLoading = true;
                         updateZwfwNumberScope(this.zwfwNumberScope).then(response => {
-                            copyProperties(this.currentRow, response.data);
-                            this.$message.success('更新成功');
                             this.listLoading = false;
+                            if (response.httpCode === 200) {
+                                copyProperties(this.currentRow, response.data);
+                                this.$message.success('更新成功');
+                            } else {
+                                this.$message.error('更新失败')
+                            }
                         })
                     } else {
                         return false;
@@ -345,22 +361,30 @@
                     numberScopeId: this.numberScopeId
                 }
                 getAllItemNumberScope(query).then(response => {
-                    const arr = [];
-                    for (const ids of response.data) {
-                        for (const idList of this.itemNumberScopeList) {
-                            if (ids.itemId == idList.id) {
-                                arr.push(idList);
+                    this.listLoading1 = false;
+                    if (response.httpCode === 200) {
+                        const arr = [];
+                        for (const ids of response.data) {
+                            for (const idList of this.itemNumberScopeList) {
+                                if (ids.itemId == idList.id) {
+                                    arr.push(idList);
+                                }
                             }
                         }
+                        this.zwfwItemList = arr
+                    } else {
+                        this.$message.error('数据加载失败')
                     }
-                    this.zwfwItemList = arr
-                    this.listLoading1 = false;
                 })
             },
             getItemList() {
                 const query = {}
                 getAllByNameOrbasicCode(query).then(response => {
-                    this.itemNumberScopeList = response.data;
+                    if (response.httpCode === 200) {
+                        this.itemNumberScopeList = response.data;
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
                 })
             },
             remoteMethod(query) {
@@ -375,7 +399,11 @@
                         listQueryName.basicCode = query
                     }
                     getAllByNameOrbasicCode(listQueryName).then(response => {
-                        this.optionsName = response.data;
+                        if (response.httpCode === 200) {
+                            this.optionsName = response.data;
+                        } else {
+                            this.$message.error('数据加载失败')
+                        }
                     })
                 } else {
                     this.optionsName = [];
@@ -391,41 +419,49 @@
             saveCategoryItem() {
                 const query = {};
                 getAllItemNumberScope(query).then(response => {
-                    this.numberScopeList = response.data;
-                    this.$refs['zwfwItemForm'].validate((valid) => {
-                        if (valid) {
-                            for (let obj of this.zwfwItemList) {
-                                if (obj.id == this.zwfwItem.id) {
-                                    this.$message.warning('事项已存在');
-                                    this.resetTemp1();
-                                    resetForm(this, 'zwfwItemForm');
-                                    return false;
+                    if (response.httpCode === 200) {
+                        this.numberScopeList = response.data;
+                        this.$refs['zwfwItemForm'].validate((valid) => {
+                            if (valid) {
+                                for (let obj of this.zwfwItemList) {
+                                    if (obj.id == this.zwfwItem.id) {
+                                        this.$message.warning('事项已存在');
+                                        this.resetTemp1();
+                                        resetForm(this, 'zwfwItemForm');
+                                        return false;
+                                    }
                                 }
-                            }
-                            for (const arr of this.numberScopeList) {
-                                if (arr.itemId == this.zwfwItem.id) {
-                                    this.$message.warning('该事项已关联其他排号前缀');
-                                    this.resetTemp1();
-                                    resetForm(this, 'zwfwItemForm');
-                                    return false;
+                                for (const arr of this.numberScopeList) {
+                                    if (arr.itemId == this.zwfwItem.id) {
+                                        this.$message.warning('该事项已关联其他排号前缀');
+                                        this.resetTemp1();
+                                        resetForm(this, 'zwfwItemForm');
+                                        return false;
+                                    }
                                 }
+                                const query = {
+                                    numberScopeId: this.numberScopeId,
+                                    itemId: this.zwfwItem.id
+                                }
+                                this.listLoading1 = true;
+                                createZwfwNumberScopeItem(query).then(response => {
+                                    this.listLoading1 = false;
+                                    if (response.httpCode === 200) {
+                                        this.zwfwItemList.unshift(this.zwfwItem);
+                                        this.$message.success('创建成功');
+                                        this.currentItem.numberItemCount += 1;
+                                        this.resetZwfwItemForm();
+                                    } else {
+                                        this.$message.error('创建失败')
+                                    }
+                                })
+                            } else {
+                                return false;
                             }
-                            const query = {
-                                numberScopeId: this.numberScopeId,
-                                itemId: this.zwfwItem.id
-                            }
-                            this.listLoading1 = true;
-                            createZwfwNumberScopeItem(query).then(response => {
-                                this.zwfwItemList.unshift(this.zwfwItem);
-                                this.$message.success('创建成功');
-                                this.listLoading1 = false;
-                                this.currentItem.numberItemCount += 1;
-                                this.resetZwfwItemForm();
-                            })
-                        } else {
-                            return false;
-                        }
-                    });
+                        });
+                    } else {
+                        this.$message.error('操作失败')
+                    }
                 })
             },
             handleDeleteOne() {
@@ -445,9 +481,13 @@
                         }
                         deleteZwfwNumberScopeItem(this.numberScopeId, ids).then(response => {
                             this.listLoading1 = false;
-                            this.currentItem.numberItemCount -= length;
-                            this.$message.success('删除成功');
-                            this.resetZwfwItemForm();
+                            if (response.httpCode === 200) {
+                                this.currentItem.numberItemCount -= length;
+                                this.$message.success('删除成功');
+                                this.resetZwfwItemForm();
+                            } else {
+                                this.$message.error('删除失败')
+                            }
                         })
                         for (const deleteRow of this.selectedRows) {
                             const index = this.zwfwItemList.indexOf(deleteRow);

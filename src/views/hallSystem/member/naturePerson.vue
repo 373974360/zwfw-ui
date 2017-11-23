@@ -300,9 +300,13 @@
             getList() {
                 this.listLoading = true;
                 getZwfwNaturePersonList(this.listQuery).then(response => {
-                    this.zwfwNaturePersonList = response.data.list;
-                    this.total = response.data.total;
                     this.listLoading = false;
+                    if (response.httpCode === 200) {
+                        this.zwfwNaturePersonList = response.data.list;
+                        this.total = response.data.total;
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
                 })
             },
             handleSizeChange(val) {

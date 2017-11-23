@@ -366,9 +366,13 @@
             getList() {
                 this.listLoading = true;
                 getZwfwItemNumberList(this.listQuery).then(response => {
-                    this.list = response.data.list;
-                    this.total = response.data.total;
                     this.listLoading = false;
+                    if (response.httpCode === 200) {
+                        this.list = response.data.list;
+                        this.total = response.data.total;
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
                 })
             },
             handleSizeChange(val) {
@@ -401,16 +405,22 @@
             },
             getDatilList() {
                 getDatilByItemNumberId(this.itemNumberId).then(response => {
-                    this.itemNumber = response.data.itemNumber;
-                    this.member = response.data.member;
-                    this.approveStepList = response.data.approveStepList;
-                    this.itemVo = response.data.itemVo;
-                    this.itemConditionVoList = response.data.itemConditionVoList;
-                    this.itemMaterialVoList = response.data.itemMaterialVoList;
-                    this.itemPretrialMaterialVoList = response.data.itemPretrialMaterialVoList;
-                    this.itemPretrialVo = response.data.itemPretrialVo;
-                    this.windowVo = response.data.windowVo;
-                    this.itemWindowUserName = response.data.itemWindowUserName;
+                    if (response.httpCode === 200) {
+                        if (response.data) {
+                            this.itemNumber = response.data.itemNumber;
+                            this.member = response.data.member;
+                            this.approveStepList = response.data.approveStepList;
+                            this.itemVo = response.data.itemVo;
+                            this.itemConditionVoList = response.data.itemConditionVoList;
+                            this.itemMaterialVoList = response.data.itemMaterialVoList;
+                            this.itemPretrialMaterialVoList = response.data.itemPretrialMaterialVoList;
+                            this.itemPretrialVo = response.data.itemPretrialVo;
+                            this.windowVo = response.data.windowVo;
+                            this.itemWindowUserName = response.data.itemWindowUserName;
+                        }
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
                 });
             },
             resetTemp() {
