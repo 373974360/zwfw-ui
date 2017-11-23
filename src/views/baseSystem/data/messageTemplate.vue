@@ -54,7 +54,8 @@
                     <el-input v-model="sysMessageTemplate.sms_title"></el-input>
                 </el-form-item>
                 <el-form-item label="模板内容" prop="sms_content">
-                    <el-input id="sms_content" type="textarea" :rows="3" v-model="sysMessageTemplate.sms_content" @focus="contentFocus"></el-input>
+                    <el-input id="sms_content" type="textarea" :rows="3" v-model="sysMessageTemplate.sms_content"
+                              @focus="contentFocus"></el-input>
                 </el-form-item>
                 <el-form-item label="短信签名" prop="sms_signature">
                     <el-input v-model="sysMessageTemplate.sms_signature">
@@ -64,7 +65,8 @@
                     <template scope="scope">
                         <template v-for="(sysMessageFiled,index) in sysMessageFiledList">
                             <div class="wrapper" v-if="index != 0 && index % 6 == 0"></div>
-                            <el-button type="info" @click="btnClick(sysMessageFiled.value)" >{{sysMessageFiled.name}}</el-button>
+                            <el-button type="info" @click="btnClick(sysMessageFiled.value)">{{sysMessageFiled.name}}
+                            </el-button>
                         </template>
                     </template>
                 </el-form-item>
@@ -140,7 +142,11 @@
             getList() {
                 this.listLoading = true;
                 getSysMessageTemplateList().then(response => {
-                    this.sysMessageTemplateList = response.data;
+                    if (response.httpCode === 200) {
+                        this.sysMessageTemplateList = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.listLoading = false;
                 })
             },
@@ -148,13 +154,17 @@
                 if (this.sysMessageFiledList.length <= 0) {
                     this.dialogLoading = true;
                     getAllSysMessageFiled().then(response => {
-                        this.sysMessageFiledList = response.data;
+                        if (response.httpCode === 200) {
+                            this.sysMessageFiledList = response.data;
+                        } else {
+                            this.$message.error(response.msg);
+                        }
                         this.dialogLoading = false;
                     })
                 }
             },
             btnClick(value){
-                if(this.$content){
+                if (this.$content) {
                     const index = this.$content.selectionEnd;
                     var arr = this.sysMessageTemplate.sms_content.split('');
                     arr.splice(index, 0, value);
@@ -199,15 +209,19 @@
                     this.listLoading = true;
                     let template_id = this.selectedRows[0].template_id;
                     delSysMessageTemplates(template_id).then(response => {
-                        for (const deleteRow of this.selectedRows) {
-                            const index = this.sysMessageTemplateList.indexOf(deleteRow);
-                            this.sysMessageTemplateList.splice(index, 1);
+                        if (response.httpCode === 200) {
+                            for (const deleteRow of this.selectedRows) {
+                                const index = this.sysMessageTemplateList.indexOf(deleteRow);
+                                this.sysMessageTemplateList.splice(index, 1);
+                            }
+                            this.$message.success('删除成功！');
+                        } else {
+                            this.$message.error('删除失败！');
                         }
-                        this.$message.success('删除成功');
                         this.listLoading = false;
                     })
                 }).catch(() => {
-                    console.dir("取消");
+                    console.dir('取消');
                 });
             },
             create() {
@@ -216,8 +230,12 @@
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         createSysMessageTemplate(this.sysMessageTemplate).then(response => {
-                            this.sysMessageTemplateList.unshift(response.data);
-                            this.$message.success('创建成功');
+                            if (response.httpCode === 200) {
+                                this.sysMessageTemplateList.unshift(response.data);
+                                this.$message.success('创建成功！');
+                            } else {
+                                this.$message.error('创建失败！');
+                            }
                             this.listLoading = false;
                         })
                     } else {
@@ -231,8 +249,12 @@
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         updateSysMessageTemplate(this.sysMessageTemplate).then(response => {
-                            copyProperties(this.currentRow, this.sysMessageTemplate);
-                            this.$message.success('更新成功');
+                            if (response.httpCode === 200) {
+                                copyProperties(this.currentRow, this.sysMessageTemplate);
+                                this.$message.success('更新成功！');
+                            } else {
+                                this.$message.error('更新失败！');
+                            }
                             this.listLoading = false;
                         })
                     } else {
@@ -258,5 +280,7 @@
     }
 </script>
 <style scoped>
-    .wrapper{height: 10px;}
+    .wrapper {
+        height: 10px;
+    }
 </style>

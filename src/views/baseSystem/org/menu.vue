@@ -150,14 +150,22 @@
             getList() {
                 this.listLoading = true;
                 getMenuTree().then(response => {
-                    this.menuList = response.data;
+                    if (response.httpCode === 200) {
+                        this.menuList = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.listLoading = false;
                 })
             },
             getOptions(id) {
                 this.dialogLoading = true;
                 getMenuCascader(id).then(response => {
-                    this.cascader = response.data;
+                    if (response.httpCode === 200) {
+                        this.cascader = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.dialogLoading = false;
                 })
             },

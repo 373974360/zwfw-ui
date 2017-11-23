@@ -208,8 +208,12 @@
             getList() {
                 this.listLoading = true;
                 getRoleList(this.listQuery).then(response => {
-                    this.list = response.data.list;
-                    this.total = response.data.total;
+                    if (response.httpCode === 200) {
+                        this.list = response.data.list;
+                        this.total = response.data.total;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.listLoading = false;
                 })
             },
@@ -323,16 +327,24 @@
             getMenuTree() {
                 this.roleMenuDialogLoading = true;
                 getMenuTree().then(response => {
-                    this.menuTree = response.data;
+                    if (response.httpCode === 200) {
+                        this.menuTree = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.roleMenuDialogLoading = false;
                     this.getAllRoleMenu();
                 })
             },
             getAllRoleMenu() {
                 getAllRoleMenus(this.currentRole.id).then(response => {
-                    const menus = response.data;
-                    for (const menu of menus) {
-                        this.$refs.menuTree.setChecked(menu.menuId, true, false);
+                    if (response.httpCode === 200) {
+                        const menus = response.data;
+                        for (const menu of menus) {
+                            this.$refs.menuTree.setChecked(menu.menuId, true, false);
+                        }
+                    } else {
+                        this.$message.error(response.msg);
                     }
                 })
             },
@@ -381,7 +393,11 @@
             getDeptAndUsersList() {
                 this.userRoleDialogLoading = true;
                 getDeptNameAndUsers(this.listQuery).then(response => {
-                    this.userList = response.data;
+                    if (response.httpCode === 200) {
+                        this.userList = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.userRoleDialogLoading = false;
                     this.getAllUserRoles();
                 })
@@ -389,10 +405,14 @@
             getAllUserRoles() {
                 this.checkedUsers = [];
                 getAllUserRole(this.currentRole.id).then(response => {
-                    if (response.data) {
-                        for (const item of response.data) {
-                            this.checkedUsers.push(item.userId);
+                    if (response.httpCode === 200) {
+                        if (response.data) {
+                            for (const item of response.data) {
+                                this.checkedUsers.push(item.userId);
+                            }
                         }
+                    } else {
+                        this.$message.error(response.msg);
                     }
                 })
             },

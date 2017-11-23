@@ -257,7 +257,11 @@
             },
             getOptions(id) {
                 getDeptCascader(id).then(response => {
-                    this.cascader = response.data;
+                    if (response.httpCode === 200) {
+                        this.cascader = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                 })
             },
             handleSizeChange(val) {

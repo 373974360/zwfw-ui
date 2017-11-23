@@ -1,7 +1,7 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="窗口名称"
+            <el-input @keyup.enter.native="getList" style="width: 130px;" class="filter-item" placeholder="窗口名称"
                       v-model="listQuery.name" no-match-text="没有找到哦">
             </el-input>
 

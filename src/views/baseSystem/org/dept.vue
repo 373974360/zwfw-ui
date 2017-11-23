@@ -129,14 +129,22 @@
             getList() {
                 this.listLoading = true;
                 getDeptTree().then(response => {
-                    this.deptList = response.data;
+                    if (response.httpCode === 200) {
+                        this.deptList = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.listLoading = false;
                 })
             },
             getOptions(id) {
                 this.dialogLoading = true;
                 getDeptCascader(id).then(response => {
-                    this.cascader = response.data;
+                    if (response.httpCode === 200) {
+                        this.cascader = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.dialogLoading = false;
                 })
             },

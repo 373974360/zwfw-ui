@@ -11,8 +11,8 @@
 
         <el-table ref="cacheTable" :data="list" v-loading.body="listLoading" border fit highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
-            <el-table-column type="selection" width="50" align="center" />
-            <el-table-column type="index" width="70" label="序号" align="center"  />
+            <el-table-column type="selection" width="50" align="center"/>
+            <el-table-column type="index" width="70" label="序号" align="center"/>
             <el-table-column align="center" label="Key" min-width="140">
                 <template scope="scope">
                     <el-tooltip class="item" effect="dark" content="查看详细" placement="right-start">
@@ -67,7 +67,7 @@
 
 
 <script>
-    import {getCacheList,editCache,delCache,flushCache} from 'api/baseSystem/setting/cache';
+    import {getCacheList, editCache, delCache, flushCache} from 'api/baseSystem/setting/cache';
     import jsonEditor from 'components/jsonEditor';
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
@@ -104,7 +104,7 @@
                 'closeOnClickModal'
             ])
         },
-        components: { jsonEditor },
+        components: {jsonEditor},
         created() {
             this.getList();
         },
@@ -112,8 +112,12 @@
             getList() {
                 this.listLoading = true;
                 getCacheList(this.listQuery).then(response => {
-                    this.allList = response.data;
-                    this.total = response.data.length;
+                    if (response.httpCode === 200) {
+                        this.allList = response.data;
+                        this.total = response.data.length;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.handlePage();
                     this.listLoading = false;
                 })
@@ -133,8 +137,8 @@
                 this.listQuery.page = val;
                 this.handlePage();
             },
-            handlePage(){
-                this.list = this.allList.slice((this.listQuery.page - 1) * this.listQuery.rows,(this.listQuery.page - 1) * this.listQuery.rows + this.listQuery.rows);
+            handlePage() {
+                this.list = this.allList.slice((this.listQuery.page - 1) * this.listQuery.rows, (this.listQuery.page - 1) * this.listQuery.rows + this.listQuery.rows);
             },
             handleUpdate(row) {
                 this.resetTemp();
@@ -156,30 +160,38 @@
                             keys.push(deleteRow.key);
                         }
                         delCache(keys).then(response => {
+                            if (response.httpCode === 200) {
+                                this.total -= selectCounts;
+                                for (const deleteRow of this.selectedRows) {
+                                    let index = this.list.indexOf(deleteRow);
+                                    this.list.splice(index, 1);
+                                    index = this.allList.indexOf(deleteRow);
+                                    this.allList.splice(index, 1);
+                                }
+                                this.$message.success('删除成功！');
+                            } else {
+                                this.$message.error('删除失败！');
+                            }
                             this.listLoading = false;
-                            this.total -= selectCounts;
-                            this.$message.success('删除成功');
                         })
-                        for (const deleteRow of this.selectedRows) {
-                            let index = this.list.indexOf(deleteRow);
-                            this.list.splice(index, 1);
-                            index = this.allList.indexOf(deleteRow);
-                            this.allList.splice(index, 1);
-                        }
                     }).catch(() => {
                         console.dir('取消');
                     });
                 }
             },
-            handleFlush(){
+            handleFlush() {
                 this.$confirm('此操作将清空缓存数据库, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
                     flushCache().then(response => {
+                        if (response.httpCode === 200) {
+                            this.$message.success('清空成功！');
+                        } else {
+                            this.$message.error('清空失败！');
+                        }
                         this.listLoading = false;
-                        this.$message.success('清空成功');
                     })
                     this.list = [];
                     this.allList = [];
@@ -187,44 +199,28 @@
                     console.dir('取消');
                 });
             },
-            resetTemp(){
+            resetTemp() {
                 this.redisResult = {
                     key: '',
                     value: '',
                     type: '',
                     ttl: ''
                 };
-            },
-            handleDownload() {
-                require.ensure([], () => {
-                    const {export_json_to_excel} = require('vendor/Export2Excel');
-                    const tHeader = ['时间', '地区', '类型', '标题', '重要性'];
-                    const filterVal = ['timestamp', 'province', 'type', 'title', 'importance'];
-                    const data = this.formatJson(filterVal, this.list);
-                    export_json_to_excel(tHeader, data, 'table数据');
-                })
-            },
-            formatJson(filterVal, jsonData) {
-                return jsonData.map(v => filterVal.map(j => {
-                    if (j === 'timestamp') {
-                        return parseTime(v[j])
-                    } else {
-                        return v[j]
-                    }
-                }))
             }
         }
     }
 </script>
 <style>
-    .editor-container{
+    .editor-container {
         position: relative;
         height: 300px;
         overflow-x: hidden;
     }
+
     .el-input.is-disabled .el-input__inner {
         color: #1f2d3d;
     }
+
     .el-textarea.is-disabled .el-textarea__inner {
         color: #1f2d3d;
     }
