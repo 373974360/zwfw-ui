@@ -71,14 +71,14 @@
                     <el-input v-model="zwfwMaterial.name"></el-input>
                 </el-form-item>
                 <el-form-item label="材料类型" prop="type">
-                        <el-select v-model="zwfwMaterial.type" placeholder="请选择材料类型">
-                            <el-option
-                                    v-for="item in dics['cllx']"
-                                    :key="item.code"
-                                    :label="item.value"
-                                    :value="item.value">
-                            </el-option>
-                        </el-select>
+                    <el-select v-model="zwfwMaterial.type" placeholder="请选择材料类型">
+                        <el-option
+                                v-for="item in dics['cllx']"
+                                :key="item.code"
+                                :label="item.value"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="是否需要电子材料" prop="electronicMaterial">
                     <el-switch
@@ -111,8 +111,12 @@
                                :on-remove="handleRemoveExample"
                                :auto-upload="false">
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUploadExample">上传到服务器</el-button>
-                        <el-button style="margin-left: 10px;" size="small" type="info" @click="showMaterialExample">查看图片</el-button>
+                        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUploadExample">
+                            上传到服务器
+                        </el-button>
+                        <el-button style="margin-left: 10px;" size="small" type="info" @click="showMaterialExample">
+                            查看图片
+                        </el-button>
 
                     </el-upload>
                 </el-form-item>
@@ -127,8 +131,11 @@
                                :on-remove="handleRemoveEform"
                                :auto-upload="false">
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUploadEform">上传到服务器</el-button>
-                        <el-button style="margin-left: 10px;" size="small" type="info" @click="showEformFile">点击下载</el-button>
+                        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUploadEform">
+                            上传到服务器
+                        </el-button>
+                        <el-button style="margin-left: 10px;" size="small" type="info" @click="showEformFile">点击下载
+                        </el-button>
 
                     </el-upload>
                 </el-form-item>
@@ -217,7 +224,7 @@
                 'closeOnClickModal'
             ]),
             uploadHeaders(){
-               return { 'User-Authorization': this.$store.getters.token}
+                return {'User-Authorization': this.$store.getters.token}
             }
         },
         methods: {
@@ -230,8 +237,12 @@
             getList() {
                 this.listLoading = true;
                 getZwfwMaterialList(this.listQuery).then(response => {
-                    this.zwfwMaterialList = response.data.list;
-                    this.total = response.data.total;
+                    if (response.httpCode === 200) {
+                        this.zwfwMaterialList = response.data.list;
+                        this.total = response.data.total;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.listLoading = false;
                 })
             },
@@ -281,12 +292,12 @@
                 this.zwfwMaterial.eform = res.url;
             },
             showMaterialExample(){
-                if(this.zwfwMaterial.example) {
+                if (this.zwfwMaterial.example) {
                     window.open(this.zwfwMaterial.example);
                 }
             },
             showEformFile(){
-                if(this.zwfwMaterial.eform) {
+                if (this.zwfwMaterial.eform) {
                     window.open(this.zwfwMaterial.eform);
                 }
             },
@@ -324,16 +335,20 @@
                             ids.push(deleteRow.id);
                         }
                         delZwfwMaterials(ids).then(response => {
-                            this.total -= selectCounts;
-                            for (const deleteRow of this.selectedRows) {
-                                const index = this.zwfwMaterialList.indexOf(deleteRow);
-                                this.zwfwMaterialList.splice(index, 1);
+                            if (response.httpCode === 200) {
+                                this.total -= selectCounts;
+                                for (const deleteRow of this.selectedRows) {
+                                    const index = this.zwfwMaterialList.indexOf(deleteRow);
+                                    this.zwfwMaterialList.splice(index, 1);
+                                }
+                                this.$message.success('删除成功！');
+                            } else {
+                                this.$message.error('删除失败！');
                             }
-                            this.$message.success('删除成功');
                             this.listLoading = false;
                         })
                     }).catch(() => {
-                        console.dir("取消");
+                        console.dir('取消');
                     });
                 }
             },
@@ -343,10 +358,14 @@
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         createZwfwMaterial(this.zwfwMaterial).then(response => {
-                            this.zwfwMaterialList.unshift(response.data);
-                            this.total += 1;
+                            if (response.httpCode === 200) {
+                                this.zwfwMaterialList.unshift(response.data);
+                                this.total += 1;
+                                this.$message.success('创建成功！');
+                            } else {
+                                this.$message.error('创建失败！');
+                            }
                             this.listLoading = false;
-                            this.$message.success('创建成功');
                             this.uploadAvatarsExample = [];
                             this.uploadAvatarsEform = [];
                             this.resetZwfwMaterialForm();
@@ -362,8 +381,12 @@
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         updateZwfwMaterial(this.zwfwMaterial).then(response => {
-                            copyProperties(this.currentRow, response.data);
-                            this.$message.success('更新成功');
+                            if (response.httpCode === 200) {
+                                copyProperties(this.currentRow, response.data);
+                                this.$message.success('更新成功');
+                            } else {
+                                this.$message.error('更新失败！');
+                            }
                             this.listLoading = false;
                             this.uploadAvatarsExample = [];
                             this.uploadAvatarsEform = [];
