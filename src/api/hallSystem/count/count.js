@@ -75,26 +75,17 @@ export function dataPlotSatisfactionLevelByWindow(query) {
         method: 'get',
         params: query
     });
-}/**
- * 业务审批统计---待审批
+}
+
+/**
+ * 业务审批统计---待审批、办理中、已办结
  * @param query
  */
-export function dataPlotPendingByPretrial(query) {
+export function dataPlotProcessCount() {
     return fetch({
-        url: '/api/hallSystem/count/statistics/dataPlotPendingByPretrial',
-        method: 'get',
-        params: query
-    });
-}/**
- * 业务审批统计---办理中、已办结
- * @param query
- */
-export function dataPlotHandleByProcess(query) {
-    return fetch({
-        url: '/api/hallSystem/count/statistics/dataPlotHandleByProcess',
-        method: 'get',
-        params: query
-    });
+        url: '/api/hallSystem/count/statistics/dataPlotProcessCount',
+        method: 'get'
+    })
 }
 /**
  *超期件、整改件、督办件
@@ -120,8 +111,15 @@ export function dataPlotBusinessByProcess(query) {
     })
 }
 
+export function dataPlotQueueCount() {
+    return fetch({
+        url: '/api/hallSystem/count/statistics/dataPlotQueueCount',
+        method: 'get'
+    })
+}
+
 /**
- * 时间段内排队数、等待时长业务审批统计---办理中、已办结
+ * 时间段内排队数、等待时长
  * @param query
  */
 export function dataPlotCountByHour(query) {

@@ -2,15 +2,15 @@
     <div class="app-container calendar-list-container">
         <div class="row">
             <div class="filter-container">
-                <el-select v-model="listQuery.itemIds" class="filter-item" multiple filterable placeholder="选择事项">
+                <el-select v-model="checkItemIds" class="filter-item" multiple filterable placeholder="选择事项">
                     <el-option :key="item.id" v-for="item in itemList" :label="item.name" :value="item.id">
                     </el-option>
                 </el-select>
-                <el-select v-model="listQuery.deptIds" class="filter-item" multiple filterable placeholder="选择部门" @change="reloadItemList">
+                <el-select v-model="checkDeptIds" class="filter-item" multiple filterable placeholder="选择部门" @change="reloadItemList">
                     <el-option :key="item.id" v-for="item in deptList" :label="item.name" :value="item.id">
                     </el-option>
                 </el-select>
-                <el-select v-model="listQuery.windowIds" class="filter-item" multiple filterable placeholder="选择窗口" @change="reloadItemList">
+                <el-select v-model="checkWindowIds" class="filter-item" multiple filterable placeholder="选择窗口" @change="reloadItemList">
                     <el-option :key="item.id" v-for="item in windowList" :label="item.name" :value="item.id">
                     </el-option>
                 </el-select>
@@ -56,12 +56,15 @@
         data() {
             return {
                 listQuery: {
-                    itemIds: [],
-                    deptIds: [],
-                    windowIds: [],
+                    itemIds: undefined,
+                    deptIds: undefined,
+                    windowIds: undefined,
                     startDate: undefined,
                     endDate: undefined
                 },
+                checkItemIds: [],
+                checkDeptIds: [],
+                checkWindowIds: [],
                 itemListQuery: {
                     itemDepartments: '',
                     itemWindows: ''
@@ -100,8 +103,8 @@
                 })
             },
             getItemList() {
-                this.itemListQuery.itemDepartments = this.listQuery.deptIds.join();
-                this.itemListQuery.itemWindows = this.listQuery.windowIds.join();
+                this.itemListQuery.itemDepartments = this.checkDeptIds.join();
+                this.itemListQuery.itemWindows = this.checkWindowIds.join();
                 getAllByNameOrbasicCode(this.itemListQuery).then(response => {
                     this.itemList = response.data
                 })
@@ -111,8 +114,10 @@
                 this.listQuery.itemIds = [];
             },
             doPlot() {
+                this.listQuery.itemIds = this.checkItemIds.join();
+                this.listQuery.deptIds = this.checkDeptIds.join();
+                this.listQuery.windowIds = this.checkWindowIds.join();
                 dataPlotByWindow(this.listQuery).then(response => {
-                    console.log('windowHandle:', response);
                     const handleData = response.data;
                     this.handleWindowName = [];
                     this.handleNum = [];
@@ -151,9 +156,7 @@
                         yAxis: [
                             {
                                 type: 'value',
-                                name: '单位：件',
-                                nameLocation: 'center',
-                                nameRotate: 90
+                                name: '单位：件'
                             }
                         ],
                         series: [
@@ -166,7 +169,6 @@
                     })
                 });
                 dataPlotAvgByWindowId(this.listQuery).then(response => {
-                    console.log('windowWait:', response)
                     const waitData = response.data;
                     this.waitWindowName = [];
                     this.waitNum = [];
@@ -205,9 +207,7 @@
                         yAxis: [
                             {
                                 type: 'value',
-                                name: '单位：分钟',
-                                nameLocation: 'center',
-                                nameRotate: 90
+                                name: '单位：分钟'
                             }
                         ],
                         series: [

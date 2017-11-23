@@ -65,7 +65,6 @@
             doPlot() {
                 if (this.listQuery.categoryType == 1) { // 按部门统计
                     dataPlotSatisfactionLevelByDept(this.listQuery).then(response => {
-                        console.log('deptSatisfaction:', response);
                         const deptData = response.data;
                         this.deptName = [];
                         this.deptOneNum = [];
@@ -175,7 +174,6 @@
                     })
                 } else { // 按窗口统计
                     dataPlotSatisfactionLevelByWindow(this.listQuery).then(response => {
-                        console.log('windowSatisfaction:', response)
                         const windowData = response.data;
                         this.windowName = [];
                         this.windowOneNum = [];
