@@ -122,9 +122,19 @@
 
 <script>
     import TreeGrid from 'components/TreeGrid';
-    import {getCategoryTree, getCategoryCascader, createCategory, updateCategory, delCategory} from 'api/zwfwSystem/business/category';
+    import {
+        getCategoryTree,
+        getCategoryCascader,
+        createCategory,
+        updateCategory,
+        delCategory
+    } from 'api/zwfwSystem/business/category';
     import {getAllByNameOrbasicCode} from 'api/zwfwSystem/business/item';
-    import {getAllCategoeyItem, createZwfwCategoryItem, deleteZwfwCategoryItem} from 'api/zwfwSystem/business/categoryItem';
+    import {
+        getAllCategoeyItem,
+        createZwfwCategoryItem,
+        deleteZwfwCategoryItem
+    } from 'api/zwfwSystem/business/categoryItem';
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import TreeUtil from 'utils/TreeUtil.js';
@@ -222,14 +232,22 @@
             getList() {
                 this.listLoading = true;
                 getCategoryTree().then(response => {
-                    this.categoryList = response.data;
+                    if (response.httpCode === 200) {
+                        this.categoryList = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.listLoading = false;
                 })
             },
             getOptions(id) {
                 this.dialogLoading = true;
                 getCategoryCascader(id).then(response => {
-                    this.cascader = response.data;
+                    if (response.httpCode === 200) {
+                        this.cascader = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.dialogLoading = false;
                 })
             },
@@ -288,24 +306,31 @@
             getItemListByCategoryId() {
                 this.listLoading1 = true;
                 getAllCategoeyItem(this.categoryId).then(response => {
-                    const arr = [];
-                    console.log(response.data);
-                    for (const ids of response.data) {
-                        for (const idList of this.itemCategoryList) {
-                            if (ids.itemId == idList.id) {
-                                arr.push(idList);
+                    if (response.httpCode === 200) {
+                        const arr = [];
+                        console.log(response.data);
+                        for (const ids of response.data) {
+                            for (const idList of this.itemCategoryList) {
+                                if (ids.itemId == idList.id) {
+                                    arr.push(idList);
+                                }
                             }
                         }
+                        this.zwfwItemList = arr;
+                    } else {
+                        this.$message.error(response.msg);
                     }
-                    this.zwfwItemList = arr;
                     this.listLoading1 = false;
                 })
             },
             getItemList() {
                 const query = {}
                 getAllByNameOrbasicCode(query).then(response => {
-                    this.itemCategoryList = response.data;
-                    console.log(this.itemCategoryList);
+                    if (response.httpCode === 200) {
+                        this.itemCategoryList = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                 })
             },
             remoteMethod(query) {
@@ -320,7 +345,11 @@
                         listQueryName.basicCode = query
                     }
                     getAllByNameOrbasicCode(listQueryName).then(response => {
-                        this.optionsName = response.data;
+                        if (response.httpCode === 200) {
+                            this.optionsName = response.data;
+                        } else {
+                            this.$message.error(response.msg);
+                        }
                     })
                 } else {
                     this.optionsName = [];
@@ -350,11 +379,15 @@
                         }
                         this.listLoading1 = true;
                         createZwfwCategoryItem(query).then(response => {
-                            this.zwfwItemList.unshift(this.zwfwItem);
-                            this.$message.success('创建成功');
+                            if (response.httpCode === 200) {
+                                this.zwfwItemList.unshift(this.zwfwItem);
+                                this.$message.success('创建成功！');
+                                this.currentItem.categoryItemCount += 1;
+                            } else {
+                                this.$message.error('创建失败！');
+                            }
                             this.listLoading1 = false;
                             this.resetZwfwItemForm();
-                            this.currentItem.categoryItemCount += 1;
                         })
                     } else {
                         return false;
@@ -376,16 +409,20 @@
                             ids.push(deleteRow.id);
                         }
                         deleteZwfwCategoryItem(this.categoryId, ids).then(response => {
-                            this.currentItem.categoryItemCount -= length;
-                            this.$message.success('删除成功');
+                            if (response.httpCode === 200) {
+                                this.currentItem.categoryItemCount -= length;
+                                for (const deleteRow of this.selectedRows) {
+                                    const index = this.zwfwItemList.indexOf(deleteRow);
+                                    this.zwfwItemList.splice(index, 1);
+                                }
+                                this.$message.success('删除成功！');
+                            } else {
+                                this.$message.error('删除失败！');
+                            }
                             this.resetZwfwItemForm();
                         })
-                        for (const deleteRow of this.selectedRows) {
-                            const index = this.zwfwItemList.indexOf(deleteRow);
-                            this.zwfwItemList.splice(index, 1);
-                        }
                     }).catch(() => {
-                        console.dir("取消");
+                        console.dir('取消');
                     });
                 }
             },
@@ -397,12 +434,16 @@
                 }).then(() => {
                     this.listLoading = true;
                     delCategory(row.id).then(response => {
-                        TreeUtil.delRow(response.data, this.categoryList);
-                        this.$message.success('删除成功');
+                        if (response.httpCode === 200) {
+                            TreeUtil.delRow(response.data, this.categoryList);
+                            this.$message.success('删除成功！');
+                        } else {
+                            this.$message.error('删除失败！');
+                        }
                         this.listLoading = false;
                     })
                 }).catch(() => {
-                    console.dir("取消");
+                    console.dir('取消');
                 });
             },
             create() {
@@ -411,8 +452,12 @@
                         this.dialogFormVisible = false;
                         console.dir(this.category.parentId);
                         createCategory(this.category).then(response => {
-                            this.$message.success('创建成功');
-                            TreeUtil.addRow(response.data, this.categoryList);
+                            if (response.httpCode === 200) {
+                                this.$message.success('创建成功！');
+                                TreeUtil.addRow(response.data, this.categoryList);
+                            } else {
+                                this.$message.error('创建失败！');
+                            }
                         })
                     } else {
                         return false;
@@ -424,8 +469,12 @@
                     if (valid) {
                         this.dialogFormVisible = false;
                         updateCategory(this.category).then(response => {
-                            this.$message.success('更新成功');
-                            TreeUtil.editRow(response.data, this.categoryList);
+                            if (response.httpCode === 200) {
+                                this.$message.success('更新成功');
+                                TreeUtil.editRow(response.data, this.categoryList);
+                            } else {
+                                this.$message.error('更新失败！');
+                            }
                         })
                     } else {
                         return false;
