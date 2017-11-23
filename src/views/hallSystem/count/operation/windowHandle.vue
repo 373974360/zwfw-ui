@@ -94,19 +94,31 @@
         methods: {
             getDeptList() {
                 getAllDept().then(response => {
-                    this.deptList = response.data;
+                    if (response.httpCode === 200) {
+                        this.deptList = response.data;
+                    } else {
+                        this.$message.error('部门信息加载失败')
+                    }
                 })
             },
             getWindowList() {
                 getAllWindow().then(response => {
-                    this.windowList = response.data;
+                    if (response.httpCode === 200) {
+                        this.windowList = response.data;
+                    } else {
+                        this.$message.error('窗口信息加载失败')
+                    }
                 })
             },
             getItemList() {
                 this.itemListQuery.itemDepartments = this.checkDeptIds.join();
                 this.itemListQuery.itemWindows = this.checkWindowIds.join();
                 getAllByNameOrbasicCode(this.itemListQuery).then(response => {
-                    this.itemList = response.data
+                    if (response.httpCode === 200) {
+                        this.itemList = response.data
+                    } else {
+                        this.$message.error('事项信息加载失败')
+                    }
                 })
             },
             reloadItemList() {
@@ -118,106 +130,114 @@
                 this.listQuery.deptIds = this.checkDeptIds.join();
                 this.listQuery.windowIds = this.checkWindowIds.join();
                 dataPlotByWindow(this.listQuery).then(response => {
-                    const handleData = response.data;
-                    this.handleWindowName = [];
-                    this.handleNum = [];
-                    for (let handle of handleData) {
-                        this.handleWindowName.push(handle.windowName);
-                        this.handleNum.push(handle.total);
+                    if (response.httpCode === 200) {
+                        const handleData = response.data;
+                        this.handleWindowName = [];
+                        this.handleNum = [];
+                        for (let handle of handleData) {
+                            this.handleWindowName.push(handle.windowName);
+                            this.handleNum.push(handle.total);
+                        }
+                        const e = echarts.init(document.getElementById('windowHandle'));
+                        e.setOption({
+                            title: {
+                                text: '窗口受理量'
+                            },
+                            legend: {
+                                data: ['受理量']
+                            },
+                            tooltip: {
+                                trigger: 'axis'
+                            },
+                            toolbox: {
+                                show: true,
+                                feature: {
+                                    mark: {show: true},
+                                    dataView: {show: true, readOnly: false},
+                                    magicType: {show: true, type: ['line', 'bar']},
+                                    restore: {show: true},
+                                    saveAsImage: {show: true}
+                                }
+                            },
+                            calculable: true,
+                            xAxis: [
+                                {
+                                    type: 'category',
+                                    data: this.handleWindowName
+                                }
+                            ],
+                            yAxis: [
+                                {
+                                    type: 'value',
+                                    name: '单位：件'
+                                }
+                            ],
+                            series: [
+                                {
+                                    name: '受理量',
+                                    type: 'bar',
+                                    data: this.handleNum
+                                }
+                            ]
+                        })
+                    } else {
+                        this.$message.error('数据加载失败')
                     }
-                    const e = echarts.init(document.getElementById('windowHandle'));
-                    e.setOption({
-                        title: {
-                            text: '窗口受理量'
-                        },
-                        legend: {
-                            data: ['受理量']
-                        },
-                        tooltip: {
-                            trigger: 'axis'
-                        },
-                        toolbox: {
-                            show: true,
-                            feature: {
-                                mark: {show: true},
-                                dataView: {show: true, readOnly: false},
-                                magicType: {show: true, type: ['line', 'bar']},
-                                restore: {show: true},
-                                saveAsImage: {show: true}
-                            }
-                        },
-                        calculable: true,
-                        xAxis: [
-                            {
-                                type: 'category',
-                                data: this.handleWindowName
-                            }
-                        ],
-                        yAxis: [
-                            {
-                                type: 'value',
-                                name: '单位：件'
-                            }
-                        ],
-                        series: [
-                            {
-                                name: '受理量',
-                                type: 'bar',
-                                data: this.handleNum
-                            }
-                        ]
-                    })
                 });
                 dataPlotAvgByWindowId(this.listQuery).then(response => {
-                    const waitData = response.data;
-                    this.waitWindowName = [];
-                    this.waitNum = [];
-                    for (let wait of waitData) {
-                        this.waitWindowName.push(wait.windowName);
-                        this.waitNum.push(wait.avgtime);
+                    if (response.httpCode === 200) {
+                        const waitData = response.data;
+                        this.waitWindowName = [];
+                        this.waitNum = [];
+                        for (let wait of waitData) {
+                            this.waitWindowName.push(wait.windowName);
+                            this.waitNum.push(wait.avgtime);
+                        }
+                        const e = echarts.init(document.getElementById('windowWait'));
+                        e.setOption({
+                            title: {
+                                text: '平均等待时长'
+                            },
+                            legend: {
+                                data: ['等待时长']
+                            },
+                            tooltip: {
+                                trigger: 'axis'
+                            },
+                            toolbox: {
+                                show: true,
+                                feature: {
+                                    mark: {show: true},
+                                    dataView: {show: true, readOnly: false},
+                                    magicType: {show: true, type: ['line', 'bar']},
+                                    restore: {show: true},
+                                    saveAsImage: {show: true}
+                                }
+                            },
+                            calculable: true,
+                            xAxis: [
+                                {
+                                    type: 'category',
+                                    data: this.waitWindowName
+                                }
+                            ],
+                            yAxis: [
+                                {
+                                    type: 'value',
+                                    name: '单位：分钟'
+                                }
+                            ],
+                            series: [
+                                {
+                                    name: '等待时长',
+                                    type: 'bar',
+                                    data: this.waitNum
+                                }
+                            ]
+                        })
+                    } else {
+                        this.$message.error('数据加载失败')
                     }
-                    const e = echarts.init(document.getElementById('windowWait'));
-                    e.setOption({
-                        title: {
-                            text: '平均等待时长'
-                        },
-                        legend: {
-                            data: ['等待时长']
-                        },
-                        tooltip: {
-                            trigger: 'axis'
-                        },
-                        toolbox: {
-                            show: true,
-                            feature: {
-                                mark: {show: true},
-                                dataView: {show: true, readOnly: false},
-                                magicType: {show: true, type: ['line', 'bar']},
-                                restore: {show: true},
-                                saveAsImage: {show: true}
-                            }
-                        },
-                        calculable: true,
-                        xAxis: [
-                            {
-                                type: 'category',
-                                data: this.waitWindowName
-                            }
-                        ],
-                        yAxis: [
-                            {
-                                type: 'value',
-                                name: '单位：分钟'
-                            }
-                        ],
-                        series: [
-                            {
-                                name: '等待时长',
-                                type: 'bar',
-                                data: this.waitNum
-                            }
-                        ]
-                    })
                 })
             },
             formatStartDate() {

@@ -642,7 +642,7 @@
                 },
                 uploadAccepts: '.gif,.jpg,.jpeg,.bmp,.png,.xls,.xlsx,.doc,.docx,.zip,.rar,.pdf',
                 allUserList: [],
-                deptTree: [],
+                deptTree: []
             }
         },
         created() {
@@ -687,7 +687,11 @@
                 getAllUser({
                     name: keywords
                 }).then(response => {
-                    this.allUserList = response.data;
+                    if (response.httpCode === 200) {
+                        this.allUserList = response.data;
+                    } else {
+                        this.$message.error("加载用户列表失败");
+                    }
                 });
             },
             handleChange(value) {
@@ -711,8 +715,12 @@
             getList() {
                 this.listLoading = true;
                 getZwfwItemList(this.listQuery).then(response => {
-                    this.zwfwItemList = response.data.list;
-                    this.total = response.data.total;
+                    if (response.httpCode === 200) {
+                        this.zwfwItemList = response.data.list;
+                        this.total = response.data.total;
+                    } else {
+                        this.$message.error(response.msg || '事项列表查询失败');
+                    }
                     this.listLoading = false;
                 });
             },
@@ -730,7 +738,11 @@
             getItemMaterialListByItemId() {
                 this.listLoading1 = true;
                 getAllItemMaterial(this.currentItem.id).then(response => {
-                    this.zwfwItemMaterialList = response.data;
+                    if (response.httpCode === 200) {
+                        this.zwfwItemMaterialList = response.data;
+                    } else {
+                        this.$message.error(response.msg || '加载材料列表失败');
+                    }
                     this.listLoading1 = false;
                 })
             },
@@ -772,7 +784,11 @@
                     }
                     this.electronicMaterial = '';
                     getAllMaterial(listQueryName).then(response => {
-                        this.optionsName = response.data;
+                        if (response.httpCode === 200) {
+                            this.optionsName = response.data;
+                        } else {
+                            console.log(reponse.msg || '材料查找失败');
+                        }
                     })
                 } else {
                     this.optionsName = [];
@@ -845,6 +861,8 @@
                         this.zwfwItem.pretrialUserIdsArray = response.data.map(function (o) {
                             return o.id;
                         });
+                    } else {
+                        this.$message.error("查询预审用户失败");
                     }
                 });
             },
@@ -864,12 +882,16 @@
                             ids.push(deleteRow.id);
                         }
                         delZwfwItems(ids).then(response => {
-                            this.total -= selectCounts;
-                            for (const deleteRow of this.selectedRows) {
-                                const index = this.zwfwItemList.indexOf(deleteRow);
-                                this.zwfwItemList.splice(index, 1);
+                            if (response.httpCode == 200) {
+                                this.total -= selectCounts;
+                                for (const deleteRow of this.selectedRows) {
+                                    const index = this.zwfwItemList.indexOf(deleteRow);
+                                    this.zwfwItemList.splice(index, 1);
+                                }
+                                this.$message.success('删除成功');
+                            } else {
+                                this.$message.error(response.msg || '删除失败');
                             }
-                            this.$message.success('删除成功');
                             this.listLoading = false;
                         })
                     }).catch(() => {
@@ -892,12 +914,16 @@
                             ids.push(deleteRow.id);
                         }
                         deleteZwfwItemMaterial(this.itemId, ids).then(response => {
-                            this.currentItem.itemMaterialCount -= length;
-                            this.$message.success('删除成功');
+                            if (response.httpCode === 200) {
+                                this.currentItem.itemMaterialCount -= length;
+                                this.$message.success('删除成功');
 //                            for (const deleteRow of this.selectedRows) {
 //                                const index = this.zwfwItemMaterialList.indexOf(deleteRow);
 //                                this.zwfwItemMaterialList.splice(index, 1);
 //                            }
+                            } else {
+                                this.$message.error(response.msg || '删除失败');
+                            }
                             this.dialogFormVisible1 = false;
                         })
                     }).catch(() => {
@@ -947,13 +973,18 @@
                             }
                             this.listLoading1 = true;
                             createZwfwItemMaterial(query).then(response => {
-                                this.zwfwItemMaterialList.unshift(this.zwfwItemMaterial);
-                                this.$message.success('创建成功');
+                                if (response.httpCode === 200) {
+                                    this.zwfwItemMaterialList.unshift(this.zwfwItemMaterial);
+                                    this.$message.success('创建成功');
+                                    this.uploadAvatarsExample = [];
+                                    this.uploadAvatarsEform = [];
+                                    this.resetZwfwMaterialForm();
+                                    this.currentItem.itemMaterialCount += 1;
+                                } else {
+                                    this.$message.error('添加失败');
+                                }
                                 this.listLoading1 = false;
-                                this.uploadAvatarsExample = [];
-                                this.uploadAvatarsEform = [];
-                                this.resetZwfwMaterialForm();
-                                this.currentItem.itemMaterialCount += 1;
+
                             })
                         } else {
                             const zwfwMaterialList = {
@@ -972,12 +1003,16 @@
                             this.listLoading1 = true;
                             updateZwfwMaterial(zwfwMaterialList).then(response => {
                                 this.listLoading1 = false;
-                                copyProperties(this.currentRow, response.data);
-                                this.$message.success('更新成功');
-                                this.dialogFormVisible1 = true;
-                                this.uploadAvatarsExample = [];
-                                this.uploadAvatarsEform = [];
-                                this.resetZwfwMaterialForm();
+                                if (response.httpCode == 200) {
+                                    copyProperties(this.currentRow, response.data);
+                                    this.$message.success('更新成功');
+                                    this.dialogFormVisible1 = true;
+                                    this.uploadAvatarsExample = [];
+                                    this.uploadAvatarsEform = [];
+                                    this.resetZwfwMaterialForm();
+                                } else {
+                                    this.$message.error("修改失败");
+                                }
                             })
                         }
                     } else {

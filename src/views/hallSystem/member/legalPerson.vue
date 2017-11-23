@@ -287,9 +287,13 @@
             getList() {
                 this.listLoading = true;
                 getZwfwLegalPersonList(this.listQuery).then(response => {
-                    this.zwfwLegalPersonList = response.data.list;
-                    this.total = response.data.total;
                     this.listLoading = false;
+                    if (response.httpCode === 200) {
+                        this.zwfwLegalPersonList = response.data.list;
+                        this.total = response.data.total;
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
                 })
             },
             handleSizeChange(val) {

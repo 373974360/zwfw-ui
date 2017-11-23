@@ -217,9 +217,13 @@
             getList() {
                 this.listLoading = true;
                 getZwfwItemPretrialList(this.listQuery).then(response => {
-                    this.pretrialList = response.data.list;
-                    this.total = response.data.total;
                     this.listLoading = false;
+                    if (response.httpCode === 200) {
+                        this.pretrialList = response.data.list;
+                        this.total = response.data.total;
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
                 })
             },
             handleSelectionChange(row) {
@@ -243,9 +247,13 @@
             },
             getPretrialDetail() {
                 getPretrialDetail(this.itemPretrialId).then(response => {
-                    this.member = response.data.member;
-                    this.materialList = response.data.pretrialMaterialList;
-                    this.ItemPretrial = this.currentItemPretrial;
+                    if (response.httpCode === 200) {
+                        this.member = response.data.member;
+                        this.materialList = response.data.pretrialMaterialList;
+                        this.ItemPretrial = this.currentItemPretrial;
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
                 })
             },
             print_ycxgzd() {

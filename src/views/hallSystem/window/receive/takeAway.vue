@@ -175,9 +175,13 @@
             getList() {
                 this.listLoading = true;
                 getFinishList(this.listQuery).then(response => {
-                    this.list = response.data.list;
-                    this.total = response.data.total;
                     this.listLoading = false;
+                    if (response.httpCode === 200) {
+                        this.list = response.data.list;
+                        this.total = response.data.total;
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
                 })
             },
             remoteMethod(query) {
@@ -186,8 +190,11 @@
                         name: query
                     }
                     getAllCompany(listQueryName).then(response => {
-                        this.optionsName = response.data;
-                        console.log(this.optionsName);
+                        if (response.httpCode === 200) {
+                            this.optionsName = response.data;
+                        } else {
+                            this.$message.error('数据加载失败')
+                        }
                     })
                 } else {
                     this.optionsName = [];
@@ -204,7 +211,11 @@
             getAllItemList() {
                 const query = {};
                 getAllByNameOrbasicCode(query).then(response => {
-                    this.itemList = response.data;
+                    if (response.httpCode === 200) {
+                        this.itemList = response.data;
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
                 })
             },
             changeTakeTypePick(row) {
@@ -219,8 +230,12 @@
                         id: row.id
                     };
                     updateTake(query).then(response => {
-                        copyProperties(this.currentRow, response.data);
                         this.listLoading = false;
+                        if (response.httpCode === 200) {
+                            copyProperties(this.currentRow, response.data);
+                        } else {
+                            this.$message.error('操作失败')
+                        }
                     })
                 }).catch(() => {
                     console.dir('取消');
@@ -241,10 +256,14 @@
                             expressCompany: this.express.expressCompany
                         };
                         updateTake(query).then(response => {
-                            copyProperties(this.currRow, response.data);
                             this.listLoading = false;
-                            this.currRow = null;
-                            this.dialogFormVisible = false;
+                            if (response.httpCode === 200) {
+                                copyProperties(this.currRow, response.data);
+                                this.currRow = null;
+                                this.dialogFormVisible = false;
+                            } else {
+                                this.$message.error('操作失败')
+                            }
                         });
                     } else {
                         return false;
