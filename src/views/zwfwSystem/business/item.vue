@@ -95,6 +95,25 @@
                 <el-form-item label="事项名称" prop="name">
                     <el-input v-model="zwfwItem.name"></el-input>
                 </el-form-item>
+                <el-form-item label="所属部门" prop="departmentId">
+                    <!--<el-select v-model="zwfwItem.departmentId" placeholder="所属部门" style="width:100%">-->
+                    <!--<el-option-->
+                    <!--v-for="dept in deptList"-->
+                    <!--:key="dept.id"-->
+                    <!--:label="dept.name"-->
+                    <!--:value="dept.id">-->
+                    <!--</el-option>-->
+                    <!--</el-select>-->
+
+                    <el-cascader
+                            expand-trigger="hover" :show-all-levels="true"
+                            :change-on-select="true"
+                            :options="deptTree"
+                            v-model="cascaderModel"
+                            @change="handleChange">
+                    </el-cascader>
+
+                </el-form-item>
                 <el-form-item label="基本编码" prop="basicCode">
                     <el-input v-model="zwfwItem.basicCode"></el-input>
                 </el-form-item>
@@ -490,6 +509,7 @@
     } from 'api/zwfwSystem/business/itemMaterial';
     import {getAllMaterial, updateZwfwMaterial} from 'api/zwfwSystem/business/material';
     import {getAllUser} from 'api/baseSystem/org/user';
+    import {getDeptCascader} from 'api/baseSystem/org/dept';
 
 
     export default {
@@ -516,6 +536,7 @@
                 activeName: 'first',
                 zwfwItem: {
                     id: undefined,
+                    departmentId: [],
                     setBasis: '',
                     chargeable: true,
                     orderable: true,
@@ -557,7 +578,8 @@
                     commonRequestion: '',
                     implCode: '',
                     updateType: '',
-                    pretrialUserIds: []
+                    pretrialUserIds: [],
+                    departmentTreePosition: ''
                 },
                 zwfwItemMaterial: {
                     id: undefined,
@@ -619,20 +641,39 @@
                     ]
                 },
                 uploadAccepts: '.gif,.jpg,.jpeg,.bmp,.png,.xls,.xlsx,.doc,.docx,.zip,.rar,.pdf',
-                allUserList: []
+                allUserList: [],
+                deptTree: [],
             }
         },
         created() {
             this.getList();
-
             //用于加载根据部门分组的用户列表，用来在设置预审用户时使用
             this.allUserList = [];
+            this.deptTree = [];
+            getDeptCascader().then(response => {
+                if (response.httpCode === 200) {
+                    this.deptTree = response.data;
+                } else {
+                    console.log('加载部门信息失败');
+                }
+            });
 
         },
         mounted() {
 
         },
         computed: {
+            cascaderModel: function () {
+                if (this.zwfwItem.departmentId) {
+                    //找到对应的部门
+//                    console.log(this.zwfwItem.departmentTreePosition);
+                    if (this.zwfwItem.departmentTreePosition) {
+                        const arr = this.zwfwItem.departmentTreePosition.split('&');
+                        return arr
+                    }
+                    return [];
+                }
+            },
             ...mapGetters([
                 'textMap',
                 'enums',
@@ -642,12 +683,22 @@
         },
         methods: {
             queryUser(keywords) {
-                console.log(keywords);
+//                console.log(keywords);
                 getAllUser({
                     name: keywords
                 }).then(response => {
                     this.allUserList = response.data;
                 });
+            },
+            handleChange(value) {
+//                console.log(value);
+                if (value.length > 0) {
+                    this.zwfwItem.departmentId = parseInt(value[value.length - 1]);
+                    this.zwfwItem.departmentTreePosition = value.join('&');
+                } else {
+                    this.zwfwItem.departmentId = 0;
+                    this.zwfwItem.departmentTreePosition = [];
+                }
             },
             submitUpload() {
                 this.$refs.upload.submit();
@@ -860,9 +911,14 @@
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         createZwfwItem(this.zwfwItem).then(response => {
-                            this.zwfwItemList.unshift(response.data);
-                            this.total += 1;
-                            this.$message.success('创建成功');
+                            if (response.httpCode === 200) {
+                                this.zwfwItemList.unshift(response.data);
+                                this.total += 1;
+                                this.$message.success('创建成功');
+                                this.getList();
+                            } else {
+                                this.$message.error(response.msg || '创建失败');
+                            }
                             this.listLoading = false;
                         })
                     } else {
@@ -939,14 +995,12 @@
                             if (response.httpCode == 200) {
                                 copyProperties(this.currentRow, response.data);
                                 this.$message.success('更新成功');
+                                this.getList();
                             } else {
                                 this.$message.error(response.msg);
                             }
-
                             this.listLoading = false;
-
-
-                        })
+                        });
                     } else {
                         return false;
                     }
@@ -970,6 +1024,7 @@
             resetTemp() {
                 this.zwfwItem = {
                     id: undefined,
+                    departmentId: undefined,
                     setBasis: '',
                     chargeable: true,
                     orderable: true,
@@ -1011,7 +1066,8 @@
                     implCode: '',
                     updateType: '',
                     pretrialDays: '',
-                    pretrialUserIdsArray: []
+                    pretrialUserIdsArray: [],
+                    departmentTreePosition: ''
                 };
             },
             resetZwfwItemForm() {
