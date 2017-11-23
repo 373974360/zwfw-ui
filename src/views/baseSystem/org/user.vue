@@ -98,14 +98,14 @@
                 </el-form-item>
                 <el-form-item label="头像" prop="avatar">
                     <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
-                               :action="uploadAction" :file-list="uploadAvatars"
+                               :action="uploadAction"
                                :on-success="handleAvatarSuccess"
                                :on-error="handlerAvatarError"
                                :before-upload="beforeAvatarUpload"
                                :show-file-list="false"
                                :on-remove="handleRemove">
                         <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                        <!--<i class="el-icon-plus"></i>-->
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="帐号" prop="account">
@@ -229,7 +229,6 @@
                 dialogStatus: '',
                 dialogLoading: false,
                 uploadAction: '/api/common/upload',
-                uploadAvatars: []
             }
         },
         computed: {
@@ -310,7 +309,7 @@
                 this.sysUser.password = '';
                 this.sysUserRules1.password[0].required = false;
                 this.sysUserRules1.passwordConfirm[0].required = false;
-                this.uploadAvatars.push({url: this.sysUser.avatar});
+                this.imageUrl = this.sysUser.avatar;
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
@@ -453,7 +452,6 @@
                     remark: ''
 
                 };
-                this.uploadAvatars = []
             },
             resetUserForm1() {
                 this.dialogFormVisible = false;
@@ -480,9 +478,9 @@
     .avatar-uploader-icon {
         font-size: 28px;
         color: #8c939d;
-        width: 178px;
-        height: 178px;
-        line-height: 178px;
+        width: 146px;
+        height: 146px;
+        line-height: 146px;
         text-align: center;
     }
 
