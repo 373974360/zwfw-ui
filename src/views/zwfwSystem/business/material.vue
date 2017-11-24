@@ -76,7 +76,7 @@
                                 v-for="item in dics['cllx']"
                                 :key="item.code"
                                 :label="item.value"
-                                :value="item.value">
+                                :value="item.code">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -98,7 +98,7 @@
                                 v-for="item in dics['sxsqclly']"
                                 :key="item.code"
                                 :label="item.value"
-                                :value="item.value">
+                                :value="item.code">
                         </el-option>
                     </el-select>
                 </el-form-item>
