@@ -94,15 +94,13 @@
                             <td>{{member.naturePerson.idcard}}</td>
                         </tr>
                         <tr>
-                            <th width="140">邮箱</th>
-                            <td>{{member.email}}</td>
+
                             <th width="140">手机</th>
                             <td>{{member.naturePerson.phone}}</td>
-                        </tr>
-                        <tr>
                             <th width="140">地址</th>
-                            <td colspan="3">{{member.naturePerson.address}}</td>
+                            <td >{{member.naturePerson.address}}</td>
                         </tr>
+
                     </table>
                 </div>
                 <div class="table-show">
