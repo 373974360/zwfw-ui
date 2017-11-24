@@ -133,142 +133,150 @@
             },
             doPlot() {
                 dataPlotFlagByProcess(this.listQuery).then(response => {
-                    const handleNumData = response.data;
-                    this.deptName = [];
-                    this.timeoutNum = [];
-                    this.superviedNum = [];
-                    this.correctionNum = [];
-                    for (let handleNum of handleNumData) {
-                        this.deptName.push(handleNum.deptName);
-                        this.timeoutNum.push(handleNum.timeout);
-                        this.superviedNum.push(handleNum.supervied);
-                        this.correctionNum.push(handleNum.correction);
+                    if (response.httpCode === 200) {
+                        const handleNumData = response.data;
+                        this.deptName = [];
+                        this.timeoutNum = [];
+                        this.superviedNum = [];
+                        this.correctionNum = [];
+                        for (let handleNum of handleNumData) {
+                            this.deptName.push(handleNum.deptName);
+                            this.timeoutNum.push(handleNum.timeout);
+                            this.superviedNum.push(handleNum.supervied);
+                            this.correctionNum.push(handleNum.correction);
+                        }
+                        const e = echarts.init(document.getElementById('handleNum'));
+                        e.setOption({
+                            legend: {
+                                data: ['超期件', '整改件', '督办件']
+                            },
+                            tooltip: {
+                                trigger: 'axis'
+                            },
+                            toolbox: {
+                                show: true,
+                                feature: {
+                                    mark: {show: true},
+                                    dataView: {show: true, readOnly: false},
+                                    magicType: {show: true, type: ['line', 'bar']},
+                                    restore: {show: true},
+                                    saveAsImage: {show: true}
+                                }
+                            },
+                            calculable: true,
+                            xAxis: [
+                                {
+                                    type: 'category',
+                                    data: this.deptName
+                                }
+                            ],
+                            yAxis: [
+                                {
+                                    type: 'value'
+                                }
+                            ],
+                            series: [
+                                {
+                                    name: '超期件',
+                                    type: 'bar',
+                                    stack: '总分',
+                                    data: this.timeoutNum
+                                },
+                                {
+                                    name: '整改件',
+                                    type: 'bar',
+                                    stack: '总分',
+                                    data: this.correctionNum
+                                },
+                                {
+                                    name: '督办件',
+                                    type: 'bar',
+                                    stack: '总分',
+                                    data: this.superviedNum
+                                }
+                            ]
+                        })
+                    } else {
+                        this.$message.error('数据加载失败')
                     }
-                    const e = echarts.init(document.getElementById('handleNum'));
-                    e.setOption({
-                        legend: {
-                            data: ['超期件', '整改件', '督办件']
-                        },
-                        tooltip: {
-                            trigger: 'axis'
-                        },
-                        toolbox: {
-                            show: true,
-                            feature: {
-                                mark: {show: true},
-                                dataView: {show: true, readOnly: false},
-                                magicType: {show: true, type: ['line', 'bar']},
-                                restore: {show: true},
-                                saveAsImage: {show: true}
-                            }
-                        },
-                        calculable: true,
-                        xAxis: [
-                            {
-                                type: 'category',
-                                data: this.deptName
-                            }
-                        ],
-                        yAxis: [
-                            {
-                                type: 'value'
-                            }
-                        ],
-                        series: [
-                            {
-                                name: '超期件',
-                                type: 'bar',
-                                stack: '总分',
-                                data: this.timeoutNum
-                            },
-                            {
-                                name: '整改件',
-                                type: 'bar',
-                                stack: '总分',
-                                data: this.correctionNum
-                            },
-                            {
-                                name: '督办件',
-                                type: 'bar',
-                                stack: '总分',
-                                data: this.superviedNum
-                            }
-                        ]
-                    })
                 })
             },
             doPlot2() {
                 dataPlotBusinessByProcess(this.listQuery2).then(response => {
-                    const handleRateData = response.data;
-                    this.deptName2 = [];
-                    this.businessNum = [];
-                    this.timeoutRate = [];
-                    this.handledRate = [];
-                    for (let handleRate of handleRateData) {
-                        this.deptName2.push(handleRate.deptName);
-                        this.businessNum.push(handleRate.total);
-                        this.timeoutRate.push(handleRate.timeOutRate);
-                        this.handledRate.push(handleRate.untimeOutRate);
-                    }
-                    const e = echarts.init(document.getElementById('handleRate'));
-                    e.setOption({
-                        legend: {
-                            data: ['业务量', '超期率', '正常办结率']
-                        },
-                        tooltip: {
-                            trigger: 'axis'
-                        },
-                        toolbox: {
-                            show: true,
-                            feature: {
-                                mark: {show: true},
-                                dataView: {show: true, readOnly: false},
-                                magicType: {show: true, type: ['line', 'bar']},
-                                restore: {show: true},
-                                saveAsImage: {show: true}
-                            }
-                        },
-                        calculable: true,
-                        xAxis: [
-                            {
-                                type: 'category',
-                                data: this.deptName2
-                            }
-                        ],
-                        yAxis: [
-                            {
-                                type: 'value'
+                    if (response.httpCode === 200) {
+                        const handleRateData = response.data;
+                        this.deptName2 = [];
+                        this.businessNum = [];
+                        this.timeoutRate = [];
+                        this.handledRate = [];
+                        for (let handleRate of handleRateData) {
+                            this.deptName2.push(handleRate.deptName);
+                            this.businessNum.push(handleRate.total);
+                            this.timeoutRate.push(handleRate.timeOutRate);
+                            this.handledRate.push(handleRate.untimeOutRate);
+                        }
+                        const e = echarts.init(document.getElementById('handleRate'));
+                        e.setOption({
+                            legend: {
+                                data: ['业务量', '超期率', '正常办结率']
                             },
-                            {
-                                type: 'value',
-                                min: 0,
-                                max: 100,
-                                interval: 10,
-                                axisLabel: {
-                                    formatter: '{value} %'
+                            tooltip: {
+                                trigger: 'axis'
+                            },
+                            toolbox: {
+                                show: true,
+                                feature: {
+                                    mark: {show: true},
+                                    dataView: {show: true, readOnly: false},
+                                    magicType: {show: true, type: ['line', 'bar']},
+                                    restore: {show: true},
+                                    saveAsImage: {show: true}
                                 }
-                            }
-                        ],
-                        series: [
-                            {
-                                name: '业务量',
-                                type: 'bar',
-                                data: this.businessNum
                             },
-                            {
-                                name: '超期率',
-                                type: 'line',
-                                yAxisIndex: 1,
-                                data: this.timeoutRate
-                            },
-                            {
-                                name: '正常办结率',
-                                type: 'line',
-                                yAxisIndex: 1,
-                                data: this.handledRate
-                            }
-                        ]
-                    })
+                            calculable: true,
+                            xAxis: [
+                                {
+                                    type: 'category',
+                                    data: this.deptName2
+                                }
+                            ],
+                            yAxis: [
+                                {
+                                    type: 'value'
+                                },
+                                {
+                                    type: 'value',
+                                    min: 0,
+                                    max: 100,
+                                    interval: 10,
+                                    axisLabel: {
+                                        formatter: '{value} %'
+                                    }
+                                }
+                            ],
+                            series: [
+                                {
+                                    name: '业务量',
+                                    type: 'bar',
+                                    data: this.businessNum
+                                },
+                                {
+                                    name: '超期率',
+                                    type: 'line',
+                                    yAxisIndex: 1,
+                                    data: this.timeoutRate
+                                },
+                                {
+                                    name: '正常办结率',
+                                    type: 'line',
+                                    yAxisIndex: 1,
+                                    data: this.handledRate
+                                }
+                            ]
+                        })
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
                 })
             },
             getCurrentMonthFirst() {

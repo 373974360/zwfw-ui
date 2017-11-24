@@ -1,7 +1,7 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="名称"
+            <el-input @keyup.enter.native="getList" style="width: 130px;" class="filter-item" placeholder="名称"
                       v-model="listQuery.name"></el-input>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">
@@ -76,7 +76,7 @@
                                 v-for="item in dics['cllx']"
                                 :key="item.code"
                                 :label="item.value"
-                                :value="item.value">
+                                :value="item.code">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -98,7 +98,7 @@
                                 v-for="item in dics['sxsqclly']"
                                 :key="item.code"
                                 :label="item.value"
-                                :value="item.value">
+                                :value="item.code">
                         </el-option>
                     </el-select>
                 </el-form-item>

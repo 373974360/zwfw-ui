@@ -188,7 +188,7 @@
                                 v-for="item in dics['sslx']"
                                 :key="item.code"
                                 :label="item.value"
-                                :value="item.value">
+                                :value="item.code">
                         </el-option>
                     </el-select>
                 </el-form-item>
