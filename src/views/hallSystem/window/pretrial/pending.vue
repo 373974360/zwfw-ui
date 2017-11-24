@@ -113,18 +113,11 @@
                                 <th>名称</th>
                                 <th width="50">链接</th>
                             </tr>
-                            <tr v-for="m in materialList">
+                            <tr v-for="m in pretrialMaterialList">
                                 <td>{{m.itemMaterialName}}</td>
                                 <td>
-                                    <template v-for="(file,index) in m.multipleFile">
-                                        <template v-if="file.url!=null && file.url!=''">
-                                            <a target="_blank"
-                                               v-if="file.fileType == 'doc' || file.fileType == 'docx' || file.fileType == 'xls' || file.fileType == 'xlsx' || file.fileType == 'ppt'"
-                                               :href="'https://view.officeapps.live.com/op/view.aspx?src='+file.url">[{{index
-                                            + 1}}]</a>
-                                            <a v-else :href="file.url"
-                                               target="_blank">[{{index + 1}}]</a>
-                                        </template>
+                                    <template v-for="(file,index) in m.itemMaterialUrl.split('|')">
+                                        <a v-if="index>0" target="_blank" :href="file">[{{index}}]</a>
                                     </template>
                                 </td>
                             </tr>
@@ -190,7 +183,7 @@
                 },
                 legalPerson: [],
                 member: [],
-                materialList: [],
+                pretrialMaterialList: [],
                 titleName: '办件预审',
                 currentItemPretrial: [],
                 pretrialInfo: [],
@@ -267,7 +260,7 @@
                 getPretrialDetail(this.itemPretrialId).then(response => {
                     if (response.httpCode === 200) {
                         this.member = response.data.member;
-                        this.materialList = response.data.pretrialMaterialList;
+                        this.pretrialMaterialList = response.data.pretrialMaterialList;
                         this.ItemPretrial = this.currentItemPretrial;
                         this.ItemPretrial.status = '';
                         this.ItemPretrialRules.status[0].required = false;
