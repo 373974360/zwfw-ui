@@ -234,7 +234,7 @@
                             <div id="itemInfo">
                                 <table>
                                     <tr>
-                                        <th>办理事项</th>
+                                        <th width="200">办理事项</th>
                                         <td>{{itemVo.name}}</td>
                                     </tr>
                                     <tr>

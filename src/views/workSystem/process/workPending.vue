@@ -1,7 +1,7 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-select style="bottom: 4px;" v-model="listQuery.me" placeholder="请选择" @change="handleFilter">
+            <el-select style="bottom: 4px;" v-model="listQuery.my" placeholder="请选择" @change="handleFilter">
                 <el-option
                         v-for="item in options"
                         :key="item.value"
@@ -413,7 +413,7 @@
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     pretrialNumber: undefined,
-                    me: true
+                    my: true
                 },
                 options: [
                     {
