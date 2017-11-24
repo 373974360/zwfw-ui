@@ -288,13 +288,28 @@
                     <el-input v-model="zwfwItem.implAgency"></el-input>
                 </el-form-item>
                 <el-form-item label="受理条件" prop="acceptCondition">
-                    <el-input v-model="zwfwItem.acceptCondition" type="textarea"></el-input>
+                    <!--<el-input v-model="zwfwItem.acceptCondition" type="textarea"></el-input>-->
+                    <quill-editor v-model="acceptConditionHtml"
+                                  @change="acceptConditionChange($event)"
+                                  ref="acceptConditionEditor"
+                                  :options="acceptConditionEditorOption" >
+                    </quill-editor>
                 </el-form-item>
                 <el-form-item label="收费依据" prop="chargeBasis">
-                    <el-input v-model="zwfwItem.chargeBasis" type="textarea"></el-input>
+                    <!--<el-input v-model="zwfwItem.chargeBasis" type="textarea"></el-input>-->
+                    <quill-editor v-model="chargeBasisHtml"
+                                  @change="chargeBasisChange($event)"
+                                  ref="acceptConditionEditor"
+                                  :options="acceptConditionEditorOption" >
+                    </quill-editor>
                 </el-form-item>
                 <el-form-item label="内部流程描述" prop="workflowDescription">
-                    <el-input v-model="zwfwItem.workflowDescription" type="textarea"></el-input>
+                    <!--<el-input v-model="zwfwItem.workflowDescription" type="textarea"></el-input>-->
+                    <quill-editor v-model="workflowDescriptionHtml"
+                                  @change="workflowDescriptionChange($event)"
+                                  ref="acceptConditionEditor"
+                                  :options="acceptConditionEditorOption" >
+                    </quill-editor>
                 </el-form-item>
                 <el-form-item label="权限划分" prop="authorityDivision">
                     <el-input v-model="zwfwItem.authorityDivision"></el-input>
@@ -510,10 +525,15 @@
     import {getAllMaterial, updateZwfwMaterial} from 'api/zwfwSystem/business/material';
     import {getAllUser} from 'api/baseSystem/org/user';
     import {getDeptCascader} from 'api/baseSystem/org/dept';
+    import { quillEditor } from 'vue-quill-editor'
+
 
 
     export default {
         name: 'zwfwItem_table',
+        components:{
+            quillEditor
+        },
         data() {
             return {
                 changeMaterialName: false,
@@ -642,9 +662,25 @@
                 },
                 uploadAccepts: '.gif,.jpg,.jpeg,.bmp,.png,.xls,.xlsx,.doc,.docx,.zip,.rar,.pdf',
                 allUserList: [],
-                deptTree: []
+                deptTree: [],
+                acceptConditionEditorOption: {
+                    modules: {
+                        toolbar: [
+                            [{ header: [] }],
+                            ['bold', 'italic', 'underline', 'link'],
+                            [{ color: [] }, { background: [] }],
+                            [{ list: 'ordered' }, { list: 'bullet' }],
+                            ['clean']
+                        ]
+                    },
+                    theme: 'snow'
+                },
+                acceptConditionHtml:'',
+                chargeBasisHtml:'',
+                workflowDescriptionHtml:''
             }
         },
+
         created() {
             this.getList();
             //用于加载根据部门分组的用户列表，用来在设置预审用户时使用
@@ -682,6 +718,21 @@
             ])
         },
         methods: {
+            acceptConditionChange({editor,html,text}) {
+//                console.log(html);
+//                console.log(text);
+                this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(html));
+            },
+            chargeBasisChange({editor,html,text}) {
+//                console.log(html);
+//                console.log(text);
+                this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(html));
+            },
+            workflowDescriptionChange({editor,html,text}) {
+//                console.log(html);
+//                console.log(text);
+                this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(html));
+            },
             queryUser(keywords) {
 //                console.log(keywords);
                 getAllUser({
@@ -852,6 +903,9 @@
                     this.uploadAvatarsResult = [];
                     this.uploadAvatarsResult.push({url: this.zwfwItem.resultExample, name: '结果样本'});
                 }
+                this.acceptConditionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.acceptCondition));
+                this.chargeBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeBasis));
+                this.workflowDescriptionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.workflowDescription));
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
                 //查询事项绑定的预审用户
@@ -1104,6 +1158,9 @@
                     pretrialUserIdsArray: [],
                     departmentTreePosition: ''
                 };
+                this.acceptCondition = '';
+                this.chargeBasis = '';
+                this.workflowDescription = '';
             },
             resetZwfwItemForm() {
                 this.dialogFormVisible = false;
