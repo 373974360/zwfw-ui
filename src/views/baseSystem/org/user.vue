@@ -129,6 +129,9 @@
                 <el-form-item label="备注">
                     <el-input type="textarea" v-model="sysUser.remark" :rows="3"/>
                 </el-form-item>
+                <el-form-item label="工号" prop="empNo">
+                    <el-input v-model="sysUser.empNo"/>
+                </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="resetUserForm1">取 消</el-button>
@@ -195,7 +198,8 @@
                     password: '',
                     passwordConfirm: '',
                     enable: 1,
-                    remark: ''
+                    remark: '',
+                    empNo: ''
                 },
                 sysUserRules1: {
                     deptId: [
@@ -219,7 +223,10 @@
                     ],
                     passwordConfirm: [
                         {required: true, validator: validatePass2}
-                    ]
+                    ],
+                    empNo: [
+                        {required: true, message: '请输入工号'}
+                    ],
                 },
                 selectedRows: [],
                 cascader: [],
@@ -292,7 +299,7 @@
             },
             handleCreate(row) {
                 this.currentRow = row;
-                this.sysUser.deptId = row.id;
+                //this.sysUser.deptId = row.id;
                 this.sysUserRules1.password[0].required = true;
                 this.sysUserRules1.passwordConfirm[0].required = true;
                 this.dialogStatus = 'create';
@@ -392,9 +399,14 @@
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         createUser(this.sysUser).then(response => {
-                            this.list.unshift(response.data);
-                            this.total += 1;
-                            this.$message.success('创建成功');
+                            if(response.httpCode!=200){
+                                this.$message.error(response.msg);
+                            }else{
+                                this.list.unshift(response.data);
+                                this.total += 1;
+                                this.$message.success('创建成功');
+                                this.resetUserForm1();
+                            }
                             this.listLoading = false;
                         })
                     } else {
@@ -409,8 +421,12 @@
                         this.listLoading = true;
                         this.sysUser.deptVo = {};
                         updateUser(this.sysUser).then(response => {
-                            copyProperties(this.currentRow, response.data);
-                            this.$message.success('更新成功');
+                            if(response.httpCode!=200){
+                                this.$message.error(response.msg);
+                            }else{
+                                copyProperties(this.currentRow, response.data);
+                                this.$message.success('更新成功');
+                            }
                             this.listLoading = false;
                         })
                     } else {
@@ -432,7 +448,7 @@
                     passwordConfirm: '',
                     enable: 1,
                     remark: '',
-
+                    empNo: '',
                 };
                 this.uploadAvatars = []
             },
