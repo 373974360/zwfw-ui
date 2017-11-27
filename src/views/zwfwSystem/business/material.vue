@@ -105,7 +105,7 @@
                 <el-form-item label="材料样本" prop="example">
                     <el-upload name="uploadFile"
                                ref="uploadExample"
-                               :accept="uploadAccepts"
+                               :accept="acceptTypes"
                                :action="uploadAction"
                                :show-file-list="false"
                                :with-credentials="true"
@@ -121,7 +121,7 @@
                         <!--<el-button style="margin-left: 10px;" size="small" type="info" @click="showMaterialExample">
                             点击下载
                         </el-button>-->
-                        <a :href="this.zwfwMaterial.example" :download="this.zwfwMaterial.name" :class="{disabled: !this.zwfwMaterial.example}">
+                        <a :href="this.zwfwMaterial.example" :download="downloadExample" :class="{disabled: !this.zwfwMaterial.example}">
                             <el-button style="margin-left: 10px;" size="small" type="info" :disabled="!this.zwfwMaterial.example">点击下载</el-button>
                         </a>
                     </el-upload>
@@ -129,7 +129,7 @@
                 <el-form-item label="电子表单" prop="eform">
                     <el-upload name="uploadFile"
                                ref="uploadEform"
-                               :accept="uploadAccepts"
+                               :accept="acceptTypes"
                                :action="uploadAction"
                                :show-file-list="false"
                                :with-credentials="true"
@@ -145,7 +145,7 @@
                         <!--<el-button style="margin-left: 10px;" size="small" type="info" @click="showEformFile">
                             点击下载
                         </el-button>-->
-                        <a :href="this.zwfwMaterial.eform" :download="this.zwfwMaterial.name" :class="{disabled: !this.zwfwMaterial.eform}">
+                        <a :href="this.zwfwMaterial.eform" :download="downloadEform" :class="{disabled: !this.zwfwMaterial.eform}">
                             <el-button style="margin-left: 10px;" size="small" type="info" :disabled="!this.zwfwMaterial.eform">点击下载</el-button>
                         </a>
                     </el-upload>
@@ -206,7 +206,8 @@
                 dialogFormVisible: false,
                 dialogStatus: '',
                 dialogLoading: false,
-                uploadAction: '/api/common/upload',
+                uploadAction: this.$store.state.app.uploadUrl,
+                acceptTypes: this.$store.state.app.fileAccepts,
                 zwfwMaterialRules: {
                     name: [
                         {required: true, message: '请输入材料名称'}
@@ -217,8 +218,7 @@
                     type: [
                         {required: true, message: '请输入材料类型'}
                     ]
-                },
-                uploadAccepts: '.gif,.jpg,.jpeg,.bmp,.png,.xls,.xlsx,.doc,.docx,.zip,.rar,.pdf'
+                }
             }
         },
         created() {
@@ -233,6 +233,12 @@
             ]),
             uploadHeaders() {
                 return {'User-Authorization': this.$store.getters.token}
+            },
+            downloadEform() {
+                return this.zwfwMaterial.name + this.zwfwMaterial.eform.substring(this.zwfwMaterial.eform.lastIndexOf('.'))
+            },
+            downloadExample() {
+                return this.zwfwMaterial.name + this.zwfwMaterial.example.substring(this.zwfwMaterial.example.lastIndexOf('.'))
             }
         },
         methods: {

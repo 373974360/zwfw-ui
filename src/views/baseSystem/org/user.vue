@@ -97,7 +97,7 @@
                     <el-input v-model="sysUser.phone"/>
                 </el-form-item>
                 <el-form-item label="头像" prop="avatar">
-                    <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
+                    <el-upload name="uploadFile" :accept="acceptTypes"
                                :action="uploadAction"
                                :on-success="handleAvatarSuccess"
                                :on-error="handlerAvatarError"
@@ -235,7 +235,8 @@
                 dialogFormVisible: false,
                 dialogStatus: '',
                 dialogLoading: false,
-                uploadAction: '/api/common/upload',
+                uploadAction: this.$store.state.app.uploadUrl,
+                acceptTypes: this.$store.state.app.imageAccepts
             }
         },
         computed: {
@@ -244,7 +245,7 @@
                 'enums',
                 'closeOnClickModal'
             ]),
-            updateModel: function () {
+            updateModel() {
                 let result = [];
                 if (this.sysUser.deptVo.treePosition) {
                     result = (this.sysUser.deptVo.treePosition + '&' + this.sysUser.deptVo.id).split('&');
@@ -358,11 +359,16 @@
                 this.$message.error("网络不稳定，上传失败");
             },
             beforeAvatarUpload(file) {
+                const isJPG = this.acceptTypes.includes(file.type);
                 const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isJPG) {
+                    this.$message.error('上传头像图片格式不正确!');
+                }
                 if (!isLt2M) {
                     this.$message.error('上传头像图片大小不能超过 2MB!');
                 }
-                return isLt2M;
+                return isJPG && isLt2M;
             },
             handleRemove() {
                 this.sysUser.avatar = '';
@@ -488,15 +494,15 @@
     .avatar-uploader-icon {
         font-size: 28px;
         color: #8c939d;
-        width: 146px;
-        height: 146px;
-        line-height: 146px;
+        width: 178px;
+        height: 178px;
+        line-height: 178px;
         text-align: center;
     }
 
     .avatar {
-        width: 146px;
-        height: 146px;
+        width: 178px;
+        height: 178px;
         display: block;
     }
 </style>

@@ -25,7 +25,10 @@ const app = {
         closeOnClickModal: false,
         loadedEnums: [],
         currentSystem: Cookies.get('CurrentSystem'),
-        routeComplete: false
+        routeComplete: false,
+        uploadUrl: '/api/common/upload',
+        imageAccepts: 'image/jpg, image/jpeg, image/png, image/bmp, image/gif',
+        fileAccepts: 'image/jpg,image/jpeg,image/png,image/bmp,image/gif,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/pdf,text/plain,application/zip,application/rar'
     },
     mutations: {
         TOGGLE_SIDEBAR: state => {

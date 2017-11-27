@@ -109,8 +109,7 @@
                 </el-form-item>
                 <el-form-item label="照片" prop="photo">
                     <el-upload class="avatar-uploader" name="uploadFile" :action="uploadUrl" :show-file-list="false"
-                            :on-success="handleAvatarSuccess"
-                            :before-upload="beforeAvatarUpload">
+                               :accept="acceptTypes" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
                         <img v-if="zwfwNaturePerson.photo" :src="zwfwNaturePerson.photo" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         <div slot="tip" class="el-upload__tip">只能上传jpg文件，且不超过2MB</div>
@@ -205,7 +204,8 @@
                 zwfwNaturePersonList: [],
                 total: null,
                 listLoading: true,
-                uploadUrl: '/api/common/upload',
+                uploadUrl: this.$store.state.app.uploadUrl,
+                acceptTypes: this.$store.state.app.imageAccepts,
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
@@ -287,11 +287,11 @@
                 this.zwfwNaturePerson.photo = res.url
             },
             beforeAvatarUpload(file) {
-                const isJPG = file.type === 'image/jpeg';
+                const isJPG = this.acceptTypes.includes(file.type);
                 const isLt2M = file.size / 1024 / 1024 < 2;
 
                 if (!isJPG) {
-                    this.$message.error('上传头像图片只能是 JPG 格式!');
+                    this.$message.error('上传头像图片格式不正确!');
                 }
                 if (!isLt2M) {
                     this.$message.error('上传头像图片大小不能超过 2MB!');

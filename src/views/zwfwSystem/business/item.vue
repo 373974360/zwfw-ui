@@ -193,7 +193,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="结果样本" prop="resultExample">
-                    <el-upload name="uploadFile" accept="uploadAccepts"
+                    <el-upload name="uploadFile" :accept="uploadAccepts"
                                ref="upload"
                                :action="uploadAction" :file-list="uploadAvatarsResult"
                                :on-success="handleAvatarResultSuccess"
@@ -626,7 +626,8 @@
                 dialogFormVisible1: false,
                 dialogStatus: '',
                 dialogLoading: false,
-                uploadAction: '/api/common/upload',
+                uploadAction: this.$store.state.app.uploadUrl,
+                uploadAccepts: this.$store.state.app.fileAccepts,
                 uploadAvatarsExample: [],
                 uploadAvatarsEform: [],
                 uploadAvatarsResult: [],
@@ -660,7 +661,6 @@
                         {required: true, message: '请输入材料名称'}
                     ]
                 },
-                uploadAccepts: '.gif,.jpg,.jpeg,.bmp,.png,.xls,.xlsx,.doc,.docx,.zip,.rar,.pdf',
                 allUserList: [],
                 deptTree: [],
                 acceptConditionEditorOption: {
@@ -675,9 +675,9 @@
                     },
                     theme: 'snow'
                 },
-                acceptConditionHtml:'',
-                chargeBasisHtml:'',
-                workflowDescriptionHtml:''
+                acceptConditionHtml: '',
+                chargeBasisHtml: '',
+                workflowDescriptionHtml: ''
             }
         },
 
