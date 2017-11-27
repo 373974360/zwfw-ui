@@ -14,6 +14,9 @@ const Reset = () => import('../views/common/login/reset');
 /* 选择系统 */
 import System from '../views/common/login/system';
 
+/************************个人设置************************/
+const Profile = () => import('../views/common/layout/profile');
+
 /************************基础信息管理系统************************/
 /* index */
 const BaseSystem = () => import('../views/baseSystem/index');
@@ -45,15 +48,24 @@ const NumberScope = () => import('../views/hallSystem/lobby/numberScope');
 const NaturePerson = () => import('../views/hallSystem/member/naturePerson');
 const LegalPerson = () => import('../views/hallSystem/member/legalPerson');
 /* 综合窗口 */
-const WindowAccept = () => import('../views/hallSystem/window/receive/windowAccept');  /* 窗口收件*/
-const Record = () => import('../views/hallSystem/window/receive/record');    /* 收件记录*/
-const TakeAway = () => import('../views/hallSystem/window/receive/takeAway');  /* 办结取件*/
-const Pending = () => import('../views/hallSystem/window/pretrial/pending'); /* 未预审 */
-const Finish = () => import('../views/hallSystem/window/pretrial/finish');   /* 已预审 */
-const Correction = () => import('../views/hallSystem/window/pretrial/correction');   /* 预审整改 */
-const NoAccept = () => import('../views/hallSystem/window/pretrial/noAccept');   /* 预审未受理 */
-const WindowWork = () => import('../views/hallSystem/window/street/windowWork');    /* 街办收件 */
-const WindowHistory = () => import('../views/hallSystem/window/street/windowHistory');  /* 街办查询 */
+const WindowAccept = () => import('../views/hallSystem/window/receive/windowAccept');
+/* 窗口收件*/
+const Record = () => import('../views/hallSystem/window/receive/record');
+/* 收件记录*/
+const TakeAway = () => import('../views/hallSystem/window/receive/takeAway');
+/* 办结取件*/
+const Pending = () => import('../views/hallSystem/window/pretrial/pending');
+/* 未预审 */
+const Finish = () => import('../views/hallSystem/window/pretrial/finish');
+/* 已预审 */
+const Correction = () => import('../views/hallSystem/window/pretrial/correction');
+/* 预审整改 */
+const NoAccept = () => import('../views/hallSystem/window/pretrial/noAccept');
+/* 预审未受理 */
+const WindowWork = () => import('../views/hallSystem/window/street/windowWork');
+/* 街办收件 */
+const WindowHistory = () => import('../views/hallSystem/window/street/windowHistory');
+/* 街办查询 */
 
 /************************政务服务管理系统************************/
 /* index */
@@ -79,10 +91,14 @@ const Business = () => import('../views/hallSystem/count/approval/business');
 /* index */
 const WorkSystem = () => import('../views/workSystem/index');
 /* 办件管理 */
-const WorkPending = () => import('../views/workSystem/process/workPending'); /* 待办事项 */
-const WorkQuery = () => import('../views/workSystem/process/workQuery'); /* 办件查询 */
-const WorkExtendTime = () => import('../views/workSystem/process/workExtendTime');   /* 延期审核管理 */
-const WorkSupervise = () => import('../views/workSystem/process/workSupervise'); /* 督办管理 */
+const WorkPending = () => import('../views/workSystem/process/workPending');
+/* 待办事项 */
+const WorkQuery = () => import('../views/workSystem/process/workQuery');
+/* 办件查询 */
+const WorkExtendTime = () => import('../views/workSystem/process/workExtendTime');
+/* 延期审核管理 */
+const WorkSupervise = () => import('../views/workSystem/process/workSupervise');
+/* 督办管理 */
 
 /************************共享数据管理系统************************/
 /* index */
@@ -316,28 +332,28 @@ export const asyncRouterMap = [
                 component: AppMain,
                 name: '收件管理',
                 meta: {permission: 'hallSystem:window:receive:admin'},
-				children: [
-					{
-						path: 'windowAccept',
-						component: WindowAccept,
-						name: '窗口收件',
-						meta: {permission: 'hallSystem:window:receive:windowAccept:list'}
-					},
-					{
-						path: 'record',
-						component: Record,
-						name: '收件记录',
-						meta: {permission: 'hallSystem:window:receive:record:list'}
-					},
-					{
-						path: 'takeAway',
-						component: TakeAway,
-						name: '办结取件',
-						meta: {permission: 'hallSystem:window:receive:takeAway:list'}
-					}
-				]
+                children: [
+                    {
+                        path: 'windowAccept',
+                        component: WindowAccept,
+                        name: '窗口收件',
+                        meta: {permission: 'hallSystem:window:receive:windowAccept:list'}
+                    },
+                    {
+                        path: 'record',
+                        component: Record,
+                        name: '收件记录',
+                        meta: {permission: 'hallSystem:window:receive:record:list'}
+                    },
+                    {
+                        path: 'takeAway',
+                        component: TakeAway,
+                        name: '办结取件',
+                        meta: {permission: 'hallSystem:window:receive:takeAway:list'}
+                    }
+                ]
             },
-			{path: 'windowWork', component: WindowWork, name: '街办收件'},
+            {path: 'windowWork', component: WindowWork, name: '街办收件'},
             {path: 'windowHistory', component: WindowHistory, name: '办件查询'}
         ]
     },
@@ -532,5 +548,19 @@ export const asyncRouterMap = [
     /************************共享数据管理系统************************/
 
     /*************************404页面******************************/
-    {path: '*', redirect: '/404', hidden: true}
+    {path: '*', redirect: '/404', hidden: true},
+    /*************************个人设置 修改个人信息******************************/
+    {
+        hidden: true,
+        name: '个人设置',
+        path: '/admin',
+        component: Layout,
+        children: [
+            {
+                name: '修改资料',
+                path: 'profile',
+                component: Profile
+            }
+        ]
+    }
 ];
