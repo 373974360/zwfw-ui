@@ -412,6 +412,8 @@
                         _this.$message.error(response.msg);
                     }
 
+                }).catch(e =>{
+                    console.log(e);
                 });
             },
             /**

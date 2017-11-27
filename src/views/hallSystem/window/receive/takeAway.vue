@@ -45,7 +45,11 @@
             </el-table-column>
             <el-table-column align="center" label="申请人信息" min-width="180">
                 <template scope="scope">
-                    <span>公司：{{scope.row.companyName}}<br>申请人：{{scope.row.memberRealname}}<br>联系电话：{{scope.row.memberPhonenumber}}<br>
+                    <span>
+                        <span v-if="scope.row.companyName!=null">
+                            公司：{{scope.row.companyName}}<br>
+                        </span>
+                        申请人：{{scope.row.memberRealname}}<br>联系电话：{{scope.row.memberPhonenumber}}<br>
                     </span>
                 </template>
             </el-table-column>
