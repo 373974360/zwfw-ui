@@ -38,14 +38,15 @@ export function delUser(ids) {
 export function getDeptNameAndUsers(query) {
     return fetch({
         url: '/api/baseSystem/org/user/getDeptNameAndUsers',
-        mothod: 'get',
+        method: 'get',
         params: query
     });
 }
 
-export function getAllUser() {
+export function getAllUser(query) {
     return fetch({
         url: '/api/baseSystem/org/user/getAll',
-        mothod: 'get'
+        method: 'get',
+        params: query
     });
 }

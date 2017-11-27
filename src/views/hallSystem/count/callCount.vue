@@ -135,17 +135,29 @@
         methods: {
             getCategoryList() {
                 getAllCategory().then(response => {
-                    this.categoryList = response.data;
+                    if (response.httpCode === 200) {
+                        this.categoryList = response.data;
+                    } else {
+                        this.$message.error('事项分类信息加载失败')
+                    }
                 })
             },
             getWindowList() {
                 getAllWindow().then(response => {
-                    this.windowList = response.data;
+                    if (response.httpCode === 200) {
+                        this.windowList = response.data;
+                    } else {
+                        this.$message.error('窗口信息加载失败')
+                    }
                 })
             },
             getUserList() {
                 getAllUser().then(response => {
-                    this.userList = response.data;
+                    if (response.httpCode === 200) {
+                        this.userList = response.data;
+                    } else {
+                        this.$message.error('人员信息加载失败')
+                    }
                 })
             },
             plotByCategory() {
@@ -165,46 +177,49 @@
                     }
                 }
                 plotByCategory(query).then(response => {
-                    console.log(response.data);
-                    const list = response.data;
-                    this.categoryName = [];
-                    this.categoryTotal = [];
-                    this.all = 0;
-                    for (let i = 0; i < list.length; i++) {
-                        this.categoryName.push(list[i].categoryName);
-                        const map = {};
-                        map.name = list[i].categoryName;
-                        map.value = list[i].total;
-                        this.all += list[i].total;
-                        this.categoryTotal.push(map);
-                    }
-                    const e = echarts.init(document.getElementById('plotbyCategory'));
-                    e.setOption({
-                        title: {
-                            text: '按部门统计叫号数据',
-                            subtext: '叫号总计：' + this.all,
-                            x: 'center'
-                        },
-                        tooltip: {trigger: 'item'},
-                        legend: {top: 55, orient: 'horizontal', x: 'center', data: this.categoryName},
-                        calculable: !0,
-                        series: [{
-                            name: '叫号统计',
-                            type: 'pie',
-                            radius: '55%',
-                            center: ['50%', '70%'],
-                            itemStyle: {
-                                normal: {
-                                    label: {
-                                        show: true,
-                                        formatter: '{b} : {c}个 ({d}%)'
-                                    },
-                                    labelLine: {show: true}
-                                }
+                    if (response.httpCode === 200) {
+                        const list = response.data;
+                        this.categoryName = [];
+                        this.categoryTotal = [];
+                        this.all = 0;
+                        for (let i = 0; i < list.length; i++) {
+                            this.categoryName.push(list[i].categoryName);
+                            const map = {};
+                            map.name = list[i].categoryName;
+                            map.value = list[i].total;
+                            this.all += list[i].total;
+                            this.categoryTotal.push(map);
+                        }
+                        const e = echarts.init(document.getElementById('plotbyCategory'));
+                        e.setOption({
+                            title: {
+                                text: '按部门统计叫号数据',
+                                subtext: '叫号总计：' + this.all,
+                                x: 'center'
                             },
-                            data: this.categoryTotal
-                        }]
-                    })
+                            tooltip: {trigger: 'item'},
+                            legend: {top: 55, orient: 'horizontal', x: 'center', data: this.categoryName},
+                            calculable: !0,
+                            series: [{
+                                name: '叫号统计',
+                                type: 'pie',
+                                radius: '55%',
+                                center: ['50%', '70%'],
+                                itemStyle: {
+                                    normal: {
+                                        label: {
+                                            show: true,
+                                            formatter: '{b} : {c}个 ({d}%)'
+                                        },
+                                        labelLine: {show: true}
+                                    }
+                                },
+                                data: this.categoryTotal
+                            }]
+                        })
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
                 })
             },
             plotByWindow() {
@@ -224,35 +239,38 @@
                     }
                 }
                 plotByWindow(query).then(response => {
-                    console.log(response.data);
-                    const list = response.data;
-                    this.windowName = [];
-                    this.windowTotal = [];
-                    for (let i = 0; i < list.length; i++) {
-                        this.windowName.push(list[i].windowName);
-                        this.windowTotal.push(list[i].total);
+                    if (response.httpCode === 200) {
+                        const list = response.data;
+                        this.windowName = [];
+                        this.windowTotal = [];
+                        for (let i = 0; i < list.length; i++) {
+                            this.windowName.push(list[i].windowName);
+                            this.windowTotal.push(list[i].total);
+                        }
+                        const e = echarts.init(document.getElementById('plotbyWindow'));
+                        e.setOption({
+                            title: {text: '按窗口统计叫号数据', x: 'center'},
+                            tooltip: {trigger: 'axis'},
+                            legend: {top: 40, orient: 'horizontal', x: 'center', data: this.windowName},
+                            grid: {x: 40, x2: 40, y2: 24},
+                            calculable: !0,
+                            xAxis: [{type: 'category', data: this.windowName}],
+                            yAxis: [{type: 'value'}],
+                            series: [{
+                                name: '叫号数',
+                                type: 'bar',
+                                label: {
+                                    normal: {
+                                        show: true,
+                                        position: 'top'
+                                    }
+                                },
+                                data: this.windowTotal
+                            }]
+                        });
+                    } else {
+                        this.$message.error('数据加载失败')
                     }
-                    const e = echarts.init(document.getElementById('plotbyWindow'));
-                    e.setOption({
-                        title: {text: '按窗口统计叫号数据', x: 'center'},
-                        tooltip: {trigger: 'axis'},
-                        legend: {top: 40, orient: 'horizontal', x: 'center', data: this.windowName},
-                        grid: {x: 40, x2: 40, y2: 24},
-                        calculable: !0,
-                        xAxis: [{type: 'category', data: this.windowName}],
-                        yAxis: [{type: 'value'}],
-                        series: [{
-                            name: '叫号数',
-                            type: 'bar',
-                            label: {
-                                normal: {
-                                    show: true,
-                                    position: 'top'
-                                }
-                            },
-                            data: this.windowTotal
-                        }]
-                    });
                 })
             },
             plotByUser() {
@@ -272,35 +290,38 @@
                     }
                 }
                 plotByUser(query).then(response => {
-                    console.log(response.data);
-                    const list = response.data;
-                    this.userName = [];
-                    this.userTotal = [];
-                    for (let i = 0; i < list.length; i++) {
-                        this.userName.push(list[i].userName);
-                        this.userTotal.push(list[i].total);
+                    if (response.httpCode === 200) {
+                        const list = response.data;
+                        this.userName = [];
+                        this.userTotal = [];
+                        for (let i = 0; i < list.length; i++) {
+                            this.userName.push(list[i].userName);
+                            this.userTotal.push(list[i].total);
+                        }
+                        const e = echarts.init(document.getElementById('plotbyUser'));
+                        e.setOption({
+                            title: {text: '按用户统计叫号数据', x: 'center'},
+                            tooltip: {trigger: 'axis'},
+                            legend: {top: 40, orient: 'horizontal', x: 'center', data: this.userName},
+                            grid: {x: 40, x2: 40, y2: 24},
+                            calculable: !0,
+                            xAxis: [{type: 'category', data: this.userName}],
+                            yAxis: [{type: 'value'}],
+                            series: [{
+                                name: '叫号数',
+                                type: 'bar',
+                                label: {
+                                    normal: {
+                                        show: true,
+                                        position: 'top'
+                                    }
+                                },
+                                data: this.userTotal
+                            }]
+                        })
+                    } else {
+                        this.$message.error('数据加载失败')
                     }
-                    const e = echarts.init(document.getElementById('plotbyUser'));
-                    e.setOption({
-                        title: {text: '按用户统计叫号数据', x: 'center'},
-                        tooltip: {trigger: 'axis'},
-                        legend: {top: 40, orient: 'horizontal', x: 'center', data: this.userName},
-                        grid: {x: 40, x2: 40, y2: 24},
-                        calculable: !0,
-                        xAxis: [{type: 'category', data: this.userName}],
-                        yAxis: [{type: 'value'}],
-                        series: [{
-                            name: '叫号数',
-                            type: 'bar',
-                            label: {
-                                normal: {
-                                    show: true,
-                                    position: 'top'
-                                }
-                            },
-                            data: this.userTotal
-                        }]
-                    })
                 })
             },
             changeDateStartCategory() {

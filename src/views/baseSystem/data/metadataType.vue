@@ -13,7 +13,8 @@
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible"
                    :close-on-click-modal="closeOnClickModal" :before-close="resetMetadataTypeForm">
-            <el-form ref="metadataTypeForm" class="small-space" :model="sysMetadataType" label-position="right" label-width="80px"
+            <el-form ref="metadataTypeForm" class="small-space" :model="sysMetadataType" label-position="right"
+                     label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="metadataTypeRules">
                 <el-form-item label="上级分类">
                     <el-cascader :options="cascader" v-model="cascaderModel" @change="handleChange"
@@ -45,7 +46,13 @@
 
 <script>
     import TreeGrid from 'components/TreeGrid';
-    import {getMetadataTypeTree, getMetadataTypeCascader, createMetadataType, updateMetadataType, delMetadataType} from 'api/baseSystem/data/metadataType';
+    import {
+        getMetadataTypeTree,
+        getMetadataTypeCascader,
+        createMetadataType,
+        updateMetadataType,
+        delMetadataType
+    } from 'api/baseSystem/data/metadataType';
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import TreeUtil from 'utils/TreeUtil.js';
@@ -113,14 +120,22 @@
             getList() {
                 this.listLoading = true;
                 getMetadataTypeTree().then(response => {
-                    this.metadataTypeList = response.data;
+                    if (response.httpCode === 200) {
+                        this.metadataTypeList = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.listLoading = false;
                 })
             },
             getOptions(id) {
                 this.dialogLoading = true;
                 getMetadataTypeCascader(id).then(response => {
-                    this.cascader = response.data;
+                    if (response.httpCode === 200) {
+                        this.cascader = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.dialogLoading = false;
                 })
             },
@@ -169,11 +184,15 @@
                     type: 'warning'
                 }).then(() => {
                     delMetadataType(row.id).then(response => {
-                        this.$message.success('删除成功');
-                        TreeUtil.delRow(response.data, this.metadataTypeList);
+                        if (response.httpCode === 200) {
+                            this.$message.success('删除成功！');
+                            TreeUtil.delRow(response.data, this.metadataTypeList);
+                        } else {
+                            this.$message.erroe('删除失败！');
+                        }
                     })
                 }).catch(() => {
-                    console.dir("取消");
+                    console.dir('取消');
                 });
             },
             create() {
@@ -182,8 +201,12 @@
                         this.dialogFormVisible = false;
                         console.dir(this.sysMetadataType.parentId);
                         createMetadataType(this.sysMetadataType).then(response => {
-                            this.$message.success('创建成功');
-                            TreeUtil.addRow(response.data, this.metadataTypeList);
+                            if (response.httpCode === 200) {
+                                this.$message.success('创建成功！');
+                                TreeUtil.addRow(response.data, this.metadataTypeList);
+                            } else {
+                                this.$message.error('创建失败！');
+                            }
                         })
                     } else {
                         return false;
@@ -195,8 +218,12 @@
                     if (valid) {
                         this.dialogFormVisible = false;
                         updateMetadataType(this.sysMetadataType).then(response => {
-                            this.$message.success('更新成功');
-                            TreeUtil.editRow(response.data, this.metadataTypeList);
+                            if (response.httpCode === 200) {
+                                this.$message.success('更新成功！');
+                                TreeUtil.editRow(response.data, this.metadataTypeList);
+                            } else {
+                                this.$message.error('更新失败！');
+                            }
                         })
                     } else {
                         return false;

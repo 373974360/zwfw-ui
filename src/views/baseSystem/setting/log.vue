@@ -160,8 +160,12 @@
             getList() {
                 this.listLoading = true;
                 getLogList(this.listQuery).then(response => {
-                    this.list = response.data.list;
-                    this.total = response.data.total;
+                    if (response.httpCode === 200) {
+                        this.list = response.data.list;
+                        this.total = response.data.total;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.listLoading = false;
                 })
             },
@@ -177,7 +181,11 @@
             },
             getUserList() {
                 getAllUser().then(response => {
-                    this.userList = response.data;
+                    if (response.httpCode === 200) {
+                        this.userList = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                 })
             },
             handleUpdate(row) {
@@ -209,24 +217,6 @@
                     this.listQuery.selectDateTime[0] = moment(this.listQuery.selectDateTime[0]).format("YYYY-MM-DD HH:mm:ss");
                     this.listQuery.selectDateTime[1] = moment(this.listQuery.selectDateTime[1]).format("YYYY-MM-DD HH:mm:ss");
                 }
-            },
-            handleDownload() {
-                require.ensure([], () => {
-                    const {export_json_to_excel} = require('vendor/Export2Excel');
-                    const tHeader = ['时间', '地区', '类型', '标题', '重要性'];
-                    const filterVal = ['timestamp', 'province', 'type', 'title', 'importance'];
-                    const data = this.formatJson(filterVal, this.list);
-                    export_json_to_excel(tHeader, data, 'table数据');
-                })
-            },
-            formatJson(filterVal, jsonData) {
-                return jsonData.map(v => filterVal.map(j => {
-                    if (j === 'timestamp') {
-                        return parseTime(v[j])
-                    } else {
-                        return v[j]
-                    }
-                }))
             }
         }
     }

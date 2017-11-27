@@ -39,7 +39,7 @@
             </el-table-column>
             <el-table-column align="center" label="预审号">
                 <template scope="scope">
-                    <span>{{scope.row.itemPretrialId}}</span>
+                    <span>{{scope.row.itemPretrialNumber}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="开始时间" width="200">
@@ -228,15 +228,13 @@
                                     </template>
                                 </el-table-column>
                             </el-table>
-                            <h3>注意事项:</h3>
-                            <pre class="panel-warning">{{itemVo.commonRequestion}}</pre>
 
                         </el-tab-pane>
                         <el-tab-pane label="事项信息" name="itemInfoPanel">
                             <div id="itemInfo">
                                 <table>
                                     <tr>
-                                        <th>办理事项</th>
+                                        <th width="200">办理事项</th>
                                         <td>{{itemVo.name}}</td>
                                     </tr>
                                     <tr>
@@ -309,6 +307,9 @@
                         <el-button type="primary" @click="print_ywsld">打印业务受理单</el-button>
                         <el-button type="primary" @click="print_wlzyd">打印物料转移单</el-button>
                     </div>
+                    <div v-if="itemNumber.status==4" style="margin-top:20px;">
+                            <el-button type="primary" @click="print_ycxgzd">打印一次性告知单</el-button>
+                    </div>
                 </el-col>
             </el-row>
         </el-dialog>
@@ -366,9 +367,13 @@
             getList() {
                 this.listLoading = true;
                 getZwfwItemNumberList(this.listQuery).then(response => {
-                    this.list = response.data.list;
-                    this.total = response.data.total;
                     this.listLoading = false;
+                    if (response.httpCode === 200) {
+                        this.list = response.data.list;
+                        this.total = response.data.total;
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
                 })
             },
             handleSizeChange(val) {
@@ -399,18 +404,29 @@
                     window.open('/api/hallSystem/hallCompositeWindow/downloadWlzyd?numberId=' + this.itemNumber.id);
                 }
             },
+            print_ycxgzd() {
+                if (this.itemNumber != null) {
+                    window.open('/api/hallSystem/hallCompositeWindow/downloadYcxgzd?numberId=' + this.itemNumber.id);
+                }
+            },
             getDatilList() {
                 getDatilByItemNumberId(this.itemNumberId).then(response => {
-                    this.itemNumber = response.data.itemNumber;
-                    this.member = response.data.member;
-                    this.approveStepList = response.data.approveStepList;
-                    this.itemVo = response.data.itemVo;
-                    this.itemConditionVoList = response.data.itemConditionVoList;
-                    this.itemMaterialVoList = response.data.itemMaterialVoList;
-                    this.itemPretrialMaterialVoList = response.data.itemPretrialMaterialVoList;
-                    this.itemPretrialVo = response.data.itemPretrialVo;
-                    this.windowVo = response.data.windowVo;
-                    this.itemWindowUserName = response.data.itemWindowUserName;
+                    if (response.httpCode === 200) {
+                        if (response.data) {
+                            this.itemNumber = response.data.itemNumber;
+                            this.member = response.data.member;
+                            this.approveStepList = response.data.approveStepList;
+                            this.itemVo = response.data.itemVo;
+                            this.itemConditionVoList = response.data.itemConditionVoList;
+                            this.itemMaterialVoList = response.data.itemMaterialVoList;
+                            this.itemPretrialMaterialVoList = response.data.itemPretrialMaterialVoList;
+                            this.itemPretrialVo = response.data.itemPretrialVo;
+                            this.windowVo = response.data.windowVo;
+                            this.itemWindowUserName = response.data.itemWindowUserName;
+                        }
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
                 });
             },
             resetTemp() {

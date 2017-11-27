@@ -10,7 +10,7 @@
                             <el-option
                                     v-for="item in processDefinitionList"
                                     :key="item.key"
-                                    :label="item.name"
+                                    :label="'('+item.key+')' + item.name"
                                     :value="item.key">
                             </el-option>
                         </el-select>

@@ -100,13 +100,13 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
-                    name: undefined,
+                    name: undefined
                 },
                 sysMessageFiled: {
                     id: undefined,
                     name: undefined,
                     remark: undefined,
-                    value: '@var()',
+                    value: '@var()'
                 },
                 currentRow: null,
                 selectedRows: [],
@@ -119,7 +119,7 @@
                     ],
                     value: [
                         {required: true, message: '请输入字段值'}
-                    ],
+                    ]
                 }
             }
         },
@@ -134,11 +134,18 @@
             ])
         },
         methods: {
+            handleFilter() {
+                this.getList();
+            },
             getList() {
                 this.listLoading = true;
                 getSysMessageFiledList(this.listQuery).then(response => {
-                    this.sysMessageFiledList = response.data.list;
-                    this.total = response.data.total;
+                    if (response.httpCode === 200) {
+                        this.sysMessageFiledList = response.data.list;
+                        this.total = response.data.total;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.listLoading = false;
                 })
             },
@@ -186,16 +193,21 @@
                             ids.push(deleteRow.id);
                         }
                         delSysMessageFileds(ids).then(response => {
-                            this.total -= selectCounts;
-                            for (const deleteRow of this.selectedRows) {
-                                const index = this.sysMessageFiledList.indexOf(deleteRow);
-                                this.sysMessageFiledList.splice(index, 1);
+                            if (response.httpCode === 200) {
+                                this.total -= selectCounts;
+                                for (const deleteRow of this.selectedRows) {
+                                    const index = this.sysMessageFiledList.indexOf(deleteRow);
+                                    this.sysMessageFiledList.splice(index, 1);
+                                }
+                                this.$message.success('删除成功！');
+                                this.listLoading = false;
+                            } else {
+                                this.$message.error('删除失败！');
                             }
-                            this.$message.success('删除成功');
                             this.listLoading = false;
                         })
                     }).catch(() => {
-                        console.dir("取消");
+                        console.dir('取消');
                     });
                 }
             },
@@ -205,9 +217,14 @@
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         createSysMessageFiled(this.sysMessageFiled).then(response => {
-                            this.sysMessageFiledList.unshift(response.data);
-                            this.total += 1;
-                            this.$message.success('创建成功');
+                            if (response.httpCode === 200) {
+                                this.sysMessageFiledList.unshift(response.data);
+                                this.total += 1;
+                                this.$message.success('创建成功！');
+                                this.listLoading = false;
+                            } else {
+                                this.$message.error('创建失败！');
+                            }
                             this.listLoading = false;
                         })
                     } else {
@@ -221,9 +238,13 @@
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         updateSysMessageFiled(this.sysMessageFiled).then(response => {
-                            copyProperties(this.currentRow, response.data);
-                            this.$message.success('更新成功');
-                            this.listLoading = false;
+                            if (response.httpCode === 200) {
+                                copyProperties(this.currentRow, response.data);
+                                this.$message.success('更新成功！');
+                                this.listLoading = false;
+                            } else {
+                                this.$message.error('更新失败！');
+                            }
                         })
                     } else {
                         return false;
@@ -235,7 +256,7 @@
                     id: undefined,
                     name: undefined,
                     remark: undefined,
-                    value: '@var()',
+                    value: '@var()'
                 };
             },
             resetSysMessageFiledForm() {

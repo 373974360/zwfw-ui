@@ -94,15 +94,13 @@
                             <td>{{member.naturePerson.idcard}}</td>
                         </tr>
                         <tr>
-                            <th width="140">邮箱</th>
-                            <td>{{member.email}}</td>
+
                             <th width="140">手机</th>
                             <td>{{member.naturePerson.phone}}</td>
-                        </tr>
-                        <tr>
                             <th width="140">地址</th>
-                            <td colspan="3">{{member.naturePerson.address}}</td>
+                            <td >{{member.naturePerson.address}}</td>
                         </tr>
+
                     </table>
                 </div>
                 <div class="table-show">
@@ -116,15 +114,8 @@
                             <tr v-for="m in materialList">
                                 <td>{{m.itemMaterialName}}</td>
                                 <td>
-                                    <template v-for="(file,index) in m.multipleFile">
-                                        <template v-if="file.url!=null && file.url!=''">
-                                            <a target="_blank"
-                                               v-if="file.fileType == 'doc' || file.fileType == 'docx' || file.fileType == 'xls' || file.fileType == 'xlsx' || file.fileType == 'ppt'"
-                                               :href="'https://view.officeapps.live.com/op/view.aspx?src='+file.url">[{{index
-                                            + 1}}]</a>
-                                            <a v-else :href="file.url"
-                                               target="_blank">[{{index + 1}}]</a>
-                                        </template>
+                                    <template v-for="(file,index) in m.itemMaterialUrl.split('|')">
+                                        <a v-if="index>0" target="_blank" :href="file">[{{index}}]</a>
                                     </template>
                                 </td>
                             </tr>
@@ -217,9 +208,13 @@
             getList() {
                 this.listLoading = true;
                 getZwfwItemPretrialList(this.listQuery).then(response => {
-                    this.pretrialList = response.data.list;
-                    this.total = response.data.total;
                     this.listLoading = false;
+                    if (response.httpCode === 200) {
+                        this.pretrialList = response.data.list;
+                        this.total = response.data.total;
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
                 })
             },
             handleSelectionChange(row) {
@@ -243,10 +238,13 @@
             },
             getPretrialDetail() {
                 getPretrialDetail(this.itemPretrialId).then(response => {
-                    console.log(response.data);
-                    this.member = response.data.member;
-                    this.materialList = response.data.pretrialMaterialList;
-                    this.ItemPretrial = this.currentItemPretrial;
+                    if (response.httpCode === 200) {
+                        this.member = response.data.member;
+                        this.materialList = response.data.pretrialMaterialList;
+                        this.ItemPretrial = this.currentItemPretrial;
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
                 })
             },
             print_ycxgzd() {

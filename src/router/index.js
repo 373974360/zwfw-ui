@@ -312,38 +312,6 @@ export const asyncRouterMap = [
         component: Layout,
         children: [
             {
-                path: '/pretrial',
-                component: AppMain,
-                name: '预审管理',
-                meta: {permission: 'hallSystem:window:pretrial:admin'},
-				children: [
-					{
-						path: 'pending',
-						component: Pending,
-						name: '待预审件',
-						meta: {permission: 'hallSystem:window:pretrial:pending:list'}
-					},
-					{
-						path: 'correction',
-						component: Correction,
-						name: '整改件',
-						meta: {permission: 'hallSystem:window:pretrial:correction:list'}
-					},
-					{
-						path: 'noAccept',
-						component: NoAccept,
-						name: '不予受理件',
-						meta: {permission: 'hallSystem:window:pretrial:noAccept:list'}
-					},
-					{
-						path: 'finish',
-						component: Finish,
-						name: '已预审件',
-						meta: {permission: 'hallSystem:window:pretrial:finish:list'}
-					}
-				]
-            },
-            {
                 path: '/receive',
                 component: AppMain,
                 name: '收件管理',
@@ -485,16 +453,48 @@ export const asyncRouterMap = [
                 component: TaskSetting,
                 name: '审批节点管理',
                 meta: {permission: 'zwfwSystem:business:taskSetting:list'}
-            },
-            {
-                path: 'formEditor',
-                component: FormEditor,
-                name: '表单编辑器',
-                meta: {permission: 'zwfwSystem:business:formEditor:list'}
             }
+            // {
+            //     path: 'formEditor',
+            //     component: FormEditor,
+            //     name: '表单编辑器',
+            //     meta: {permission: 'zwfwSystem:business:formEditor:list'}
+            // }
         ]
     },
     /************************政务业务办理系统************************/
+    {
+        path: '/pretrial',
+        component: Layout,
+        name: '预审管理',
+        meta: {permission: 'workSystem:pretrial:admin'},
+        children: [
+            {
+                path: 'pending',
+                component: Pending,
+                name: '待预审件',
+                meta: {permission: 'workSystem:pretrial:pending:list'}
+            },
+            {
+                path: 'correction',
+                component: Correction,
+                name: '整改件',
+                meta: {permission: 'workSystem:pretrial:correction:list'}
+            },
+            {
+                path: 'noAccept',
+                component: NoAccept,
+                name: '不予受理件',
+                meta: {permission: 'workSystem:pretrial:noAccept:list'}
+            },
+            {
+                path: 'finish',
+                component: Finish,
+                name: '已预审件',
+                meta: {permission: 'workSystem:pretrial:finish:list'}
+            }
+        ]
+    },
     {
         path: '/process',
         redirect: 'noredirect',

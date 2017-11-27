@@ -114,7 +114,7 @@
             this.getList();
         },
         computed: {
-            cascaderModel: function () {
+            cascaderModel: function() {
                 if (this.sysDept.treePosition) {
                     const arr = this.sysDept.treePosition.split('&');
                     return arr;
@@ -129,14 +129,22 @@
             getList() {
                 this.listLoading = true;
                 getDeptTree().then(response => {
-                    this.deptList = response.data;
+                    if (response.httpCode === 200) {
+                        this.deptList = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.listLoading = false;
                 })
             },
             getOptions(id) {
                 this.dialogLoading = true;
                 getDeptCascader(id).then(response => {
-                    this.cascader = response.data;
+                    if (response.httpCode === 200) {
+                        this.cascader = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.dialogLoading = false;
                 })
             },
@@ -185,11 +193,15 @@
                     type: 'warning'
                 }).then(() => {
                     delDept(row.id).then(response => {
-                        this.$message.success('删除成功');
-                        TreeUtil.delRow(response.data, this.deptList);
+                        if (response.httpCode === 200) {
+                            this.$message.success('删除成功！');
+                            TreeUtil.delRow(response.data, this.deptList);
+                        } else {
+                            this.$message.error('删除失败！')
+                        }
                     })
                 }).catch(() => {
-                    console.dir("取消");
+                    console.dir('取消');
                 });
             },
             create() {
@@ -198,8 +210,12 @@
                         this.dialogFormVisible = false;
                         console.dir(this.sysDept.parentId);
                         createDept(this.sysDept).then(response => {
-                            this.$message.success('创建成功');
-                            TreeUtil.addRow(response.data, this.deptList);
+                            if (response.httpCode === 200) {
+                                this.$message.success('创建成功！');
+                                TreeUtil.addRow(response.data, this.deptList);
+                            } else {
+                                this.$message.error('创建失败！');
+                            }
                         })
                     } else {
                         return false;
@@ -211,8 +227,12 @@
                     if (valid) {
                         this.dialogFormVisible = false;
                         updateDept(this.sysDept).then(response => {
-                            this.$message.success('更新成功');
-                            TreeUtil.editRow(response.data, this.deptList);
+                            if (response.httpCode === 200) {
+                                this.$message.success('更新成功！');
+                                TreeUtil.editRow(response.data, this.deptList);
+                            } else {
+                                this.$message.error('更新失败！')
+                            }
                         })
                     } else {
                         return false;

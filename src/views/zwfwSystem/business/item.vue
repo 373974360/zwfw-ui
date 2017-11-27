@@ -95,6 +95,25 @@
                 <el-form-item label="事项名称" prop="name">
                     <el-input v-model="zwfwItem.name"></el-input>
                 </el-form-item>
+                <el-form-item label="所属部门" prop="departmentId">
+                    <!--<el-select v-model="zwfwItem.departmentId" placeholder="所属部门" style="width:100%">-->
+                    <!--<el-option-->
+                    <!--v-for="dept in deptList"-->
+                    <!--:key="dept.id"-->
+                    <!--:label="dept.name"-->
+                    <!--:value="dept.id">-->
+                    <!--</el-option>-->
+                    <!--</el-select>-->
+
+                    <el-cascader
+                            expand-trigger="hover" :show-all-levels="true"
+                            :change-on-select="true"
+                            :options="deptTree"
+                            v-model="cascaderModel"
+                            @change="handleChange">
+                    </el-cascader>
+
+                </el-form-item>
                 <el-form-item label="基本编码" prop="basicCode">
                     <el-input v-model="zwfwItem.basicCode"></el-input>
                 </el-form-item>
@@ -169,12 +188,12 @@
                                 v-for="item in dics['sslx']"
                                 :key="item.code"
                                 :label="item.value"
-                                :value="item.value">
+                                :value="item.code">
                         </el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="结果样本" prop="resultExample">
-                    <el-upload name="uploadFile"  accept="uploadAccepts"
+                    <el-upload name="uploadFile" accept="uploadAccepts"
                                ref="upload"
                                :action="uploadAction" :file-list="uploadAvatarsResult"
                                :on-success="handleAvatarResultSuccess"
@@ -182,8 +201,10 @@
                                :on-remove="handleRemoveResult"
                                :auto-upload="false">
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
-                        <el-button style="margin-left: 10px;" size="small" type="info" @click="showResultExample">查看图片</el-button>
+                        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器
+                        </el-button>
+                        <el-button style="margin-left: 10px;" size="small" type="info" @click="showResultExample">查看图片
+                        </el-button>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="行使层级" prop="handleLevel">
@@ -267,13 +288,28 @@
                     <el-input v-model="zwfwItem.implAgency"></el-input>
                 </el-form-item>
                 <el-form-item label="受理条件" prop="acceptCondition">
-                    <el-input v-model="zwfwItem.acceptCondition" type="textarea"></el-input>
+                    <!--<el-input v-model="zwfwItem.acceptCondition" type="textarea"></el-input>-->
+                    <quill-editor v-model="acceptConditionHtml"
+                                  @change="acceptConditionChange($event)"
+                                  ref="acceptConditionEditor"
+                                  :options="acceptConditionEditorOption" >
+                    </quill-editor>
                 </el-form-item>
                 <el-form-item label="收费依据" prop="chargeBasis">
-                    <el-input v-model="zwfwItem.chargeBasis" type="textarea"></el-input>
+                    <!--<el-input v-model="zwfwItem.chargeBasis" type="textarea"></el-input>-->
+                    <quill-editor v-model="chargeBasisHtml"
+                                  @change="chargeBasisChange($event)"
+                                  ref="acceptConditionEditor"
+                                  :options="acceptConditionEditorOption" >
+                    </quill-editor>
                 </el-form-item>
                 <el-form-item label="内部流程描述" prop="workflowDescription">
-                    <el-input v-model="zwfwItem.workflowDescription" type="textarea"></el-input>
+                    <!--<el-input v-model="zwfwItem.workflowDescription" type="textarea"></el-input>-->
+                    <quill-editor v-model="workflowDescriptionHtml"
+                                  @change="workflowDescriptionChange($event)"
+                                  ref="acceptConditionEditor"
+                                  :options="acceptConditionEditorOption" >
+                    </quill-editor>
                 </el-form-item>
                 <el-form-item label="权限划分" prop="authorityDivision">
                     <el-input v-model="zwfwItem.authorityDivision"></el-input>
@@ -296,6 +332,18 @@
                 </el-form-item>
                 <el-form-item label="预审天数" prop="pretrialDays">
                     <el-input v-model="zwfwItem.pretrialDays"></el-input>
+                </el-form-item>
+                <el-form-item label="预审人员">
+                    <el-select style="width:100%" v-model="zwfwItem.pretrialUserIdsArray" remote
+                               :remote-method="queryUser"
+                               multiple filterable placeholder="请选择">
+                        <el-option
+                                v-for="u in allUserList"
+                                :key="u.id"
+                                :label="u.name + ' (工号：' + u.empNo +')'"
+                                :value="u.id">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="中介服务" prop="mediumService">
                     <el-input v-model="zwfwItem.mediumService"></el-input>
@@ -338,7 +386,7 @@
                         <span>{{scope.row.id}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="name" align="left" label="材料名称" width="400" >
+                <el-table-column prop="name" align="left" label="材料名称" width="400">
                     <template scope="scope">
                         <el-tooltip content="点击编辑" placement="right" effect="dark">
                             <span class="link-type" @click='handleUpdateClick(scope.row)'>{{scope.row.name}}</span>
@@ -385,7 +433,7 @@
                     </el-select>
                 </el-form-item>
 
-                <el-form-item label="纸质材料说明:" prop="paperDescription" v-show="changeMaterialInfo" >
+                <el-form-item label="纸质材料说明:" prop="paperDescription" v-show="changeMaterialInfo">
                     <!--<span>{{zwfwItemMaterial.paperDescription}}</span>-->
                     <el-input v-model="zwfwItemMaterial.paperDescription" placeholder="数量和规格"></el-input>
                 </el-form-item>
@@ -393,14 +441,14 @@
                     <tr>
                         <td>
                             <el-form-item label="材料类型:" :inline="true" v-show="changeMaterialInfo">
-                                <span >{{zwfwItemMaterial.type | dics('cllx')}}</span>
+                                <span>{{zwfwItemMaterial.type | dics('cllx')}}</span>
                                 <!--<el-input v-model="zwfwItemMaterial.type"></el-input>-->
                             </el-form-item>
                         </td>
                         <td width="100"></td>
                         <td>
                             <el-form-item label="是否需要电子材料:" :inline="true" prop="electronicMaterial"
-                                          v-show="changeMaterialInfo" >
+                                          v-show="changeMaterialInfo">
                                 <span v-if="electronicMaterial!=null">{{zwfwItemMaterial.electronicMaterial | enums('YesNo')}}</span>
                                 <!--<el-switch-->
                                 <!--v-model="zwfwItemMaterial.electronicMaterial"-->
@@ -414,15 +462,15 @@
                     </tr>
                 </table>
 
-                <el-form-item label="受理标准:" prop="acceptStandard"  v-show="changeMaterialInfo" >
+                <el-form-item label="受理标准:" prop="acceptStandard" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.acceptStandard}}</span>
                     <!--<el-input v-model="zwfwItemMaterial.acceptStandard"></el-input>-->
                 </el-form-item>
-                <el-form-item label="来源渠道:"  v-show="changeMaterialInfo" >
+                <el-form-item label="来源渠道:" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.source | dics('sxsqclly')}}</span>
                     <!--<el-input v-model="zwfwItemMaterial.source"></el-input>-->
                 </el-form-item>
-                <el-form-item label="材料样本:" prop="example"  v-show="changeMaterialInfo" >
+                <el-form-item label="材料样本:" prop="example" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.example}}</span>
                     <!--<el-upload name="uploadFile"  accept="uploadAccepts"-->
                     <!--:action="uploadAction" :file-list="uploadAvatarsExample"-->
@@ -432,8 +480,8 @@
                     <!--<el-button size="small" type="primary">点击上传</el-button>-->
                     <!--</el-upload>-->
                 </el-form-item>
-                <el-form-item label="电子表单:" prop="eform"  v-show="changeMaterialInfo" >
-                    <span>{{zwfwItemMaterial.eform==1?'支持':'不支持'}}</span>
+                <el-form-item label="电子表单:" prop="eform" v-show="changeMaterialInfo">
+                    <span>{{zwfwItemMaterial.eform == 1 ? '支持' : '不支持'}}</span>
                     <!--<el-upload name="uploadFile"  accept="uploadAccepts"-->
                     <!--:action="uploadAction" :file-list="uploadAvatarsEform"-->
                     <!--:on-success="handleAvatarEformSuccess"-->
@@ -442,11 +490,11 @@
                     <!--<el-button size="small" type="primary">点击上传</el-button>-->
                     <!--</el-upload>-->
                 </el-form-item>
-                <el-form-item label="填报须知:" prop="notice"  v-show="changeMaterialInfo" >
+                <el-form-item label="填报须知:" prop="notice" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.notice}}</span>
                     <!--<el-input v-model="zwfwItemMaterial.notice"></el-input>-->
                 </el-form-item>
-                <el-form-item label="备注:" prop="remark"  v-show="changeMaterialInfo" >
+                <el-form-item label="备注:" prop="remark" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.remark}}</span>
                     <!--<el-input v-model="zwfwItemMaterial.remark"></el-input>-->
                 </el-form-item>
@@ -464,17 +512,28 @@
 <script>
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
-    import {getZwfwItemList, createZwfwItem, updateZwfwItem, delZwfwItems} from 'api/zwfwSystem/business/item';
+    import {
+        getZwfwItemList, createZwfwItem, updateZwfwItem, delZwfwItems,
+        getPretrialUserListByItemId,
+        updatePretrialUserList
+    } from 'api/zwfwSystem/business/item';
     import {
         createZwfwItemMaterial,
         getAllItemMaterial,
         deleteZwfwItemMaterial
     } from 'api/zwfwSystem/business/itemMaterial';
     import {getAllMaterial, updateZwfwMaterial} from 'api/zwfwSystem/business/material';
+    import {getAllUser} from 'api/baseSystem/org/user';
+    import {getDeptCascader} from 'api/baseSystem/org/dept';
+    import { quillEditor } from 'vue-quill-editor'
+
 
 
     export default {
         name: 'zwfwItem_table',
+        components:{
+            quillEditor
+        },
         data() {
             return {
                 changeMaterialName: false,
@@ -497,6 +556,7 @@
                 activeName: 'first',
                 zwfwItem: {
                     id: undefined,
+                    departmentId: [],
                     setBasis: '',
                     chargeable: true,
                     orderable: true,
@@ -537,7 +597,9 @@
                     mediumService: '',
                     commonRequestion: '',
                     implCode: '',
-                    updateType: ''
+                    updateType: '',
+                    pretrialUserIds: [],
+                    departmentTreePosition: ''
                 },
                 zwfwItemMaterial: {
                     id: undefined,
@@ -577,8 +639,8 @@
 //                        {min: 10, max: 10, message: '基本编码长度是10位'}
                     ],
                     implCode: [
-                        {required: true, message: '请输入实施编码'},
-                        {min: 24, max: 24, message: '实施编码长度是24位'}
+                        {required: true, message: '请输入实施编码'}
+//                        {min: 24, max: 24, message: '实施编码长度是24位'}
                     ],
                     type: [
                         {required: true, message: '请输入事项类型'}
@@ -598,13 +660,56 @@
                         {required: true, message: '请输入材料名称'}
                     ]
                 },
-                uploadAccepts: '.gif,.jpg,.jpeg,.bmp,.png,.xls,.xlsx,.doc,.docx,.zip,.rar,.pdf'
+                uploadAccepts: '.gif,.jpg,.jpeg,.bmp,.png,.xls,.xlsx,.doc,.docx,.zip,.rar,.pdf',
+                allUserList: [],
+                deptTree: [],
+                acceptConditionEditorOption: {
+                    modules: {
+                        toolbar: [
+                            [{ header: [] }],
+                            ['bold', 'italic', 'underline', 'link'],
+                            [{ color: [] }, { background: [] }],
+                            [{ list: 'ordered' }, { list: 'bullet' }],
+                            ['clean']
+                        ]
+                    },
+                    theme: 'snow'
+                },
+                acceptConditionHtml:'',
+                chargeBasisHtml:'',
+                workflowDescriptionHtml:''
             }
         },
+
         created() {
             this.getList();
+            //用于加载根据部门分组的用户列表，用来在设置预审用户时使用
+            this.allUserList = [];
+            this.deptTree = [];
+            getDeptCascader().then(response => {
+                if (response.httpCode === 200) {
+                    this.deptTree = response.data;
+                } else {
+                    console.log('加载部门信息失败');
+                }
+            });
+
+        },
+        mounted() {
+
         },
         computed: {
+            cascaderModel: function () {
+                if (this.zwfwItem.departmentId) {
+                    //找到对应的部门
+//                    console.log(this.zwfwItem.departmentTreePosition);
+                    if (this.zwfwItem.departmentTreePosition) {
+                        const arr = this.zwfwItem.departmentTreePosition.split('&');
+                        return arr
+                    }
+                    return [];
+                }
+            },
             ...mapGetters([
                 'textMap',
                 'enums',
@@ -613,23 +718,64 @@
             ])
         },
         methods: {
-            submitUpload(){
+            acceptConditionChange({editor,html,text}) {
+//                console.log(html);
+//                console.log(text);
+                this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(html));
+            },
+            chargeBasisChange({editor,html,text}) {
+//                console.log(html);
+//                console.log(text);
+                this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(html));
+            },
+            workflowDescriptionChange({editor,html,text}) {
+//                console.log(html);
+//                console.log(text);
+                this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(html));
+            },
+            queryUser(keywords) {
+//                console.log(keywords);
+                getAllUser({
+                    name: keywords
+                }).then(response => {
+                    if (response.httpCode === 200) {
+                        this.allUserList = response.data;
+                    } else {
+                        this.$message.error("加载用户列表失败");
+                    }
+                });
+            },
+            handleChange(value) {
+//                console.log(value);
+                if (value.length > 0) {
+                    this.zwfwItem.departmentId = parseInt(value[value.length - 1]);
+                    this.zwfwItem.departmentTreePosition = value.join('&');
+                } else {
+                    this.zwfwItem.departmentId = 0;
+                    this.zwfwItem.departmentTreePosition = [];
+                }
+            },
+            submitUpload() {
                 this.$refs.upload.submit();
             },
-            showResultExample(){
-                if(this.zwfwItem.resultExample) {
+            showResultExample() {
+                if (this.zwfwItem.resultExample) {
                     window.open(this.zwfwItem.resultExample);
                 }
             },
             getList() {
                 this.listLoading = true;
                 getZwfwItemList(this.listQuery).then(response => {
-                    this.zwfwItemList = response.data.list;
-                    this.total = response.data.total;
+                    if (response.httpCode === 200) {
+                        this.zwfwItemList = response.data.list;
+                        this.total = response.data.total;
+                    } else {
+                        this.$message.error(response.msg || '事项列表查询失败');
+                    }
                     this.listLoading = false;
-                })
+                });
             },
-            handleFilter(){
+            handleFilter() {
                 this.getList();
             },
             handleMaterialList(item) {
@@ -643,7 +789,11 @@
             getItemMaterialListByItemId() {
                 this.listLoading1 = true;
                 getAllItemMaterial(this.currentItem.id).then(response => {
-                    this.zwfwItemMaterialList = response.data;
+                    if (response.httpCode === 200) {
+                        this.zwfwItemMaterialList = response.data;
+                    } else {
+                        this.$message.error(response.msg || '加载材料列表失败');
+                    }
                     this.listLoading1 = false;
                 })
             },
@@ -685,7 +835,11 @@
                     }
                     this.electronicMaterial = '';
                     getAllMaterial(listQueryName).then(response => {
-                        this.optionsName = response.data;
+                        if (response.httpCode === 200) {
+                            this.optionsName = response.data;
+                        } else {
+                            console.log(reponse.msg || '材料查找失败');
+                        }
                     })
                 } else {
                     this.optionsName = [];
@@ -747,10 +901,24 @@
                     this.handleRemoveResult();
                 } else {
                     this.uploadAvatarsResult = [];
-                    this.uploadAvatarsResult.push({url: this.zwfwItem.resultExample , name:'结果样本'});
+                    this.uploadAvatarsResult.push({url: this.zwfwItem.resultExample, name: '结果样本'});
                 }
+                this.acceptConditionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.acceptCondition));
+                this.chargeBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeBasis));
+                this.workflowDescriptionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.workflowDescription));
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
+                //查询事项绑定的预审用户
+                getPretrialUserListByItemId(this.zwfwItem.id).then(response => {
+                    if (response.httpCode === 200) {
+                        this.allUserList = response.data;
+                        this.zwfwItem.pretrialUserIdsArray = response.data.map(function (o) {
+                            return o.id;
+                        });
+                    } else {
+                        this.$message.error("查询预审用户失败");
+                    }
+                });
             },
             handleDelete(row) {
                 if (this.selectedRows == 0) {
@@ -768,12 +936,16 @@
                             ids.push(deleteRow.id);
                         }
                         delZwfwItems(ids).then(response => {
-                            this.total -= selectCounts;
-                            for (const deleteRow of this.selectedRows) {
-                                const index = this.zwfwItemList.indexOf(deleteRow);
-                                this.zwfwItemList.splice(index, 1);
+                            if (response.httpCode == 200) {
+                                this.total -= selectCounts;
+                                for (const deleteRow of this.selectedRows) {
+                                    const index = this.zwfwItemList.indexOf(deleteRow);
+                                    this.zwfwItemList.splice(index, 1);
+                                }
+                                this.$message.success('删除成功');
+                            } else {
+                                this.$message.error(response.msg || '删除失败');
                             }
-                            this.$message.success('删除成功');
                             this.listLoading = false;
                         })
                     }).catch(() => {
@@ -796,12 +968,16 @@
                             ids.push(deleteRow.id);
                         }
                         deleteZwfwItemMaterial(this.itemId, ids).then(response => {
-                            this.currentItem.itemMaterialCount -= length;
-                            this.$message.success('删除成功');
+                            if (response.httpCode === 200) {
+                                this.currentItem.itemMaterialCount -= length;
+                                this.$message.success('删除成功');
 //                            for (const deleteRow of this.selectedRows) {
 //                                const index = this.zwfwItemMaterialList.indexOf(deleteRow);
 //                                this.zwfwItemMaterialList.splice(index, 1);
 //                            }
+                            } else {
+                                this.$message.error(response.msg || '删除失败');
+                            }
                             this.dialogFormVisible1 = false;
                         })
                     }).catch(() => {
@@ -815,9 +991,14 @@
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         createZwfwItem(this.zwfwItem).then(response => {
-                            this.zwfwItemList.unshift(response.data);
-                            this.total += 1;
-                            this.$message.success('创建成功');
+                            if (response.httpCode === 200) {
+                                this.zwfwItemList.unshift(response.data);
+                                this.total += 1;
+                                this.$message.success('创建成功');
+                                this.getList();
+                            } else {
+                                this.$message.error(response.msg || '创建失败');
+                            }
                             this.listLoading = false;
                         })
                     } else {
@@ -846,13 +1027,18 @@
                             }
                             this.listLoading1 = true;
                             createZwfwItemMaterial(query).then(response => {
-                                this.zwfwItemMaterialList.unshift(this.zwfwItemMaterial);
-                                this.$message.success('创建成功');
+                                if (response.httpCode === 200) {
+                                    this.zwfwItemMaterialList.unshift(this.zwfwItemMaterial);
+                                    this.$message.success('创建成功');
+                                    this.uploadAvatarsExample = [];
+                                    this.uploadAvatarsEform = [];
+                                    this.resetZwfwMaterialForm();
+                                    this.currentItem.itemMaterialCount += 1;
+                                } else {
+                                    this.$message.error('添加失败');
+                                }
                                 this.listLoading1 = false;
-                                this.uploadAvatarsExample = [];
-                                this.uploadAvatarsEform = [];
-                                this.resetZwfwMaterialForm();
-                                this.currentItem.itemMaterialCount += 1;
+
                             })
                         } else {
                             const zwfwMaterialList = {
@@ -871,12 +1057,16 @@
                             this.listLoading1 = true;
                             updateZwfwMaterial(zwfwMaterialList).then(response => {
                                 this.listLoading1 = false;
-                                copyProperties(this.currentRow, response.data);
-                                this.$message.success('更新成功');
-                                this.dialogFormVisible1 = true;
-                                this.uploadAvatarsExample = [];
-                                this.uploadAvatarsEform = [];
-                                this.resetZwfwMaterialForm();
+                                if (response.httpCode == 200) {
+                                    copyProperties(this.currentRow, response.data);
+                                    this.$message.success('更新成功');
+                                    this.dialogFormVisible1 = true;
+                                    this.uploadAvatarsExample = [];
+                                    this.uploadAvatarsEform = [];
+                                    this.resetZwfwMaterialForm();
+                                } else {
+                                    this.$message.error("修改失败");
+                                }
                             })
                         }
                     } else {
@@ -889,12 +1079,17 @@
                     if (valid) {
                         this.listLoading = true;
                         this.dialogFormVisible = false;
+                        this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIdsArray.join(',');
                         updateZwfwItem(this.zwfwItem).then(response => {
-                            copyProperties(this.currentRow, response.data);
-                            this.$message.success('更新成功');
+                            if (response.httpCode == 200) {
+                                copyProperties(this.currentRow, response.data);
+                                this.$message.success('更新成功');
+                                this.getList();
+                            } else {
+                                this.$message.error(response.msg);
+                            }
                             this.listLoading = false;
-
-                        })
+                        });
                     } else {
                         return false;
                     }
@@ -918,6 +1113,7 @@
             resetTemp() {
                 this.zwfwItem = {
                     id: undefined,
+                    departmentId: undefined,
                     setBasis: '',
                     chargeable: true,
                     orderable: true,
@@ -958,8 +1154,13 @@
                     commonRequestion: '',
                     implCode: '',
                     updateType: '',
-                    pretrialDays: ''
+                    pretrialDays: '',
+                    pretrialUserIdsArray: [],
+                    departmentTreePosition: ''
                 };
+                this.acceptCondition = '';
+                this.chargeBasis = '';
+                this.workflowDescription = '';
             },
             resetZwfwItemForm() {
                 this.dialogFormVisible = false;

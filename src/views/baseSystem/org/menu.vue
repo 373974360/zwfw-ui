@@ -16,7 +16,8 @@
 
                 <el-form-item label="上级菜单">
                     <el-cascader :options="cascader" v-model="cascaderModel" :show-all-levels="true"
-                                 :change-on-select="true" expand-trigger="hover"  style="width:100%" :disabled="false" :clearable="true"
+                                 :change-on-select="true" expand-trigger="hover" style="width:100%" :disabled="false"
+                                 :clearable="true"
                                  @change="handleChange"></el-cascader>
                 </el-form-item>
                 <el-form-item label="菜单名称" prop="name">
@@ -24,15 +25,15 @@
                 </el-form-item>
                 <el-form-item label="菜单类型">
                     <el-radio-group v-model="sysMenu.type">
-                        <el-radio  v-for="item in enums['MenuType']"
-                                   :key="item.code"
-                                   :label="item.code"
-                                   :value="item.code">
+                        <el-radio v-for="item in enums['MenuType']"
+                                  :key="item.code"
+                                  :label="item.code"
+                                  :value="item.code">
                             <span style="font-weight:normal;">{{item.value}}</span>
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item label="菜单图标"  prop="iconcls">
+                <el-form-item label="菜单图标" prop="iconcls">
                     <el-input v-model="sysMenu.iconcls"/>
                 </el-form-item>
                 <el-form-item label="请求地址" prop="request">
@@ -44,7 +45,7 @@
                 <el-form-item label="排序">
                     <el-input-number v-model="sysMenu.sortNo" :min="1" :max="100"/>
                 </el-form-item>
-                <el-form-item label="备注"  prop="remark">
+                <el-form-item label="备注" prop="remark">
                     <el-input type="textarea" v-model="sysMenu.remark" :rows="3"/>
                 </el-form-item>
             </el-form>
@@ -149,14 +150,22 @@
             getList() {
                 this.listLoading = true;
                 getMenuTree().then(response => {
-                    this.menuList = response.data;
+                    if (response.httpCode === 200) {
+                        this.menuList = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.listLoading = false;
                 })
             },
             getOptions(id) {
                 this.dialogLoading = true;
                 getMenuCascader(id).then(response => {
-                    this.cascader = response.data;
+                    if (response.httpCode === 200) {
+                        this.cascader = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.dialogLoading = false;
                 })
             },
@@ -205,11 +214,15 @@
                     type: 'warning'
                 }).then(() => {
                     delMenu(row.id).then(response => {
-                        this.$message.success('删除成功');
-                        TreeUtil.delRow(response.data, this.menuList);
+                        if (response.httpCode === 200) {
+                            this.$message.success('删除成功！');
+                            TreeUtil.delRow(response.data, this.menuList);
+                        } else {
+                            this.$message.error('删除失败！');
+                        }
                     })
                 }).catch(() => {
-                    console.dir("取消");
+                    console.dir('取消');
                 });
             },
             create() {
@@ -217,8 +230,12 @@
                     if (valid) {
                         this.dialogFormVisible = false;
                         createMenu(this.sysMenu).then(response => {
-                            this.$message.success('创建成功');
-                            TreeUtil.addRow(response.data, this.menuList);
+                            if (response.httpCode === 200) {
+                                this.$message.success('创建成功！');
+                                TreeUtil.addRow(response.data, this.menuList);
+                            } else {
+                                this.$message.error('创建失败！');
+                            }
                         })
                     } else {
                         return false;
@@ -230,8 +247,12 @@
                     if (valid) {
                         this.dialogFormVisible = false;
                         updateMenu(this.sysMenu).then(response => {
-                            this.$message.success('更新成功');
-                            TreeUtil.editRow(response.data, this.menuList);
+                            if (response.httpCode === 200) {
+                                this.$message.success('更新成功！');
+                                TreeUtil.editRow(response.data, this.menuList);
+                            } else {
+                                this.$message.error('更新失败！');
+                            }
                         })
                     } else {
                         return false;

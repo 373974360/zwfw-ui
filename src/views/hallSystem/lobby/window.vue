@@ -1,7 +1,7 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="窗口名称"
+            <el-input @keyup.enter.native="getList" style="width: 130px;" class="filter-item" placeholder="窗口名称"
                       v-model="listQuery.name" no-match-text="没有找到哦">
             </el-input>
 
@@ -306,9 +306,13 @@
             getList() {
                 this.listLoading = true;
                 getWindowList(this.listQuery).then(response => {
-                    this.list = response.data.list;
-                    this.total = response.data.total;
                     this.listLoading = false;
+                    if (response.httpCode === 200) {
+                        this.list = response.data.list;
+                        this.total = response.data.total;
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
                 })
             },
             handleSelectionChange(row) {
@@ -351,8 +355,12 @@
                         }
                         delWindow(ids).then(response => {
                             this.listLoading = false;
-                            this.total -= selectCounts;
-                            this.$message.success('删除成功');
+                            if (response.httpCode === 200) {
+                                this.total -= selectCounts;
+                                this.$message.success('删除成功');
+                            } else {
+                                this.$message.error('删除失败')
+                            }
                         })
                         for (const deleteRow of this.selectedRows) {
                             const index = this.list.indexOf(deleteRow);
@@ -369,10 +377,14 @@
                         this.addDialogFormVisible = false;
                         this.listLoading = true;
                         createWindow(this.window).then(response => {
-                            this.list.unshift(response.data);
-                            this.total += 1;
-                            this.$message.success('创建成功');
                             this.listLoading = false;
+                            if (response.httpCode === 200) {
+                                this.list.unshift(response.data);
+                                this.total += 1;
+                                this.$message.success('创建成功');
+                            } else {
+                                this.$message.error('创建失败')
+                            }
                         })
                     } else {
                         return false;
@@ -384,8 +396,12 @@
                     if (valid) {
                         this.addDialogFormVisible = false;
                         updateWindow(this.window).then(response => {
-                            copyProperties(this.currentRow, response.data);
-                            this.$message.success('更新成功');
+                            if (response.httpCode === 200) {
+                                copyProperties(this.currentRow, response.data);
+                                this.$message.success('更新成功');
+                            } else {
+                                this.$message.error('更新失败')
+                            }
                         })
                     } else {
                         return false;
@@ -412,27 +428,34 @@
             getItemListByWindowId() {
                 this.listLoading1 = true;
                 getAllItemWindow(this.windowId).then(response => {
-                    const arr = [];
-                    console.log(response.data);
-                    for (const ids of response.data) {
-                        for (const idList of this.itemWindowList) {
-                            if (ids.itemId == idList.id) {
-                                arr.push(idList);
+                    this.listLoading1 = false;
+                    if (response.httpCode === 200) {
+                        const arr = [];
+                        console.log(response.data);
+                        for (const ids of response.data) {
+                            for (const idList of this.itemWindowList) {
+                                if (ids.itemId == idList.id) {
+                                    arr.push(idList);
+                                }
                             }
                         }
+                        this.zwfwItemList = arr;
+                    } else {
+                        this.$message.error('数据加载失败')
                     }
-                    this.zwfwItemList = arr;
-                    this.listLoading1 = false;
                 })
             },
             getItemList() {
                 const query = {}
                 getAllByNameOrbasicCode(query).then(response => {
-                    this.itemWindowList = response.data;
-                    this.zwfwItem.supportAssist = true;
-                    this.zwfwItem.supportEnquire = true;
-                    this.zwfwItem.supportNormal = true;
-                    console.log(this.itemWindowList);
+                    if (response.httpCode === 200) {
+                        this.itemWindowList = response.data;
+                        this.zwfwItem.supportAssist = true;
+                        this.zwfwItem.supportEnquire = true;
+                        this.zwfwItem.supportNormal = true;
+                    } else {
+                        this.$message.error('事项信息加载失败')
+                    }
                 })
             },
             remoteMethod(query) {
@@ -447,7 +470,11 @@
                         listQueryName.basicCode = query
                     }
                     getAllByNameOrbasicCode(listQueryName).then(response => {
-                        this.optionsName = response.data;
+                        if (response.httpCode === 200) {
+                            this.optionsName = response.data;
+                        } else {
+                            this.$message.error('数据加载失败')
+                        }
                     })
                 } else {
                     this.optionsName = [];
@@ -480,11 +507,15 @@
                         }
                         this.listLoading1 = true;
                         createZwfwWindowItem(query).then(response => {
-                            this.zwfwItemList.unshift(this.zwfwItem);
-                            this.$message.success('创建成功');
                             this.listLoading1 = false;
-                            this.currentItem.windowItemCount += 1;
-                            this.resetZwfwItemForm();
+                            if (response.httpCode === 200) {
+                                this.zwfwItemList.unshift(this.zwfwItem);
+                                this.$message.success('创建成功');
+                                this.currentItem.windowItemCount += 1;
+                                this.resetZwfwItemForm();
+                            } else {
+                                this.$message.error('创建失败')
+                            }
                         })
                     } else {
                         return false;
@@ -506,9 +537,13 @@
                             ids.push(deleteRow.id);
                         }
                         deleteZwfwWindowItem(this.windowId, ids).then(response => {
-                            this.currentItem.windowItemCount -= length;
-                            this.$message.success('删除成功');
-                            this.resetZwfwItemForm();
+                            if (response.httpCode === 200) {
+                                this.currentItem.windowItemCount -= length;
+                                this.$message.success('删除成功');
+                                this.resetZwfwItemForm();
+                            } else {
+                                this.$message.error('删除失败')
+                            }
                         })
                         for (const deleteRow of this.selectedRows) {
                             const index = this.zwfwItemList.indexOf(deleteRow);
@@ -528,18 +563,26 @@
             getDeptAndUsersList() {
                 this.userWindowDialogLoading = true;
                 getDeptNameAndUsers(this.listQuery).then(response => {
-                    this.userList = response.data;
                     this.userWindowDialogLoading = false;
-                    this.getAllUserWindows();
+                    if (response.httpCode === 200) {
+                        this.userList = response.data;
+                        this.getAllUserWindows();
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
                 })
             },
             getAllUserWindows() {
                 this.checkedUsers = [];
                 getAllUserWindow(this.currentWindow.id).then(response => {
-                    if (response.data) {
-                        for (const item of response.data) {
-                            this.checkedUsers.push(item.userId);
+                    if (response.httpCode === 200) {
+                        if (response.data) {
+                            for (const item of response.data) {
+                                this.checkedUsers.push(item.userId);
+                            }
                         }
+                    } else {
+                        this.$message.error('数据加载失败')
                     }
                 })
             },
@@ -550,9 +593,13 @@
                 this.userWindowDialogLoading = true;
                 createUserWindow(this.currentWindow.id, this.checkedUsers).then(response => {
                     this.userWindowDialogLoading = false;
-                    this.userWindowDialogFormVisible = false;
-                    this.$message.success('关联成功');
-                    this.currentWindow.windowUserCount = this.checkedUsers.length;
+                    if (response.httpCode === 200) {
+                        this.userWindowDialogFormVisible = false;
+                        this.$message.success('关联成功');
+                        this.currentWindow.windowUserCount = this.checkedUsers.length;
+                    } else {
+                        this.$message.error('关联失败')
+                    }
                 })
             },
             resetTemp1() {

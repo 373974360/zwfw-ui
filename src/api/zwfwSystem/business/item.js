@@ -25,28 +25,63 @@ export function updateZwfwItem(zwfwItemVo) {
         data
     })
 }
+
 export function delZwfwItems(ids) {
     const data = {ids};
     return fetch({
         url: '/api/zwfwSystem/business/item/dels',
         method: 'post',
         data
-    })
+    });
 }
+
 export function deleteZwfwItem(id) {
     const data = {id};
     return fetch({
         url: '/api/zwfwSystem/business/item/delete',
         method: 'post',
         data
-    })
+    });
 }
+
 export function getAllByNameOrbasicCode(query) {
     return fetch({
         url: '/api/zwfwSystem/business/item/getAll',
         method: 'get',
         params: query
     })
+}
+
+/**
+ * 根据事项id查询预审用户列表
+ * @param itemId
+ */
+export function getPretrialUserListByItemId(itemId) {
+    const data = {
+        itemId: itemId
+    };
+    return fetch({
+        url: '/api/zwfwSystem/business/item/getPretrialUser',
+        method: 'get',
+        params: data
+    });
+}
+
+/**
+ * 更新事项的预审用户列表
+ * @param itemId
+ * @param userIds
+ */
+export function updatePretrialUserList(itemId, userIds) {
+    const data = {
+        itemId: itemId,
+        userIds: userIds
+    };
+    return fetch({
+        url: '/api/zwfwSystem/business/item/updatePretrialUser',
+        method: 'post',
+        params: data
+    });
 }
 
 

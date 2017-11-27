@@ -202,11 +202,18 @@
             ])
         },
         methods: {
+            handleFilter() {
+                this.getList();
+            },
             getList() {
                 this.listLoading = true;
                 getRoleList(this.listQuery).then(response => {
-                    this.list = response.data.list;
-                    this.total = response.data.total;
+                    if (response.httpCode === 200) {
+                        this.list = response.data.list;
+                        this.total = response.data.total;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.listLoading = false;
                 })
             },
@@ -250,14 +257,19 @@
                             ids.push(deleteRow.id);
                         }
                         delRole(ids).then(response => {
-                            this.listLoading = false;
-                            this.total -= selectCounts;
-                            this.$message.success('删除成功');
+                            if (response.httpCode === 200) {
+                                this.listLoading = false;
+                                this.total -= selectCounts;
+                                this.$message.success('删除成功！');
+                                for (const deleteRow of this.selectedRows) {
+                                    const index = this.list.indexOf(deleteRow);
+                                    this.list.splice(index, 1);
+                                }
+                            } else {
+                                this.listLoading = false;
+                                this.$message.error('删除失败！');
+                            }
                         })
-                        for (const deleteRow of this.selectedRows) {
-                            const index = this.list.indexOf(deleteRow);
-                            this.list.splice(index, 1);
-                        }
                     }).catch(() => {
                         console.dir('取消');
                     });
@@ -269,10 +281,15 @@
                         this.addDialogFormVisible = false;
                         this.listLoading = true;
                         createRole(this.sysRole).then(response => {
-                            this.list.unshift(response.data);
-                            this.total += 1;
-                            this.$message.success('创建成功');
-                            this.listLoading = false;
+                            if (response.httpCode === 200) {
+                                this.list.unshift(response.data);
+                                this.total += 1;
+                                this.$message.success('创建成功！');
+                                this.listLoading = false;
+                            } else {
+                                this.listLoading = false;
+                                this.$message.error('创建失败！');
+                            }
                         })
                     } else {
                         return false;
@@ -284,8 +301,12 @@
                     if (valid) {
                         this.addDialogFormVisible = false;
                         updateRole(this.sysRole).then(response => {
-                            copyProperties(this.currentRow, response.data);
-                            this.$message.success('更新成功');
+                            if (response.httpCode === 200) {
+                                copyProperties(this.currentRow, response.data);
+                                this.$message.success('更新成功！');
+                            } else {
+                                this.$message.error('更新失败！');
+                            }
                         })
                     } else {
                         return false;
@@ -306,32 +327,36 @@
             getMenuTree() {
                 this.roleMenuDialogLoading = true;
                 getMenuTree().then(response => {
-                    this.menuTree = response.data;
+                    if (response.httpCode === 200) {
+                        this.menuTree = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.roleMenuDialogLoading = false;
                     this.getAllRoleMenu();
                 })
             },
             getAllRoleMenu() {
                 getAllRoleMenus(this.currentRole.id).then(response => {
-                    const menus = response.data;
-                    for (const menu of menus) {
-                        this.$refs.menuTree.setChecked(menu.menuId, true, false);
-//                        console.log(x);
+                    if (response.httpCode === 200) {
+                        const menus = response.data;
+                        for (const menu of menus) {
+                            this.$refs.menuTree.setChecked(menu.menuId, true, false);
+                        }
+                    } else {
+                        this.$message.error(response.msg);
                     }
                 })
             },
 
             menuTreeChecked(data, checked) {
                 if (checked) {
-                    console.log(data)
-//                    this.checkedMenu.push(data.id);
-                    //找到上级，如果上级节点没有选中就自动选中
                     if (data.parentId != 0) {
-                        this.$refs.menuTree.setChecked(data.parentId,true, false);
+                        this.$refs.menuTree.setChecked(data.parentId, true, false);
                     }
                 } else {
-                    if(data.children!=null && data.children.length>0) {
-                        for(let c of data.children) {
+                    if (data.children != null && data.children.length > 0) {
+                        for (let c of data.children) {
                             this.$refs.menuTree.setChecked(c.id, false, true);
                         }
                     }
@@ -345,14 +370,18 @@
             },
             submitRoleMenu() {
                 this.roleMenuDialogLoading = true;
-
                 var checked = this.$refs.menuTree.getCheckedKeys(false);
-                console.log("提交的内容：", checked);
                 createRoleMenus(this.currentRole.id, checked).then(response => {
-                    this.roleMenuDialogLoading = false;
-                    this.roleMenuDialogFormVisible = false;
-                    this.$message.success('关联成功');
-                    this.currentRole.roleMenuCount = this.checkedMenu.length;
+                    if (response.httpCode === 200) {
+                        this.roleMenuDialogLoading = false;
+                        this.roleMenuDialogFormVisible = false;
+                        this.$message.success('关联成功！');
+                        this.currentRole.roleMenuCount = checked.length;
+                    } else {
+                        this.roleMenuDialogLoading = false;
+                        this.roleMenuDialogFormVisible = false;
+                        this.$message.error('关联失败！');
+                    }
                 })
             },
             handleUserList(role) {
@@ -364,7 +393,11 @@
             getDeptAndUsersList() {
                 this.userRoleDialogLoading = true;
                 getDeptNameAndUsers(this.listQuery).then(response => {
-                    this.userList = response.data;
+                    if (response.httpCode === 200) {
+                        this.userList = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.userRoleDialogLoading = false;
                     this.getAllUserRoles();
                 })
@@ -372,10 +405,14 @@
             getAllUserRoles() {
                 this.checkedUsers = [];
                 getAllUserRole(this.currentRole.id).then(response => {
-                    if (response.data) {
-                        for (const item of response.data) {
-                            this.checkedUsers.push(item.userId);
+                    if (response.httpCode === 200) {
+                        if (response.data) {
+                            for (const item of response.data) {
+                                this.checkedUsers.push(item.userId);
+                            }
                         }
+                    } else {
+                        this.$message.error(response.msg);
                     }
                 })
             },
@@ -385,10 +422,16 @@
             submitUserRole() {
                 this.userRoleDialogLoading = true;
                 createUserRole(this.currentRole.id, this.checkedUsers).then(response => {
-                    this.userRoleDialogLoading = false;
-                    this.userRoleDialogFormVisible = false;
-                    this.$message.success('关联成功');
-                    this.currentRole.userRoleCount = this.checkedUsers.length;
+                    if (response.httpCode === 200) {
+                        this.userRoleDialogLoading = false;
+                        this.userRoleDialogFormVisible = false;
+                        this.$message.success('关联成功！');
+                        this.currentRole.userRoleCount = this.checkedUsers.length;
+                    } else {
+                        this.userRoleDialogLoading = false;
+                        this.userRoleDialogFormVisible = false;
+                        this.$message.error('关联失败！');
+                    }
                 })
             },
             resetRoleForm() {

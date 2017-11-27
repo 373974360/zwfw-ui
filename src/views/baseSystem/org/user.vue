@@ -98,13 +98,14 @@
                 </el-form-item>
                 <el-form-item label="头像" prop="avatar">
                     <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
-                               :action="uploadAction" :file-list="uploadAvatars"
+                               :action="uploadAction"
                                :on-success="handleAvatarSuccess"
                                :on-error="handlerAvatarError"
                                :before-upload="beforeAvatarUpload"
-                               :show-file-list="true"
+                               :show-file-list="false"
                                :on-remove="handleRemove">
-                        <i class="el-icon-plus"></i>
+                        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="帐号" prop="account">
@@ -177,6 +178,7 @@
                 }
             };
             return {
+                imageUrl: '',
                 list: null,
                 total: null,
                 listLoading: true,
@@ -234,7 +236,6 @@
                 dialogStatus: '',
                 dialogLoading: false,
                 uploadAction: '/api/common/upload',
-                uploadAvatars: []
             }
         },
         computed: {
@@ -258,9 +259,16 @@
             this.getOptions();
         },
         methods: {
+            handleFilter() {
+                this.getList();
+            },
             getOptions(id) {
                 getDeptCascader(id).then(response => {
-                    this.cascader = response.data;
+                    if (response.httpCode === 200) {
+                        this.cascader = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                 })
             },
             handleSizeChange(val) {
@@ -312,7 +320,7 @@
                 this.sysUser.password = '';
                 this.sysUserRules1.password[0].required = false;
                 this.sysUserRules1.passwordConfirm[0].required = false;
-                this.uploadAvatars.push({url: this.sysUser.avatar});
+                this.imageUrl = this.sysUser.avatar;
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
@@ -331,14 +339,12 @@
              *
              */
             handleAvatarSuccess(res, file, fileList) {
-                console.log(res);
                 if (res.state === 'SUCCESS') {
-                    fileList.length = 0;
-                    fileList.push(file);
+                    this.imageUrl = URL.createObjectURL(file.raw);
                     this.sysUser.avatar = res.url;
-                    this.$message.success("上传成功");
+                    this.$message.success('上传成功！');
                 } else {
-                    this.$message.error("上传失败");
+                    this.$message.error('上传失败！');
                 }
             },
             /**
@@ -377,17 +383,23 @@
                             ids.push(deleteRow.id);
                         }
                         delUser(ids).then(response => {
-                            delWindowUser(ids).then(response => {
+                            if (response.httpCode === 200) {
+                                delWindowUser(ids).then(response => {
+                                    if (response.httpCode === 200) {
+                                        this.listLoading = false;
+                                        this.total -= selectCounts;
+                                        this.$message.success('删除成功！');
+                                        this.getList();
+                                    } else {
+                                        this.listLoading = false;
+                                        this.$message.error('删除失败！');
+                                    }
+                                })
+                            } else {
                                 this.listLoading = false;
-                                this.total -= selectCounts;
-                                this.$message.success('删除成功');
-                                this.getList();
-                            })
+                                this.$message.error('删除失败！');
+                            }
                         })
-                        for (const deleteRow of this.selectedRows) {
-                            const index = this.list.indexOf(deleteRow);
-                            this.list.splice(index, 1);
-                        }
                     }).catch(() => {
                         console.dir('取消');
                     });
@@ -450,29 +462,11 @@
                     remark: '',
                     empNo: '',
                 };
-                this.uploadAvatars = []
-            },
-            handleDownload() {
-                require.ensure([], () => {
-                    const {export_json_to_excel} = require('vendor/Export2Excel');
-                    const tHeader = ['时间', '地区', '类型', '标题', '重要性'];
-                    const filterVal = ['timestamp', 'province', 'type', 'title', 'importance'];
-                    const data = this.formatJson(filterVal, this.list);
-                    export_json_to_excel(tHeader, data, 'table数据');
-                })
-            },
-            formatJson(filterVal, jsonData) {
-                return jsonData.map(v => filterVal.map(j => {
-                    if (j === 'timestamp') {
-                        return parseTime(v[j])
-                    } else {
-                        return v[j]
-                    }
-                }))
             },
             resetUserForm1() {
                 this.dialogFormVisible = false;
                 this.resetTemp();
+                this.imageUrl = '';
                 resetForm(this, 'userForm1');
             }
         }
@@ -488,21 +482,21 @@
     }
 
     .avatar-uploader .el-upload:hover {
-        border-color: #20a0ff;
+        border-color: #409EFF;
     }
 
     .avatar-uploader-icon {
         font-size: 28px;
         color: #8c939d;
-        width: 178px;
-        height: 178px;
-        line-height: 178px;
+        width: 146px;
+        height: 146px;
+        line-height: 146px;
         text-align: center;
     }
 
     .avatar {
-        width: 178px;
-        height: 178px;
+        width: 146px;
+        height: 146px;
         display: block;
     }
 </style>
