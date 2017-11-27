@@ -108,11 +108,12 @@
                     <el-input v-model="zwfwNaturePerson.phone"></el-input>
                 </el-form-item>
                 <el-form-item label="照片" prop="photo">
-                    <el-upload  class="avatar-uploader" action="" :show-file-list="false"
+                    <el-upload class="avatar-uploader" name="uploadFile" :action="uploadUrl" :show-file-list="false"
                             :on-success="handleAvatarSuccess"
                             :before-upload="beforeAvatarUpload">
-                        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                        <img v-if="zwfwNaturePerson.photo" :src="zwfwNaturePerson.photo" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                        <div slot="tip" class="el-upload__tip">只能上传jpg文件，且不超过2MB</div>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="密码" prop="password">
@@ -204,6 +205,7 @@
                 zwfwNaturePersonList: [],
                 total: null,
                 listLoading: true,
+                uploadUrl: '/api/common/upload',
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
@@ -224,7 +226,6 @@
                     remark: '',
                     enable: 1
                 },
-                imageUrl: '',
                 currentRow: null,
                 selectedRows: [],
                 dialogFormVisible: false,
@@ -283,7 +284,7 @@
                 }
             },
             handleAvatarSuccess(res, file) {
-                this.imageUrl = URL.createObjectURL(file.raw);
+                this.zwfwNaturePerson.photo = res.url
             },
             beforeAvatarUpload(file) {
                 const isJPG = file.type === 'image/jpeg';
