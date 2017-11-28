@@ -990,6 +990,7 @@
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
+                        this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIdsArray.join(',');
                         createZwfwItem(this.zwfwItem).then(response => {
                             if (response.httpCode === 200) {
                                 this.zwfwItemList.unshift(response.data);
