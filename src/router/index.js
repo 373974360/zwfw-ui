@@ -15,7 +15,7 @@ const Reset = () => import('../views/common/login/reset');
 import System from '../views/common/login/system';
 
 /************************个人设置************************/
-const Profile = () => import('../views/common/layout/profile');
+const Profile = () => import('../views/common/login/profile');
 
 /************************基础信息管理系统************************/
 /* index */

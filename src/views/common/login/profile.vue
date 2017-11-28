@@ -21,7 +21,8 @@
                 <el-input v-model="sysUser.phone"/>
             </el-form-item>
             <el-form-item label="头像" prop="avatar">
-                <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
+                <el-upload class="avatar-uploader" name="uploadFile"
+                           :accept="acceptTypes"
                            :action="uploadAction"
                            :on-success="handleAvatarSuccess"
                            :on-error="handlerAvatarError"
@@ -36,7 +37,7 @@
                 <el-input v-model="sysUser.account" :disabled="true"/>
             </el-form-item>
             <el-form-item label="工号" prop="empNo">
-                <el-input v-model="sysUser.empNo"/>
+                <el-input v-model="sysUser.empNo" disabled/>
             </el-form-item>
             <el-form-item label="修改密码">
                 <el-checkbox v-model="checked">是</el-checkbox>
@@ -122,7 +123,8 @@
                         {required: true, validator: validatePass2}
                     ]
                 },
-                uploadAction: '/api/common/upload',
+                uploadAction: this.$store.state.app.uploadUrl,
+                acceptTypes: this.$store.state.app.imageAccepts,
                 imageUrl: '',
                 checked: false
             }
@@ -231,15 +233,15 @@
     .avatar-uploader-icon {
         font-size: 28px;
         color: #8c939d;
-        width: 146px;
-        height: 146px;
-        line-height: 146px;
+        width: 178px;
+        height: 178px;
+        line-height: 178px;
         text-align: center;
     }
 
     .avatar {
-        width: 146px;
-        height: 146px;
+        width: 178px;
+        height: 178px;
         display: block;
     }
 </style>

@@ -97,7 +97,8 @@
                     <el-input v-model="sysUser.phone"/>
                 </el-form-item>
                 <el-form-item label="头像" prop="avatar">
-                    <el-upload name="uploadFile" :accept="acceptTypes"
+                    <el-upload class="avatar-uploader" name="uploadFile"
+                               :accept="acceptTypes"
                                :action="uploadAction"
                                :on-success="handleAvatarSuccess"
                                :on-error="handlerAvatarError"
