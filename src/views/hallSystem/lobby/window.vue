@@ -216,7 +216,7 @@
         getAllItemWindow,
         createZwfwWindowItem,
         deleteZwfwWindowItem
-    } from 'api/hallSystem/lobby/window';
+    } from '../../../api/hallSystem/lobby/window';
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import {getDeptNameAndUsers} from 'api/baseSystem/org/user';
@@ -431,7 +431,6 @@
                     this.listLoading1 = false;
                     if (response.httpCode === 200) {
                         const arr = [];
-                        console.log(response.data);
                         for (const ids of response.data) {
                             for (const idList of this.itemWindowList) {
                                 if (ids.itemId == idList.id) {
@@ -440,6 +439,8 @@
                             }
                         }
                         this.zwfwItemList = arr;
+                        console.log(arr.length);
+                        this.currentItem.windowItemCount = arr.length;
                     } else {
                         this.$message.error('数据加载失败')
                     }
@@ -536,7 +537,7 @@
                         for (const deleteRow of this.selectedRows) {
                             ids.push(deleteRow.id);
                         }
-                        deleteZwfwWindowItem(this.windowId, ids).then(response => {
+                        deleteZwfwWindowItem(this.windowId, ids.join()).then(response => {
                             if (response.httpCode === 200) {
                                 this.currentItem.windowItemCount -= length;
                                 this.$message.success('删除成功');

@@ -935,7 +935,7 @@
                         for (const deleteRow of this.selectedRows) {
                             ids.push(deleteRow.id);
                         }
-                        delZwfwItems(ids).then(response => {
+                        delZwfwItems(ids.join()).then(response => {
                             if (response.httpCode == 200) {
                                 this.total -= selectCounts;
                                 for (const deleteRow of this.selectedRows) {
@@ -990,6 +990,7 @@
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
+                        this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIdsArray.join(',');
                         createZwfwItem(this.zwfwItem).then(response => {
                             if (response.httpCode === 200) {
                                 this.zwfwItemList.unshift(response.data);

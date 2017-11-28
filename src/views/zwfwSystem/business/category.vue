@@ -408,7 +408,7 @@
                         for (const deleteRow of this.selectedRows) {
                             ids.push(deleteRow.id);
                         }
-                        deleteZwfwCategoryItem(this.categoryId, ids).then(response => {
+                        deleteZwfwCategoryItem(this.categoryId, ids.join()).then(response => {
                             if (response.httpCode === 200) {
                                 this.currentItem.categoryItemCount -= length;
                                 for (const deleteRow of this.selectedRows) {
