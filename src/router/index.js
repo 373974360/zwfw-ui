@@ -352,9 +352,9 @@ export const asyncRouterMap = [
                         meta: {permission: 'hallSystem:window:receive:takeAway:list'}
                     }
                 ]
-            },
-            {path: 'windowWork', component: WindowWork, name: '街办收件'},
-            {path: 'windowHistory', component: WindowHistory, name: '办件查询'}
+            }
+            // {path: 'windowWork', component: WindowWork, name: '街办收件'},
+            // {path: 'windowHistory', component: WindowHistory, name: '办件查询'}
         ]
     },
     {
