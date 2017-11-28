@@ -531,7 +531,7 @@
 
     export default {
         name: 'zwfwItem_table',
-        components:{
+        components: {
             quillEditor
         },
         data() {
@@ -699,7 +699,7 @@
 
         },
         computed: {
-            cascaderModel: function () {
+            cascaderModel() {
                 if (this.zwfwItem.departmentId) {
                     //找到对应的部门
 //                    console.log(this.zwfwItem.departmentTreePosition);
@@ -1080,6 +1080,9 @@
                         this.listLoading = true;
                         this.dialogFormVisible = false;
                         this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIdsArray.join(',');
+                        this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(this.zwfwItem.acceptCondition));
+                        this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(this.zwfwItem.chargeBasis));
+                        this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(this.zwfwItem.workflowDescription));
                         updateZwfwItem(this.zwfwItem).then(response => {
                             if (response.httpCode == 200) {
                                 copyProperties(this.currentRow, response.data);
