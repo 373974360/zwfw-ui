@@ -482,6 +482,7 @@ export const asyncRouterMap = [
     {
         path: '/pretrial',
         component: Layout,
+        icon: 'process',
         name: '预审管理',
         meta: {permission: 'workSystem:pretrial:admin'},
         children: [
