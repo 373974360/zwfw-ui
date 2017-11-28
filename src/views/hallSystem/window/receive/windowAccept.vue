@@ -191,6 +191,9 @@
                                 <el-table-column
                                         prop="type"
                                         label="类型">
+                                    <template scope="scope">
+                                        {{scope.row.type | dics('cllx')}}
+                                    </template>
                                 </el-table-column>
                                 <el-table-column
                                         prop="example"
