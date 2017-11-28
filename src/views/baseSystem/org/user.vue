@@ -149,34 +149,35 @@
 
 
 <script>
+    import {mapGetters} from 'vuex';
+    import {copyProperties, resetForm} from 'utils';
+    import {validatMobiles} from 'utils/validate'
+    import {delWindowUser} from 'api/hallSystem/lobby/window';
     import {getDeptCascader} from 'api/baseSystem/org/dept';
     import {getUserList, updateUser, createUser, delUser} from 'api/baseSystem/org/user';
-    import {copyProperties, resetForm} from 'utils';
-    import {mapGetters} from 'vuex';
-    import {delWindowUser} from 'api/hallSystem/lobby/window';
 
     export default {
         name: 'table_demo',
         data() {
-            const validatMobiles = (rule, value, callback) => {
-                if (!/^((13|15|18|14|17)+\d{9})$/.test(value)) {
-                    return callback(new Error('电话号码格式不正确'));
+            const validateMobiles = (rule, value, callback) => {
+                if (!validatMobiles(value)) {
+                    callback(new Error('电话号码格式不正确'));
                 } else {
                     callback();
                 }
             };
-            const validatePass2 = (rule, value, callback) => {
-                if (this.sysUser.password === '') {
-                    callback();
-                } else {
-                    if (value === '') {
-                        callback(new Error('请再次输入密码'));
-                    } else if (value !== this.sysUser.password) {
-                        callback(new Error('两次输入密码不一致!'));
-                    } else {
-                        callback();
-                    }
+            const validatePass = (rule, value, callback) => {
+                if (this.sysUser.passwordConfirm) {
+                    this.$refs.userForm1.validateField('passwordConfirm')
                 }
+                callback()
+            };
+            const validatePass2 = (rule, value, callback) => {
+                if (this.sysUser.password && this.sysUser.passwordConfirm
+                    && this.sysUser.password != this.sysUser.passwordConfirm) {
+                    callback(new Error('两次输入密码不一致!'))
+                }
+                callback()
             };
             return {
                 imageUrl: '',
@@ -212,24 +213,28 @@
                         {required: true, message: '请输入姓名'}
                     ],
                     phone: [
-                        {required: true, validator: validatMobiles}
+                        {required: true, message: '请输入手机号码'},
+                        {validator: validateMobiles, trigger: 'blur'}
                     ],
                     avatar: [
                         {type: 'url', required: true, message: '头像地址不正确'}
                     ],
                     account: [
-                        {type: 'email', required: true, message: '请输入合法的邮箱'}
+                        {required: true, message: '请输入邮箱'},
+                        {type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur'}
                     ],
                     password: [
                         {required: true, message: '请输入密码'},
-                        {min: 6, max: 18, message: '长度在 6 到 18 个字符'}
+                        {min: 6, max: 18, message: '长度在 6 到 18 个字符', trigger: 'blur'},
+                        {validator: validatePass, trigger: 'blur'}
                     ],
                     passwordConfirm: [
-                        {required: true, validator: validatePass2}
+                        {required: true, message: '请再次输入密码'},
+                        {validator: validatePass2, trigger: 'blur'}
                     ],
                     empNo: [
                         {required: true, message: '请输入工号'}
-                    ],
+                    ]
                 },
                 selectedRows: [],
                 cascader: [],
@@ -375,7 +380,7 @@
                 this.sysUser.avatar = '';
             },
             handleDelete() {
-                var selectCounts = this.selectedRows.length;
+                let selectCounts = this.selectedRows.length;
                 if (this.selectedRows == 0) {
                     this.$message.warning('请选择需要操作的记录');
                 } else {
@@ -467,7 +472,7 @@
                     passwordConfirm: '',
                     enable: 1,
                     remark: '',
-                    empNo: '',
+                    empNo: ''
                 };
             },
             resetUserForm1() {
