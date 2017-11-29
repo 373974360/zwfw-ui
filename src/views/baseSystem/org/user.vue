@@ -423,9 +423,9 @@
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         createUser(this.sysUser).then(response => {
-                            if(response.httpCode!=200){
+                            if (response.httpCode!=200) {
                                 this.$message.error(response.msg);
-                            }else{
+                            } else {
                                 this.list.unshift(response.data);
                                 this.total += 1;
                                 this.$message.success('创建成功');
@@ -445,10 +445,10 @@
                         this.listLoading = true;
                         this.sysUser.deptVo = {};
                         updateUser(this.sysUser).then(response => {
-                            if(response.httpCode!=200){
+                            if (response.httpCode != 200) {
                                 this.$message.error(response.msg);
-                            }else{
-                                copyProperties(this.currentRow, response.data);
+                            } else {
+                                this.getList();
                                 this.$message.success('更新成功');
                             }
                             this.listLoading = false;
