@@ -1112,9 +1112,8 @@
                         this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(this.workflowDescriptionHtml));
                         updateZwfwItem(this.zwfwItem).then(response => {
                             if (response.httpCode == 200) {
-                                copyProperties(this.currentRow, response.data);
-                                this.$message.success('更新成功');
                                 this.getList();
+                                this.$message.success('更新成功');
                             } else {
                                 this.$message.error(response.msg);
                             }

@@ -30,7 +30,7 @@
             </el-table-column>
             <el-table-column align="center" label="机构类型" prop="companyType">
                 <template scope="scope">
-                    <span>{{scope.row.companyType}}</span>
+                    <span>{{scope.row.companyType | dics('gsxz')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="机构名称" prop="companyName">
@@ -83,7 +83,9 @@
                     <el-input :disabled="readonlyFlag" v-model="zwfwLegalPerson.companyCode"></el-input>
                 </el-form-item>
                 <el-form-item label="机构类型" prop="companyType">
-                    <el-input v-model="zwfwLegalPerson.companyType"></el-input>
+                    <el-select v-model="zwfwLegalPerson.companyType" placeholder="请选择">
+                        <el-option v-for="item in dics['gsxz']" :key="item.code" :value="item.code" :label="item.value"></el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="机构名称" prop="companyName">
                     <el-input v-model="zwfwLegalPerson.companyName"></el-input>
@@ -236,7 +238,7 @@
                         {validator: validatCompanyCode, trigger: 'blur'}
                     ],
                     companyType: [
-                        {required: true, message: '请输入机构类型', trigger: 'blur'}
+                        {required: true, message: '请选择机构类型', trigger: 'blur'}
                     ],
                     companyName: [
                         {required: true, message: '请输入机构名称', trigger: 'blur'}
@@ -280,7 +282,8 @@
             ...mapGetters([
                 'textMap',
                 'enums',
-                'closeOnClickModal'
+                'closeOnClickModal',
+                'dics'
             ])
         },
         methods: {
@@ -388,7 +391,7 @@
                 });
             },
             update() {
-                this.$refs['zwfwLegalPersonForm'].validate((valid) => {
+                this.$refs['zwfwLegalPersonForm'].validate(valid => {
                     if (valid) {
                         this.btnLoading = true;
                         updateZwfwLegalPerson(this.zwfwLegalPerson).then(response => {
