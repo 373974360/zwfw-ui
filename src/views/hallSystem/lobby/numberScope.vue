@@ -170,7 +170,7 @@
         createZwfwNumberScopeItem,
         deleteZwfwNumberScopeItem
     } from 'api/hallSystem/lobby/numberScope';
-    import {copyProperties, resetForm} from 'utils';
+    import {copyProperties, resetForm, validateQueryStr} from 'utils';
     import {mapGetters} from 'vuex';
     import {getAllByNameOrbasicCode} from 'api/zwfwSystem/business/item';
 
@@ -393,6 +393,11 @@
                     basicCode: undefined
                 }
                 if (query !== '') {
+                    let valid = validateQueryStr(query);
+                    if (valid) {
+                        this.$message.error(`输入中包含非法字符 ${valid}`)
+                        return
+                    }
                     if (/.*[\u4e00-\u9fa5]+.*$/.test(query)) {
                         listQueryName.name = query;
                     } else {

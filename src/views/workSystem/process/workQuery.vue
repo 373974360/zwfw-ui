@@ -331,16 +331,14 @@
 </template>
 
 <script>
-    import {copyProperties, resetForm} from 'utils';
+    import {validateQueryStr} from 'utils';
     import {mapGetters} from 'vuex';
     import {
         getZwfwDeptWorkQueryList, getZwfwDeptWorkDetail
     } from 'api/workSystem/process/workQuery';
-    import Vue from 'vue';
     import {
         getAllCompany
     } from 'api/other/company';
-    import {getZwfwApiHost} from 'utils/fetch';
 
     export default {
         name: 'zwfwDeptWorkQuery_table',
@@ -442,19 +440,23 @@
                 this.getList();
             },
             queryCompanySearch(queryString) {
-
-                if(queryString.length<2) {
-                    return ;
+                let valid = validateQueryStr(queryString);
+                if (valid) {
+                    this.$message.error(`输入中包含非法字符 ${valid}`)
+                    return
+                }
+                if (queryString.length < 2) {
+                    return;
                 }
                 // 调用 callback 返回建议列表的数据
                 const query = {
                     name: queryString
                 };
                 getAllCompany(query).then(response => {
-                    if (response.httpCode == 200) {
-                        this.companyList = (response.data);
+                    if (response.httpCode === 200) {
+                        this.companyList = response.data;
                     } else {
-                        this.$message.error("查询失败");
+                        this.$message.error('查询失败');
                     }
                 });
             },

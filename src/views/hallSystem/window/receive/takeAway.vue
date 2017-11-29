@@ -116,7 +116,7 @@
     import {getFinishList, updateTake} from 'api/workSystem/process/itemProcess';
     import {getAllByNameOrbasicCode} from 'api/zwfwSystem/business/item';
     import {getAllCompany} from 'api/other/company';
-    import {copyProperties} from 'utils';
+    import {copyProperties, validateQueryStr} from 'utils';
     import {mapGetters} from 'vuex';
 
     export default {
@@ -190,6 +190,11 @@
             },
             remoteMethod(query) {
                 if (query !== '') {
+                    let valid = validateQueryStr(query);
+                    if (valid) {
+                        this.$message.error(`输入中包含非法字符 ${valid}`)
+                        return
+                    }
                     const listQueryName = {
                         name: query
                     }

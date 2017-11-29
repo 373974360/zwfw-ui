@@ -96,15 +96,6 @@
                     <el-input v-model="zwfwItem.name"></el-input>
                 </el-form-item>
                 <el-form-item label="所属部门" prop="departmentId">
-                    <!--<el-select v-model="zwfwItem.departmentId" placeholder="所属部门" style="width:100%">-->
-                    <!--<el-option-->
-                    <!--v-for="dept in deptList"-->
-                    <!--:key="dept.id"-->
-                    <!--:label="dept.name"-->
-                    <!--:value="dept.id">-->
-                    <!--</el-option>-->
-                    <!--</el-select>-->
-
                     <el-cascader
                             expand-trigger="hover" :show-all-levels="true"
                             :change-on-select="true"
@@ -112,7 +103,6 @@
                             v-model="cascaderModel"
                             @change="handleChange">
                     </el-cascader>
-
                 </el-form-item>
                 <el-form-item label="基本编码" prop="basicCode">
                     <el-input v-model="zwfwItem.basicCode"></el-input>
@@ -398,29 +388,29 @@
                       highlight-current-row
                       style="width: 100%" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55"/>
-                <el-table-column align="center" label="序号" width="150">
+                <el-table-column align="center" label="序号" width="200">
                     <template scope="scope">
                         <span>{{scope.row.id}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="name" align="left" label="材料名称" width="400">
+                <el-table-column prop="name" align="left" label="材料名称">
                     <template scope="scope">
                         <el-tooltip content="点击编辑" placement="right" effect="dark">
                             <span class="link-type" @click='handleUpdateClick(scope.row)'>{{scope.row.name}}</span>
                         </el-tooltip>
                     </template>
                 </el-table-column>
-                <el-table-column prop="type" align="center" label="材料类型" width="100">
+                <el-table-column prop="type" align="center" label="材料类型" width="200">
                     <template scope="scope">
                         <span>{{scope.row.type | dics('cllx')}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column v-once prop="source" align="center" label="来源渠道">
+                <el-table-column v-once prop="source" align="center" label="来源渠道" width="300">
                     <template scope="scope">
                         <span>{{scope.row.source | dics('sxsqclly')}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="electronicMaterial" align="center" label="是否需要电子材料">
+                <el-table-column prop="electronicMaterial" align="center" label="是否需要电子材料" width="200">
                     <template scope="scope">
                         <span>{{scope.row.electronicMaterial | enums('YesNo')}}</span>
                     </template>
@@ -466,54 +456,28 @@
                         <td>
                             <el-form-item label="是否需要电子材料:" :inline="true" prop="electronicMaterial"
                                           v-show="changeMaterialInfo">
-                                <span v-if="electronicMaterial!=null">{{zwfwItemMaterial.electronicMaterial | enums('YesNo')}}</span>
-                                <!--<el-switch-->
-                                <!--v-model="zwfwItemMaterial.electronicMaterial"-->
-                                <!--on-color="#13ce66"-->
-                                <!--off-color="#ff4949"-->
-                                <!--:on-value="true"-->
-                                <!--:off-value="false">-->
-                                <!--</el-switch>-->
+                                <span v-if="electronicMaterial != null">{{zwfwItemMaterial.electronicMaterial | enums('YesNo')}}</span>
                             </el-form-item>
                         </td>
                     </tr>
                 </table>
-
                 <el-form-item label="受理标准:" prop="acceptStandard" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.acceptStandard}}</span>
-                    <!--<el-input v-model="zwfwItemMaterial.acceptStandard"></el-input>-->
                 </el-form-item>
                 <el-form-item label="来源渠道:" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.source | dics('sxsqclly')}}</span>
-                    <!--<el-input v-model="zwfwItemMaterial.source"></el-input>-->
                 </el-form-item>
                 <el-form-item label="材料样本:" prop="example" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.example}}</span>
-                    <!--<el-upload name="uploadFile"  accept="fileAccepts"-->
-                    <!--:action="uploadAction" :file-list="uploadAvatarsExample"-->
-                    <!--:on-success="handleAvatarExampleSuccess"-->
-                    <!--:before-upload="beforeAvatarUpload"-->
-                    <!--:on-remove="handleRemoveExample">-->
-                    <!--<el-button size="small" type="primary">点击上传</el-button>-->
-                    <!--</el-upload>-->
                 </el-form-item>
                 <el-form-item label="电子表单:" prop="eform" v-show="changeMaterialInfo">
-                    <span>{{zwfwItemMaterial.eform == 1 ? '支持' : '不支持'}}</span>
-                    <!--<el-upload name="uploadFile"  accept="fileAccepts"-->
-                    <!--:action="uploadAction" :file-list="uploadAvatarsEform"-->
-                    <!--:on-success="handleAvatarEformSuccess"-->
-                    <!--:before-upload="beforeAvatarUpload"-->
-                    <!--:on-remove="handleRemoveEform">-->
-                    <!--<el-button size="small" type="primary">点击上传</el-button>-->
-                    <!--</el-upload>-->
+                    <span>{{zwfwItemMaterial.eform}}</span>
                 </el-form-item>
                 <el-form-item label="填报须知:" prop="notice" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.notice}}</span>
-                    <!--<el-input v-model="zwfwItemMaterial.notice"></el-input>-->
                 </el-form-item>
                 <el-form-item label="备注:" prop="remark" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.remark}}</span>
-                    <!--<el-input v-model="zwfwItemMaterial.remark"></el-input>-->
                 </el-form-item>
             </el-form>
             <div style="text-align: center" slot="footer" class="dialog-footer">
@@ -527,7 +491,7 @@
 </template>
 
 <script>
-    import {copyProperties, resetForm} from 'utils';
+    import {copyProperties, resetForm, validateQueryStr} from 'utils';
     import {mapGetters} from 'vuex';
     import {
         getZwfwItemList, createZwfwItem, updateZwfwItem, delZwfwItems,
@@ -764,7 +728,6 @@
                 }
             },
             queryUser(keywords) {
-//                console.log(keywords);
                 getAllUser({
                     name: keywords
                 }).then(response => {
@@ -826,18 +789,8 @@
                     this.listLoading1 = false;
                 })
             },
-            handleAvatarEformSuccess(res, file, fileList) {
-                fileList.length = 0;
-                fileList.push(file);
-                this.zwfwItemMaterial.eform = res.url;
-            },
             handleRemoveEform() {
                 this.zwfwItemMaterial.eform = '';
-            },
-            handleAvatarExampleSuccess(res, file, fileList) {
-                fileList.length = 0;
-                fileList.push(file);
-                this.zwfwItemMaterial.example = res.url;
             },
             handleRemoveExample() {
                 this.zwfwItemMaterial.example = '';
@@ -859,6 +812,11 @@
             },
             remoteMethod(query) {
                 if (query !== '') {
+                    let valid = validateQueryStr(query);
+                    if (valid) {
+                        this.$message.error(`输入中包含非法字符 ${valid}`)
+                        return
+                    }
                     const listQueryName = {
                         name: query
                     }
@@ -867,7 +825,7 @@
                         if (response.httpCode === 200) {
                             this.optionsName = response.data;
                         } else {
-                            console.log(reponse.msg || '材料查找失败');
+                            this.$message.error(response.msg || '材料查找失败');
                         }
                     })
                 } else {
