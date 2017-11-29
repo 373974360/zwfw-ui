@@ -50,7 +50,7 @@
             </el-table-column>
             <el-table-column align="center" label="民族" prop="nation">
                 <template scope="scope">
-                    <span>{{scope.row.nation}}</span>
+                    <span>{{scope.row.nation | dics('mz')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="联系电话" prop="phone">
@@ -102,7 +102,9 @@
                     <el-input v-model="zwfwNaturePerson.address"></el-input>
                 </el-form-item>
                 <el-form-item label="民族" prop="nation">
-                    <el-input v-model="zwfwNaturePerson.nation"></el-input>
+                    <el-select v-model="zwfwNaturePerson.nation" placeholder="请选择">
+                        <el-option v-for="item in dics['mz']" :key="item.code" :value="item.code" :label="item.value"></el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="联系电话" prop="phone">
                     <el-input v-model="zwfwNaturePerson.phone"></el-input>
@@ -245,7 +247,7 @@
                         {required: true, message: '请输入住址', trigger: 'blur'}
                     ],
                     nation: [
-                        {required: true, message: '请输入民族', trigger: 'blur'}
+                        {required: true, message: '请选择民族', trigger: 'blur'}
                     ],
                     phone: [
                         {required: true, message: '请输入联系电话', trigger: 'blur'},
@@ -270,7 +272,8 @@
             ...mapGetters([
                 'textMap',
                 'enums',
-                'closeOnClickModal'
+                'closeOnClickModal',
+                'dics'
             ])
         },
         methods: {
@@ -402,7 +405,7 @@
                 });
             },
             update() {
-                this.$refs['zwfwNaturePersonForm'].validate((valid) => {
+                this.$refs['zwfwNaturePersonForm'].validate(valid => {
                     if (valid) {
                         this.btnLoading = true;
                         updateZwfwNaturePerson(this.zwfwNaturePerson).then(response => {
