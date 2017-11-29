@@ -28,7 +28,9 @@ const app = {
         routeComplete: false,
         uploadUrl: '/api/common/upload',
         imageAccepts: 'image/jpg, image/jpeg, image/png, image/bmp, image/gif',
-        fileAccepts: 'image/jpg,image/jpeg,image/png,image/bmp,image/gif,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/pdf,text/plain,application/zip,application/rar'
+        fileAccepts: 'image/jpg,image/jpeg,image/png,image/bmp,image/gif,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/pdf,text/plain,application/zip,application/rar',
+        invalidStr: ['script', 'mid', 'master', 'truncate', 'insert', 'select', 'delete', 'update', 'declare', 'iframe', '\'', 'onreadystatechange', 'alert', 'atestu', 'xss', ';', '"', '<', '>', '\\', 'svg', 'confirm', 'prompt', 'onload', 'onmouseover', 'onfocus', 'onerror'],
+        invalidReg: /script|mid|master|truncate|insert|select|delete|update|declare|iframe|'|onreadystatechange|alert|atestu|xss|;|"|<|>|\\|svg|confirm|prompt|onload|onmouseover|onfocus|onerror/g
     },
     mutations: {
         TOGGLE_SIDEBAR: state => {
@@ -48,7 +50,7 @@ const app = {
         SET_DICTS: (state, dics) => {
             state.dics = dics;
         },
-        SET_SYSTEM:(state, currentSystem) =>{
+        SET_SYSTEM: (state, currentSystem) => {
             state.currentSystem = currentSystem;
         }
     },

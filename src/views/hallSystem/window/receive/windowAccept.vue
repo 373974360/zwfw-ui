@@ -3,31 +3,55 @@
         <el-col :span="8">
             <div class="grid-content ">
                 <div style="padding:10px">
+                    <!--<el-row type="flex" justify="center">-->
+                    <!--<el-input v-model="getNumberBy_pretrialNumber" placeholder="输入预审抽号">-->
+                    <!--<el-button slot="append" type="primary" @click="takeNumberByPretrialNumber">已预审抽号-->
+                    <!--</el-button>-->
+                    <!--</el-input>-->
+                    <!--</el-row>-->
+                    <!--<el-row type="flex" justify="center">-->
+                    <!--<el-input v-model="getNumberBy_itemCode" placeholder="输入事项编码">-->
+                    <!--<el-button slot="append" type="primary" @click="takeNumberByItemCode">未预审抽号</el-button>-->
+                    <!--</el-input>-->
+                    <!--</el-row>-->
+                    <!--<el-row type="flex" justify="center">-->
+                    <!--<el-input v-model="devMockWindowKey" placeholder="输入窗口key">-->
+                    <!--<el-button slot="append" type="primary" @click="loginToWindow">登录到窗口</el-button>-->
+                    <!--</el-input>-->
+                    <!--</el-row>-->
+                    <!--<el-row type="flex" justify="center">-->
+                    <!--<el-input v-model="getNumberBy_hallNumber" placeholder="输入呼叫号查看办理事项">-->
+                    <!--<el-button slot="append" @click="queryNumberByCallNumber">按呼叫号查询</el-button>-->
+                    <!--</el-input>-->
+                    <!--</el-row>-->
                     <el-row type="flex" justify="center">
-                        <el-input v-model="getNumberBy_pretrialNumber" placeholder="输入预审抽号">
-                            <el-button slot="append" type="primary" @click="takeNumberByPretrialNumber">已预审抽号
-                            </el-button>
-                        </el-input>
+                        <!--<el-input v-model="itemCode" placeholder="请输入事项编码"></el-input>-->
+                        <el-select
+                                v-model="selectedItem"
+                                filterable
+                                remote
+                                placeholder="请输入事项名称或基本编码"
+                                :remote-method="queryItem"
+                                @change="changeItem" style="width:100%">
+                            <el-option
+                                    v-for="item in optionsName"
+                                    :key="item.id"
+                                    :label="item.name"
+                                    :value="item.id">
+                            </el-option>
+                        </el-select>
                     </el-row>
                     <el-row type="flex" justify="center">
-                        <el-input v-model="getNumberBy_itemCode" placeholder="输入事项编码">
-                            <el-button slot="append" type="primary" @click="takeNumberByItemCode">未预审抽号</el-button>
-                        </el-input>
-                    </el-row>
-                    <el-row type="flex" justify="center">
-                        <el-input v-model="devMockWindowKey" placeholder="输入窗口key">
-                            <el-button slot="append" type="primary" @click="loginToWindow">登录到窗口</el-button>
-                        </el-input>
-                    </el-row>
-                    <el-row type="flex" justify="center">
-                        <el-input v-model="getNumberBy_hallNumber" placeholder="输入呼叫号查看办理事项">
-                            <el-button slot="append" @click="queryNumberByCallNumber">按呼叫号查询</el-button>
+                        <el-input v-model="memberCode" placeholder="输入企业统一信用代码或身份证号" @change="queryCompanyInfo">
+                            <el-button slot="append" @click="queryCompanyInfo">查询</el-button>
                         </el-input>
                     </el-row>
                     <el-button v-if="itemNumber == null || itemNumber.status==1" type="primary" @click="callNumber">
                         叫号
                     </el-button>
-                    <el-button type="primary" @click="queryCurrentNumber">查询当前业务</el-button>
+                    <!--<el-button type="primary" @click="queryCurrentNumber">查询当前业务</el-button>-->
+                    <el-button type="primary" @click="submitNoPretrial">处理收件</el-button>
+
                     <el-button v-if="itemNumber.status==2" type="primary"
                                v-bind:disabled="itemNumber.applyFinishTime!=null"
                                @click="welcomeNumber" title="仅限测试使用">
@@ -39,8 +63,61 @@
                         跳过
                     </el-button>
 
+                    <div id="companyInfo" v-if="companyInfo.id" class="tableDiv">
+                        <table>
+                            <tr>
+                                <th width="140">统一信用代码:</th>
+                                <td>{{companyInfo.ty_code}}</td>
+                            </tr>
+                            <tr>
+                                <th width="140">企业名称:</th>
+                                <td>{{companyInfo.qymc}}</td>
+                            </tr>
+                            <tr>
+                                <th width="140">法人:</th>
+                                <td>{{companyInfo.fr}}</td>
+                            </tr>
+                            <tr>
+                                <th width="140">联系电话:</th>
+                                <td>{{companyInfo.lxdh}}</td>
+                            </tr>
+                            <tr>
+                                <th width="140">企业类型:</th>
+                                <td>{{companyInfo.qllx}}</td>
+                            </tr>
+                            <tr>
+                                <th width="140">地址:</th>
+                                <td>{{companyInfo.jgzs}}</td>
+                            </tr>
+                            <tr>
+                                <th width="140">注册资金:</th>
+                                <td>{{companyInfo.zczj}}</td>
+                            </tr>
+                            <tr>
+                                <th width="140">成立日期:</th>
+                                <td>{{companyInfo.clrq}}</td>
+                            </tr>
+                            <tr>
+                                <th width="140">营业期限:</th>
+                                <td>{{companyInfo.yyqx}}</td>
+                            </tr>
+                            <tr>
+                                <th width="140">经营范围:</th>
+                                <td>{{companyInfo.jyfw}}</td>
+                            </tr>
+                            <tr>
+                                <th width="140">状态:</th>
+                                <td>{{companyInfo.djzt}}</td>
+                            </tr>
+                            <tr>
+                                <th width="140">所属街道:</th>
+                                <td>{{companyInfo.ssjd}}</td>
+                            </tr>
+                        </table>
+                    </div>
 
-                    <div id="numberInfo" v-show="itemNumber!=null">
+
+                    <div id="numberInfo" v-show="itemNumber.id" class="tableDiv">
                         <table>
                             <tr>
                                 <th width="140">呼叫号:</th>
@@ -162,13 +239,13 @@
                     <el-tabs v-model="tabName" type="card" @tab-click="handleTabClick">
                         <el-tab-pane label="所需资料" name="materialListPanel">
                             <el-table id="materiaTable"
-                                    ref="itemMaterialVoList"
-                                    :data="itemMaterialVoList"
-                                    height="400"
-                                    border
-                                    style="width: 100%"
+                                      ref="itemMaterialVoList"
+                                      :data="itemMaterialVoList"
+                                      height="400"
+                                      border
+                                      style="width: 100%"
 
-                                    @selection-change="handleMaterialSelectionChange"
+                                      @selection-change="handleMaterialSelectionChange"
                             >
                                 <el-table-column
                                         fixed
@@ -177,7 +254,7 @@
                                 </el-table-column>
                                 <el-table-column
                                         fixed
-                                        v-if="itemNumber.status==6"
+                                        v-if="itemNumber.status==6 || companyInfo.id"
                                         type="selection"
                                         prop="received"
                                         width="55">
@@ -312,9 +389,11 @@
                                         </td>
                                     </tr>
                                 </table>
-                                <h3>常见问题:</h3>
-                                <pre class="panel-warning"
-                                     style="white-space:pre-wrap">{{itemVo.commonRequestion}}</pre>
+                                <div v-if="itemVo.commonRequestion">
+                                    <h3>常见问题:</h3>
+                                    <pre class="panel-warning"
+                                         style="white-space:pre-wrap">{{itemVo.commonRequestion}}</pre>
+                                </div>
                             </div>
                         </el-tab-pane>
                         <el-tab-pane label="内部办理流程描述" name="itemStep">
@@ -347,8 +426,12 @@
         loginToWindow,
         callNumber,
         welcomeNumber,
-        submitWork
-    } from 'api/hallSystem/window/receive/windowAccept'
+        submitWork,
+        queryCompanyInfo,
+        getItemInfo,
+        submitNoPretrial
+    } from 'api/hallSystem/window/receive/windowAccept';
+    import {getAllByNameOrbasicCode} from 'api/zwfwSystem/business/item';
 
 
     export default {
@@ -373,8 +456,39 @@
                 window: {},
                 itemWindowUserName: '',
                 testStatus: '1',
-                devMockWindowKey: ''
-
+                devMockWindowKey: '',
+                itemCode: '',
+                memberCode: '91610104MA6U0WNB9B',
+                companyInfo: {
+                    id: '',
+                    node_id: '',
+                    ty_code: '',
+                    zz_code: '',
+                    gs_code: '',
+                    qymc: '',
+                    fr: '',
+                    lxr: '',
+                    lxdh: '',
+                    qllx: '',
+                    jgzs: '',
+                    zczj: '',
+                    clrq: '',
+                    yyqx: '',
+                    jyfw: '',
+                    djjg: '',
+                    hzrq: '',
+                    djzt: '',
+                    bak: '',
+                    add_type: '',
+                    add_time: '',
+                    add_user: '',
+                    up_time: '',
+                    up_user: '',
+                    ssjd: '',
+                    vtype: ''
+                },
+                optionsName: [],
+                selectedItem: {}
             }
         },
 //        beforeRouteEnter(to, from, next) {
@@ -383,6 +497,85 @@
 //            })
 //        },
         methods: {
+
+            /**
+             *
+             * 提交非预审收件
+             * */
+            submitNoPretrial() {
+                let checked_m = this.materialSelection.map(function (m) {
+                    return m.id;
+                });
+                submitNoPretrial({
+                    itemId: this.selectedItem,
+                    memberCode: this.memberCode,
+                    received:checked_m.join(',')
+                }).then(response => {
+                    console.log(response);
+                    if (response.httpCode === 200) {
+                        this.$message.success("提交成功");
+                    } else {
+                        this.$message.error("提交出错 ，" + response.msg);
+                    }
+                });
+            },
+            /**
+             * 查询企业信息
+             */
+            queryCompanyInfo() {
+                if (this.memberCode == '' || this.memberCode.length != 18) {
+                    this.companyInfo = {};
+                    return;
+                }
+                queryCompanyInfo({
+                    memberCode: this.memberCode
+                }).then(response => {
+                    if (response.httpCode === 200) {
+                        this.companyInfo = response.data;
+                    } else {
+                        this.companyInfo = {};
+                    }
+//                    console.log(response);
+                })
+            },
+
+            queryItem(query) {
+                const listQueryName = {
+                    name: undefined,
+                    basicCode: undefined
+                }
+                if (query !== '') {
+                    if (/.*[\u4e00-\u9fa5]+.*$/.test(query)) {
+                        listQueryName.name = query;
+                    } else {
+                        listQueryName.basicCode = query
+                    }
+                    getAllByNameOrbasicCode(listQueryName).then(response => {
+                        if (response.httpCode === 200) {
+                            this.optionsName = response.data;
+                        } else {
+                            this.$message.error('数据加载失败')
+                        }
+                    })
+                } else {
+                    this.optionsName = [];
+                }
+            },
+            changeItem(itemId) {
+//                console.log(itemId);
+                var _this = this;
+                getItemInfo({
+                    id: itemId
+                }).then(response => {
+                    if (response.httpCode === 200) {
+                        let data = response.data;
+                        _this.itemVo = data.itemVo;
+                        _this.itemMaterialVoList = data.itemMaterialVoList;
+                    } else {
+                        this.$message.error("网络超时");
+                    }
+                });
+            },
             /**
              * 模拟当前用户登录到窗口
              */
@@ -415,7 +608,7 @@
                         _this.$message.error(response.msg);
                     }
 
-                }).catch(e =>{
+                }).catch(e => {
                     console.log(e);
                 });
             },
@@ -746,12 +939,12 @@
 </script>
 
 <style>
-    #numberInfo table {
+    .tableDiv table {
         width: 100%;
         margin-top: 20px;
     }
 
-    #numberInfo table th, #numberInfo table td {
+    .tableDiv table th, .tableDiv table td {
         height: 30px;
         line-height: 30px;
         border: 1px solid #bfcbd9;
@@ -759,7 +952,7 @@
         font-weight: normal;
     }
 
-    #numberInfo table th {
+    .tableDiv table th {
         text-align: center;
         background-color: #eef1f6;
         font-size: 14px;
@@ -776,7 +969,8 @@
         padding: 6px;
         font-size: 14px;
     }
-    #itemInfo table td{
+
+    #itemInfo table td {
         text-indent: 2em;
     }
 
@@ -785,12 +979,15 @@
         background-color: #eef1f6;
         font-weight: normal;
     }
-    #materiaTable th{
+
+    #materiaTable th {
         font-weight: normal;
     }
-    #materiaTable th div{
+
+    #materiaTable th div {
         text-align: center;
     }
+
     #itemStepInfo table {
         width: 100%;
         margin-top: 20px;

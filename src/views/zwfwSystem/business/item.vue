@@ -457,54 +457,28 @@
                         <td>
                             <el-form-item label="是否需要电子材料:" :inline="true" prop="electronicMaterial"
                                           v-show="changeMaterialInfo">
-                                <span v-if="electronicMaterial!=null">{{zwfwItemMaterial.electronicMaterial | enums('YesNo')}}</span>
-                                <!--<el-switch-->
-                                <!--v-model="zwfwItemMaterial.electronicMaterial"-->
-                                <!--on-color="#13ce66"-->
-                                <!--off-color="#ff4949"-->
-                                <!--:on-value="true"-->
-                                <!--:off-value="false">-->
-                                <!--</el-switch>-->
+                                <span v-if="electronicMaterial != null">{{zwfwItemMaterial.electronicMaterial | enums('YesNo')}}</span>
                             </el-form-item>
                         </td>
                     </tr>
                 </table>
-
                 <el-form-item label="受理标准:" prop="acceptStandard" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.acceptStandard}}</span>
-                    <!--<el-input v-model="zwfwItemMaterial.acceptStandard"></el-input>-->
                 </el-form-item>
                 <el-form-item label="来源渠道:" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.source | dics('sxsqclly')}}</span>
-                    <!--<el-input v-model="zwfwItemMaterial.source"></el-input>-->
                 </el-form-item>
                 <el-form-item label="材料样本:" prop="example" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.example}}</span>
-                    <!--<el-upload name="uploadFile"  accept="uploadAccepts"-->
-                    <!--:action="uploadAction" :file-list="uploadAvatarsExample"-->
-                    <!--:on-success="handleAvatarExampleSuccess"-->
-                    <!--:before-upload="beforeAvatarUpload"-->
-                    <!--:on-remove="handleRemoveExample">-->
-                    <!--<el-button size="small" type="primary">点击上传</el-button>-->
-                    <!--</el-upload>-->
                 </el-form-item>
                 <el-form-item label="电子表单:" prop="eform" v-show="changeMaterialInfo">
-                    <span>{{zwfwItemMaterial.eform == 1 ? '支持' : '不支持'}}</span>
-                    <!--<el-upload name="uploadFile"  accept="uploadAccepts"-->
-                    <!--:action="uploadAction" :file-list="uploadAvatarsEform"-->
-                    <!--:on-success="handleAvatarEformSuccess"-->
-                    <!--:before-upload="beforeAvatarUpload"-->
-                    <!--:on-remove="handleRemoveEform">-->
-                    <!--<el-button size="small" type="primary">点击上传</el-button>-->
-                    <!--</el-upload>-->
+                    <span>{{zwfwItemMaterial.eform}}</span>
                 </el-form-item>
                 <el-form-item label="填报须知:" prop="notice" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.notice}}</span>
-                    <!--<el-input v-model="zwfwItemMaterial.notice"></el-input>-->
                 </el-form-item>
                 <el-form-item label="备注:" prop="remark" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.remark}}</span>
-                    <!--<el-input v-model="zwfwItemMaterial.remark"></el-input>-->
                 </el-form-item>
             </el-form>
             <div style="text-align: center" slot="footer" class="dialog-footer">
@@ -518,7 +492,7 @@
 </template>
 
 <script>
-    import {copyProperties, resetForm} from 'utils';
+    import {copyProperties, resetForm, validateQueryStr} from 'utils';
     import {mapGetters} from 'vuex';
     import {
         getZwfwItemList, createZwfwItem, updateZwfwItem, delZwfwItems,
@@ -634,7 +608,8 @@
                 dialogStatus: '',
                 dialogLoading: false,
                 uploadAction: this.$store.state.app.uploadUrl,
-                uploadAccepts: this.$store.state.app.fileAccepts,
+                fileAccepts: this.$store.state.app.fileAccepts,
+                imageAccepts: this.$store.state.app.imageAccepts,
                 uploadAvatarsExample: [],
                 uploadAvatarsEform: [],
                 uploadAvatarsResult: [],
@@ -950,20 +925,18 @@
                     this.uploadAvatarsResult = [];
                     this.uploadAvatarsResult.push({url: this.zwfwItem.resultExample, name: '结果样本'});
                 }
-                this.acceptConditionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.acceptCondition));
-                this.chargeBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeBasis));
-                this.workflowDescriptionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.workflowDescription));
+                this.decodeEditorHtml();
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
-                //查询事项绑定的预审用户
+                // 查询事项绑定的预审用户
                 getPretrialUserListByItemId(this.zwfwItem.id).then(response => {
                     if (response.httpCode === 200) {
                         this.allUserList = response.data;
-                        this.zwfwItem.pretrialUserIdsArray = response.data.map(function (o) {
+                        this.zwfwItem.pretrialUserIdsArray = response.data.map(function(o) {
                             return o.id;
                         });
                     } else {
-                        this.$message.error("查询预审用户失败");
+                        this.$message.error('查询预审用户失败');
                     }
                 });
             },
@@ -983,7 +956,7 @@
                             ids.push(deleteRow.id);
                         }
                         delZwfwItems(ids.join()).then(response => {
-                            if (response.httpCode == 200) {
+                            if (response.httpCode === 200) {
                                 this.total -= selectCounts;
                                 for (const deleteRow of this.selectedRows) {
                                     const index = this.zwfwItemList.indexOf(deleteRow);
@@ -996,7 +969,7 @@
                             this.listLoading = false;
                         })
                     }).catch(() => {
-                        console.dir("取消");
+                        console.dir('取消');
                     });
                 }
             },
@@ -1028,19 +1001,17 @@
                             this.dialogFormVisible1 = false;
                         })
                     }).catch(() => {
-                        console.dir("取消");
+                        console.dir('取消');
                     });
                 }
             },
             create() {
-                this.$refs['zwfwItemForm'].validate((valid) => {
+                this.$refs['zwfwItemForm'].validate(valid => {
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIdsArray.join(',');
-                        this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(this.acceptConditionHtml));
-                        this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(this.chargeBasisHtml));
-                        this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(this.workflowDescriptionHtml));
+                        this.encodeEditorHtml();
                         createZwfwItem(this.zwfwItem).then(response => {
                             if (response.httpCode === 200) {
                                 this.zwfwItemList.unshift(response.data);
@@ -1058,7 +1029,7 @@
                 });
             },
             createMaterial() {
-                this.$refs['zwfwMaterialForm'].validate((valid) => {
+                this.$refs['zwfwMaterialForm'].validate(valid => {
                     if (valid) {
                         if (this.changeMaterialName != true) {
                             for (let obj of this.zwfwItemMaterialList) {
@@ -1073,8 +1044,7 @@
                             const query = {
                                 itemId: this.itemId,
                                 materialId: this.zwfwItemMaterial.id,
-                                paperDescription: this.zwfwItemMaterial.paperDescription,
-
+                                paperDescription: this.zwfwItemMaterial.paperDescription
                             }
                             this.listLoading1 = true;
                             createZwfwItemMaterial(query).then(response => {
@@ -1089,7 +1059,6 @@
                                     this.$message.error('添加失败');
                                 }
                                 this.listLoading1 = false;
-
                             })
                         } else {
                             const zwfwMaterialList = {
@@ -1108,7 +1077,7 @@
                             this.listLoading1 = true;
                             updateZwfwMaterial(zwfwMaterialList).then(response => {
                                 this.listLoading1 = false;
-                                if (response.httpCode == 200) {
+                                if (response.httpCode === 200) {
                                     copyProperties(this.currentRow, response.data);
                                     this.$message.success('更新成功');
                                     this.dialogFormVisible1 = true;
@@ -1116,7 +1085,7 @@
                                     this.uploadAvatarsEform = [];
                                     this.resetZwfwMaterialForm();
                                 } else {
-                                    this.$message.error("修改失败");
+                                    this.$message.error('修改失败');
                                 }
                             })
                         }
@@ -1126,16 +1095,14 @@
                 });
             },
             update() {
-                this.$refs['zwfwItemForm'].validate((valid) => {
+                this.$refs['zwfwItemForm'].validate(valid => {
                     if (valid) {
                         this.listLoading = true;
                         this.dialogFormVisible = false;
                         this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIdsArray.join(',');
-                        this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(this.acceptConditionHtml));
-                        this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(this.chargeBasisHtml));
-                        this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(this.workflowDescriptionHtml));
+                        this.encodeEditorHtml();
                         updateZwfwItem(this.zwfwItem).then(response => {
-                            if (response.httpCode == 200) {
+                            if (response.httpCode === 200) {
                                 this.getList();
                                 this.$message.success('更新成功');
                             } else {

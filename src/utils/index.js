@@ -1,6 +1,7 @@
 /**
  * Created by jiachenpan on 16/11/18.
  */
+import app from 'store/modules/app';
 
 export function parseTime(time, cFormat) {
     if (arguments.length === 0) {
@@ -243,4 +244,15 @@ export function mergeTree(list, data, isAppend) {
 
 export function resetForm(el, form) {
     el.$refs[form].resetFields();
+}
+
+export function validateQueryStr(str) {
+    if (str) {
+        for (let reg of app.state.invalidStr) {
+            if (str.indexOf(reg) > -1) {
+                return reg;
+            }
+        }
+    }
+    return '';
 }
