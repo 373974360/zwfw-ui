@@ -339,12 +339,6 @@
                     this.listLoading = false;
                 })
             },
-
-            /**
-             *
-             * 后台返回响应就会触发
-             *
-             */
             handleAvatarSuccess(res, file, fileList) {
                 if (res.state === 'SUCCESS') {
                     this.imageUrl = URL.createObjectURL(file.raw);
@@ -354,12 +348,6 @@
                     this.$message.error('上传失败！');
                 }
             },
-            /**
-             * 网络无法联通时会触发，其他的场景没有进入
-             * @param err
-             * @param file
-             * @param fileList
-             */
             handlerAvatarError(err, file, fileList) {
                 console.log(err);
                 this.$message.error("网络不稳定，上传失败");

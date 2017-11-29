@@ -87,11 +87,11 @@
             </el-pagination>
         </div>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible"
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" @open="initEditor"
                    :close-on-click-modal="closeOnClickModal" :before-close="resetZwfwItemForm">
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem" label-position="right"
                      label-width="134px"
-                     style='width: 80%; ' v-loading="dialogLoading" :rules="zwfwItemRules">
+                     style="width: 80%; margin-left: 10%" v-loading="dialogLoading" :rules="zwfwItemRules">
                 <el-form-item label="事项名称" prop="name">
                     <el-input v-model="zwfwItem.name"></el-input>
                 </el-form-item>
@@ -121,7 +121,7 @@
                     <el-input v-model="zwfwItem.implCode"></el-input>
                 </el-form-item>
                 <el-form-item label="设定依据" prop="setBasis">
-                    <el-input v-model="zwfwItem.setBasis" type="textarea"></el-input>
+                    <el-input v-model="zwfwItem.setBasis" type="textarea" :rows="3"></el-input>
                 </el-form-item>
                 <table>
                     <tr>
@@ -193,7 +193,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="结果样本" prop="resultExample">
-                    <el-upload name="uploadFile" :accept="uploadAccepts"
+                    <el-upload name="uploadFile" :accept="fileAccepts"
                                ref="upload"
                                :action="uploadAction" :file-list="uploadAvatarsResult"
                                :on-success="handleAvatarResultSuccess"
@@ -252,9 +252,6 @@
                 <el-form-item label="咨询电话" prop="askPhone">
                     <el-input v-model="zwfwItem.askPhone"></el-input>
                 </el-form-item>
-                <el-form-item label="收费标准" prop="chargeStandard">
-                    <el-input v-model="zwfwItem.chargeStandard" type="textarea"></el-input>
-                </el-form-item>
                 <el-form-item label="办件类型" prop="processType">
                     <el-radio-group v-model="zwfwItem.processType">
                         <el-radio v-for="item in dics['bjlx']"
@@ -289,67 +286,46 @@
                 </el-form-item>
                 <el-form-item label="受理条件" prop="acceptCondition">
                     <!--<el-input v-model="zwfwItem.acceptCondition" type="textarea"></el-input>-->
-                    <quill-editor v-model="acceptConditionHtml"
-                                  :options="quillEditorOption"
-                                  @focus="onEditorFocus($event)"
-                                  @ready="onEditorReady($event)" >
-
+                    <quill-editor ref="conditionEditor" v-model="acceptConditionHtml"
+                                  :options="quillEditorOption" @focus="onEditorFocus($event)" >
                     </quill-editor>
-                    <!-- 文件上传input 将它隐藏-->
-                    <el-upload class="avatar-uploader" name="uploadFile"
-                               :action="uploadAction"
-                               :on-success="handleAvatarSuccess"
-                               :on-error="handlerAvatarError"
-                               :show-file-list="false">
-                        <button type="button" @click="customButtonClick">img</button>
+                    <el-upload name="uploadFile" v-show="false" :show-file-list="false"
+                               :action="uploadAction" :accept="imageAccepts"
+                               :on-success="handleAvatarSuccess" :on-error="handlerAvatarError">
+                        <el-button id="condition_btn"></el-button>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="内部流程描述" prop="workflowDescription">
                     <!--<el-input v-model="zwfwItem.workflowDescription" type="textarea"></el-input>-->
-                    <quill-editor v-model="workflowDescriptionHtml"
-                                  :options="quillEditorOption"
-                                  @focus="onEditorFocus($event)"
-                                  @ready="onEditorReady($event)">
+                    <quill-editor ref="workflowEditor" v-model="workflowDescriptionHtml"
+                                  :options="quillEditorOption" @focus="onEditorFocus($event)">
                     </quill-editor>
-                    <!-- 文件上传input 将它隐藏-->
-                    <el-upload class="avatar-uploader" name="uploadFile"
-                               :action="uploadAction"
-                               :on-success="handleAvatarSuccess"
-                               :on-error="handlerAvatarError"
-                               :show-file-list="false">
-                        <button type="button" @click="customButtonClick">img</button>
+                    <el-upload name="uploadFile" v-show="false" :show-file-list="false"
+                               :action="uploadAction" :accept="imageAccepts"
+                               :on-success="handleAvatarSuccess" :on-error="handlerAvatarError">
+                        <el-button id="workflow_btn"></el-button>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="收费标准" prop="chargeStandard">
                     <!--<el-input v-model="zwfwItem.chargeStandard" type="textarea"></el-input>-->
-                    <quill-editor v-model="chargeStandardHtml"
-                                  :options="quillEditorOption"
-                                  @focus="onEditorFocus($event)"
-                                  @ready="onEditorReady($event)">
+                    <quill-editor ref="standardEditor" v-model="chargeStandardHtml"
+                                  :options="quillEditorOption" @focus="onEditorFocus($event)">
                     </quill-editor>
-                    <!-- 文件上传input 将它隐藏-->
-                    <el-upload class="avatar-uploader" name="uploadFile"
-                               :action="uploadAction"
-                               :on-success="handleAvatarSuccess"
-                               :on-error="handlerAvatarError"
-                               :show-file-list="false">
-                        <button type="button" @click="customButtonClick">img</button>
+                    <el-upload name="uploadFile" v-show="false" :show-file-list="false"
+                               :action="uploadAction" :accept="imageAccepts"
+                               :on-success="handleAvatarSuccess" :on-error="handlerAvatarError">
+                        <el-button id="standard_btn"></el-button>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="收费依据" prop="chargeBasis">
                     <!--<el-input v-model="zwfwItem.chargeBasis" type="textarea"></el-input>-->
-                    <quill-editor v-model="chargeBasisHtml"
-                                  :options="quillEditorOption"
-                                  @focus="onEditorFocus($event)"
-                                  @ready="onEditorReady($event)">
+                    <quill-editor ref="basisEditor" v-model="chargeBasisHtml"
+                                  :options="quillEditorOption" @focus="onEditorFocus($event)">
                     </quill-editor>
-                    <!-- 文件上传input 将它隐藏-->
-                    <el-upload class="avatar-uploader" name="uploadFile"
-                               :action="uploadAction"
-                               :on-success="handleAvatarSuccess"
-                               :on-error="handlerAvatarError"
-                               :show-file-list="false">
-                        <button type="button" @click="customButtonClick">img</button>
+                    <el-upload name="uploadFile" v-show="false" :show-file-list="false"
+                               :action="uploadAction" :accept="imageAccepts"
+                               :on-success="handleAvatarSuccess" :on-error="handlerAvatarError">
+                        <el-button id="basis_btn"></el-button>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="权限划分" prop="authorityDivision">
@@ -513,7 +489,7 @@
                 </el-form-item>
                 <el-form-item label="材料样本:" prop="example" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.example}}</span>
-                    <!--<el-upload name="uploadFile"  accept="uploadAccepts"-->
+                    <!--<el-upload name="uploadFile"  accept="fileAccepts"-->
                     <!--:action="uploadAction" :file-list="uploadAvatarsExample"-->
                     <!--:on-success="handleAvatarExampleSuccess"-->
                     <!--:before-upload="beforeAvatarUpload"-->
@@ -523,7 +499,7 @@
                 </el-form-item>
                 <el-form-item label="电子表单:" prop="eform" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.eform == 1 ? '支持' : '不支持'}}</span>
-                    <!--<el-upload name="uploadFile"  accept="uploadAccepts"-->
+                    <!--<el-upload name="uploadFile"  accept="fileAccepts"-->
                     <!--:action="uploadAction" :file-list="uploadAvatarsEform"-->
                     <!--:on-success="handleAvatarEformSuccess"-->
                     <!--:before-upload="beforeAvatarUpload"-->
@@ -555,8 +531,7 @@
     import {mapGetters} from 'vuex';
     import {
         getZwfwItemList, createZwfwItem, updateZwfwItem, delZwfwItems,
-        getPretrialUserListByItemId,
-        updatePretrialUserList
+        getPretrialUserListByItemId
     } from 'api/zwfwSystem/business/item';
     import {
         createZwfwItemMaterial,
@@ -567,14 +542,10 @@
     import {getAllUser} from 'api/baseSystem/org/user';
     import {getDeptCascader} from 'api/baseSystem/org/dept';
     import { quillEditor } from 'vue-quill-editor'
-    import ElInput from "../../../../node_modules/element-ui/packages/input/src/input.vue";
-
-
 
     export default {
         name: 'zwfwItem_table',
         components: {
-            ElInput,
             quillEditor
         },
         data() {
@@ -670,7 +641,8 @@
                 dialogStatus: '',
                 dialogLoading: false,
                 uploadAction: this.$store.state.app.uploadUrl,
-                uploadAccepts: this.$store.state.app.fileAccepts,
+                fileAccepts: this.$store.state.app.fileAccepts,
+                imageAccepts: this.$store.state.app.imageAccepts,
                 uploadAvatarsExample: [],
                 uploadAvatarsEform: [],
                 uploadAvatarsResult: [],
@@ -706,14 +678,15 @@
                 },
                 allUserList: [],
                 deptTree: [],
-                acceptConditionEditorOption: {
+                quillEditorOption: {
                     modules: {
                         toolbar: [
                             [{ header: [] }],
-                            ['bold', 'italic', 'underline', 'link'],
+                            ['bold', 'italic', 'underline'],
                             [{ color: [] }, { background: [] }],
                             [{ list: 'ordered' }, { list: 'bullet' }],
-                            ['clean']
+                            ['clean'],
+                            ['link', 'image']
                         ]
                     },
                     theme: 'snow'
@@ -722,15 +695,13 @@
                 workflowDescriptionHtml: '',
                 chargeStandardHtml: '',
                 chargeBasisHtml: '',
-                length: '',
-                editor: {},
-                uploadType: ''
+                editor: {}
             }
         },
 
         created() {
             this.getList();
-            //用于加载根据部门分组的用户列表，用来在设置预审用户时使用
+            // 用于加载根据部门分组的用户列表，用来在设置预审用户时使用
             this.allUserList = [];
             this.deptTree = [];
             getDeptCascader().then(response => {
@@ -740,16 +711,11 @@
                     console.log('加载部门信息失败');
                 }
             });
-
-        },
-        mounted() {
-
         },
         computed: {
             cascaderModel() {
                 if (this.zwfwItem.departmentId) {
-                    //找到对应的部门
-//                    console.log(this.zwfwItem.departmentTreePosition);
+                    // 找到对应的部门
                     if (this.zwfwItem.departmentTreePosition) {
                         const arr = this.zwfwItem.departmentTreePosition.split('&');
                         return arr
@@ -762,12 +728,41 @@
                 'enums',
                 'dics',
                 'closeOnClickModal'
-            ]),
-            editor() {
-                return this.$refs.zwfwItem.quill
-            }
+            ])
         },
         methods: {
+            initEditor() {
+                this.$nextTick(() => {
+                    this.$refs.conditionEditor.quill.getModule('toolbar').addHandler('image', this.imgHandlerCondition);
+                    this.$refs.workflowEditor.quill.getModule('toolbar').addHandler('image', this.imgHandlerWorkflow);
+                    this.$refs.standardEditor.quill.getModule('toolbar').addHandler('image', this.imgHandlerStandard);
+                    this.$refs.basisEditor.quill.getModule('toolbar').addHandler('image', this.imgHandlerBasis);
+                })
+            },
+            imgHandlerCondition(image) {
+                if (image) {
+                    let fileUploader = document.getElementById('condition_btn');
+                    fileUploader.click()
+                }
+            },
+            imgHandlerWorkflow(image) {
+                if (image) {
+                    let fileUploader = document.getElementById('workflow_btn');
+                    fileUploader.click()
+                }
+            },
+            imgHandlerStandard(image) {
+                if (image) {
+                    let fileUploader = document.getElementById('standard_btn');
+                    fileUploader.click()
+                }
+            },
+            imgHandlerBasis(image) {
+                if (image) {
+                    let fileUploader = document.getElementById('basis_btn');
+                    fileUploader.click()
+                }
+            },
             queryUser(keywords) {
 //                console.log(keywords);
                 getAllUser({
@@ -776,12 +771,11 @@
                     if (response.httpCode === 200) {
                         this.allUserList = response.data;
                     } else {
-                        this.$message.error("加载用户列表失败");
+                        this.$message.error('加载用户列表失败');
                     }
                 });
             },
             handleChange(value) {
-//                console.log(value);
                 if (value.length > 0) {
                     this.zwfwItem.departmentId = parseInt(value[value.length - 1]);
                     this.zwfwItem.departmentTreePosition = value.join('&');
@@ -941,15 +935,15 @@
                 this.decodeEditorHtml();
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
-                //查询事项绑定的预审用户
+                // 查询事项绑定的预审用户
                 getPretrialUserListByItemId(this.zwfwItem.id).then(response => {
                     if (response.httpCode === 200) {
                         this.allUserList = response.data;
-                        this.zwfwItem.pretrialUserIdsArray = response.data.map(function (o) {
+                        this.zwfwItem.pretrialUserIdsArray = response.data.map(function(o) {
                             return o.id;
                         });
                     } else {
-                        this.$message.error("查询预审用户失败");
+                        this.$message.error('查询预审用户失败');
                     }
                 });
             },
@@ -969,7 +963,7 @@
                             ids.push(deleteRow.id);
                         }
                         delZwfwItems(ids.join()).then(response => {
-                            if (response.httpCode == 200) {
+                            if (response.httpCode === 200) {
                                 this.total -= selectCounts;
                                 for (const deleteRow of this.selectedRows) {
                                     const index = this.zwfwItemList.indexOf(deleteRow);
@@ -982,7 +976,7 @@
                             this.listLoading = false;
                         })
                     }).catch(() => {
-                        console.dir("取消");
+                        console.dir('取消');
                     });
                 }
             },
@@ -1014,12 +1008,12 @@
                             this.dialogFormVisible1 = false;
                         })
                     }).catch(() => {
-                        console.dir("取消");
+                        console.dir('取消');
                     });
                 }
             },
             create() {
-                this.$refs['zwfwItemForm'].validate((valid) => {
+                this.$refs['zwfwItemForm'].validate(valid => {
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
@@ -1042,7 +1036,7 @@
                 });
             },
             createMaterial() {
-                this.$refs['zwfwMaterialForm'].validate((valid) => {
+                this.$refs['zwfwMaterialForm'].validate(valid => {
                     if (valid) {
                         if (this.changeMaterialName != true) {
                             for (let obj of this.zwfwItemMaterialList) {
@@ -1057,8 +1051,7 @@
                             const query = {
                                 itemId: this.itemId,
                                 materialId: this.zwfwItemMaterial.id,
-                                paperDescription: this.zwfwItemMaterial.paperDescription,
-
+                                paperDescription: this.zwfwItemMaterial.paperDescription
                             }
                             this.listLoading1 = true;
                             createZwfwItemMaterial(query).then(response => {
@@ -1073,7 +1066,6 @@
                                     this.$message.error('添加失败');
                                 }
                                 this.listLoading1 = false;
-
                             })
                         } else {
                             const zwfwMaterialList = {
@@ -1092,7 +1084,7 @@
                             this.listLoading1 = true;
                             updateZwfwMaterial(zwfwMaterialList).then(response => {
                                 this.listLoading1 = false;
-                                if (response.httpCode == 200) {
+                                if (response.httpCode === 200) {
                                     copyProperties(this.currentRow, response.data);
                                     this.$message.success('更新成功');
                                     this.dialogFormVisible1 = true;
@@ -1100,7 +1092,7 @@
                                     this.uploadAvatarsEform = [];
                                     this.resetZwfwMaterialForm();
                                 } else {
-                                    this.$message.error("修改失败");
+                                    this.$message.error('修改失败');
                                 }
                             })
                         }
@@ -1110,14 +1102,14 @@
                 });
             },
             update() {
-                this.$refs['zwfwItemForm'].validate((valid) => {
+                this.$refs['zwfwItemForm'].validate(valid => {
                     if (valid) {
                         this.listLoading = true;
                         this.dialogFormVisible = false;
                         this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIdsArray.join(',');
                         this.encodeEditorHtml();
                         updateZwfwItem(this.zwfwItem).then(response => {
-                            if (response.httpCode == 200) {
+                            if (response.httpCode === 200) {
                                 this.getList();
                                 this.$message.success('更新成功');
                             } else {
@@ -1193,9 +1185,10 @@
                     pretrialUserIdsArray: [],
                     departmentTreePosition: ''
                 };
-                this.acceptCondition = '';
-                this.chargeBasis = '';
-                this.workflowDescription = '';
+                this.acceptConditionHtml = '';
+                this.workflowDescriptionHtml = '';
+                this.chargeStandardHtml = '';
+                this.chargeBasisHtml = ''
             },
             resetZwfwItemForm() {
                 this.dialogFormVisible = false;
@@ -1224,46 +1217,16 @@
                 this.chargeBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeBasis));
             },
             onEditorFocus(editor) {
-                this.editor = editor   //当content获取到焦点的时候就 存储editor
+                this.editor = editor
             },
-            onEditorReady(editor) {
-                this.editor = editor //当quill实例化完先 存储editor
-            },
-            customButtonClick() {
-                let range
-                if (this.editor.getSelection() != null) {
-                    range = this.editor.getSelection()
-                    this.length = range.index  //content获取到焦点，计算光标所在位置，目的为了在该位置插入img
-                } else {
-                    this.length = this.content.length  //content没有获取到焦点时候 目的是为了在content末尾插入img
-                }
-                this.$el.querySelector('.custom-input').click();   //打开file 选择图片
-            },
-
-
-            /**
-             *
-             * 后台返回响应就会触发
-             *
-             */
             handleAvatarSuccess(res, file, fileList) {
                 if (res.state === 'SUCCESS') {
-                    let self = this
-                    self.contentImg = res.url;
-                    this.$message.success('上传成功！');
-                    let range = self.editor.getSelection(true);
-                    let length = range.index
-                    self.editor.insertEmbed(length, 'image', self.contentImg); // ★这里才是重点★ 插入到content中
+                    let length = this.editor.getSelection(true).index;
+                    this.editor.insertEmbed(length, 'image', res.url);
                 } else {
                     this.$message.error('上传失败！');
                 }
             },
-            /**
-             * 网络无法联通时会触发，其他的场景没有进入
-             * @param err
-             * @param file
-             * @param fileList
-             */
             handlerAvatarError(err, file, fileList) {
                 this.$message.error('网络不稳定，上传失败');
             }
@@ -1276,8 +1239,11 @@
         text-align: center;
     }
     .quill-editor {
-        height: 234px;
+        height: 218px;
         margin-bottom: 8px;
+        .ql-toolbar {
+            line-height: 24px;
+        }
         .ql-container {
             height: 180px;
         }
