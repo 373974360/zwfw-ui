@@ -94,6 +94,8 @@ const WorkSystem = () => import('../views/workSystem/index');
 const WorkPending = () => import('../views/workSystem/process/workPending');
 /* 待办事项 */
 const WorkQuery = () => import('../views/workSystem/process/workQuery');
+/* 办结查询 */
+const WorkFinish = () => import('../views/workSystem/process/WorkFinish');
 /* 办件查询 */
 const WorkExtendTime = () => import('../views/workSystem/process/workExtendTime');
 /* 延期审核管理 */
@@ -531,6 +533,12 @@ export const asyncRouterMap = [
                 component: WorkQuery,
                 name: '办件查询',
                 meta: {permission: 'workSystem:process:workQuery:list'}
+            },
+            {
+                path: 'workFinish',
+                component: WorkFinish,
+                name: '办结查询',
+                meta: {permission: 'workSystem:process:workFinish:list'}
             },
             {
                 path: 'workExtendTime',

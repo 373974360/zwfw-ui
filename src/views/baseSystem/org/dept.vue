@@ -29,6 +29,9 @@
                 <el-form-item label="部门编号" prop="deptCode">
                     <el-input v-model="sysDept.deptCode"></el-input>
                 </el-form-item>
+                <el-form-item label="通知短信手机" prop="phone">
+                    <el-input v-model="sysDept.phone"></el-input>
+                </el-form-item>
                 <el-form-item label="排序">
                     <el-input-number v-model="sysDept.sortNo" :min="1" :max="100"/>
                 </el-form-item>
@@ -54,11 +57,19 @@
     import {getDeptTree, getDeptCascader, createDept, updateDept, delDept} from 'api/baseSystem/org/dept';
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
+    import {validatMobiles} from 'utils/validate'
     import TreeUtil from 'utils/TreeUtil.js';
 
     export default {
         name: 'dept_table',
         data() {
+            const validateMobiles = (rule, value, callback) => {
+                if (!validatMobiles(value)) {
+                    callback(new Error('电话号码格式不正确'));
+                } else {
+                    callback();
+                }
+            };
             return {
                 deptList: [],
                 listLoading: true,
@@ -71,6 +82,10 @@
                         text: '部门名称',
                         dataIndex: 'name',
                         editAble: true
+                    },
+                    {
+                        text: '通知短信手机',
+                        dataIndex: 'phone'
                     },
                     {
                         text: '部门简称',
@@ -94,7 +109,8 @@
                     sortNo: 1,
                     status: 1,
                     treePosition: '',
-                    remark: ''
+                    remark: '',
+                    phone: ''
                 },
                 cascader: [],
                 dialogFormVisible: false,
@@ -103,6 +119,10 @@
                 deptRules: {
                     name: [
                         {required: true, message: '请输入部门名称'}
+                    ],
+                    phone: [
+                        {required: true, message: '请输入手机号码'},
+                        {validator: validateMobiles, trigger: 'blur'}
                     ]
                 }
             }
@@ -114,7 +134,7 @@
             this.getList();
         },
         computed: {
-            cascaderModel: function() {
+            cascaderModel: function () {
                 if (this.sysDept.treePosition) {
                     const arr = this.sysDept.treePosition.split('&');
                     return arr;
@@ -249,7 +269,8 @@
                     sortNo: 1,
                     status: 1,
                     treePosition: '',
-                    remark: ''
+                    remark: '',
+                    phone: ''
                 };
             },
             resetDeptForm() {

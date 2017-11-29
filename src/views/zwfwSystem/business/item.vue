@@ -96,19 +96,10 @@
                     <el-input v-model="zwfwItem.name"></el-input>
                 </el-form-item>
                 <el-form-item label="所属部门" prop="departmentId">
-                    <!--<el-select v-model="zwfwItem.departmentId" placeholder="所属部门" style="width:100%">-->
-                    <!--<el-option-->
-                    <!--v-for="dept in deptList"-->
-                    <!--:key="dept.id"-->
-                    <!--:label="dept.name"-->
-                    <!--:value="dept.id">-->
-                    <!--</el-option>-->
-                    <!--</el-select>-->
-
                     <el-cascader
                             expand-trigger="hover" :show-all-levels="true"
                             :change-on-select="true"
-                            :options="deptTree"
+                            :options="deptTrees"
                             v-model="cascaderModel"
                             @change="handleChange">
                     </el-cascader>
@@ -489,7 +480,7 @@
                 </el-form-item>
                 <el-form-item label="材料样本:" prop="example" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.example}}</span>
-                    <!--<el-upload name="uploadFile"  accept="fileAccepts"-->
+                    <!--<el-upload name="uploadFile"  accept="uploadAccepts"-->
                     <!--:action="uploadAction" :file-list="uploadAvatarsExample"-->
                     <!--:on-success="handleAvatarExampleSuccess"-->
                     <!--:before-upload="beforeAvatarUpload"-->
@@ -499,7 +490,7 @@
                 </el-form-item>
                 <el-form-item label="电子表单:" prop="eform" v-show="changeMaterialInfo">
                     <span>{{zwfwItemMaterial.eform == 1 ? '支持' : '不支持'}}</span>
-                    <!--<el-upload name="uploadFile"  accept="fileAccepts"-->
+                    <!--<el-upload name="uploadFile"  accept="uploadAccepts"-->
                     <!--:action="uploadAction" :file-list="uploadAvatarsEform"-->
                     <!--:on-success="handleAvatarEformSuccess"-->
                     <!--:before-upload="beforeAvatarUpload"-->
@@ -571,6 +562,7 @@
                 zwfwItem: {
                     id: undefined,
                     departmentId: [],
+                    superviseDepartmentId: [],
                     setBasis: '',
                     chargeable: true,
                     orderable: true,
@@ -613,7 +605,8 @@
                     implCode: '',
                     updateType: '',
                     pretrialUserIds: [],
-                    departmentTreePosition: ''
+                    departmentTreePosition: '',
+                    departmentTreePositions: ''
                 },
                 zwfwItemMaterial: {
                     id: undefined,
@@ -641,8 +634,7 @@
                 dialogStatus: '',
                 dialogLoading: false,
                 uploadAction: this.$store.state.app.uploadUrl,
-                fileAccepts: this.$store.state.app.fileAccepts,
-                imageAccepts: this.$store.state.app.imageAccepts,
+                uploadAccepts: this.$store.state.app.fileAccepts,
                 uploadAvatarsExample: [],
                 uploadAvatarsEform: [],
                 uploadAvatarsResult: [],
@@ -669,6 +661,12 @@
                     ],
                     supervisePhone: [
                         {required: true, message: '请输入监督电话'}
+                    ],
+                    superviseDepartmentId: [
+                        {required: true, message: '请选择监督部门'}
+                    ],
+                    departmentId: [
+                        {required: true, message: '请选择所属部门'}
                     ]
                 },
                 zwfwItemMaterialRules: {
@@ -678,6 +676,7 @@
                 },
                 allUserList: [],
                 deptTree: [],
+                deptTrees: [],
                 quillEditorOption: {
                     modules: {
                         toolbar: [
@@ -718,6 +717,17 @@
                     // 找到对应的部门
                     if (this.zwfwItem.departmentTreePosition) {
                         const arr = this.zwfwItem.departmentTreePosition.split('&');
+                        return arr
+                    }
+                    return [];
+                }
+            },
+            updateModel() {
+                if (this.zwfwItem.superviseDepartmentId) {
+                    //找到对应的部门
+//                    console.log(this.zwfwItem.departmentTreePosition);
+                    if (this.zwfwItem.departmentTreePositions) {
+                        const arr = this.zwfwItem.departmentTreePositions.split('&');
                         return arr
                     }
                     return [];
@@ -764,14 +774,13 @@
                 }
             },
             queryUser(keywords) {
-//                console.log(keywords);
                 getAllUser({
                     name: keywords
                 }).then(response => {
                     if (response.httpCode === 200) {
                         this.allUserList = response.data;
                     } else {
-                        this.$message.error('加载用户列表失败');
+                        this.$message.error("加载用户列表失败");
                     }
                 });
             },
@@ -782,6 +791,15 @@
                 } else {
                     this.zwfwItem.departmentId = 0;
                     this.zwfwItem.departmentTreePosition = [];
+                }
+            },
+            handleChanges(value) {
+                if (value.length > 0) {
+                    this.zwfwItem.superviseDepartmentId = parseInt(value[value.length - 1]);
+                    this.zwfwItem.departmentTreePositions = value.join('&');
+                } else {
+                    this.zwfwItem.superviseDepartmentId = 0;
+                    this.zwfwItem.departmentTreePositions = [];
                 }
             },
             submitUpload() {
@@ -932,18 +950,20 @@
                     this.uploadAvatarsResult = [];
                     this.uploadAvatarsResult.push({url: this.zwfwItem.resultExample, name: '结果样本'});
                 }
-                this.decodeEditorHtml();
+                this.acceptConditionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.acceptCondition));
+                this.chargeBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeBasis));
+                this.workflowDescriptionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.workflowDescription));
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
-                // 查询事项绑定的预审用户
+                //查询事项绑定的预审用户
                 getPretrialUserListByItemId(this.zwfwItem.id).then(response => {
                     if (response.httpCode === 200) {
                         this.allUserList = response.data;
-                        this.zwfwItem.pretrialUserIdsArray = response.data.map(function(o) {
+                        this.zwfwItem.pretrialUserIdsArray = response.data.map(function (o) {
                             return o.id;
                         });
                     } else {
-                        this.$message.error('查询预审用户失败');
+                        this.$message.error("查询预审用户失败");
                     }
                 });
             },
@@ -963,7 +983,7 @@
                             ids.push(deleteRow.id);
                         }
                         delZwfwItems(ids.join()).then(response => {
-                            if (response.httpCode === 200) {
+                            if (response.httpCode == 200) {
                                 this.total -= selectCounts;
                                 for (const deleteRow of this.selectedRows) {
                                     const index = this.zwfwItemList.indexOf(deleteRow);
@@ -976,7 +996,7 @@
                             this.listLoading = false;
                         })
                     }).catch(() => {
-                        console.dir('取消');
+                        console.dir("取消");
                     });
                 }
             },
@@ -1008,17 +1028,19 @@
                             this.dialogFormVisible1 = false;
                         })
                     }).catch(() => {
-                        console.dir('取消');
+                        console.dir("取消");
                     });
                 }
             },
             create() {
-                this.$refs['zwfwItemForm'].validate(valid => {
+                this.$refs['zwfwItemForm'].validate((valid) => {
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIdsArray.join(',');
-                        this.encodeEditorHtml();
+                        this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(this.acceptConditionHtml));
+                        this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(this.chargeBasisHtml));
+                        this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(this.workflowDescriptionHtml));
                         createZwfwItem(this.zwfwItem).then(response => {
                             if (response.httpCode === 200) {
                                 this.zwfwItemList.unshift(response.data);
@@ -1036,7 +1058,7 @@
                 });
             },
             createMaterial() {
-                this.$refs['zwfwMaterialForm'].validate(valid => {
+                this.$refs['zwfwMaterialForm'].validate((valid) => {
                     if (valid) {
                         if (this.changeMaterialName != true) {
                             for (let obj of this.zwfwItemMaterialList) {
@@ -1051,7 +1073,8 @@
                             const query = {
                                 itemId: this.itemId,
                                 materialId: this.zwfwItemMaterial.id,
-                                paperDescription: this.zwfwItemMaterial.paperDescription
+                                paperDescription: this.zwfwItemMaterial.paperDescription,
+
                             }
                             this.listLoading1 = true;
                             createZwfwItemMaterial(query).then(response => {
@@ -1066,6 +1089,7 @@
                                     this.$message.error('添加失败');
                                 }
                                 this.listLoading1 = false;
+
                             })
                         } else {
                             const zwfwMaterialList = {
@@ -1084,7 +1108,7 @@
                             this.listLoading1 = true;
                             updateZwfwMaterial(zwfwMaterialList).then(response => {
                                 this.listLoading1 = false;
-                                if (response.httpCode === 200) {
+                                if (response.httpCode == 200) {
                                     copyProperties(this.currentRow, response.data);
                                     this.$message.success('更新成功');
                                     this.dialogFormVisible1 = true;
@@ -1092,7 +1116,7 @@
                                     this.uploadAvatarsEform = [];
                                     this.resetZwfwMaterialForm();
                                 } else {
-                                    this.$message.error('修改失败');
+                                    this.$message.error("修改失败");
                                 }
                             })
                         }
@@ -1102,14 +1126,16 @@
                 });
             },
             update() {
-                this.$refs['zwfwItemForm'].validate(valid => {
+                this.$refs['zwfwItemForm'].validate((valid) => {
                     if (valid) {
                         this.listLoading = true;
                         this.dialogFormVisible = false;
                         this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIdsArray.join(',');
-                        this.encodeEditorHtml();
+                        this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(this.acceptConditionHtml));
+                        this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(this.chargeBasisHtml));
+                        this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(this.workflowDescriptionHtml));
                         updateZwfwItem(this.zwfwItem).then(response => {
-                            if (response.httpCode === 200) {
+                            if (response.httpCode == 200) {
                                 this.getList();
                                 this.$message.success('更新成功');
                             } else {
@@ -1141,6 +1167,7 @@
                 this.zwfwItem = {
                     id: undefined,
                     departmentId: undefined,
+                    superviseDepartmentId: undefined,
                     setBasis: '',
                     chargeable: true,
                     orderable: true,
@@ -1183,7 +1210,8 @@
                     updateType: '',
                     pretrialDays: '',
                     pretrialUserIdsArray: [],
-                    departmentTreePosition: ''
+                    departmentTreePosition: '',
+                    departmentTreePositions: ''
                 };
                 this.acceptConditionHtml = '';
                 this.workflowDescriptionHtml = '';
