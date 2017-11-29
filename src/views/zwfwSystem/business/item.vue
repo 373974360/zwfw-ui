@@ -290,8 +290,7 @@
                 <el-form-item label="受理条件" prop="acceptCondition">
                     <!--<el-input v-model="zwfwItem.acceptCondition" type="textarea"></el-input>-->
                     <quill-editor v-model="acceptConditionHtml"
-                                  ref="acceptConditionEditor"
-                                  :options="acceptConditionEditorOption"
+                                  :options="quillEditorOption"
                                   @focus="onEditorFocus($event)"
                                   @ready="onEditorReady($event)" >
 
@@ -305,11 +304,10 @@
                         <button type="button" @click="customButtonClick">img</button>
                     </el-upload>
                 </el-form-item>
-                <el-form-item label="收费依据" prop="chargeBasis">
-                    <!--<el-input v-model="zwfwItem.chargeBasis" type="textarea"></el-input>-->
-                    <quill-editor v-model="chargeBasisHtml"
-                                  ref="acceptConditionEditor"
-                                  :options="acceptConditionEditorOption"
+                <el-form-item label="内部流程描述" prop="workflowDescription">
+                    <!--<el-input v-model="zwfwItem.workflowDescription" type="textarea"></el-input>-->
+                    <quill-editor v-model="workflowDescriptionHtml"
+                                  :options="quillEditorOption"
                                   @focus="onEditorFocus($event)"
                                   @ready="onEditorReady($event)">
                     </quill-editor>
@@ -322,11 +320,26 @@
                         <button type="button" @click="customButtonClick">img</button>
                     </el-upload>
                 </el-form-item>
-                <el-form-item label="内部流程描述" prop="workflowDescription">
-                    <!--<el-input v-model="zwfwItem.workflowDescription" type="textarea"></el-input>-->
-                    <quill-editor v-model="workflowDescriptionHtml"
-                                  ref="acceptConditionEditor"
-                                  :options="acceptConditionEditorOption"
+                <el-form-item label="收费标准" prop="chargeStandard">
+                    <!--<el-input v-model="zwfwItem.chargeStandard" type="textarea"></el-input>-->
+                    <quill-editor v-model="chargeStandardHtml"
+                                  :options="quillEditorOption"
+                                  @focus="onEditorFocus($event)"
+                                  @ready="onEditorReady($event)">
+                    </quill-editor>
+                    <!-- 文件上传input 将它隐藏-->
+                    <el-upload class="avatar-uploader" name="uploadFile"
+                               :action="uploadAction"
+                               :on-success="handleAvatarSuccess"
+                               :on-error="handlerAvatarError"
+                               :show-file-list="false">
+                        <button type="button" @click="customButtonClick">img</button>
+                    </el-upload>
+                </el-form-item>
+                <el-form-item label="收费依据" prop="chargeBasis">
+                    <!--<el-input v-model="zwfwItem.chargeBasis" type="textarea"></el-input>-->
+                    <quill-editor v-model="chargeBasisHtml"
+                                  :options="quillEditorOption"
                                   @focus="onEditorFocus($event)"
                                   @ready="onEditorReady($event)">
                     </quill-editor>
@@ -706,12 +719,12 @@
                     theme: 'snow'
                 },
                 acceptConditionHtml: '',
-                chargeBasisHtml: '',
                 workflowDescriptionHtml: '',
-
+                chargeStandardHtml: '',
+                chargeBasisHtml: '',
                 length: '',
                 editor: {},
-                uploadType: '',
+                uploadType: ''
             }
         },
 
@@ -752,8 +765,7 @@
             ]),
             editor() {
                 return this.$refs.zwfwItem.quill
-            },
-
+            }
         },
         methods: {
             queryUser(keywords) {
@@ -926,9 +938,7 @@
                     this.uploadAvatarsResult = [];
                     this.uploadAvatarsResult.push({url: this.zwfwItem.resultExample, name: '结果样本'});
                 }
-                this.acceptConditionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.acceptCondition));
-                this.chargeBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeBasis));
-                this.workflowDescriptionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.workflowDescription));
+                this.decodeEditorHtml();
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
                 //查询事项绑定的预审用户
@@ -1014,9 +1024,7 @@
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIdsArray.join(',');
-                        this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(this.acceptConditionHtml));
-                        this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(this.chargeBasisHtml));
-                        this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(this.workflowDescriptionHtml));
+                        this.encodeEditorHtml();
                         createZwfwItem(this.zwfwItem).then(response => {
                             if (response.httpCode === 200) {
                                 this.zwfwItemList.unshift(response.data);
@@ -1107,9 +1115,7 @@
                         this.listLoading = true;
                         this.dialogFormVisible = false;
                         this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIdsArray.join(',');
-                        this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(this.acceptConditionHtml));
-                        this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(this.chargeBasisHtml));
-                        this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(this.workflowDescriptionHtml));
+                        this.encodeEditorHtml();
                         updateZwfwItem(this.zwfwItem).then(response => {
                             if (response.httpCode == 200) {
                                 this.getList();
@@ -1205,16 +1211,26 @@
                 this.resetTemp1();
                 resetForm(this, 'zwfwMaterialForm');
             },
-
+            encodeEditorHtml() {
+                this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(this.acceptConditionHtml));
+                this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(this.workflowDescriptionHtml));
+                this.zwfwItem.chargeStandard = encodeURIComponent(encodeURIComponent(this.chargeStandardHtml));
+                this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(this.chargeBasisHtml));
+            },
+            decodeEditorHtml() {
+                this.acceptConditionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.acceptCondition));
+                this.workflowDescriptionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.workflowDescription));
+                this.chargeStandardHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeStandard));
+                this.chargeBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeBasis));
+            },
             onEditorFocus(editor) {
                 this.editor = editor   //当content获取到焦点的时候就 存储editor
             },
             onEditorReady(editor) {
                 this.editor = editor //当quill实例化完先 存储editor
             },
-
-            customButtonClick(){
-                var range
+            customButtonClick() {
+                let range
                 if (this.editor.getSelection() != null) {
                     range = this.editor.getSelection()
                     this.length = range.index  //content获取到焦点，计算光标所在位置，目的为了在该位置插入img
@@ -1235,11 +1251,9 @@
                     let self = this
                     self.contentImg = res.url;
                     this.$message.success('上传成功！');
-                    console.log(self.contentImg)
-                    var range = self.editor.getSelection(true);
-                    var  length = range.index
+                    let range = self.editor.getSelection(true);
+                    let length = range.index
                     self.editor.insertEmbed(length, 'image', self.contentImg); // ★这里才是重点★ 插入到content中
-
                 } else {
                     this.$message.error('上传失败！');
                 }
@@ -1251,16 +1265,21 @@
              * @param fileList
              */
             handlerAvatarError(err, file, fileList) {
-                console.log(err);
-                this.$message.error("网络不稳定，上传失败");
-            },
-
+                this.$message.error('网络不稳定，上传失败');
+            }
         }
     }
 </script>
-<style>
+<style rel="stylesheet/scss" lang="scss">
     .item {
         margin-top: 10px;
         text-align: center;
+    }
+    .quill-editor {
+        height: 234px;
+        margin-bottom: 8px;
+        .ql-container {
+            height: 180px;
+        }
     }
 </style>
