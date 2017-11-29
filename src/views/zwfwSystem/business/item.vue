@@ -291,22 +291,53 @@
                     <!--<el-input v-model="zwfwItem.acceptCondition" type="textarea"></el-input>-->
                     <quill-editor v-model="acceptConditionHtml"
                                   ref="acceptConditionEditor"
-                                  :options="acceptConditionEditorOption" >
+                                  :options="acceptConditionEditorOption"
+                                  @focus="onEditorFocus($event)"
+                                  @ready="onEditorReady($event)" >
+
                     </quill-editor>
+                    <!-- 文件上传input 将它隐藏-->
+                    <el-upload class="avatar-uploader" name="uploadFile"
+                               :action="uploadAction"
+                               :on-success="handleAvatarSuccess"
+                               :on-error="handlerAvatarError"
+                               :show-file-list="false">
+                        <button type="button" @click="customButtonClick">img</button>
+                    </el-upload>
                 </el-form-item>
                 <el-form-item label="收费依据" prop="chargeBasis">
                     <!--<el-input v-model="zwfwItem.chargeBasis" type="textarea"></el-input>-->
                     <quill-editor v-model="chargeBasisHtml"
                                   ref="acceptConditionEditor"
-                                  :options="acceptConditionEditorOption" >
+                                  :options="acceptConditionEditorOption"
+                                  @focus="onEditorFocus($event)"
+                                  @ready="onEditorReady($event)">
                     </quill-editor>
+                    <!-- 文件上传input 将它隐藏-->
+                    <el-upload class="avatar-uploader" name="uploadFile"
+                               :action="uploadAction"
+                               :on-success="handleAvatarSuccess"
+                               :on-error="handlerAvatarError"
+                               :show-file-list="false">
+                        <button type="button" @click="customButtonClick">img</button>
+                    </el-upload>
                 </el-form-item>
                 <el-form-item label="内部流程描述" prop="workflowDescription">
                     <!--<el-input v-model="zwfwItem.workflowDescription" type="textarea"></el-input>-->
                     <quill-editor v-model="workflowDescriptionHtml"
                                   ref="acceptConditionEditor"
-                                  :options="acceptConditionEditorOption" >
+                                  :options="acceptConditionEditorOption"
+                                  @focus="onEditorFocus($event)"
+                                  @ready="onEditorReady($event)">
                     </quill-editor>
+                    <!-- 文件上传input 将它隐藏-->
+                    <el-upload class="avatar-uploader" name="uploadFile"
+                               :action="uploadAction"
+                               :on-success="handleAvatarSuccess"
+                               :on-error="handlerAvatarError"
+                               :show-file-list="false">
+                        <button type="button" @click="customButtonClick">img</button>
+                    </el-upload>
                 </el-form-item>
                 <el-form-item label="权限划分" prop="authorityDivision">
                     <el-input v-model="zwfwItem.authorityDivision"></el-input>
@@ -523,12 +554,14 @@
     import {getAllUser} from 'api/baseSystem/org/user';
     import {getDeptCascader} from 'api/baseSystem/org/dept';
     import { quillEditor } from 'vue-quill-editor'
+    import ElInput from "../../../../node_modules/element-ui/packages/input/src/input.vue";
 
 
 
     export default {
         name: 'zwfwItem_table',
         components: {
+            ElInput,
             quillEditor
         },
         data() {
@@ -674,7 +707,11 @@
                 },
                 acceptConditionHtml: '',
                 chargeBasisHtml: '',
-                workflowDescriptionHtml: ''
+                workflowDescriptionHtml: '',
+
+                length: '',
+                editor: {},
+                uploadType: '',
             }
         },
 
@@ -712,7 +749,11 @@
                 'enums',
                 'dics',
                 'closeOnClickModal'
-            ])
+            ]),
+            editor() {
+                return this.$refs.zwfwItem.quill
+            },
+
         },
         methods: {
             queryUser(keywords) {
@@ -1069,6 +1110,7 @@
                         this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(this.acceptConditionHtml));
                         this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(this.chargeBasisHtml));
                         this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(this.workflowDescriptionHtml));
+                        debugger;
                         updateZwfwItem(this.zwfwItem).then(response => {
                             if (response.httpCode == 200) {
                                 copyProperties(this.currentRow, response.data);
@@ -1164,7 +1206,57 @@
                 this.electronicMaterial = null;
                 this.resetTemp1();
                 resetForm(this, 'zwfwMaterialForm');
-            }
+            },
+
+            onEditorFocus(editor) {
+                this.editor = editor   //当content获取到焦点的时候就 存储editor
+            },
+            onEditorReady(editor) {
+                this.editor = editor //当quill实例化完先 存储editor
+            },
+
+            customButtonClick(){
+                var range
+                if (this.editor.getSelection() != null) {
+                    range = this.editor.getSelection()
+                    this.length = range.index  //content获取到焦点，计算光标所在位置，目的为了在该位置插入img
+                } else {
+                    this.length = this.content.length  //content没有获取到焦点时候 目的是为了在content末尾插入img
+                }
+                this.$el.querySelector('.custom-input').click();   //打开file 选择图片
+            },
+
+
+            /**
+             *
+             * 后台返回响应就会触发
+             *
+             */
+            handleAvatarSuccess(res, file, fileList) {
+                if (res.state === 'SUCCESS') {
+                    let self = this
+                    self.contentImg = res.url;
+                    this.$message.success('上传成功！');
+                    console.log(self.contentImg)
+                    var range = self.editor.getSelection(true);
+                    var  length = range.index
+                    self.editor.insertEmbed(length, 'image', self.contentImg); // ★这里才是重点★ 插入到content中
+
+                } else {
+                    this.$message.error('上传失败！');
+                }
+            },
+            /**
+             * 网络无法联通时会触发，其他的场景没有进入
+             * @param err
+             * @param file
+             * @param fileList
+             */
+            handlerAvatarError(err, file, fileList) {
+                console.log(err);
+                this.$message.error("网络不稳定，上传失败");
+            },
+
         }
     }
 </script>
