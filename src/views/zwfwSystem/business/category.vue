@@ -217,7 +217,7 @@
             this.getItemList();
         },
         computed: {
-            cascaderModel: function () {
+            cascaderModel() {
                 if (this.category.treePosition) {
                     const arr = this.category.treePosition.split('&');
                     return arr;

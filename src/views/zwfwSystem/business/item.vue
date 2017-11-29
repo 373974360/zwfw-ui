@@ -252,9 +252,6 @@
                 <el-form-item label="咨询电话" prop="askPhone">
                     <el-input v-model="zwfwItem.askPhone"></el-input>
                 </el-form-item>
-                <el-form-item label="收费标准" prop="chargeStandard">
-                    <el-input v-model="zwfwItem.chargeStandard" type="textarea"></el-input>
-                </el-form-item>
                 <el-form-item label="办件类型" prop="processType">
                     <el-radio-group v-model="zwfwItem.processType">
                         <el-radio v-for="item in dics['bjlx']"
@@ -290,22 +287,25 @@
                 <el-form-item label="受理条件" prop="acceptCondition">
                     <!--<el-input v-model="zwfwItem.acceptCondition" type="textarea"></el-input>-->
                     <quill-editor v-model="acceptConditionHtml"
-                                  ref="acceptConditionEditor"
-                                  :options="acceptConditionEditorOption" >
-                    </quill-editor>
-                </el-form-item>
-                <el-form-item label="收费依据" prop="chargeBasis">
-                    <!--<el-input v-model="zwfwItem.chargeBasis" type="textarea"></el-input>-->
-                    <quill-editor v-model="chargeBasisHtml"
-                                  ref="acceptConditionEditor"
-                                  :options="acceptConditionEditorOption" >
+                                  :options="quillEditorOption" >
                     </quill-editor>
                 </el-form-item>
                 <el-form-item label="内部流程描述" prop="workflowDescription">
                     <!--<el-input v-model="zwfwItem.workflowDescription" type="textarea"></el-input>-->
                     <quill-editor v-model="workflowDescriptionHtml"
-                                  ref="acceptConditionEditor"
-                                  :options="acceptConditionEditorOption" >
+                                  :options="quillEditorOption" >
+                    </quill-editor>
+                </el-form-item>
+                <el-form-item label="收费标准" prop="chargeStandard">
+                    <!--<el-input v-model="zwfwItem.chargeStandard" type="textarea"></el-input>-->
+                    <quill-editor v-model="chargeStandardHtml"
+                                  :options="quillEditorOption" >
+                    </quill-editor>
+                </el-form-item>
+                <el-form-item label="收费依据" prop="chargeBasis">
+                    <!--<el-input v-model="zwfwItem.chargeBasis" type="textarea"></el-input>-->
+                    <quill-editor v-model="chargeBasisHtml"
+                                  :options="quillEditorOption" >
                     </quill-editor>
                 </el-form-item>
                 <el-form-item label="权限划分" prop="authorityDivision">
@@ -660,7 +660,7 @@
                 },
                 allUserList: [],
                 deptTree: [],
-                acceptConditionEditorOption: {
+                quillEditorOption: {
                     modules: {
                         toolbar: [
                             [{ header: [] }],
@@ -673,6 +673,7 @@
                     theme: 'snow'
                 },
                 acceptConditionHtml: '',
+                chargeStandardHtml: '',
                 chargeBasisHtml: '',
                 workflowDescriptionHtml: ''
             }
@@ -885,9 +886,7 @@
                     this.uploadAvatarsResult = [];
                     this.uploadAvatarsResult.push({url: this.zwfwItem.resultExample, name: '结果样本'});
                 }
-                this.acceptConditionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.acceptCondition));
-                this.chargeBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeBasis));
-                this.workflowDescriptionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.workflowDescription));
+                this.decodeEditorHtml();
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
                 //查询事项绑定的预审用户
@@ -973,9 +972,7 @@
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIdsArray.join(',');
-                        this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(this.acceptConditionHtml));
-                        this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(this.chargeBasisHtml));
-                        this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(this.workflowDescriptionHtml));
+                        this.encodeEditorHtml();
                         createZwfwItem(this.zwfwItem).then(response => {
                             if (response.httpCode === 200) {
                                 this.zwfwItemList.unshift(response.data);
@@ -1066,9 +1063,7 @@
                         this.listLoading = true;
                         this.dialogFormVisible = false;
                         this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIdsArray.join(',');
-                        this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(this.acceptConditionHtml));
-                        this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(this.chargeBasisHtml));
-                        this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(this.workflowDescriptionHtml));
+                        this.encodeEditorHtml();
                         updateZwfwItem(this.zwfwItem).then(response => {
                             if (response.httpCode == 200) {
                                 this.getList();
@@ -1163,13 +1158,32 @@
                 this.electronicMaterial = null;
                 this.resetTemp1();
                 resetForm(this, 'zwfwMaterialForm');
+            },
+            encodeEditorHtml() {
+                this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(this.acceptConditionHtml));
+                this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(this.workflowDescriptionHtml));
+                this.zwfwItem.chargeStandard = encodeURIComponent(encodeURIComponent(this.chargeStandardHtml));
+                this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(this.chargeBasisHtml));
+            },
+            decodeEditorHtml() {
+                this.acceptConditionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.acceptCondition));
+                this.workflowDescriptionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.workflowDescription));
+                this.chargeStandardHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeStandard));
+                this.chargeBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeBasis));
             }
         }
     }
 </script>
-<style>
+<style rel="stylesheet/scss" lang="scss">
     .item {
         margin-top: 10px;
         text-align: center;
+    }
+    .quill-editor {
+        height: 234px;
+        margin-bottom: 8px;
+        .ql-container {
+            height: 180px;
+        }
     }
 </style>
