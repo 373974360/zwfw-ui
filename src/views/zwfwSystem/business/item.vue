@@ -290,7 +290,6 @@
                 <el-form-item label="受理条件" prop="acceptCondition">
                     <!--<el-input v-model="zwfwItem.acceptCondition" type="textarea"></el-input>-->
                     <quill-editor v-model="acceptConditionHtml"
-                                  @change="acceptConditionChange($event)"
                                   ref="acceptConditionEditor"
                                   :options="acceptConditionEditorOption" >
                     </quill-editor>
@@ -298,7 +297,6 @@
                 <el-form-item label="收费依据" prop="chargeBasis">
                     <!--<el-input v-model="zwfwItem.chargeBasis" type="textarea"></el-input>-->
                     <quill-editor v-model="chargeBasisHtml"
-                                  @change="chargeBasisChange($event)"
                                   ref="acceptConditionEditor"
                                   :options="acceptConditionEditorOption" >
                     </quill-editor>
@@ -306,7 +304,6 @@
                 <el-form-item label="内部流程描述" prop="workflowDescription">
                     <!--<el-input v-model="zwfwItem.workflowDescription" type="textarea"></el-input>-->
                     <quill-editor v-model="workflowDescriptionHtml"
-                                  @change="workflowDescriptionChange($event)"
                                   ref="acceptConditionEditor"
                                   :options="acceptConditionEditorOption" >
                     </quill-editor>
@@ -718,21 +715,6 @@
             ])
         },
         methods: {
-            acceptConditionChange({editor,html,text}) {
-//                console.log(html);
-//                console.log(text);
-                this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(html));
-            },
-            chargeBasisChange({editor,html,text}) {
-//                console.log(html);
-//                console.log(text);
-                this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(html));
-            },
-            workflowDescriptionChange({editor,html,text}) {
-//                console.log(html);
-//                console.log(text);
-                this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(html));
-            },
             queryUser(keywords) {
 //                console.log(keywords);
                 getAllUser({
@@ -991,6 +973,9 @@
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIdsArray.join(',');
+                        this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(this.acceptConditionHtml));
+                        this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(this.chargeBasisHtml));
+                        this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(this.workflowDescriptionHtml));
                         createZwfwItem(this.zwfwItem).then(response => {
                             if (response.httpCode === 200) {
                                 this.zwfwItemList.unshift(response.data);
@@ -1081,9 +1066,9 @@
                         this.listLoading = true;
                         this.dialogFormVisible = false;
                         this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIdsArray.join(',');
-                        this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(this.zwfwItem.acceptCondition));
-                        this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(this.zwfwItem.chargeBasis));
-                        this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(this.zwfwItem.workflowDescription));
+                        this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(this.acceptConditionHtml));
+                        this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(this.chargeBasisHtml));
+                        this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(this.workflowDescriptionHtml));
                         updateZwfwItem(this.zwfwItem).then(response => {
                             if (response.httpCode == 200) {
                                 copyProperties(this.currentRow, response.data);
