@@ -1110,7 +1110,6 @@
                         this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(this.acceptConditionHtml));
                         this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(this.chargeBasisHtml));
                         this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(this.workflowDescriptionHtml));
-                        debugger;
                         updateZwfwItem(this.zwfwItem).then(response => {
                             if (response.httpCode == 200) {
                                 copyProperties(this.currentRow, response.data);
