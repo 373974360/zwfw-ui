@@ -67,3 +67,12 @@ export function workCancelExtendTime(query) {
     })
 }
 
+export function workuploadImg(itemProcessAttachmentVo) {
+    const data = itemProcessAttachmentVo;
+    return fetch({
+        url: '/api/workSystem/itemProcessAttachment/uploadImg',
+        method: 'post',
+        data
+    })
+}
+

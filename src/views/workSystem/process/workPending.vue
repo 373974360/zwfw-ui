@@ -103,6 +103,18 @@
                         <el-button v-if="itemTaskSetting.supportClose" class="filter-item" type="primary"
                                    @click="action='close'">不予处理
                         </el-button>
+
+                        <el-upload style="margin-top: 10px;" name="uploadFile"
+                                   :action="uploadAction"
+                                   :on-success="handleAvatarSuccess"
+                                   :on-error="handlerAvatarError"
+                                   :show-file-list="false">
+                            <el-button class="filter-item" type="primary"
+                                       @click="action='customButtonClick'"
+                            >上传图片
+                            </el-button>
+                        </el-upload>
+
                     </div>
 
                     <el-form ref="deptWorkPendingForm" :model="itemProcessVo" label-suffix="：">
@@ -376,6 +388,14 @@
                         </el-tab-pane>
                     </el-tabs>
                 </div>
+                <div v-if="uploadImgs!=null && uploadImgs.length>0">
+                    <h2 class="h2-style-show">图片：</h2>
+                    <ul>
+                        <li v-for="item in uploadImgs">
+                            <img :src="item.fileUrl" />
+                        </li>
+                    </ul>
+                </div>
                 <div>
                     <el-button v-if="itemProcessVo.flagCorrection || itemProcessVo.status == 99"
                                type="button" @click="print_ycxgzd(itemProcessVo.pretrialNumber)">打印一次性告知单</el-button>
@@ -396,7 +416,8 @@
         workCorrection,
         workExtendTime,
         workClose,
-        workCancelExtendTime
+        workCancelExtendTime,
+        workuploadImg
     } from 'api/workSystem/process/workPending';
 
     import {getZwfwApiHost} from 'utils/fetch';
@@ -452,7 +473,10 @@
                 itemTaskSetting: {},
                 action: '',
                 correctionList: [],
-                extendTimeVoList: []
+                extendTimeVoList: [],
+
+                uploadAction: this.$store.state.app.uploadUrl,
+                uploadImgs: [],
             }
         },
         created() {
@@ -521,6 +545,7 @@
                         this.action = '';
                         this.correctionList = response.data.correctionList;
                         this.extendTimeVoList = response.data.extendTimeVoList;
+                        this.uploadImgs = response.data.itemProcessAttachmentList;
                     } else {
                         this.$message.error(response.msg);
                     }
@@ -649,7 +674,45 @@
                 if (pretrialNumber != null) {
                     window.open('/api/workSystem/itemPretrial/downloadYcxgzd?pretrialNumber=' + pretrialNumber);
                 }
-            }
+            },
+
+            /**
+             *
+             * 后台返回响应就会触发
+             *
+             */
+            handleAvatarSuccess(res, file, fileList) {
+                if (res.state === 'SUCCESS') {
+                    const query = {
+                        processNumber: this.pretrialNumber,
+                        taskId: this.taskId,
+                        fileUrl: res.url,
+                    }
+                    debugger;
+                    workuploadImg(query).then(response => {
+                        if (response.httpCode === 200) {
+                            this.$message.success("保存成功");
+                            console.log(response);
+                            this.uploadImgs.push(response.data);
+                        } else {
+                            this.$message.error(response.msg);
+                        }
+                    })
+                } else {
+                    this.$message.error('上传失败！');
+                }
+            },
+            /**
+             * 网络无法联通时会触发，其他的场景没有进入
+             * @param err
+             * @param file
+             * @param fileList
+             */
+            handlerAvatarError(err, file, fileList) {
+                console.log(err);
+                this.$message.error("网络不稳定，上传失败");
+            },
+
         }
     }
 </script>
