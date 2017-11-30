@@ -46,11 +46,18 @@
                             <el-button slot="append" @click="queryCompanyInfo">查询</el-button>
                         </el-input>
                     </el-row>
+                    <el-row type="flex" justify="center" >
+                        <el-input v-model="memberRealname" placeholder="联系人" >
+                        </el-input>
+                    </el-row>
+                    <el-row type="flex" justify="center">
+                        <el-input v-model="memberPhone" placeholder="手机号" >
+                        </el-input>
+                    </el-row>
                     <el-button v-if="itemNumber == null || itemNumber.status==1" type="primary" @click="callNumber">
                         叫号
                     </el-button>
                     <!--<el-button type="primary" @click="queryCurrentNumber">查询当前业务</el-button>-->
-                    <el-button type="primary" @click="submitNoPretrial">处理收件</el-button>
 
                     <el-button v-if="itemNumber.status==2" type="primary"
                                v-bind:disabled="itemNumber.applyFinishTime!=null"
@@ -202,31 +209,7 @@
                                 </td>
                             </tr>
                         </table>
-                        <div class="block full-width" v-if="itemNumber.status==6">
 
-                            <el-input
-                                    type="textarea"
-                                    :autosize="{ minRows: 2, maxRows: 4}"
-                                    placeholder="用于记录不予受理的原因"
-                                    v-model="remark">
-                            </el-input>
-                        </div>
-                        <div style="margin: 20px 0;"></div>
-                        <el-button-group>
-
-                            <el-button v-if="itemNumber.status==6" type="primary"
-                                       v-bind:disabled="itemNumber.applyFinishTime!=null"
-                                       @click="pass"
-                                       title="核验资料无误时点击此处">
-                                收件并转交部门
-                            </el-button>
-                            <el-button v-if="itemNumber.status==6" type="primary"
-                                       v-bind:disabled="itemNumber.applyFinishTime!=null"
-                                       @click="reject">
-                                不予受理
-                            </el-button>
-
-                        </el-button-group>
                     </div>
                 </div>
 
@@ -238,6 +221,7 @@
                 <div style="padding:10px">
                     <el-tabs v-model="tabName" type="card" @tab-click="handleTabClick">
                         <el-tab-pane label="所需资料" name="materialListPanel">
+                            <p v-if="(itemNumber.status==6 || companyInfo.id) && itemVo.id">勾选收件材料：</p>
                             <el-table id="materiaTable"
                                       ref="itemMaterialVoList"
                                       :data="itemMaterialVoList"
@@ -248,22 +232,21 @@
                                       @selection-change="handleMaterialSelectionChange"
                             >
                                 <el-table-column
-                                        fixed
                                         type="index"
                                         width="50">
                                 </el-table-column>
                                 <el-table-column
-                                        fixed
-                                        v-if="itemNumber.status==6 || companyInfo.id"
+
+                                        v-if="(itemNumber.status==6 || companyInfo.id) && itemVo.id"
                                         type="selection"
                                         prop="received"
                                         width="55">
                                 </el-table-column>
                                 <el-table-column
-                                        fixed
+
                                         prop="name"
                                         label="材料"
-                                        width="180">
+                                        width="300">
                                 </el-table-column>
                                 <el-table-column
                                         prop="type"
@@ -272,14 +255,14 @@
                                         {{scope.row.type | dics('cllx')}}
                                     </template>
                                 </el-table-column>
-                                <el-table-column
-                                        prop="example"
-                                        label="样本">
-                                    <template scope="scope">
-                                        <a v-if="scope.row.example" :href="scope.row.example" target="_blank">点击下载</a>
-                                        <span v-else>无</span>
-                                    </template>
-                                </el-table-column>
+                                <!--<el-table-column-->
+                                        <!--prop="example"-->
+                                        <!--label="样本">-->
+                                    <!--<template scope="scope">-->
+                                        <!--<a v-if="scope.row.example" :href="scope.row.example" target="_blank">点击下载</a>-->
+                                        <!--<span v-else>无</span>-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
                                 <el-table-column
                                         prop="source"
                                         label="来源">
@@ -287,18 +270,18 @@
                                         {{scope.row.source | dics('sxsqclly')}}
                                     </template>
                                 </el-table-column>
-                                <el-table-column
-                                        prop="paperDescription"
-                                        label="纸质说明">
-                                </el-table-column>
-                                <el-table-column
-                                        prop="notice"
-                                        label="填报须知">
-                                </el-table-column>
-                                <el-table-column
-                                        prop="acceptStandard"
-                                        label="受理标准">
-                                </el-table-column>
+                                <!--<el-table-column-->
+                                        <!--prop="paperDescription"-->
+                                        <!--label="纸质说明">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--prop="notice"-->
+                                        <!--label="填报须知">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--prop="acceptStandard"-->
+                                        <!--label="受理标准">-->
+                                <!--</el-table-column>-->
                                 <el-table-column
                                         prop="electronicMaterial"
                                         label="需要预审">
@@ -308,7 +291,7 @@
                                 </el-table-column>
                                 <el-table-column
                                         prop="multipleFile"
-                                        label="已上传">
+                                        label="预审资料">
                                     <template scope="scope">
                                         <span v-for="(file,index) in scope.row.multipleFile">
                                             <span v-if="file.url!=null && file.url!=''">
@@ -406,6 +389,34 @@
                         <el-button type="primary" @click="print_ywsld">打印业务受理单</el-button>
                         <el-button type="primary" @click="print_wlzyd">打印物料转移单</el-button>
                     </div>
+
+                    <div class="block full-width" style="margin-top:20px;" v-if="itemNumber.status==6 || (companyInfo.id && itemVo.id && !itemNumber.id)">
+                        <el-input
+                                type="textarea"
+                                :autosize="{ minRows: 2, maxRows: 4}"
+                                placeholder="填写备注"
+                                v-model="remark">
+                        </el-input>
+                    </div>
+                    <div v-if="companyInfo.id && itemVo.id && !itemNumber.id"  style="margin-top:20px;">
+                        <el-button type="primary" @click="submitNoPretrial">提交收件</el-button>
+                        <el-button type="primary" @click="rejectNoPretrial">不予受理</el-button>
+                    </div>
+                    <div style="margin: 20px 0;"></div>
+                    <el-button-group>
+                        <el-button v-if="itemNumber.status==6" type="primary"
+                                   v-bind:disabled="itemNumber.applyFinishTime!=null"
+                                   @click="pass"
+                                   title="核验资料无误时点击此处">
+                            收件并转交部门
+                        </el-button>
+                        <el-button v-if="itemNumber.status==6" type="primary"
+                                   v-bind:disabled="itemNumber.applyFinishTime!=null"
+                                   @click="reject">
+                            不予受理
+                        </el-button>
+
+                    </el-button-group>
                 </div>
             </div>
         </el-col>
@@ -503,21 +514,42 @@
              * 提交非预审收件
              * */
             submitNoPretrial() {
+                var _this  = this;
                 let checked_m = this.materialSelection.map(function (m) {
                     return m.id;
                 });
                 submitNoPretrial({
                     itemId: this.selectedItem,
                     memberCode: this.memberCode,
-                    received:checked_m.join(',')
+                    memberRealname:this.memberRealname,
+                    memberPhone:this.memberPhone,
+                    received:checked_m.join(','),
+                    remark:this.remark
                 }).then(response => {
-                    console.log(response);
+//                    console.log(response);
+
                     if (response.httpCode === 200) {
                         this.$message.success("提交成功");
+                        let data = response.data;
+                        if (data != null) {
+                            _this.itemNumber = data.itemNumber;
+                            _this.itemVo = data.itemVo;
+                            _this.member = data.member;
+                            _this.company = data.company;
+                            _this.itemPretrialVo = data.itemPretrialVo;
+                            _this.itemMaterialVoList = data.itemMaterialVoList;
+                            _this.window = data.window;
+                            _this.itemWindowUserName = data.itemWindowUserName;
+                        } else {
+                            this.$message.error("提交出错 ，" + response.msg);
+                        }
                     } else {
                         this.$message.error("提交出错 ，" + response.msg);
                     }
                 });
+            },
+            rejectNoPretrial(){
+
             },
             /**
              * 查询企业信息
