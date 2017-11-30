@@ -99,7 +99,7 @@
                     <el-cascader
                             expand-trigger="hover" :show-all-levels="true"
                             :change-on-select="true"
-                            :options="deptTree"
+                            :options="deptTrees"
                             v-model="deptCascader"
                             @change="handleDeptChange">
                     </el-cascader>
@@ -489,7 +489,7 @@
         </el-dialog>
     </div>
 </template>
-+
+
 <script>
     import {copyProperties, resetForm, validateQueryStr} from 'utils';
     import {mapGetters} from 'vuex';
@@ -535,6 +535,7 @@
                 zwfwItem: {
                     id: undefined,
                     departmentId: [],
+                    superviseDepartmentId: [],
                     setBasis: '',
                     chargeable: true,
                     orderable: true,
@@ -577,7 +578,8 @@
                     implCode: '',
                     updateType: '',
                     pretrialUserIds: [],
-                    departmentTreePosition: ''
+                    departmentTreePosition: '',
+                    departmentTreePositions: ''
                 },
                 zwfwItemMaterial: {
                     id: undefined,
@@ -630,6 +632,12 @@
                     ],
                     supervisePhone: [
                         {required: true, message: '请输入监督电话'}
+                    ],
+                    superviseDepartmentId: [
+                        {required: true, message: '请选择监督部门'}
+                    ],
+                    departmentId: [
+                        {required: true, message: '请选择所属部门'}
                     ]
                 },
                 zwfwItemMaterialRules: {
@@ -639,6 +647,7 @@
                 },
                 allUserList: [],
                 deptTree: [],
+                deptTrees: [],
                 quillEditorOption: {
                     modules: {
                         toolbar: [
@@ -665,6 +674,17 @@
                     // 找到对应的部门
                     if (this.zwfwItem.departmentTreePosition) {
                         const arr = this.zwfwItem.departmentTreePosition.split('&');
+                        return arr
+                    }
+                    return [];
+                }
+            },
+            updateModel() {
+                if (this.zwfwItem.superviseDepartmentId) {
+                    //找到对应的部门
+//                    console.log(this.zwfwItem.departmentTreePosition);
+                    if (this.zwfwItem.departmentTreePositions) {
+                        const arr = this.zwfwItem.departmentTreePositions.split('&');
                         return arr
                     }
                     return [];
@@ -858,6 +878,15 @@
                         this.$message.error('查询预审用户失败');
                     }
                 });
+            },
+            handleChanges(value) {
+                if (value.length > 0) {
+                    this.zwfwItem.superviseDepartmentId = parseInt(value[value.length - 1]);
+                    this.zwfwItem.departmentTreePositions = value.join('&');
+                } else {
+                    this.zwfwItem.superviseDepartmentId = 0;
+                    this.zwfwItem.departmentTreePositions = [];
+                }
             },
             submitUpload() {
                 this.$refs.upload.submit();
@@ -1083,6 +1112,7 @@
                 this.zwfwItem = {
                     id: undefined,
                     departmentId: undefined,
+                    superviseDepartmentId: undefined,
                     setBasis: '',
                     chargeable: true,
                     orderable: true,
@@ -1125,7 +1155,8 @@
                     updateType: '',
                     pretrialDays: '',
                     pretrialUserIdsArray: [],
-                    departmentTreePosition: ''
+                    departmentTreePosition: '',
+                    departmentTreePositions: ''
                 };
                 this.acceptConditionHtml = '';
                 this.workflowDescriptionHtml = '';

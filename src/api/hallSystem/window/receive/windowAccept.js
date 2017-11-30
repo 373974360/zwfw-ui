@@ -101,3 +101,37 @@ export function submitWork(query) {
         params: query
     });
 }
+
+/**
+ * 查询企业信息
+ * @param query
+ */
+export function queryCompanyInfo(query) {
+    return fetch({
+        url: '/api/hallSystem/hallCompositeWindow/queryCompanyInfo',
+        method: 'post',
+        params: query
+    });
+}
+
+/**
+ * 查询事项信息和办件材料列表
+ * @param query
+ */
+export function getItemInfo(query) {
+    return fetch({
+        url: '/api/hallSystem/hallCompositeWindow/getItemInfo',
+        method: 'post',
+        params: query
+    });
+}
+/**
+ * 综合窗口提交非预审的收件
+ * */
+export function submitNoPretrial(query) {
+    return fetch({
+        url: '/api/hallSystem/hallCompositeWindow/submitNoPretrial',
+        method: 'post',
+        params: query
+    });
+}

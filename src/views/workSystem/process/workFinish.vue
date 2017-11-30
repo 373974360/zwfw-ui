@@ -42,17 +42,7 @@
             </el-table-column>
             <el-table-column align="center" label="办理事项" prop="itemName" width="200px">
                 <template scope="scope">
-                        <span >{{scope.row.itemName}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="当前步骤" prop="currentTaskName">
-                <template scope="scope">
-                    <span>{{scope.row.currentTaskName}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="步骤时限" prop="taskLimitTime">
-                <template scope="scope">
-                    <span>{{scope.row.taskLimitTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
+                    <span>{{scope.row.itemName}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="承诺期限" prop="promiseFinishTime">
@@ -95,7 +85,7 @@
         </div>
 
         <!--查看-->
-        <el-dialog class="s-dialog-title" size="large"  :title="textMapTitle" :visible.sync="dialogFormVisible"
+        <el-dialog class="s-dialog-title" size="large" :title="textMapTitle" :visible.sync="dialogFormVisible"
                    :close-on-click-modal="closeOnClickModal" :before-close="resetWorkPengingForm">
             <div>
                 <div>
@@ -331,7 +321,8 @@
                 </div>
                 <div>
                     <el-button v-if="itemProcessVo.flagCorrection || itemProcessVo.status == 99"
-                               type="button" @click="print_ycxgzd(itemProcessVo.pretrialNumber)">打印一次性告知单</el-button>
+                               type="button" @click="print_ycxgzd(itemProcessVo.pretrialNumber)">打印一次性告知单
+                    </el-button>
                 </div>
             </div>
         </el-dialog>
@@ -341,11 +332,8 @@
 </template>
 
 <script>
-    import {validateQueryStr} from 'utils';
     import {mapGetters} from 'vuex';
-    import {
-        getZwfwDeptWorkQueryList, getZwfwDeptWorkDetail
-    } from 'api/workSystem/process/workQuery';
+    import {getWorkFinishList, getZwfwDeptWorkDetail} from '../../../api/workSystem/process/workQuery';
     import {
         getAllCompany
     } from 'api/other/company';
@@ -378,7 +366,7 @@
                     enable: 1,
                     agencyCode: ''
                 },
-                companyList:[],
+                companyList: [],
                 currentRow: null,
                 selectedRows: [],
                 dialogFormVisible: false,
@@ -423,10 +411,19 @@
         methods: {
             getList() {
                 this.listLoading = true;
-                getZwfwDeptWorkQueryList(this.listQuery).then(response => {
-                    this.zwfwDeptWorkQueryList = response.data.list;
-                    this.total = response.data.total;
+                getWorkFinishList(this.listQuery).then(response => {
+                    if (response.httpCode === 200) {
+                        if (response.data == null) {
+                            this.zwfwDeptWorkQueryList = response.data;
+                        } else {
+                            this.zwfwDeptWorkQueryList = response.data.list;
+                            this.total = response.data.total;
+                        }
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     this.listLoading = false;
+
                 })
             },
             handleSizeChange(val) {
@@ -451,11 +448,7 @@
                 this.getList();
             },
             queryCompanySearch(queryString) {
-                let valid = validateQueryStr(queryString);
-                if (valid) {
-                    this.$message.error(`输入中包含非法字符 ${valid}`)
-                    return
-                }
+
                 if (queryString.length < 2) {
                     return;
                 }
@@ -464,10 +457,10 @@
                     name: queryString
                 };
                 getAllCompany(query).then(response => {
-                    if (response.httpCode === 200) {
-                        this.companyList = response.data;
+                    if (response.httpCode == 200) {
+                        this.companyList = (response.data);
                     } else {
-                        this.$message.error('查询失败');
+                        this.$message.error("查询失败");
                     }
                 });
             },
@@ -512,7 +505,6 @@
             handlePictureCardPreview(file) {
                 window.open(file.url);
             },
-
         }
     }
 </script>

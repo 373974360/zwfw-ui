@@ -85,7 +85,6 @@
                    :close-on-click-modal="closeOnClickModal" :before-close="resetWorkPendingForm">
             <div>
                 <div>
-                    <!--{{itemProcessVo.currentTaskName}}-->
                     <h2 class="h2-style-show">审批处理：{{itemProcessVo.currentTaskName}} </h2>
                     <input type="hidden" name="taskId" :value='itemProcessVo.taskId'/>
                     <input type="hidden" name="id" :value='itemProcessVo.id'/>
@@ -103,18 +102,6 @@
                         <el-button v-if="itemTaskSetting.supportClose" class="filter-item" type="primary"
                                    @click="action='close'">不予处理
                         </el-button>
-
-                        <el-upload style="margin-top: 10px;" name="uploadFile"
-                                   :action="uploadAction"
-                                   :on-success="handleAvatarSuccess"
-                                   :on-error="handlerAvatarError"
-                                   :show-file-list="false">
-                            <el-button class="filter-item" type="primary"
-                                       @click="action='customButtonClick'"
-                            >上传图片
-                            </el-button>
-                        </el-upload>
-
                     </div>
 
                     <el-form ref="deptWorkPendingForm" :model="itemProcessVo" label-suffix="：">
@@ -170,6 +157,20 @@
                             确定不予受理
                         </el-button>
                     </el-form>
+                </div>
+                <div>
+                    <h2 class="h2-style-show">上传附件：</h2>
+                    <div style="margin-bottom:20px;">
+                        <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
+                                   :action="uploadAction" :file-list="uploadAvatars"
+                                   :on-success="handleAvatarSuccess"
+                                   :on-error="handlerAvatarError"
+                                   :show-file-list="true"
+                                   :on-preview="handlePictureCardPreview"
+                                   :on-remove="handleRemove">
+                            <i class="el-icon-plus"></i>
+                        </el-upload>
+                    </div>
                 </div>
                 <div>
                     <h2 class="h2-style-show">审批记录：</h2>
@@ -388,17 +389,10 @@
                         </el-tab-pane>
                     </el-tabs>
                 </div>
-                <div v-if="uploadImgs!=null && uploadImgs.length>0">
-                    <h2 class="h2-style-show">图片：</h2>
-                    <ul>
-                        <li v-for="item in uploadImgs">
-                            <img :src="item.fileUrl" />
-                        </li>
-                    </ul>
-                </div>
                 <div>
                     <el-button v-if="itemProcessVo.flagCorrection || itemProcessVo.status == 99"
-                               type="button" @click="print_ycxgzd(itemProcessVo.pretrialNumber)">打印一次性告知单</el-button>
+                               type="button" @click="print_ycxgzd(itemProcessVo.pretrialNumber)">打印一次性告知单
+                    </el-button>
                 </div>
             </div>
         </el-dialog>
@@ -407,7 +401,6 @@
 </template>
 
 <script>
-    import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import {
         getZwfwDeptWorkPendingList,
@@ -417,15 +410,17 @@
         workExtendTime,
         workClose,
         workCancelExtendTime,
-        workuploadImg
+        workuploadImg,
+        workUploadImgRemove
     } from 'api/workSystem/process/workPending';
 
-    import {getZwfwApiHost} from 'utils/fetch';
 
     export default {
         name: 'zwfwDeptWorkPending_table',
         data() {
             return {
+                dialogImageUrl: '',
+                dialogVisible: false,
                 textMapTitle: null,
                 zwfwDeptWorkPendingList: [],
                 total: null,
@@ -474,9 +469,9 @@
                 action: '',
                 correctionList: [],
                 extendTimeVoList: [],
-
                 uploadAction: this.$store.state.app.uploadUrl,
                 uploadImgs: [],
+                uploadAvatars: []
             }
         },
         created() {
@@ -516,6 +511,7 @@
              * 显示详细
              * */
             showDetail(row) {
+                this.uploadAvatars = []
                 this.pretrialNumber = row.pretrialNumber;
                 this.taskId = row.taskId;
                 this.textMapTitle = '部门办事 - ' + row.itemName;
@@ -545,7 +541,14 @@
                         this.action = '';
                         this.correctionList = response.data.correctionList;
                         this.extendTimeVoList = response.data.extendTimeVoList;
-                        this.uploadImgs = response.data.itemProcessAttachmentList;
+                        const itemProcessAttachmentList = response.data.itemProcessAttachmentList;
+                        for (var o in itemProcessAttachmentList) {
+                            this.uploadAvatars.push(
+                                {url: itemProcessAttachmentList[o].fileUrl,
+                                id: itemProcessAttachmentList[o].id,
+                                taskId: itemProcessAttachmentList[o].taskId}
+                            );
+                        }
                     } else {
                         this.$message.error(response.msg);
                     }
@@ -575,7 +578,6 @@
              * */
             submitComplete() {
                 var form = this.$refs.deptWorkPendingForm;
-//                console.log(Qs.parse($(form.$el).serialize()));
                 console.log(this.formData);
 
                 const query = Object.assign({
@@ -686,14 +688,12 @@
                     const query = {
                         processNumber: this.pretrialNumber,
                         taskId: this.taskId,
-                        fileUrl: res.url,
+                        fileUrl: res.url
                     }
-                    debugger;
                     workuploadImg(query).then(response => {
                         if (response.httpCode === 200) {
                             this.$message.success("保存成功");
                             console.log(response);
-                            this.uploadImgs.push(response.data);
                         } else {
                             this.$message.error(response.msg);
                         }
@@ -712,6 +712,23 @@
                 console.log(err);
                 this.$message.error("网络不稳定，上传失败");
             },
+            handlePictureCardPreview(file) {
+                window.open(file.url);
+            },
+            handleRemove(file) {
+                console.log(file);
+                const data = {
+                    id: file.id,
+                    taskId: file.taskId
+                }
+                workUploadImgRemove(data).then(response => {
+                    if(response.httpCode === 200){
+                        this.$message.success("删除成功");
+                    }else{
+                        this.$message.error("删除失败");
+                    }
+                })
+            }
 
         }
     }
