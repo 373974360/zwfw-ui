@@ -3,11 +3,13 @@
         <div class="filter-container">
             <el-input @keyup.enter.native="getItemList" style="width: 130px;" class="filter-item" placeholder="名称"
                       v-model="listQuery.name"></el-input>
-            <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleItemCreate" type="primary" icon="plus">
+            <el-button class="filter-item" type="primary" v-waves icon="search" @click="getItemList">搜索</el-button>
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleItemCreate" type="primary"
+                       icon="plus">
                 添加
             </el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleItemDelete" type="danger" icon="delete">
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleItemDelete" type="danger"
+                       icon="delete">
                 删除
             </el-button>
         </div>
@@ -99,9 +101,10 @@
                     <el-cascader
                             expand-trigger="hover" :show-all-levels="true"
                             :change-on-select="true"
-                            :options="deptTrees"
+                            :options="deptTree"
                             v-model="deptCascader"
-                            @change="handleDeptChange">
+                            @change="handleDeptChange"
+                            style="width: 100%">
                     </el-cascader>
                 </el-form-item>
                 <el-form-item label="基本编码" prop="basicCode">
@@ -268,6 +271,16 @@
                     <el-date-picker v-model="zwfwItem.versionAvailableTime" type="datetime"
                                     placeholder="选择日期"></el-date-picker>
                 </el-form-item>
+                <el-form-item label="监督部门" prop="superviseDepartmentId">
+                    <el-cascader
+                            expand-trigger="hover" :show-all-levels="true"
+                            :change-on-select="true"
+                            :options="deptTrees"
+                            v-model="updateModel"
+                            @change="handleChanges"
+                            style="width: 100%">
+                    </el-cascader>
+                </el-form-item>
                 <el-form-item label="监督电话" prop="supervisePhone">
                     <el-input v-model="zwfwItem.supervisePhone"></el-input>
                 </el-form-item>
@@ -277,7 +290,7 @@
                 <el-form-item label="受理条件" prop="acceptCondition">
                     <!--<el-input v-model="zwfwItem.acceptCondition" type="textarea"></el-input>-->
                     <quill-editor ref="conditionEditor" v-model="acceptConditionHtml"
-                                  :options="quillEditorOption" @focus="onEditorFocus($event)" >
+                                  :options="quillEditorOption" @focus="onEditorFocus($event)">
                     </quill-editor>
                     <el-upload name="uploadFile" v-show="false" :show-file-list="false"
                                :action="uploadAction" :accept="imageAccepts"
@@ -505,7 +518,7 @@
     import {getAllMaterial, updateZwfwMaterial} from 'api/zwfwSystem/business/material';
     import {getAllUser} from 'api/baseSystem/org/user';
     import {getDeptCascader} from 'api/baseSystem/org/dept';
-    import { quillEditor } from 'vue-quill-editor'
+    import {quillEditor} from 'vue-quill-editor'
 
     export default {
         name: 'zwfwItem_table',
@@ -651,10 +664,10 @@
                 quillEditorOption: {
                     modules: {
                         toolbar: [
-                            [{ header: [] }],
+                            [{header: []}],
                             ['bold', 'italic', 'underline'],
-                            [{ color: [] }, { background: [] }],
-                            [{ list: 'ordered' }, { list: 'bullet' }],
+                            [{color: []}, {background: []}],
+                            [{list: 'ordered'}, {list: 'bullet'}],
                             ['clean'],
                             ['link', 'image']
                         ]
@@ -750,6 +763,7 @@
                 getDeptCascader().then(response => {
                     if (response.httpCode === 200) {
                         this.deptTree = response.data;
+                        this.deptTrees = response.data;
                     } else {
                         this.$message.error('加载部门信息失败');
                     }
@@ -846,15 +860,6 @@
                     this.pageLoading = false;
                 })
             },
-            handleDeptChange(value) {
-                if (value.length > 0) {
-                    this.zwfwItem.departmentId = parseInt(value[value.length - 1]);
-                    this.zwfwItem.departmentTreePosition = value.join('&');
-                } else {
-                    this.zwfwItem.departmentId = 0;
-                    this.zwfwItem.departmentTreePosition = [];
-                }
-            },
             queryUser(keywords) {
                 // todo 预审人员是否根据所选部门筛选
                 getAllUser({
@@ -871,13 +876,22 @@
                 getPretrialUserListByItemId(this.zwfwItem.id).then(response => {
                     if (response.httpCode === 200) {
                         this.allUserList = response.data;
-                        this.zwfwItem.pretrialUserIdsArray = response.data.map(function(o) {
+                        this.zwfwItem.pretrialUserIdsArray = response.data.map(function (o) {
                             return o.id;
                         });
                     } else {
                         this.$message.error('查询预审用户失败');
                     }
                 });
+            },
+            handleDeptChange(value) {
+                if (value.length > 0) {
+                    this.zwfwItem.departmentId = parseInt(value[value.length - 1]);
+                    this.zwfwItem.departmentTreePosition = value.join('&');
+                } else {
+                    this.zwfwItem.departmentId = 0;
+                    this.zwfwItem.departmentTreePosition = [];
+                }
             },
             handleChanges(value) {
                 if (value.length > 0) {
@@ -1201,6 +1215,7 @@
         margin-top: 10px;
         text-align: center;
     }
+
     .quill-editor {
         height: 218px;
         margin-bottom: 8px;
