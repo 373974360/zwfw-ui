@@ -166,7 +166,8 @@
                                    :on-success="handleAvatarSuccess"
                                    :on-error="handlerAvatarError"
                                    :show-file-list="true"
-                                   :on-preview="handlePictureCardPreview">
+                                   :on-preview="handlePictureCardPreview"
+                                   :on-remove="handleRemove">
                             <i class="el-icon-plus"></i>
                         </el-upload>
                     </div>
@@ -409,7 +410,8 @@
         workExtendTime,
         workClose,
         workCancelExtendTime,
-        workuploadImg
+        workuploadImg,
+        workUploadImgRemove
     } from 'api/workSystem/process/workPending';
 
 
@@ -541,7 +543,11 @@
                         this.extendTimeVoList = response.data.extendTimeVoList;
                         const itemProcessAttachmentList = response.data.itemProcessAttachmentList;
                         for (var o in itemProcessAttachmentList) {
-                            this.uploadAvatars.push({url: itemProcessAttachmentList[o].fileUrl});
+                            this.uploadAvatars.push(
+                                {url: itemProcessAttachmentList[o].fileUrl,
+                                id: itemProcessAttachmentList[o].id,
+                                taskId: itemProcessAttachmentList[o].taskId}
+                            );
                         }
                     } else {
                         this.$message.error(response.msg);
@@ -708,6 +714,20 @@
             },
             handlePictureCardPreview(file) {
                 window.open(file.url);
+            },
+            handleRemove(file) {
+                console.log(file);
+                const data = {
+                    id: file.id,
+                    taskId: file.taskId
+                }
+                workUploadImgRemove(data).then(response => {
+                    if(response.httpCode === 200){
+                        this.$message.success("删除成功");
+                    }else{
+                        this.$message.error("删除失败");
+                    }
+                })
             }
 
         }

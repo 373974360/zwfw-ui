@@ -76,3 +76,12 @@ export function workuploadImg(itemProcessAttachmentVo) {
     })
 }
 
+export function workUploadImgRemove(itemProcessAttachmentVo) {
+    const data = itemProcessAttachmentVo;
+    return fetch({
+        url: '/api/workSystem/itemProcessAttachment/uploadImgRemove',
+        method: 'post',
+        data
+    })
+}
+
