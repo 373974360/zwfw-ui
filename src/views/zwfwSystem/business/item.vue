@@ -1,18 +1,18 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="名称"
+            <el-input @keyup.enter.native="getItemList" style="width: 130px;" class="filter-item" placeholder="名称"
                       v-model="listQuery.name"></el-input>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleItemCreate" type="primary" icon="plus">
                 添加
             </el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleDelete" type="danger" icon="delete">
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleItemDelete" type="danger" icon="delete">
                 删除
             </el-button>
         </div>
 
-        <el-table ref="zwfwItemTable" :data="zwfwItemList" v-loading.body="listLoading" border fit highlight-current-row
+        <el-table ref="zwfwItemTable" :data="zwfwItemList" v-loading.body="pageLoading" border fit highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column type="selection" width="55"/>
             <el-table-column align="center" label="序号">
@@ -23,7 +23,7 @@
             <el-table-column align="left" label="事项名称" prop="name">
                 <template scope="scope">
                     <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
-                        <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
+                        <span class="link-type" @click="handleItemUpdate(scope.row)">{{scope.row.name}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
@@ -80,18 +80,18 @@
             </el-table-column>
         </el-table>
 
-        <div v-show="!listLoading" class="pagination-container">
+        <div v-show="!pageLoading" class="pagination-container">
             <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
                            :current-page.sync="listQuery.page" :page-sizes="this.$store.state.app.pageSize"
                            :page-size="listQuery.rows" layout="total, sizes, prev, pager, next, jumper" :total="total">
             </el-pagination>
         </div>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" @open="initEditor"
-                   :close-on-click-modal="closeOnClickModal" :before-close="resetZwfwItemForm">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogItemFormVisible" @open="initEditor"
+                   :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemForm">
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem" label-position="right"
                      label-width="134px"
-                     style="width: 80%; margin-left: 10%" v-loading="dialogLoading" :rules="zwfwItemRules">
+                     style="width: 80%; margin-left: 10%" v-loading="dialogFormLoading" :rules="zwfwItemRules">
                 <el-form-item label="事项名称" prop="name">
                     <el-input v-model="zwfwItem.name"></el-input>
                 </el-form-item>
@@ -100,8 +100,8 @@
                             expand-trigger="hover" :show-all-levels="true"
                             :change-on-select="true"
                             :options="deptTree"
-                            v-model="cascaderModel"
-                            @change="handleChange">
+                            v-model="deptCascader"
+                            @change="handleDeptChange">
                     </el-cascader>
                 </el-form-item>
                 <el-form-item label="基本编码" prop="basicCode">
@@ -185,9 +185,9 @@
                 <el-form-item label="结果样本" prop="resultExample">
                     <el-upload name="uploadFile" :accept="fileAccepts"
                                ref="upload"
-                               :action="uploadAction" :file-list="uploadAvatarsResult"
-                               :on-success="handleAvatarResultSuccess"
-                               :before-upload="beforeAvatarUpload"
+                               :action="uploadAction" :file-list="resultExampleFileList"
+                               :on-success="handleResultUploadSuccess"
+                               :before-upload="beforeResultUpload"
                                :on-remove="handleRemoveResult"
                                :auto-upload="false">
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
@@ -281,7 +281,7 @@
                     </quill-editor>
                     <el-upload name="uploadFile" v-show="false" :show-file-list="false"
                                :action="uploadAction" :accept="imageAccepts"
-                               :on-success="handleAvatarSuccess" :on-error="handlerAvatarError">
+                               :on-success="handleEditorUploadSuccess" :on-error="handleEditorUploadError">
                         <el-button id="condition_btn"></el-button>
                     </el-upload>
                 </el-form-item>
@@ -292,7 +292,7 @@
                     </quill-editor>
                     <el-upload name="uploadFile" v-show="false" :show-file-list="false"
                                :action="uploadAction" :accept="imageAccepts"
-                               :on-success="handleAvatarSuccess" :on-error="handlerAvatarError">
+                               :on-success="handleEditorUploadSuccess" :on-error="handleEditorUploadError">
                         <el-button id="workflow_btn"></el-button>
                     </el-upload>
                 </el-form-item>
@@ -303,7 +303,7 @@
                     </quill-editor>
                     <el-upload name="uploadFile" v-show="false" :show-file-list="false"
                                :action="uploadAction" :accept="imageAccepts"
-                               :on-success="handleAvatarSuccess" :on-error="handlerAvatarError">
+                               :on-success="handleEditorUploadSuccess" :on-error="handleEditorUploadError">
                         <el-button id="standard_btn"></el-button>
                     </el-upload>
                 </el-form-item>
@@ -314,7 +314,7 @@
                     </quill-editor>
                     <el-upload name="uploadFile" v-show="false" :show-file-list="false"
                                :action="uploadAction" :accept="imageAccepts"
-                               :on-success="handleAvatarSuccess" :on-error="handlerAvatarError">
+                               :on-success="handleEditorUploadSuccess" :on-error="handleEditorUploadError">
                         <el-button id="basis_btn"></el-button>
                     </el-upload>
                 </el-form-item>
@@ -363,27 +363,27 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer" style="text-align: center;">
-                <el-button icon="circle-cross" type="danger" @click="resetZwfwItemForm">取 消
+                <el-button icon="circle-cross" type="danger" @click="closeZwfwItemForm">取 消
                 </el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">
+                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="doItemCreate">
                     确 定
                 </el-button>
-                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">
+                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="doItemUpdate">
                     确 定
                 </el-button>
             </div>
         </el-dialog>
 
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible1" size="large"
-                   :close-on-click-modal="closeOnClickModal" :before-close="resetZwfwMaterialForm">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogMaterialFormVisible" size="large"
+                   :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwMaterialForm">
             <div class="filter-container">
-                <el-button class="filter-item" style="margin-left: 10px;" @click="handleDeleteOne" type="danger"
+                <el-button class="filter-item" style="margin-left: 10px;" @click="handleMaterialDelete" type="danger"
                            icon="delete">
                     删除
                 </el-button>
             </div>
-            <el-table ref="zwfwItemMaterialForm" :data="zwfwItemMaterialList" v-loading.body="listLoading1"
+            <el-table ref="zwfwItemMaterialForm" :data="zwfwItemMaterialList" v-loading.body="dialogTableLoading"
                       border fit
                       highlight-current-row
                       style="width: 100%" @selection-change="handleSelectionChange">
@@ -396,7 +396,7 @@
                 <el-table-column prop="name" align="left" label="材料名称">
                     <template scope="scope">
                         <el-tooltip content="点击编辑" placement="right" effect="dark">
-                            <span class="link-type" @click='handleUpdateClick(scope.row)'>{{scope.row.name}}</span>
+                            <span class="link-type" @click="handleMaterialUpdate(scope.row)">{{scope.row.name}}</span>
                         </el-tooltip>
                     </template>
                 </el-table-column>
@@ -417,9 +417,9 @@
                 </el-table-column>
             </el-table>
             <el-form ref="zwfwMaterialForm" class="small-space" :model="zwfwItemMaterial"
-                     label-position="right"
+                     label-position="right" v-loading="dialogFormLoading"
                      label-width="134px"
-                     style='width: 80%; margin-left:10%; margin-top: 5%;'
+                     style="width: 80%; margin-left:10%; margin-top: 5%;"
                      :rules="zwfwItemMaterialRules">
                 <el-form-item label="材料名称" prop="name">
                     <el-select
@@ -427,7 +427,7 @@
                             filterable
                             remote
                             placeholder="请输入材料名称"
-                            :remote-method="remoteMethod"
+                            :remote-method="searchMaterial"
                             @change="changeMaterial"
                             :disabled="changeMaterialName" style="width:100%">
 
@@ -435,7 +435,7 @@
                                 v-for="item in optionsName"
                                 :key="item.id"
                                 :label="item.name"
-                                :value="item.name">
+                                :value="item.id">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -456,7 +456,7 @@
                         <td>
                             <el-form-item label="是否需要电子材料:" :inline="true" prop="electronicMaterial"
                                           v-show="changeMaterialInfo">
-                                <span v-if="electronicMaterial != null">{{zwfwItemMaterial.electronicMaterial | enums('YesNo')}}</span>
+                                <span v-if="zwfwItemMaterial.electronicMaterial">{{zwfwItemMaterial.electronicMaterial | enums('YesNo')}}</span>
                             </el-form-item>
                         </td>
                     </tr>
@@ -481,15 +481,15 @@
                 </el-form-item>
             </el-form>
             <div style="text-align: center" slot="footer" class="dialog-footer">
-                <el-button icon="circle-cross" type="danger" @click="resetZwfwMaterialForm">取 消</el-button>
+                <el-button icon="circle-cross" type="danger" @click="closeZwfwMaterialForm">取 消</el-button>
                 <el-button type="primary" icon="circle-check"
-                           @click="createMaterial">确 定
+                           @click="relateMaterial">确 定
                 </el-button>
             </div>
         </el-dialog>
     </div>
 </template>
-
++
 <script>
     import {copyProperties, resetForm, validateQueryStr} from 'utils';
     import {mapGetters} from 'vuex';
@@ -516,15 +516,15 @@
             return {
                 changeMaterialName: false,
                 changeMaterialInfo: false,
-                electronicMaterial: null,
                 zwfwItemList: [],
                 zwfwItemMaterialList: [],
                 ItemMaterial: [],
                 optionsName: [],
                 list: [],
                 total: null,
-                listLoading: true,
-                listLoading1: true,
+                pageLoading: true,
+                dialogFormLoading: false,
+                dialogTableLoading: false,
                 changeTable: false,
                 listQuery: {
                     page: this.$store.state.app.page,
@@ -600,16 +600,13 @@
                 currentRow: null,
                 listMaterial: null,
                 selectedRows: [],
-                dialogFormVisible: false,
-                dialogFormVisible1: false,
+                dialogItemFormVisible: false,
+                dialogMaterialFormVisible: false,
                 dialogStatus: '',
-                dialogLoading: false,
                 uploadAction: this.$store.state.app.uploadUrl,
                 fileAccepts: this.$store.state.app.fileAccepts,
                 imageAccepts: this.$store.state.app.imageAccepts,
-                uploadAvatarsExample: [],
-                uploadAvatarsEform: [],
-                uploadAvatarsResult: [],
+                resultExampleFileList: [],
                 zwfwItemRules: {
                     name: [
                         {required: true, message: '请输入事项名称'}
@@ -662,22 +659,8 @@
                 editor: {}
             }
         },
-
-        created() {
-            this.getList();
-            // 用于加载根据部门分组的用户列表，用来在设置预审用户时使用
-            this.allUserList = [];
-            this.deptTree = [];
-            getDeptCascader().then(response => {
-                if (response.httpCode === 200) {
-                    this.deptTree = response.data;
-                } else {
-                    console.log('加载部门信息失败');
-                }
-            });
-        },
         computed: {
-            cascaderModel() {
+            deptCascader() {
                 if (this.zwfwItem.departmentId) {
                     // 找到对应的部门
                     if (this.zwfwItem.departmentTreePosition) {
@@ -693,6 +676,10 @@
                 'dics',
                 'closeOnClickModal'
             ])
+        },
+        created() {
+            this.getItemList();
+            this.getDeptTree();
         },
         methods: {
             initEditor() {
@@ -727,7 +714,129 @@
                     fileUploader.click()
                 }
             },
+            getItemList() {
+                this.pageLoading = true;
+                getZwfwItemList(this.listQuery).then(response => {
+                    if (response.httpCode === 200) {
+                        this.zwfwItemList = response.data.list;
+                        this.total = response.data.total;
+                    } else {
+                        this.$message.error(response.msg || '事项列表查询失败');
+                    }
+                    this.pageLoading = false;
+                });
+            },
+            getDeptTree() {
+                getDeptCascader().then(response => {
+                    if (response.httpCode === 200) {
+                        this.deptTree = response.data;
+                    } else {
+                        this.$message.error('加载部门信息失败');
+                    }
+                });
+            },
+            handleItemCreate() {
+                this.resetItemTemp();
+                this.dialogStatus = 'create';
+                this.dialogItemFormVisible = true;
+            },
+            handleItemUpdate(row) {
+                this.currentRow = row;
+                this.resetItemTemp();
+                this.zwfwItem = copyProperties(this.zwfwItem, row);
+                if (this.zwfwItem.resultExample) {
+                    this.resultExampleFileList.push({url: this.zwfwItem.resultExample, name: '结果样本'});
+                }
+                this.decodeEditorHtml();
+                this.dialogStatus = 'update';
+                this.dialogItemFormVisible = true;
+                // 查询事项信息中没有返回事项预审人员，需要主动查询
+                this.getPretrialUserList();
+            },
+            handleItemDelete() {
+                if (this.selectedRows.length === 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.doItemDelete();
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
+            doItemCreate() {
+                this.$refs['zwfwItemForm'].validate(valid => {
+                    if (valid) {
+                        this.dialogFormLoading = true;
+                        this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIdsArray.join(',');
+                        this.encodeEditorHtml();
+                        createZwfwItem(this.zwfwItem).then(response => {
+                            this.dialogFormLoading = false;
+                            if (response.httpCode === 200) {
+                                this.closeZwfwItemForm()
+                                this.$message.success('创建成功');
+                                this.getItemList();
+                            } else {
+                                this.$message.error(response.msg || '创建失败');
+                            }
+                        })
+                    } else {
+                        return false;
+                    }
+                });
+            },
+            doItemUpdate() {
+                this.$refs['zwfwItemForm'].validate(valid => {
+                    if (valid) {
+                        this.dialogFormLoading = true;
+                        this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIdsArray.join(',');
+                        this.encodeEditorHtml();
+                        updateZwfwItem(this.zwfwItem).then(response => {
+                            this.dialogFormLoading = false;
+                            if (response.httpCode === 200) {
+                                this.closeZwfwItemForm();
+                                this.$message.success('更新成功');
+                                this.getItemList();
+                            } else {
+                                this.$message.error(response.msg || '更新失败');
+                            }
+                        });
+                    } else {
+                        return false;
+                    }
+                });
+            },
+            doItemDelete() {
+                this.pageLoading = true;
+                let ids = [];
+                for (const deleteRow of this.selectedRows) {
+                    ids.push(deleteRow.id);
+                }
+                delZwfwItems(ids.join()).then(response => {
+                    if (response.httpCode === 200) {
+                        this.getItemList();
+                        this.$message.success('删除成功');
+                    } else {
+                        this.$message.error(response.msg || '删除失败');
+                    }
+                    this.pageLoading = false;
+                })
+            },
+            handleDeptChange(value) {
+                if (value.length > 0) {
+                    this.zwfwItem.departmentId = parseInt(value[value.length - 1]);
+                    this.zwfwItem.departmentTreePosition = value.join('&');
+                } else {
+                    this.zwfwItem.departmentId = 0;
+                    this.zwfwItem.departmentTreePosition = [];
+                }
+            },
             queryUser(keywords) {
+                // todo 预审人员是否根据所选部门筛选
                 getAllUser({
                     name: keywords
                 }).then(response => {
@@ -738,14 +847,17 @@
                     }
                 });
             },
-            handleChange(value) {
-                if (value.length > 0) {
-                    this.zwfwItem.departmentId = parseInt(value[value.length - 1]);
-                    this.zwfwItem.departmentTreePosition = value.join('&');
-                } else {
-                    this.zwfwItem.departmentId = 0;
-                    this.zwfwItem.departmentTreePosition = [];
-                }
+            getPretrialUserList() {
+                getPretrialUserListByItemId(this.zwfwItem.id).then(response => {
+                    if (response.httpCode === 200) {
+                        this.allUserList = response.data;
+                        this.zwfwItem.pretrialUserIdsArray = response.data.map(function(o) {
+                            return o.id;
+                        });
+                    } else {
+                        this.$message.error('查询预审用户失败');
+                    }
+                });
             },
             submitUpload() {
                 this.$refs.upload.submit();
@@ -755,62 +867,41 @@
                     window.open(this.zwfwItem.resultExample);
                 }
             },
-            getList() {
-                this.listLoading = true;
-                getZwfwItemList(this.listQuery).then(response => {
-                    if (response.httpCode === 200) {
-                        this.zwfwItemList = response.data.list;
-                        this.total = response.data.total;
-                    } else {
-                        this.$message.error(response.msg || '事项列表查询失败');
-                    }
-                    this.listLoading = false;
-                });
-            },
-            handleFilter() {
-                this.getList();
-            },
-            handleMaterialList(item) {
-                this.currentItem = item;
-                this.itemId = item.id;
-                this.resetTemp1();
-                this.dialogStatus = 'associateMaterial';
-                this.dialogFormVisible1 = true;
-                this.getItemMaterialListByItemId();
-            },
-            getItemMaterialListByItemId() {
-                this.listLoading1 = true;
-                getAllItemMaterial(this.currentItem.id).then(response => {
-                    if (response.httpCode === 200) {
-                        this.zwfwItemMaterialList = response.data;
-                    } else {
-                        this.$message.error(response.msg || '加载材料列表失败');
-                    }
-                    this.listLoading1 = false;
-                })
-            },
-            handleRemoveEform() {
-                this.zwfwItemMaterial.eform = '';
-            },
-            handleRemoveExample() {
-                this.zwfwItemMaterial.example = '';
-            },
-            handleAvatarResultSuccess(res, file, fileList) {
+            handleResultUploadSuccess(res, file, fileList) {
                 fileList.length = 0;
                 fileList.push(file);
                 this.zwfwItem.resultExample = res.url;
             },
-            handleRemoveResult() {
-                this.zwfwItem.resultExample = '';
-            },
-            beforeAvatarUpload(file) {
+            beforeResultUpload(file) {
                 const isLt2M = file.size / 1024 / 1024 < 2;
                 if (!isLt2M) {
                     this.$message.error('上传模板大小不能超过 2MB!');
                 }
                 return isLt2M;
             },
-            remoteMethod(query) {
+            handleRemoveResult() {
+                this.zwfwItem.resultExample = '';
+            },
+            handleMaterialList(item) {
+                this.currentItem = item;
+                this.itemId = item.id;
+                this.dialogStatus = 'associateMaterial';
+                this.getItemMaterialList();
+                this.resetMaterialTemp();
+                this.dialogMaterialFormVisible = true;
+            },
+            getItemMaterialList() {
+                this.dialogTableLoading = true;
+                getAllItemMaterial(this.currentItem.id).then(response => {
+                    if (response.httpCode === 200) {
+                        this.zwfwItemMaterialList = response.data;
+                    } else {
+                        this.$message.error(response.msg || '加载材料列表失败');
+                    }
+                    this.dialogTableLoading = false;
+                })
+            },
+            searchMaterial(query) {
                 if (query !== '') {
                     let valid = validateQueryStr(query);
                     if (valid) {
@@ -820,7 +911,6 @@
                     const listQueryName = {
                         name: query
                     }
-                    this.electronicMaterial = '';
                     getAllMaterial(listQueryName).then(response => {
                         if (response.httpCode === 200) {
                             this.optionsName = response.data;
@@ -834,79 +924,23 @@
             },
             changeMaterial(value) {
                 for (const obj of this.optionsName) {
-                    if (obj.name == value) {
-                        this.zwfwItemMaterial = Object.assign({}, obj);
+                    if (obj.id === value) {
+                        this.currentRow = obj
+                        this.zwfwItemMaterial = copyProperties(this.zwfwItemMaterial, obj)
                         this.changeMaterialInfo = true;
+                        return;
                     }
                 }
             },
-            handleUpdateClick(row) {
+            handleMaterialUpdate(row) {
                 this.currentRow = row;
-                this.resetTemp1();
+                this.resetMaterialTemp();
                 this.zwfwItemMaterial = copyProperties(this.zwfwItemMaterial, row);
-                if (this.zwfwItemMaterial.eform == '') {
-                    this.handleRemoveEform();
-                } else {
-                    this.uploadAvatarsEform = [];
-                    this.uploadAvatarsEform.push({url: this.zwfwItemMaterial.eform});
-                }
-                if (this.zwfwItemMaterial.example == '') {
-                    this.handleRemoveExample();
-                } else {
-                    this.uploadAvatarsExample = [];
-                    this.uploadAvatarsExample.push({url: this.zwfwItemMaterial.example});
-                }
                 this.changeMaterialName = true;
                 this.changeMaterialInfo = true;
             },
-            handleSizeChange(val) {
-                this.listQuery.rows = val;
-                this.listQuery.name = null;
-                this.getList();
-            },
-            handleCurrentChange(val) {
-                this.listQuery.page = val;
-                this.getList();
-            },
-            handleSelectionChange(rows) {
-                this.selectedRows = rows;
-            },
-            toggleSelection(row) {
-                this.$refs.zwfwItemTable.toggleRowSelection(row);
-            },
-            handleCreate(row) {
-                this.currentRow = row;
-                this.resetTemp();
-                this.dialogStatus = 'create';
-                this.dialogFormVisible = true;
-            },
-            handleUpdate(row) {
-                this.currentRow = row;
-                this.resetTemp();
-                this.zwfwItem = copyProperties(this.zwfwItem, row);
-                if (this.zwfwItem.resultExample == '') {
-                    this.handleRemoveResult();
-                } else {
-                    this.uploadAvatarsResult = [];
-                    this.uploadAvatarsResult.push({url: this.zwfwItem.resultExample, name: '结果样本'});
-                }
-                this.decodeEditorHtml();
-                this.dialogStatus = 'update';
-                this.dialogFormVisible = true;
-                // 查询事项绑定的预审用户
-                getPretrialUserListByItemId(this.zwfwItem.id).then(response => {
-                    if (response.httpCode === 200) {
-                        this.allUserList = response.data;
-                        this.zwfwItem.pretrialUserIdsArray = response.data.map(function(o) {
-                            return o.id;
-                        });
-                    } else {
-                        this.$message.error('查询预审用户失败');
-                    }
-                });
-            },
-            handleDelete(row) {
-                if (this.selectedRows == 0) {
+            handleMaterialDelete() {
+                if (this.selectedRows.length === 0) {
                     this.$message.warning('请选择需要操作的记录');
                 } else {
                     this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
@@ -914,188 +948,138 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        this.listLoading = true;
-                        let selectCounts = this.selectedRows.length;
-                        let ids = new Array();
-                        for (const deleteRow of this.selectedRows) {
-                            ids.push(deleteRow.id);
-                        }
-                        delZwfwItems(ids.join()).then(response => {
-                            if (response.httpCode === 200) {
-                                this.total -= selectCounts;
-                                for (const deleteRow of this.selectedRows) {
-                                    const index = this.zwfwItemList.indexOf(deleteRow);
-                                    this.zwfwItemList.splice(index, 1);
-                                }
-                                this.$message.success('删除成功');
-                            } else {
-                                this.$message.error(response.msg || '删除失败');
-                            }
-                            this.listLoading = false;
-                        })
+                        this.doMaterialDelete();
                     }).catch(() => {
                         console.dir('取消');
                     });
                 }
             },
-            handleDeleteOne() {
-                if (this.selectedRows == 0) {
-                    this.$message.warning('请选择需要操作的记录');
-                } else {
-                    this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-                        const length = this.selectedRows.length;
-                        const ids = new Array();
-                        for (const deleteRow of this.selectedRows) {
-                            ids.push(deleteRow.id);
-                        }
-                        deleteZwfwItemMaterial(this.itemId, ids).then(response => {
-                            if (response.httpCode === 200) {
-                                this.currentItem.itemMaterialCount -= length;
-                                this.$message.success('删除成功');
-//                            for (const deleteRow of this.selectedRows) {
-//                                const index = this.zwfwItemMaterialList.indexOf(deleteRow);
-//                                this.zwfwItemMaterialList.splice(index, 1);
-//                            }
-                            } else {
-                                this.$message.error(response.msg || '删除失败');
-                            }
-                            this.dialogFormVisible1 = false;
-                        })
-                    }).catch(() => {
-                        console.dir('取消');
-                    });
-                }
-            },
-            create() {
-                this.$refs['zwfwItemForm'].validate(valid => {
-                    if (valid) {
-                        this.dialogFormVisible = false;
-                        this.listLoading = true;
-                        this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIdsArray.join(',');
-                        this.encodeEditorHtml();
-                        createZwfwItem(this.zwfwItem).then(response => {
-                            if (response.httpCode === 200) {
-                                this.zwfwItemList.unshift(response.data);
-                                this.total += 1;
-                                this.$message.success('创建成功');
-                                this.getList();
-                            } else {
-                                this.$message.error(response.msg || '创建失败');
-                            }
-                            this.listLoading = false;
-                        })
-                    } else {
-                        return false;
-                    }
-                });
-            },
-            createMaterial() {
+            relateMaterial() {
                 this.$refs['zwfwMaterialForm'].validate(valid => {
                     if (valid) {
-                        if (this.changeMaterialName != true) {
-                            for (let obj of this.zwfwItemMaterialList) {
-                                if (obj.id == this.zwfwItemMaterial.id) {
-                                    this.$message.warning('资料已存在');
-                                    this.resetTemp1();
-                                    resetForm(this, 'zwfwMaterialForm');
-                                    this.changeMaterialInfo = false;
-                                    return false;
-                                }
-                            }
-                            const query = {
-                                itemId: this.itemId,
-                                materialId: this.zwfwItemMaterial.id,
-                                paperDescription: this.zwfwItemMaterial.paperDescription
-                            }
-                            this.listLoading1 = true;
-                            createZwfwItemMaterial(query).then(response => {
-                                if (response.httpCode === 200) {
-                                    this.zwfwItemMaterialList.unshift(this.zwfwItemMaterial);
-                                    this.$message.success('创建成功');
-                                    this.uploadAvatarsExample = [];
-                                    this.uploadAvatarsEform = [];
-                                    this.resetZwfwMaterialForm();
-                                    this.currentItem.itemMaterialCount += 1;
-                                } else {
-                                    this.$message.error('添加失败');
-                                }
-                                this.listLoading1 = false;
-                            })
+                        if (!this.changeMaterialName) {
+                            this.doMaterialAdd();
                         } else {
-                            const zwfwMaterialList = {
-                                id: this.zwfwItemMaterial.id,
-                                electronicMaterial: this.zwfwItemMaterial.electronicMaterial,
-                                eform: this.zwfwItemMaterial.eform,
-                                name: this.zwfwItemMaterial.name,
-                                paperDescription: this.zwfwItemMaterial.paperDescription,
-                                acceptStandard: this.zwfwItemMaterial.acceptStandard,
-                                remark: this.zwfwItemMaterial.remark,
-                                source: this.zwfwItemMaterial.source,
-                                type: this.zwfwItemMaterial.type,
-                                example: this.zwfwItemMaterial.example,
-                                notice: this.zwfwItemMaterial.notice
-                            }
-                            this.listLoading1 = true;
-                            updateZwfwMaterial(zwfwMaterialList).then(response => {
-                                this.listLoading1 = false;
-                                if (response.httpCode === 200) {
-                                    copyProperties(this.currentRow, response.data);
-                                    this.$message.success('更新成功');
-                                    this.dialogFormVisible1 = true;
-                                    this.uploadAvatarsExample = [];
-                                    this.uploadAvatarsEform = [];
-                                    this.resetZwfwMaterialForm();
-                                } else {
-                                    this.$message.error('修改失败');
-                                }
-                            })
+                            this.doMaterialUpdate();
                         }
                     } else {
                         return false;
                     }
                 });
             },
-            update() {
-                this.$refs['zwfwItemForm'].validate(valid => {
-                    if (valid) {
-                        this.listLoading = true;
-                        this.dialogFormVisible = false;
-                        this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIdsArray.join(',');
-                        this.encodeEditorHtml();
-                        updateZwfwItem(this.zwfwItem).then(response => {
-                            if (response.httpCode === 200) {
-                                this.getList();
-                                this.$message.success('更新成功');
-                            } else {
-                                this.$message.error(response.msg);
-                            }
-                            this.listLoading = false;
-                        });
-                    } else {
+            doMaterialAdd() {
+                for (let obj of this.zwfwItemMaterialList) {
+                    if (obj.id === this.zwfwItemMaterial.id) {
+                        this.$message.warning('资料已存在');
+                        this.resetZwfwMaterialForm();
                         return false;
                     }
-                });
+                }
+                const query = {
+                    itemId: this.itemId,
+                    materialId: this.zwfwItemMaterial.id,
+                    paperDescription: this.zwfwItemMaterial.paperDescription
+                }
+                this.dialogFormLoading = true;
+                createZwfwItemMaterial(query).then(response => {
+                    this.dialogFormLoading = false;
+                    if (response.httpCode === 200) {
+                        this.getItemMaterialList();
+                        this.resetZwfwMaterialForm();
+                        this.$message.success('关联成功');
+                    } else {
+                        this.$message.error('关联失败');
+                    }
+                })
             },
-            resetTemp1() {
-                this.zwfwItemMaterial = {
-                    id: undefined,
-                    electronicMaterial: true,
-                    eform: '',
-                    name: '',
-                    paperDescription: '',
-                    acceptStandard: '',
-                    remark: '',
-                    source: '',
-                    type: '',
-                    example: '',
-                    notice: ''
-                };
+            doMaterialUpdate() {
+                const zwfwMaterialList = {
+                    id: this.zwfwItemMaterial.id,
+                    electronicMaterial: this.zwfwItemMaterial.electronicMaterial,
+                    eform: this.zwfwItemMaterial.eform,
+                    name: this.zwfwItemMaterial.name,
+                    paperDescription: this.zwfwItemMaterial.paperDescription,
+                    acceptStandard: this.zwfwItemMaterial.acceptStandard,
+                    remark: this.zwfwItemMaterial.remark,
+                    source: this.zwfwItemMaterial.source,
+                    type: this.zwfwItemMaterial.type,
+                    example: this.zwfwItemMaterial.example,
+                    notice: this.zwfwItemMaterial.notice
+                }
+                this.dialogFormLoading = true;
+                updateZwfwMaterial(zwfwMaterialList).then(response => {
+                    this.dialogFormLoading = false;
+                    if (response.httpCode === 200) {
+                        this.getItemMaterialList();
+                        this.resetZwfwMaterialForm();
+                        this.$message.success('更新成功');
+                    } else {
+                        this.$message.error('更新失败');
+                    }
+                })
             },
-            resetTemp() {
+            doMaterialDelete() {
+                const length = this.selectedRows.length;
+                const ids = [];
+                for (const deleteRow of this.selectedRows) {
+                    ids.push(deleteRow.id);
+                }
+                deleteZwfwItemMaterial(this.itemId, ids).then(response => {
+                    if (response.httpCode === 200) {
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.zwfwItemMaterialList.indexOf(deleteRow);
+                            this.zwfwItemMaterialList.splice(index, 1);
+                        }
+                        this.currentItem.itemMaterialCount -= length;
+                        this.$message.success('删除成功');
+                    } else {
+                        this.$message.error(response.msg || '删除失败');
+                    }
+                })
+            },
+            onEditorFocus(editor) {
+                this.editor = editor
+            },
+            handleEditorUploadSuccess(res, file, fileList) {
+                if (res.state === 'SUCCESS') {
+                    let length = this.editor.getSelection(true).index;
+                    this.editor.insertEmbed(length, 'image', res.url);
+                } else {
+                    this.$message.error('上传失败！');
+                }
+            },
+            handleEditorUploadError(err, file, fileList) {
+                this.$message.error('网络不稳定，上传失败');
+            },
+            encodeEditorHtml() {
+                this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(this.acceptConditionHtml));
+                this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(this.workflowDescriptionHtml));
+                this.zwfwItem.chargeStandard = encodeURIComponent(encodeURIComponent(this.chargeStandardHtml));
+                this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(this.chargeBasisHtml));
+            },
+            decodeEditorHtml() {
+                this.acceptConditionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.acceptCondition));
+                this.workflowDescriptionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.workflowDescription));
+                this.chargeStandardHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeStandard));
+                this.chargeBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeBasis));
+            },
+            closeZwfwItemForm() {
+                this.dialogItemFormVisible = false;
+                this.resultExampleFileList = [];
+                this.resetItemTemp();
+                resetForm(this, 'zwfwItemForm');
+            },
+            closeZwfwMaterialForm() {
+                this.dialogMaterialFormVisible = false;
+                this.resetZwfwMaterialForm();
+            },
+            resetZwfwMaterialForm() {
+                this.changeMaterialName = false;
+                this.changeMaterialInfo = false;
+                this.resetMaterialTemp();
+                resetForm(this, 'zwfwMaterialForm');
+            },
+            resetItemTemp() {
                 this.zwfwItem = {
                     id: undefined,
                     departmentId: undefined,
@@ -1148,45 +1132,35 @@
                 this.chargeStandardHtml = '';
                 this.chargeBasisHtml = ''
             },
-            resetZwfwItemForm() {
-                this.dialogFormVisible = false;
-                this.uploadAvatarsResult = [];
-                this.resetTemp();
-                resetForm(this, 'zwfwItemForm');
+            resetMaterialTemp() {
+                this.zwfwItemMaterial = {
+                    id: undefined,
+                    electronicMaterial: true,
+                    eform: '',
+                    name: '',
+                    paperDescription: '',
+                    acceptStandard: '',
+                    remark: '',
+                    source: '',
+                    type: '',
+                    example: '',
+                    notice: ''
+                };
             },
-            resetZwfwMaterialForm() {
-                this.dialogFormVisible1 = false;
-                this.changeMaterialName = false;
-                this.changeMaterialInfo = false;
-                this.electronicMaterial = null;
-                this.resetTemp1();
-                resetForm(this, 'zwfwMaterialForm');
+            handleSizeChange(val) {
+                this.listQuery.rows = val;
+                this.listQuery.name = null;
+                this.getItemList();
             },
-            encodeEditorHtml() {
-                this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(this.acceptConditionHtml));
-                this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(this.workflowDescriptionHtml));
-                this.zwfwItem.chargeStandard = encodeURIComponent(encodeURIComponent(this.chargeStandardHtml));
-                this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(this.chargeBasisHtml));
+            handleCurrentChange(val) {
+                this.listQuery.page = val;
+                this.getItemList();
             },
-            decodeEditorHtml() {
-                this.acceptConditionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.acceptCondition));
-                this.workflowDescriptionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.workflowDescription));
-                this.chargeStandardHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeStandard));
-                this.chargeBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeBasis));
+            handleSelectionChange(rows) {
+                this.selectedRows = rows;
             },
-            onEditorFocus(editor) {
-                this.editor = editor
-            },
-            handleAvatarSuccess(res, file, fileList) {
-                if (res.state === 'SUCCESS') {
-                    let length = this.editor.getSelection(true).index;
-                    this.editor.insertEmbed(length, 'image', res.url);
-                } else {
-                    this.$message.error('上传失败！');
-                }
-            },
-            handlerAvatarError(err, file, fileList) {
-                this.$message.error('网络不稳定，上传失败');
+            toggleSelection(row) {
+                this.$refs.zwfwItemTable.toggleRowSelection(row);
             }
         }
     }
