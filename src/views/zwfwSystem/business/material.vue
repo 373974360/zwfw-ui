@@ -293,6 +293,7 @@
                 this.currentRow = row;
                 this.resetTemp();
                 this.zwfwMaterial = copyProperties(this.zwfwMaterial, row);
+                this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
             showMaterialExample() {
