@@ -12,46 +12,49 @@
         </div>
 
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row style="width: 100%">
-            <el-table-column align="center" label="排队号">
+            <el-table-column align="center" label="编号" width="140">
                 <template scope="scope">
-                    <span>{{scope.row.orderNo}}</span>
+                    {{scope.row.id}} <br>
+                    【{{scope.row.orderNo}}】
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="事项名称">
+            <el-table-column align="center" label="事项名称" width="400">
                 <template scope="scope">
                     <span>{{scope.row.itemName}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="姓名">
+            <el-table-column align="center" label="申请人">
                 <template scope="scope">
-                    <span>{{scope.row.memberName}}</span>
+                    <span>{{scope.row.companyName || scope.row.memberName}}</span>
+                    <br>
+                    {{scope.row.mobilephone}}
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="联系电话">
+            <!--<el-table-column align="center" label="联系电话">-->
+                <!--<template scope="scope">-->
+                    <!--<span>{{scope.row.mobilephone}}</span>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
+            <!--<el-table-column align="center" label="公司" width="250">-->
+                <!--<template scope="scope">-->
+                    <!--<span>{{scope.row.companyName}}</span>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
+            <el-table-column align="center" label="办件号">
                 <template scope="scope">
-                    <span>{{scope.row.mobilephone}}</span>
+                    <span>{{scope.row.processNumber}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="公司" width="250">
+            <el-table-column align="center" label="日期" width="200">
                 <template scope="scope">
-                    <span>{{scope.row.companyName}}</span>
+                    <span>{{scope.row.welcomeTime | date('YYYY-MM-DD')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="预审号">
-                <template scope="scope">
-                    <span>{{scope.row.itemPretrialNumber}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="开始时间" width="200">
-                <template scope="scope">
-                    <span>{{scope.row.welcomeTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="完成时间" width="200">
-                <template scope="scope">
-                    <span>{{scope.row.applyFinishTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
-                </template>
-            </el-table-column>
+            <!--<el-table-column align="center" label="完成时间" width="200">-->
+                <!--<template scope="scope">-->
+                    <!--<span>{{scope.row.applyFinishTime | date('YYYY-MM-DD HH:mm:ss')}}</span>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
             <el-table-column align="center" label="状态">
                 <template scope="scope">
                     <span>{{scope.row.status | enums('ItemNumberStatus')}}</span>
@@ -91,12 +94,15 @@
                         <tr>
                             <th>申报人联系电话:</th>
                             <td>
-                                <span v-if="member.legalPerson!=null">
+                                <div v-if="itemNumber.personPhone!=null">
+                                    {{itemNumber.personPhone}}
+                                </div>
+                                <div v-if="member.legalPerson!=null">
                                     {{member.legalPerson.phone}}
-                                </span>
-                                <span v-if="member.naturePerson!=null">
+                                </div>
+                                <div v-if="member.naturePerson!=null">
                                     {{member.naturePerson.phone}}
-                                </span>
+                                </div>
                             </td>
                         </tr>
                         <tr v-if="member.legalPerson!=null">
@@ -168,23 +174,33 @@
                                         width="50">
                                 </el-table-column>
                                 <el-table-column
-                                        fixed
                                         prop="name"
                                         label="材料"
-                                        width="180">
+                                        width="300">
+                                </el-table-column>
+                                <el-table-column
+                                        prop="received"
+                                        label="已收">
+                                    <template scope="scope">
+                                        <i v-if="scope.row.received==1" style="color:green" class="el-icon-circle-check"></i>
+                                        <i v-else class="el-icon-circle-cross" style="color:red"></i>
+                                    </template>
                                 </el-table-column>
                                 <el-table-column
                                         prop="type"
                                         label="类型">
-                                </el-table-column>
-                                <el-table-column
-                                        prop="example"
-                                        label="样本">
                                     <template scope="scope">
-                                        <a v-if="scope.row.example" :href="scope.row.example" target="_blank">点击下载</a>
-                                        <span v-else>无</span>
+                                        {{scope.row.type | dics('cllx')}}
                                     </template>
                                 </el-table-column>
+                                <!--<el-table-column-->
+                                        <!--prop="example"-->
+                                        <!--label="样本">-->
+                                    <!--<template scope="scope">-->
+                                        <!--<a v-if="scope.row.example" :href="scope.row.example" target="_blank">点击下载</a>-->
+                                        <!--<span v-else>无</span>-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
                                 <el-table-column
                                         prop="source"
                                         label="来源">
@@ -192,18 +208,18 @@
                                         {{scope.row.source | dics('sxsqclly')}}
                                     </template>
                                 </el-table-column>
-                                <el-table-column
-                                        prop="paperDescription"
-                                        label="纸质说明">
-                                </el-table-column>
-                                <el-table-column
-                                        prop="notice"
-                                        label="填报须知">
-                                </el-table-column>
-                                <el-table-column
-                                        prop="acceptStandard"
-                                        label="受理标准">
-                                </el-table-column>
+                                <!--<el-table-column-->
+                                        <!--prop="paperDescription"-->
+                                        <!--label="纸质说明">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--prop="notice"-->
+                                        <!--label="填报须知">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--prop="acceptStandard"-->
+                                        <!--label="受理标准">-->
+                                <!--</el-table-column>-->
                                 <el-table-column
                                         prop="electronicMaterial"
                                         label="需要预审">
@@ -213,7 +229,7 @@
                                 </el-table-column>
                                 <el-table-column
                                         prop="multipleFile"
-                                        label="已上传">
+                                        label="预审资料">
                                     <template scope="scope">
                                         <span v-for="(file,index) in scope.row.multipleFile">
                                             <span v-if="file.url!=null && file.url!=''">
@@ -344,7 +360,7 @@
                     legalPerson: {},
                     naturePerson: {}
                 },
-                itemVo: [],
+                itemVo: {},
                 selectedRows: [],
                 itemMaterialVoList: [],
                 tabName: 'materialListPanel',
