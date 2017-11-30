@@ -221,7 +221,7 @@
                 <div style="padding:10px">
                     <el-tabs v-model="tabName" type="card" @tab-click="handleTabClick">
                         <el-tab-pane label="所需资料" name="materialListPanel">
-                            <p v-if="(itemNumber.status==6 || companyInfo.id) && itemVo.id">勾选收件材料：</p>
+                            <p v-if="itemNumber.status==6 || (companyInfo.id && itemVo.id && !itemNumber.id)">勾选收件材料：</p>
                             <el-table id="materiaTable"
                                       ref="itemMaterialVoList"
                                       :data="itemMaterialVoList"
@@ -237,7 +237,7 @@
                                 </el-table-column>
                                 <el-table-column
 
-                                        v-if="(itemNumber.status==6 || companyInfo.id) && itemVo.id"
+                                        v-if="itemNumber.status==6 || (companyInfo.id && itemVo.id && !itemNumber.id)"
                                         type="selection"
                                         prop="received"
                                         width="55">
@@ -387,7 +387,7 @@
                     <!-- 打印按钮-->
                     <div v-if="itemNumber.status==3" style="margin-top:20px;">
                         <el-button type="primary" @click="print_ywsld">打印业务受理单</el-button>
-                        <el-button type="primary" @click="print_wlzyd">打印物料转移单</el-button>
+                        <!--<el-button type="primary" @click="print_wlzyd">打印物料转移单</el-button>-->
                     </div>
 
                     <div class="block full-width" style="margin-top:20px;" v-if="itemNumber.status==6 || (companyInfo.id && itemVo.id && !itemNumber.id)">
