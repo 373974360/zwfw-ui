@@ -41,10 +41,10 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="resetDeptForm">取 消</el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
+                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="doCreate">确 定
                 </el-button>
 
-                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
+                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="doUpdate" @click="doUpdate">确 定
                 </el-button>
             </div>
         </el-dialog>
@@ -134,7 +134,7 @@
             this.getList();
         },
         computed: {
-            cascaderModel: function () {
+            cascaderModel() {
                 if (this.sysDept.treePosition) {
                     const arr = this.sysDept.treePosition.split('&');
                     return arr;
@@ -212,27 +212,22 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    delDept(row.id).then(response => {
-                        if (response.httpCode === 200) {
-                            this.$message.success('删除成功！');
-                            TreeUtil.delRow(response.data, this.deptList);
-                        } else {
-                            this.$message.error('删除失败！')
-                        }
-                    })
+                    this.doDelete(row.id);
                 }).catch(() => {
                     console.dir('取消');
                 });
             },
-            create() {
-                this.$refs['deptForm'].validate((valid) => {
+            doCreate() {
+                this.$refs['deptForm'].validate(valid => {
                     if (valid) {
-                        this.dialogFormVisible = false;
-                        console.dir(this.sysDept.parentId);
+                        this.dialogLoading = true;
                         createDept(this.sysDept).then(response => {
+                            this.dialogLoading = false;
                             if (response.httpCode === 200) {
+                                this.resetDeptForm();
                                 this.$message.success('创建成功！');
-                                TreeUtil.addRow(response.data, this.deptList);
+//                                TreeUtil.addRow(response.data, this.deptList);
+                                this.getList();
                             } else {
                                 this.$message.error('创建失败！');
                             }
@@ -242,14 +237,17 @@
                     }
                 });
             },
-            update() {
-                this.$refs['deptForm'].validate((valid) => {
+            doUpdate() {
+                this.$refs['deptForm'].validate(valid => {
                     if (valid) {
-                        this.dialogFormVisible = false;
+                        this.dialogLoading = true;
                         updateDept(this.sysDept).then(response => {
+                            this.dialogLoading = false;
                             if (response.httpCode === 200) {
+                                this.resetDeptForm();
                                 this.$message.success('更新成功！');
-                                TreeUtil.editRow(response.data, this.deptList);
+//                                TreeUtil.editRow(response.data, this.deptList);
+                                this.getList();
                             } else {
                                 this.$message.error('更新失败！')
                             }
@@ -258,6 +256,18 @@
                         return false;
                     }
                 });
+            },
+            doDelete(id) {
+                this.listLoading = true;
+                delDept(id).then(response => {
+                    if (response.httpCode === 200) {
+                        this.$message.success('删除成功！');
+                        TreeUtil.delRow(response.data, this.deptList);
+                    } else {
+                        this.$message.error('删除失败！')
+                    }
+                    this.listLoading = false;
+                })
             },
             resetTemp() {
                 this.sysDept = {

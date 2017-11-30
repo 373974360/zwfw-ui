@@ -6,7 +6,7 @@
                 添加
             </el-button>
         </div>
-        <tree-grid :columns="columns" :tree-structure="true" :data-source="categoryList" :list-loading="listLoading"
+        <tree-grid :columns="columns" :tree-structure="true" :data-source="categoryList" :list-loading="pageLoading"
                    :handle-toggle="handleToggle" :handle-create="handleCreate"
                    :handle-update="handleUpdate" :handle-delete="handleDelete" :defaultExpandAll="true"
                    :handle-item="handleCreateItem"
@@ -14,9 +14,9 @@
         </tree-grid>
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible"
-                   :close-on-click-modal="closeOnClickModal" :before-close="resetCategoryForm">
+                   :close-on-click-modal="closeOnClickModal" :before-close="closeCategoryForm">
             <el-form ref="categoryForm" class="small-space" :model="category" label-position="right" label-width="110px"
-                     style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="categoryRules">
+                     style='width: 80%; margin-left:10%;' v-loading="dialogFormLoading" :rules="categoryRules">
                 <el-form-item label="上级事项分类">
                     <el-cascader :options="cascader" v-model="cascaderModel" @change="handleChange"
                                  :show-all-levels="true" expand-trigger="hover" :clearable="true"
@@ -33,25 +33,25 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button icon="circle-cross" type="danger" @click="resetCategoryForm">取 消</el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
+                <el-button icon="circle-cross" type="danger" @click="closeCategoryForm">取 消</el-button>
+                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="doCategoryCreate">确 定
                 </el-button>
 
-                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
+                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="doCategoryUpdate" @click="doCategoryUpdate">确 定
                 </el-button>
             </div>
         </el-dialog>
 
         <!--事项关联dialog-->
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisibleItem"
-                   :close-on-click-modal="closeOnClickModal" :before-close="resetZwfwItemForm">
+                   :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemForm">
             <div class="filter-container">
-                <el-button class="filter-item" style="margin-left: 10px;" @click="handleDeleteOne" type="danger"
+                <el-button class="filter-item" style="margin-left: 10px;" @click="handleItemDelete" type="danger"
                            icon="delete">
                     删除
                 </el-button>
             </div>
-            <el-table ref="zwfwItemTable" :data="zwfwItemList" v-loading.body="listLoading1" border fit
+            <el-table ref="zwfwItemTable" :data="categoryItemList" v-loading.body="dialogTableLoading" border fit
                       highlight-current-row
                       style="width: 100%" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55"/>
@@ -93,7 +93,7 @@
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem"
                      label-position="right"
                      label-width="80px"
-                     style='width: 80%; margin-left:10%; margin-top: 5%;' v-loading="dialogLoading"
+                     style='width: 80%; margin-left:10%; margin-top: 5%;' v-loading="dialogFormLoading"
                      :rules="categoryItemRules">
                 <el-form-item label="事项名称" prop="name">
                     <el-select
@@ -101,13 +101,13 @@
                             filterable
                             remote
                             placeholder="请输入事项名称或基本编码"
-                            :remote-method="remoteMethod"
-                            @change="changeMaterial">
+                            :remote-method="searchItem"
+                            @change="changeItem">
                         <el-option
                                 v-for="item in optionsName"
                                 :key="item.id"
                                 :label="item.name"
-                                :value="item.name">
+                                :value="item.id">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -145,10 +145,11 @@
         data() {
             return {
                 categoryList: [],
+                itemList: [],
                 categoryItem: [],
-                zwfwItemList: [],
-                listLoading: true,
-                listLoading1: true,
+                categoryItemList: [],
+                pageLoading: true,
+                dialogTableLoading: true,
                 showButton: true,
                 columns: [
                     {
@@ -190,13 +191,12 @@
                 },
                 selectedRows: [],
                 categoryId: '',
-                itemCategoryList: [],
                 cascader: [],
                 optionsName: [],
                 dialogFormVisible: false,
                 dialogFormVisibleItem: false,
                 dialogStatus: '',
-                dialogLoading: false,
+                dialogFormLoading: false,
                 categoryRules: {
                     name: [
                         {required: true, message: '请输入事项分类名称'}
@@ -213,7 +213,7 @@
             TreeGrid
         },
         created() {
-            this.getList();
+            this.getCategoryList();
             this.getItemList();
         },
         computed: {
@@ -229,26 +229,129 @@
             ])
         },
         methods: {
-            getList() {
-                this.listLoading = true;
+            getCategoryList() {
+                this.pageLoading = true;
                 getCategoryTree().then(response => {
                     if (response.httpCode === 200) {
                         this.categoryList = response.data;
                     } else {
-                        this.$message.error(response.msg);
+                        this.$message.error(response.msg || '数据加载失败');
                     }
-                    this.listLoading = false;
+                    this.pageLoading = false;
+                })
+            },
+            getItemList() {
+                const query = {}
+                getAllByNameOrbasicCode(query).then(response => {
+                    if (response.httpCode === 200) {
+                        this.itemList = response.data;
+                    } else {
+                        this.$message.error(response.msg || '数据加载失败');
+                    }
                 })
             },
             getOptions(id) {
-                this.dialogLoading = true;
+                this.dialogFormLoading = true;
                 getCategoryCascader(id).then(response => {
                     if (response.httpCode === 200) {
                         this.cascader = response.data;
                     } else {
                         this.$message.error(response.msg);
                     }
-                    this.dialogLoading = false;
+                    this.dialogFormLoading = false;
+                })
+            },
+            handleCreate(row) {
+                this.resetCategoryTemp();
+                if (row.treePosition) {
+                    if (row.treePosition.substr(0, 1) === '&') {
+                        this.category.treePosition = row.treePosition.substring(1);
+                    } else {
+                        this.category.treePosition = row.treePosition;
+                    }
+                }
+                if (row.id) {
+                    this.category.parentId = row.id;
+                } else {
+                    this.category.parentId = 0;
+                }
+                this.getOptions(null);
+                this.dialogStatus = 'create';
+                this.dialogFormVisible = true;
+            },
+            handleUpdate(row) {
+                this.resetCategoryTemp();
+                this.category = copyProperties(this.category, row);
+                if (row._parent) {
+                    this.category.treePosition = row._parent.treePosition;
+                } else {
+                    this.category.treePosition = undefined;
+                }
+                this.getOptions(this.category.id);
+                this.dialogStatus = 'update';
+                this.dialogFormVisible = true;
+            },
+            handleDelete(row) {
+                this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.doCategoryDelete(row.id);
+                }).catch(() => {
+                    console.dir('取消');
+                });
+            },
+            doCategoryCreate() {
+                this.$refs['categoryForm'].validate(valid => {
+                    if (valid) {
+                        this.dialogFormLoading = true;
+                        createCategory(this.category).then(response => {
+                            this.dialogFormLoading = false;
+                            if (response.httpCode === 200) {
+                                this.closeCategoryForm();
+                                this.$message.success('创建成功！');
+//                                TreeUtil.addRow(response.data, this.categoryList);
+                                this.getCategoryList();
+                            } else {
+                                this.$message.error('创建失败！');
+                            }
+                        })
+                    } else {
+                        return false;
+                    }
+                });
+            },
+            doCategoryUpdate() {
+                this.$refs['categoryForm'].validate(valid => {
+                    if (valid) {
+                        this.dialogFormLoading = true;
+                        updateCategory(this.category).then(response => {
+                            this.dialogFormLoading = false;
+                            if (response.httpCode === 200) {
+                                this.closeCategoryForm();
+                                this.$message.success('更新成功');
+//                                TreeUtil.editRow(response.data, this.categoryList);
+                                this.getCategoryList();
+                            } else {
+                                this.$message.error('更新失败！');
+                            }
+                        })
+                    } else {
+                        return false;
+                    }
+                });
+            },
+            doCategoryDelete(id) {
+                this.pageLoading = true;
+                delCategory(id).then(response => {
+                    if (response.httpCode === 200) {
+                        TreeUtil.delRow(response.data, this.categoryList);
+                        this.$message.success('删除成功！');
+                    } else {
+                        this.$message.error('删除失败！');
+                    }
+                    this.pageLoading = false;
                 })
             },
             handleChange(value) {
@@ -266,74 +369,33 @@
             handleSelectionChange(rows) {
                 this.selectedRows = rows;
             },
-            handleCreate(row) {
-                this.resetTemp();
-                if (row.treePosition) {
-                    if (row.treePosition.substr(0, 1) == "&") {
-                        this.category.treePosition = row.treePosition.substring(1);
-                    } else {
-                        this.category.treePosition = row.treePosition;
-                    }
-                }
-                if (row.id) {
-                    this.category.parentId = row.id;
-                } else {
-                    this.category.parentId = 0;
-                }
-                this.getOptions(null);
-                this.dialogStatus = 'create';
-                this.dialogFormVisible = true;
-            },
-            handleUpdate(row) {
-                this.resetTemp();
-                this.category = copyProperties(this.category, row);
-                if (row._parent) {
-                    this.category.treePosition = row._parent.treePosition;
-                } else {
-                    this.category.treePosition = undefined;
-                }
-                this.getOptions(this.category.id);
-                this.dialogStatus = 'update';
-                this.dialogFormVisible = true;
-            },
             handleCreateItem(row) {
                 this.currentItem = row;
                 this.dialogStatus = 'associateItem';
                 this.dialogFormVisibleItem = true;
                 this.categoryId = row.id;
-                this.getItemListByCategoryId();
+                this.getCategoryItemList();
             },
-            getItemListByCategoryId() {
-                this.listLoading1 = true;
+            getCategoryItemList() {
+                this.dialogTableLoading = true;
                 getAllCategoeyItem(this.categoryId).then(response => {
                     if (response.httpCode === 200) {
-                        const arr = [];
-                        console.log(response.data);
+                        let arr = [];
                         for (const ids of response.data) {
-                            for (const idList of this.itemCategoryList) {
-                                if (ids.itemId == idList.id) {
+                            for (const idList of this.itemList) {
+                                if (ids.itemId === idList.id) {
                                     arr.push(idList);
                                 }
                             }
                         }
-                        this.zwfwItemList = arr;
+                        this.categoryItemList = arr;
                     } else {
                         this.$message.error(response.msg);
                     }
-                    this.listLoading1 = false;
+                    this.dialogTableLoading = false;
                 })
             },
-            getItemList() {
-                const query = {}
-                getAllByNameOrbasicCode(query).then(response => {
-                    if (response.httpCode === 200) {
-                        this.itemCategoryList = response.data;
-                    } else {
-                        this.$message.error(response.msg);
-                    }
-                })
-            },
-            remoteMethod(query) {
+            searchItem(query) {
                 const listQueryName = {
                     name: undefined,
                     basicCode: undefined
@@ -360,47 +422,15 @@
                     this.optionsName = [];
                 }
             },
-            changeMaterial(value) {
-                for (const obj of this.itemCategoryList) {
-                    if (obj.name == value) {
+            changeItem(value) {
+                for (const obj of this.itemList) {
+                    if (obj.id === value) {
                         this.zwfwItem = Object.assign({}, obj);
                     }
                 }
             },
-            saveCategoryItem() {
-                this.$refs['zwfwItemForm'].validate((valid) => {
-                    if (valid) {
-                        for (const obj of this.zwfwItemList) {
-                            if (obj.id == this.zwfwItem.id) {
-                                this.$message.warning('事项已存在');
-                                this.resetTemp1();
-                                resetForm(this, 'zwfwItemForm');
-                                return false;
-                            }
-                        }
-                        const query = {
-                            categoryId: this.categoryId,
-                            itemId: this.zwfwItem.id
-                        }
-                        this.listLoading1 = true;
-                        createZwfwCategoryItem(query).then(response => {
-                            if (response.httpCode === 200) {
-                                this.zwfwItemList.unshift(this.zwfwItem);
-                                this.$message.success('创建成功！');
-                                this.currentItem.categoryItemCount += 1;
-                            } else {
-                                this.$message.error('创建失败！');
-                            }
-                            this.listLoading1 = false;
-                            this.resetZwfwItemForm();
-                        })
-                    } else {
-                        return false;
-                    }
-                });
-            },
-            handleDeleteOne() {
-                if (this.selectedRows == 0) {
+            handleItemDelete() {
+                if (this.selectedRows.length === 0) {
                     this.$message.warning('请选择需要操作的记录');
                 } else {
                     this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
@@ -408,60 +438,36 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        const length = this.selectedRows.length;
-                        const ids = new Array();
-                        for (const deleteRow of this.selectedRows) {
-                            ids.push(deleteRow.id);
-                        }
-                        deleteZwfwCategoryItem(this.categoryId, ids.join()).then(response => {
-                            if (response.httpCode === 200) {
-                                this.currentItem.categoryItemCount -= length;
-                                for (const deleteRow of this.selectedRows) {
-                                    const index = this.zwfwItemList.indexOf(deleteRow);
-                                    this.zwfwItemList.splice(index, 1);
-                                }
-                                this.$message.success('删除成功！');
-                            } else {
-                                this.$message.error('删除失败！');
-                            }
-                            this.resetZwfwItemForm();
-                        })
+                        this.doCategoryItemDelete();
                     }).catch(() => {
                         console.dir('取消');
                     });
                 }
             },
-            handleDelete(row) {
-                this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    this.listLoading = true;
-                    delCategory(row.id).then(response => {
-                        if (response.httpCode === 200) {
-                            TreeUtil.delRow(response.data, this.categoryList);
-                            this.$message.success('删除成功！');
-                        } else {
-                            this.$message.error('删除失败！');
+            saveCategoryItem() {
+                this.$refs['zwfwItemForm'].validate(valid => {
+                    if (valid) {
+                        for (const obj of this.categoryItemList) {
+                            if (obj.id === this.zwfwItem.id) {
+                                this.$message.warning('事项已存在');
+                                this.resetZwfwItemForm()
+                                return false;
+                            }
                         }
-                        this.listLoading = false;
-                    })
-                }).catch(() => {
-                    console.dir('取消');
-                });
-            },
-            create() {
-                this.$refs['categoryForm'].validate((valid) => {
-                    if (valid) {
-                        this.dialogFormVisible = false;
-                        console.dir(this.category.parentId);
-                        createCategory(this.category).then(response => {
+                        const query = {
+                            categoryId: this.categoryId,
+                            itemId: this.zwfwItem.id
+                        }
+                        this.dialogFormLoading = true;
+                        createZwfwCategoryItem(query).then(response => {
+                            this.dialogFormLoading = false;
                             if (response.httpCode === 200) {
-                                this.$message.success('创建成功！');
-                                TreeUtil.addRow(response.data, this.categoryList);
+                                this.getCategoryItemList();
+                                this.$message.success('关联成功！');
+                                this.currentItem.categoryItemCount += 1;
+                                this.resetZwfwItemForm();
                             } else {
-                                this.$message.error('创建失败！');
+                                this.$message.error('关联失败！');
                             }
                         })
                     } else {
@@ -469,24 +475,39 @@
                     }
                 });
             },
-            update() {
-                this.$refs['categoryForm'].validate((valid) => {
-                    if (valid) {
-                        this.dialogFormVisible = false;
-                        updateCategory(this.category).then(response => {
-                            if (response.httpCode === 200) {
-                                this.$message.success('更新成功');
-                                TreeUtil.editRow(response.data, this.categoryList);
-                            } else {
-                                this.$message.error('更新失败！');
-                            }
-                        })
+            doCategoryItemDelete() {
+                const length = this.selectedRows.length;
+                const ids = [];
+                for (const deleteRow of this.selectedRows) {
+                    ids.push(deleteRow.id);
+                }
+                deleteZwfwCategoryItem(this.categoryId, ids.join()).then(response => {
+                    if (response.httpCode === 200) {
+                        this.currentItem.categoryItemCount -= length;
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.categoryItemList.indexOf(deleteRow);
+                            this.categoryItemList.splice(index, 1);
+                        }
+                        this.$message.success('删除成功！');
                     } else {
-                        return false;
+                        this.$message.error('删除失败！');
                     }
-                });
+                })
             },
-            resetTemp() {
+            closeCategoryForm() {
+                this.dialogFormVisible = false;
+                this.resetCategoryTemp();
+                resetForm(this, 'categoryForm');
+            },
+            closeZwfwItemForm() {
+                this.dialogFormVisibleItem = false;
+                this.resetZwfwItemForm();
+            },
+            resetZwfwItemForm() {
+                this.resetItemTemp();
+                resetForm(this, 'zwfwItemForm');
+            },
+            resetCategoryTemp() {
                 this.category = {
                     id: undefined,
                     name: '',
@@ -497,22 +518,12 @@
                     enable: ''
                 };
             },
-            resetTemp1() {
+            resetItemTemp() {
                 this.zwfwItem = {
                     id: undefined,
                     name: '',
                     basicCode: ''
                 };
-            },
-            resetCategoryForm() {
-                this.dialogFormVisible = false;
-                this.resetTemp();
-                resetForm(this, 'categoryForm');
-            },
-            resetZwfwItemForm() {
-                this.dialogFormVisibleItem = false;
-                this.resetTemp1();
-                resetForm(this, 'zwfwItemForm');
             }
         }
     }

@@ -51,10 +51,10 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="resetMenuForm">取 消</el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
+                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="doCreate">确 定
                 </el-button>
 
-                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
+                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="doUpdate" @click="doUpdate">确 定
                 </el-button>
             </div>
         </el-dialog>
@@ -128,7 +128,7 @@
             }
         },
         computed: {
-            cascaderModel: function() {
+            cascaderModel() {
                 if (this.sysMenu.treePosition) {
                     const arr = this.sysMenu.treePosition.split('&');
                     return arr;
@@ -213,26 +213,22 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    delMenu(row.id).then(response => {
-                        if (response.httpCode === 200) {
-                            this.$message.success('删除成功！');
-                            TreeUtil.delRow(response.data, this.menuList);
-                        } else {
-                            this.$message.error('删除失败！');
-                        }
-                    })
+                    this.doDelete(row.id);
                 }).catch(() => {
                     console.dir('取消');
                 });
             },
-            create() {
-                this.$refs['menuForm'].validate((valid) => {
+            doCreate() {
+                this.$refs['menuForm'].validate(valid => {
                     if (valid) {
-                        this.dialogFormVisible = false;
+                        this.dialogLoading = true;
                         createMenu(this.sysMenu).then(response => {
+                            this.dialogLoading = false;
                             if (response.httpCode === 200) {
+                                this.resetMenuForm();
                                 this.$message.success('创建成功！');
-                                TreeUtil.addRow(response.data, this.menuList);
+//                                TreeUtil.addRow(response.data, this.menuList);
+                                this.getList();
                             } else {
                                 this.$message.error('创建失败！');
                             }
@@ -242,14 +238,17 @@
                     }
                 });
             },
-            update() {
-                this.$refs['menuForm'].validate((valid) => {
+            doUpdate() {
+                this.$refs['menuForm'].validate(valid => {
                     if (valid) {
-                        this.dialogFormVisible = false;
+                        this.dialogLoading = true;
                         updateMenu(this.sysMenu).then(response => {
+                            this.dialogLoading = false;
                             if (response.httpCode === 200) {
+                                this.resetMenuForm();
                                 this.$message.success('更新成功！');
-                                TreeUtil.editRow(response.data, this.menuList);
+//                                TreeUtil.editRow(response.data, this.menuList);
+                                this.getList();
                             } else {
                                 this.$message.error('更新失败！');
                             }
@@ -258,6 +257,18 @@
                         return false;
                     }
                 });
+            },
+            doDelete(id) {
+                this.listLoading = true;
+                delMenu(id).then(response => {
+                    if (response.httpCode === 200) {
+                        this.$message.success('删除成功！');
+                        TreeUtil.delRow(response.data, this.menuList);
+                    } else {
+                        this.$message.error('删除失败！');
+                    }
+                    this.listLoading = false;
+                })
             },
             resetTemp() {
                 this.sysMenu = {

@@ -1,9 +1,9 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="getList" style="width: 130px;" class="filter-item" placeholder="名称"
+            <el-input @keyup.enter.native="getMaterialList" style="width: 130px;" class="filter-item" placeholder="名称"
                       v-model="listQuery.name"></el-input>
-            <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
+            <el-button class="filter-item" type="primary" v-waves icon="search" @click="getMaterialList">搜索</el-button>
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">
                 添加
             </el-button>
@@ -12,7 +12,7 @@
             </el-button>
         </div>
 
-        <el-table ref="zwfwMaterialTable" :data="zwfwMaterialList" v-loading.body="listLoading" border fit
+        <el-table ref="zwfwMaterialTable" :data="zwfwMaterialList" v-loading.body="pageLoading" border fit
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column type="selection" width="55"/>
@@ -55,7 +55,7 @@
             </el-table-column>
         </el-table>
 
-        <div v-show="!listLoading" class="pagination-container">
+        <div v-show="!pageLoading" class="pagination-container">
             <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
                            :current-page.sync="listQuery.page" :page-sizes="this.$store.state.app.pageSize"
                            :page-size="listQuery.rows" layout="total, sizes, prev, pager, next, jumper" :total="total">
@@ -159,9 +159,9 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="resetZwfwMaterialForm">取 消</el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
+                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="doCreate">确 定
                 </el-button>
-                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
+                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="doUpdate">确 定
                 </el-button>
             </div>
         </el-dialog>
@@ -177,13 +177,14 @@
         updateZwfwMaterial,
         delZwfwMaterials
     } from 'api/zwfwSystem/business/material';
+
     export default {
         name: 'zwfwMaterial_table',
         data() {
             return {
                 zwfwMaterialList: [],
                 total: null,
-                listLoading: true,
+                pageLoading: true,
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
@@ -222,7 +223,7 @@
             }
         },
         created() {
-            this.getList();
+            this.getMaterialList();
         },
         computed: {
             ...mapGetters([
@@ -242,6 +243,101 @@
             }
         },
         methods: {
+            getMaterialList() {
+                this.pageLoading = true;
+                getZwfwMaterialList(this.listQuery).then(response => {
+                    if (response.httpCode === 200) {
+                        this.zwfwMaterialList = response.data.list;
+                        this.total = response.data.total;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                    this.pageLoading = false;
+                })
+            },
+            handleCreate(row) {
+                this.currentRow = row;
+                this.resetTemp();
+                this.dialogStatus = 'create';
+                this.dialogFormVisible = true;
+            },
+            handleUpdate(row) {
+                this.currentRow = row;
+                this.resetTemp();
+                this.zwfwMaterial = copyProperties(this.zwfwMaterial, row);
+                this.dialogFormVisible = true;
+            },
+            handleDelete() {
+                if (this.selectedRows.length === 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.doDelete();
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
+            doCreate() {
+                this.$refs['zwfwMaterialForm'].validate(valid => {
+                    if (valid) {
+                        this.dialogFormVisible = false;
+                        this.dialogLoading = true;
+                        createZwfwMaterial(this.zwfwMaterial).then(response => {
+                            this.dialogLoading = false;
+                            if (response.httpCode === 200) {
+                                this.resetZwfwMaterialForm();
+                                this.$message.success('创建成功！');
+                                this.getMaterialList();
+                            } else {
+                                this.$message.error('创建失败！');
+                            }
+                        })
+                    } else {
+                        return false;
+                    }
+                });
+            },
+            doUpdate() {
+                this.$refs['zwfwMaterialForm'].validate(valid => {
+                    if (valid) {
+                        this.dialogFormVisible = false;
+                        this.dialogLoading = true;
+                        updateZwfwMaterial(this.zwfwMaterial).then(response => {
+                            this.dialogLoading = false;
+                            if (response.httpCode === 200) {
+                                this.resetZwfwMaterialForm();
+                                this.$message.success('更新成功');
+                                this.getMaterialList();
+                            } else {
+                                this.$message.error('更新失败！');
+                            }
+                        })
+                    } else {
+                        return false;
+                    }
+                });
+            },
+            doDelete() {
+                this.pageLoading = true;
+                let ids = [];
+                for (const deleteRow of this.selectedRows) {
+                    ids.push(deleteRow.id);
+                }
+                delZwfwMaterials(ids).then(response => {
+                    if (response.httpCode === 200) {
+                        this.$message.success('删除成功！');
+                        this.getMaterialList();
+                    } else {
+                        this.$message.error('删除失败！');
+                    }
+                    this.pageLoading = false;
+                })
+            },
             submitUploadExample() {
                 if (this.zwfwMaterial.example) {
                     this.$refs.uploadExample.submit();
@@ -255,45 +351,6 @@
                 } else {
                     this.$message.warning('请选择文件')
                 }
-            },
-            getList() {
-                this.listLoading = true;
-                getZwfwMaterialList(this.listQuery).then(response => {
-                    if (response.httpCode === 200) {
-                        this.zwfwMaterialList = response.data.list;
-                        this.total = response.data.total;
-                    } else {
-                        this.$message.error(response.msg);
-                    }
-                    this.listLoading = false;
-                })
-            },
-            handleSizeChange(val) {
-                this.listQuery.rows = val;
-                this.listQuery.name = null;
-                this.getList();
-            },
-            handleCurrentChange(val) {
-                this.listQuery.page = val;
-                this.getList();
-            },
-            handleSelectionChange(rows) {
-                this.selectedRows = rows;
-            },
-            toggleSelection(row) {
-                this.$refs.zwfwMaterialTable.toggleRowSelection(row);
-            },
-            handleCreate(row) {
-                this.currentRow = row;
-                this.resetTemp();
-                this.dialogStatus = 'create';
-                this.dialogFormVisible = true;
-            },
-            handleUpdate(row) {
-                this.currentRow = row;
-                this.resetTemp();
-                this.zwfwMaterial = copyProperties(this.zwfwMaterial, row);
-                this.dialogFormVisible = true;
             },
             showMaterialExample() {
                 if (this.zwfwMaterial.example) {
@@ -324,79 +381,10 @@
                 }
                 return isLt2M;
             },
-            handleDelete(row) {
-                if (this.selectedRows == 0) {
-                    this.$message.warning('请选择需要操作的记录');
-                } else {
-                    this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-                        this.listLoading = true;
-                        let selectCounts = this.selectedRows.length;
-                        let ids = new Array();
-                        for (const deleteRow of this.selectedRows) {
-                            ids.push(deleteRow.id);
-                        }
-                        delZwfwMaterials(ids).then(response => {
-                            if (response.httpCode === 200) {
-                                this.total -= selectCounts;
-                                for (const deleteRow of this.selectedRows) {
-                                    const index = this.zwfwMaterialList.indexOf(deleteRow);
-                                    this.zwfwMaterialList.splice(index, 1);
-                                }
-                                this.$message.success('删除成功！');
-                            } else {
-                                this.$message.error('删除失败！');
-                            }
-                            this.listLoading = false;
-                        })
-                    }).catch(() => {
-                        console.dir('取消');
-                    });
-                }
-            },
-            create() {
-                this.$refs['zwfwMaterialForm'].validate((valid) => {
-                    if (valid) {
-                        this.dialogFormVisible = false;
-                        this.listLoading = true;
-                        createZwfwMaterial(this.zwfwMaterial).then(response => {
-                            if (response.httpCode === 200) {
-                                this.zwfwMaterialList.unshift(response.data);
-                                this.total += 1;
-                                this.$message.success('创建成功！');
-                            } else {
-                                this.$message.error('创建失败！');
-                            }
-                            this.listLoading = false;
-                            this.resetZwfwMaterialForm();
-                        })
-                    } else {
-                        return false;
-                    }
-                });
-            },
-            update() {
-                this.$refs['zwfwMaterialForm'].validate((valid) => {
-                    if (valid) {
-                        this.dialogFormVisible = false;
-                        this.listLoading = true;
-                        updateZwfwMaterial(this.zwfwMaterial).then(response => {
-                            if (response.httpCode === 200) {
-                                copyProperties(this.currentRow, response.data);
-                                this.$message.success('更新成功');
-                            } else {
-                                this.$message.error('更新失败！');
-                            }
-                            this.listLoading = false;
-                            this.resetZwfwMaterialForm();
-                        })
-                    } else {
-                        return false;
-                    }
-                });
+            resetZwfwMaterialForm() {
+                this.dialogFormVisible = false;
+                this.resetTemp();
+                resetForm(this, 'zwfwMaterialForm');
             },
             resetTemp() {
                 this.zwfwMaterial = {
@@ -412,10 +400,20 @@
                     notice: ''
                 };
             },
-            resetZwfwMaterialForm() {
-                this.dialogFormVisible = false;
-                this.resetTemp();
-                resetForm(this, 'zwfwMaterialForm');
+            handleSizeChange(val) {
+                this.listQuery.rows = val;
+                this.listQuery.name = null;
+                this.getMaterialList();
+            },
+            handleCurrentChange(val) {
+                this.listQuery.page = val;
+                this.getMaterialList();
+            },
+            handleSelectionChange(rows) {
+                this.selectedRows = rows;
+            },
+            toggleSelection(row) {
+                this.$refs.zwfwMaterialTable.toggleRowSelection(row);
             }
         }
     }

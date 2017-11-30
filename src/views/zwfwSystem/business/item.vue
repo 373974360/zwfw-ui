@@ -3,7 +3,7 @@
         <div class="filter-container">
             <el-input @keyup.enter.native="getItemList" style="width: 130px;" class="filter-item" placeholder="名称"
                       v-model="listQuery.name"></el-input>
-            <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
+            <el-button class="filter-item" type="primary" v-waves icon="search" @click="getItemList">搜索</el-button>
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleItemCreate" type="primary" icon="plus">
                 添加
             </el-button>
@@ -368,7 +368,7 @@
                 <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="doItemCreate">
                     确 定
                 </el-button>
-                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="doItemUpdate">
+                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="doItemUpdate" @click="doItemUpdate">
                     确 定
                 </el-button>
             </div>
@@ -681,7 +681,7 @@
             },
             updateModel() {
                 if (this.zwfwItem.superviseDepartmentId) {
-                    //找到对应的部门
+                    // 找到对应的部门
 //                    console.log(this.zwfwItem.departmentTreePosition);
                     if (this.zwfwItem.departmentTreePositions) {
                         const arr = this.zwfwItem.departmentTreePositions.split('&');

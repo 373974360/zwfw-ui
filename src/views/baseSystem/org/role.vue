@@ -1,7 +1,7 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="角色名称"
+            <el-input @keyup.enter.native="getList" style="width: 130px;" class="filter-item" placeholder="角色名称"
                       v-model="listQuery.name" no-match-text="没有找到哦">
             </el-input>
 
@@ -81,17 +81,17 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="resetRoleForm">取 消</el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
+                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="doCreate">确 定
                 </el-button>
 
-                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
+                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="doUpdate" @click="doUpdate">确 定
                 </el-button>
             </div>
         </el-dialog>
 
         <!--关联权限-->
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="roleMenuDialogFormVisible"
-                   :close-on-click-modal="closeOnClickModal">
+                   :close-on-click-modal="closeOnClickModal" @open="getAllRoleMenu">
             <el-form ref="roleMenuForm" class="small-space" :model="sysRole" label-position="left" label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="roleMenuDialogLoading">
                 <el-tree ref="menuTree" :data="menuTree" show-checkbox node-key="id" :default-expand-all="true"
@@ -105,7 +105,7 @@
 
         <!--关联用户 :default-checked-keys="checkedUserList"-->
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="userRoleDialogFormVisible"
-                   :close-on-click-modal="closeOnClickModal">
+                   :close-on-click-modal="closeOnClickModal" @open="getAllUserRoles">
             <el-form id="checkboxTable" ref="userForm" class="small-space" :model="sysRole"
                      label-position="left" label-width="25px"
                      style='width: 100%;' v-loading="userRoleDialogLoading">
@@ -145,7 +145,7 @@
         getAllRoleMenus,
         getAllUserRole,
         delRole
-    } from 'api/baseSystem/org/role';
+    } from '../../../api/baseSystem/org/role';
     import {getMenuTree} from 'api/baseSystem/org/menu';
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
@@ -193,6 +193,8 @@
         },
         created() {
             this.getList();
+            this.getMenuTree();
+            this.getDeptAndUsersList();
         },
         computed: {
             ...mapGetters([
@@ -202,9 +204,6 @@
             ])
         },
         methods: {
-            handleFilter() {
-                this.getList();
-            },
             getList() {
                 this.listLoading = true;
                 getRoleList(this.listQuery).then(response => {
@@ -217,17 +216,23 @@
                     this.listLoading = false;
                 })
             },
-            handleSelectionChange(row) {
-                this.selectedRows = row;
-                console.log(this.selectedRows);
+            getMenuTree() {
+                getMenuTree().then(response => {
+                    if (response.httpCode === 200) {
+                        this.menuTree = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                })
             },
-            handleSizeChange(val) {
-                this.listQuery.rows = val;
-                this.getList();
-            },
-            handleCurrentChange(val) {
-                this.listQuery.page = val;
-                this.getList();
+            getDeptAndUsersList() {
+                getDeptNameAndUsers().then(response => {
+                    if (response.httpCode === 200) {
+                        this.userList = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                })
             },
             handleCreate() {
                 this.resetTemp();
@@ -242,8 +247,7 @@
                 this.addDialogFormVisible = true;
             },
             handleDelete() {
-                const selectCounts = this.selectedRows.length;
-                if (this.selectedRows.length == 0) {
+                if (this.selectedRows.length === 0) {
                     this.$message.warning('请选择需要操作的记录');
                 } else {
                     this.$confirm('此操作将删除关联信息, 是否继续?', '提示', {
@@ -251,43 +255,23 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        this.listLoading = true;
-                        let ids = new Array();
-                        for (const deleteRow of this.selectedRows) {
-                            ids.push(deleteRow.id);
-                        }
-                        delRole(ids).then(response => {
-                            if (response.httpCode === 200) {
-                                this.listLoading = false;
-                                this.total -= selectCounts;
-                                this.$message.success('删除成功！');
-                                for (const deleteRow of this.selectedRows) {
-                                    const index = this.list.indexOf(deleteRow);
-                                    this.list.splice(index, 1);
-                                }
-                            } else {
-                                this.listLoading = false;
-                                this.$message.error('删除失败！');
-                            }
-                        })
+                        this.doDelete();
                     }).catch(() => {
                         console.dir('取消');
                     });
                 }
             },
-            create() {
+            doCreate() {
                 this.$refs['roleForm'].validate(valid => {
                     if (valid) {
-                        this.addDialogFormVisible = false;
-                        this.listLoading = true;
+                        this.dialogLoading = true;
                         createRole(this.sysRole).then(response => {
+                            this.dialogLoading = false;
                             if (response.httpCode === 200) {
-                                this.list.unshift(response.data);
-                                this.total += 1;
+                                this.resetRoleForm();
                                 this.$message.success('创建成功！');
-                                this.listLoading = false;
+                                this.getList();
                             } else {
-                                this.listLoading = false;
                                 this.$message.error('创建失败！');
                             }
                         })
@@ -296,14 +280,16 @@
                     }
                 });
             },
-            update() {
+            doUpdate() {
                 this.$refs['roleForm'].validate(valid => {
                     if (valid) {
-                        this.addDialogFormVisible = false;
+                        this.dialogLoading = true;
                         updateRole(this.sysRole).then(response => {
+                            this.dialogLoading = false;
                             if (response.httpCode === 200) {
-                                copyProperties(this.currentRow, response.data);
+                                this.resetRoleForm();
                                 this.$message.success('更新成功！');
+                                this.getList();
                             } else {
                                 this.$message.error('更新失败！');
                             }
@@ -313,42 +299,44 @@
                     }
                 });
             },
-            resetTemp() {
-                this.sysRole = {
-                    id: undefined,
-                    name: '',
-                    type: 1,
-                    deptCode: 0,
-                    deptId: '',
-                    treePosition: '',
-                    parentId: 0
-                };
-            },
-            getMenuTree() {
-                this.roleMenuDialogLoading = true;
-                getMenuTree().then(response => {
+            doDelete() {
+                this.listLoading = true;
+                let ids = [];
+                for (const deleteRow of this.selectedRows) {
+                    ids.push(deleteRow.id);
+                }
+                delRole(ids.join()).then(response => {
                     if (response.httpCode === 200) {
-                        this.menuTree = response.data;
+                        this.$message.success('删除成功！');
+                        this.getList();
                     } else {
-                        this.$message.error(response.msg);
+                        this.$message.error('删除失败！');
                     }
-                    this.roleMenuDialogLoading = false;
-                    this.getAllRoleMenu();
+                    this.listLoading = false;
                 })
+            },
+            handleMenuList(role) {
+                this.currentRole = role;
+                this.dialogStatus = 'associateMenu';
+                this.roleMenuDialogFormVisible = true;
             },
             getAllRoleMenu() {
-                getAllRoleMenus(this.currentRole.id).then(response => {
-                    if (response.httpCode === 200) {
-                        const menus = response.data;
-                        for (const menu of menus) {
-                            this.$refs.menuTree.setChecked(menu.menuId, true, false);
+                this.$nextTick(() => {
+                    this.roleMenuDialogLoading = true;
+                    this.$refs.menuTree.setCheckedKeys([])
+                    getAllRoleMenus(this.currentRole.id).then(response => {
+                        if (response.httpCode === 200) {
+                            const menus = response.data;
+                            for (const menu of menus) {
+                                this.$refs.menuTree.setChecked(menu.menuId, true, false);
+                            }
+                        } else {
+                            this.$message.error(response.msg);
                         }
-                    } else {
-                        this.$message.error(response.msg);
-                    }
+                        this.roleMenuDialogLoading = false;
+                    })
                 })
             },
-
             menuTreeChecked(data, checked) {
                 if (checked) {
                     if (data.parentId != 0) {
@@ -362,24 +350,16 @@
                     }
                 }
             },
-            handleMenuList(role) {
-                this.currentRole = role;
-                this.dialogStatus = 'associateMenu';
-                this.roleMenuDialogFormVisible = true;
-                this.getMenuTree();
-            },
             submitRoleMenu() {
                 this.roleMenuDialogLoading = true;
-                var checked = this.$refs.menuTree.getCheckedKeys(false);
+                let checked = this.$refs.menuTree.getCheckedKeys(false);
                 createRoleMenus(this.currentRole.id, checked).then(response => {
+                    this.roleMenuDialogLoading = false;
+                    this.roleMenuDialogFormVisible = false;
                     if (response.httpCode === 200) {
-                        this.roleMenuDialogLoading = false;
-                        this.roleMenuDialogFormVisible = false;
                         this.$message.success('关联成功！');
                         this.currentRole.roleMenuCount = checked.length;
                     } else {
-                        this.roleMenuDialogLoading = false;
-                        this.roleMenuDialogFormVisible = false;
                         this.$message.error('关联失败！');
                     }
                 })
@@ -388,21 +368,9 @@
                 this.currentRole = role;
                 this.dialogStatus = 'associateUser';
                 this.userRoleDialogFormVisible = true;
-                this.getDeptAndUsersList();
-            },
-            getDeptAndUsersList() {
-                this.userRoleDialogLoading = true;
-                getDeptNameAndUsers(this.listQuery).then(response => {
-                    if (response.httpCode === 200) {
-                        this.userList = response.data;
-                    } else {
-                        this.$message.error(response.msg);
-                    }
-                    this.userRoleDialogLoading = false;
-                    this.getAllUserRoles();
-                })
             },
             getAllUserRoles() {
+                this.userRoleDialogLoading = true;
                 this.checkedUsers = [];
                 getAllUserRole(this.currentRole.id).then(response => {
                     if (response.httpCode === 200) {
@@ -414,6 +382,7 @@
                     } else {
                         this.$message.error(response.msg);
                     }
+                    this.userRoleDialogLoading = false;
                 })
             },
             handleCheckedUsersChange(value) {
@@ -422,14 +391,12 @@
             submitUserRole() {
                 this.userRoleDialogLoading = true;
                 createUserRole(this.currentRole.id, this.checkedUsers).then(response => {
+                    this.userRoleDialogLoading = false;
+                    this.userRoleDialogFormVisible = false;
                     if (response.httpCode === 200) {
-                        this.userRoleDialogLoading = false;
-                        this.userRoleDialogFormVisible = false;
                         this.$message.success('关联成功！');
                         this.currentRole.userRoleCount = this.checkedUsers.length;
                     } else {
-                        this.userRoleDialogLoading = false;
-                        this.userRoleDialogFormVisible = false;
                         this.$message.error('关联失败！');
                     }
                 })
@@ -438,6 +405,28 @@
                 this.addDialogFormVisible = false;
                 this.resetTemp();
                 resetForm(this, 'roleForm');
+            },
+            resetTemp() {
+                this.sysRole = {
+                    id: undefined,
+                    name: '',
+                    type: 1,
+                    deptCode: 0,
+                    deptId: '',
+                    treePosition: '',
+                    parentId: 0
+                };
+            },
+            handleSelectionChange(row) {
+                this.selectedRows = row;
+            },
+            handleSizeChange(val) {
+                this.listQuery.rows = val;
+                this.getList();
+            },
+            handleCurrentChange(val) {
+                this.listQuery.page = val;
+                this.getList();
             }
         }
     }

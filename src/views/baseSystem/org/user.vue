@@ -1,7 +1,7 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="姓名"
+            <el-input @keyup.enter.native="getList" style="width: 130px;" class="filter-item" placeholder="姓名"
                       v-model="listQuery.name"></el-input>
             <el-cascader :options="cascader" class="filter-item" @change="handleChange"
                          :show-all-levels="true" clearable filterable expand-trigger="hover"
@@ -69,7 +69,7 @@
         </div>
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible"
-                   :close-on-click-modal="closeOnClickModal" :before-close="resetUserForm1">
+                   :close-on-click-modal="closeOnClickModal" :before-close="resetUserForm">
             <el-form id="checkboxTable" ref="userForm1" class="small-space" :model="sysUser" label-position="right"
                      label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="sysUserRules1">
@@ -136,11 +136,10 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button icon="circle-cross" type="danger" @click="resetUserForm1">取 消</el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
+                <el-button icon="circle-cross" type="danger" @click="resetUserForm">取 消</el-button>
+                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="doCreate">确 定
                 </el-button>
-
-                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
+                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="doUpdate" @click="doUpdate">确 定
                 </el-button>
             </div>
         </el-dialog>
@@ -152,7 +151,6 @@
     import {mapGetters} from 'vuex';
     import {copyProperties, resetForm} from 'utils';
     import {validatMobiles} from 'utils/validate'
-    import {delWindowUser} from 'api/hallSystem/lobby/window';
     import {getDeptCascader} from 'api/baseSystem/org/dept';
     import {getUserList, updateUser, createUser, delUser} from 'api/baseSystem/org/user';
 
@@ -266,8 +264,13 @@
             this.getOptions();
         },
         methods: {
-            handleFilter() {
-                this.getList();
+            getList() {
+                this.listLoading = true;
+                getUserList(this.listQuery).then(response => {
+                    this.list = response.data.list;
+                    this.total = response.data.total;
+                    this.listLoading = false;
+                })
             },
             getOptions(id) {
                 getDeptCascader(id).then(response => {
@@ -277,13 +280,6 @@
                         this.$message.error(response.msg);
                     }
                 })
-            },
-            handleSizeChange(val) {
-                this.listQuery.rows = val;
-                this.listQuery.deptId = null;
-                this.listQuery.name = null;
-                console.dir(this.listQuery.page);
-                this.getList();
             },
             handleChange(value) {
                 this.listQuery.deptId = null;
@@ -302,19 +298,9 @@
                     this.getList();
                 }
             },
-            handleCurrentChange(val) {
-                this.listQuery.page = val;
-                this.getList();
-            },
-            handleSelectionChange(rows) {
-                this.selectedRows = rows;
-            },
-            toggleSelection(row) {
-                this.$refs.userTable.toggleRowSelection(row);
-            },
             handleCreate(row) {
                 this.currentRow = row;
-                //this.sysUser.deptId = row.id;
+                // this.sysUser.deptId = row.id;
                 this.sysUserRules1.password[0].required = true;
                 this.sysUserRules1.passwordConfirm[0].required = true;
                 this.dialogStatus = 'create';
@@ -331,11 +317,73 @@
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
-            getList() {
+            handleDelete() {
+                if (this.selectedRows.length === 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.doDelete();
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
+            doCreate() {
+                this.$refs['userForm1'].validate(valid => {
+                    if (valid) {
+                        this.dialogLoading = true;
+                        createUser(this.sysUser).then(response => {
+                            this.dialogLoading = false;
+                            if (response.httpCode !== 200) {
+                                this.$message.error(response.msg);
+                            } else {
+                                this.resetUserForm();
+                                this.$message.success('创建成功');
+                                this.getList();
+                            }
+                        })
+                    } else {
+                        return false;
+                    }
+                });
+            },
+            doUpdate() {
+                this.$refs['userForm1'].validate(valid => {
+                    if (valid) {
+                        this.dialogLoading = true;
+                        this.sysUser.deptVo = {};
+                        updateUser(this.sysUser).then(response => {
+                            this.dialogLoading = false;
+                            if (response.httpCode !== 200) {
+                                this.$message.error(response.msg);
+                            } else {
+                                this.resetUserForm();
+                                this.$message.success('更新成功');
+                                this.getList();
+                            }
+                        })
+                    } else {
+                        return false;
+                    }
+                })
+            },
+            doDelete() {
                 this.listLoading = true;
-                getUserList(this.listQuery).then(response => {
-                    this.list = response.data.list;
-                    this.total = response.data.total;
+                let ids = [];
+                for (const deleteRow of this.selectedRows) {
+                    ids.push(deleteRow.id);
+                }
+                delUser(ids.join()).then(response => {
+                    if (response.httpCode === 200) {
+                        this.$message.success('删除成功！');
+                        this.getList();
+                    } else {
+                        this.$message.error('删除失败！');
+                    }
                     this.listLoading = false;
                 })
             },
@@ -367,85 +415,6 @@
             handleRemove() {
                 this.sysUser.avatar = '';
             },
-            handleDelete() {
-                let selectCounts = this.selectedRows.length;
-                if (this.selectedRows == 0) {
-                    this.$message.warning('请选择需要操作的记录');
-                } else {
-                    this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-                        this.listLoading = true;
-                        let ids = new Array();
-                        for (const deleteRow of this.selectedRows) {
-                            ids.push(deleteRow.id);
-                        }
-                        delUser(ids).then(response => {
-                            if (response.httpCode === 200) {
-                                delWindowUser(ids).then(response => {
-                                    if (response.httpCode === 200) {
-                                        this.listLoading = false;
-                                        this.total -= selectCounts;
-                                        this.$message.success('删除成功！');
-                                        this.getList();
-                                    } else {
-                                        this.listLoading = false;
-                                        this.$message.error('删除失败！');
-                                    }
-                                })
-                            } else {
-                                this.listLoading = false;
-                                this.$message.error('删除失败！');
-                            }
-                        })
-                    }).catch(() => {
-                        console.dir('取消');
-                    });
-                }
-            },
-            create() {
-                this.$refs['userForm1'].validate(valid => {
-                    if (valid) {
-                        this.dialogFormVisible = false;
-                        this.listLoading = true;
-                        createUser(this.sysUser).then(response => {
-                            if (response.httpCode!=200) {
-                                this.$message.error(response.msg);
-                            } else {
-                                this.list.unshift(response.data);
-                                this.total += 1;
-                                this.$message.success('创建成功');
-                                this.resetUserForm1();
-                            }
-                            this.listLoading = false;
-                        })
-                    } else {
-                        return false;
-                    }
-                });
-            },
-            update() {
-                this.$refs['userForm1'].validate(valid => {
-                    if (valid) {
-                        this.dialogFormVisible = false;
-                        this.listLoading = true;
-                        this.sysUser.deptVo = {};
-                        updateUser(this.sysUser).then(response => {
-                            if (response.httpCode != 200) {
-                                this.$message.error(response.msg);
-                            } else {
-                                this.getList();
-                                this.$message.success('更新成功');
-                            }
-                            this.listLoading = false;
-                        })
-                    } else {
-                        return false;
-                    }
-                })
-            },
             resetTemp() {
                 this.sysUser = {
                     id: undefined,
@@ -463,11 +432,27 @@
                     empNo: ''
                 };
             },
-            resetUserForm1() {
+            resetUserForm() {
                 this.dialogFormVisible = false;
                 this.resetTemp();
                 this.imageUrl = '';
                 resetForm(this, 'userForm1');
+            },
+            handleSizeChange(val) {
+                this.listQuery.rows = val;
+                this.listQuery.deptId = null;
+                this.listQuery.name = null;
+                this.getList();
+            },
+            handleCurrentChange(val) {
+                this.listQuery.page = val;
+                this.getList();
+            },
+            handleSelectionChange(rows) {
+                this.selectedRows = rows;
+            },
+            toggleSelection(row) {
+                this.$refs.userTable.toggleRowSelection(row);
             }
         }
     }
