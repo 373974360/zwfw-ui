@@ -309,6 +309,16 @@
                         </el-tab-pane>
                     </el-tabs>
                 </div>
+                <div v-if="uploadAvatars!=null && uploadAvatars.length>0">
+                    <h2 class="h2-style-show">附件材料：</h2>
+                    <el-row>
+                        <el-col :span="4" v-for="(item, index) in uploadAvatars" :key="item" :offset="1" >
+                            <el-card :body-style="{ padding: '0px' }">
+                                <img :src="item.url" @click="handlePictureCardPreview(item)" class="image">
+                            </el-card>
+                        </el-col>
+                    </el-row>
+                </div>
                 <div>
                     <el-button v-if="itemProcessVo.flagCorrection || itemProcessVo.status == 99"
                                type="button" @click="print_ycxgzd(itemProcessVo.pretrialNumber)">打印一次性告知单
@@ -384,7 +394,8 @@
                 itemTaskSetting: {},
                 action: '',
                 correctionList: [],
-                extendTimeVoList: []
+                extendTimeVoList: [],
+                uploadAvatars: []
             }
         },
         created() {
@@ -454,6 +465,7 @@
                 });
             },
             showDetail(row) {
+                this.uploadAvatars = [];
                 this.pretrialNumber = row.pretrialNumber;
                 this.taskId = row.taskId;
                 this.textMapTitle = '部门办事 - ' + row.itemName;
@@ -477,14 +489,22 @@
                     this.action = '';
                     this.correctionList = response.data.correctionList;
                     this.extendTimeVoList = response.data.extendTimeVoList;
+                    const itemProcessAttachmentList = response.data.itemProcessAttachmentList;
+                    for (var o in itemProcessAttachmentList) {
+                        this.uploadAvatars.push(
+                            {url: itemProcessAttachmentList[o].fileUrl}
+                        );
+                    }
                 });
             },
             print_ycxgzd(pretrialNumber) {
                 if (pretrialNumber != null) {
                     window.open('/api/workSystem/itemPretrial/downloadYcxgzd?pretrialNumber=' + pretrialNumber);
                 }
-            }
-
+            },
+            handlePictureCardPreview(file) {
+                window.open(file.url);
+            },
         }
     }
 </script>
@@ -571,4 +591,11 @@
 
     }
     }
+
+    .image {
+        width: 100%;
+        height: 250px;
+        display: block;
+    }
+
 </style>
