@@ -216,7 +216,7 @@
         getAllItemWindow,
         createZwfwWindowItem,
         deleteZwfwWindowItem
-    } from '../../../api/hallSystem/lobby/window';
+    } from 'api/hallSystem/lobby/window';
     import {copyProperties, resetForm, validateQueryStr} from 'utils';
     import {mapGetters} from 'vuex';
     import {getDeptNameAndUsers} from 'api/baseSystem/org/user';
