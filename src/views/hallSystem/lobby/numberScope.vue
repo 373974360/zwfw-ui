@@ -63,7 +63,7 @@
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="addDialogFormVisible"
                    :close-on-click-modal="closeOnClickModal" :before-close="resetNumberForm">
             <el-form ref="zwfwNumberScope" class="small-space" :model="zwfwNumberScope" label-position="left"
-                     label-width="100px"
+                     label-width="100px" v-loading="dialogLoading"
                      style='width: 80%; margin-left:10%;' :rules="numberScopeRules">
                 <el-form-item label="排号单前缀" prop="prefixName">
                     <el-input v-model="zwfwNumberScope.prefixName"/>
@@ -74,24 +74,24 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="resetNumberForm">取 消</el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
+                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="doCreate">确 定
                 </el-button>
 
-                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
+                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="doUpdate" @click="doUpdate">确 定
                 </el-button>
             </div>
         </el-dialog>
 
         <!--事项关联dialog-->
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisibleItem"
-                   :close-on-click-modal="closeOnClickModal" :before-close="resetZwfwItemForm">
+                   :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemForm">
             <div class="filter-container">
-                <el-button class="filter-item" style="margin-left: 10px;" @click="handleDeleteOne" type="danger"
+                <el-button class="filter-item" style="margin-left: 10px;" @click="handleItemDelete" type="danger"
                            icon="delete">
                     删除
                 </el-button>
             </div>
-            <el-table ref="zwfwItemTable" :data="zwfwItemList" v-loading.body="listLoading1" border fit
+            <el-table ref="zwfwItemTable" :data="zwfwItemList" v-loading.body="dialogTableLoading" border fit
                       highlight-current-row
                       style="width: 100%" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55"/>
@@ -147,7 +147,7 @@
                                 v-for="item in optionsName"
                                 :key="item.id"
                                 :label="item.name"
-                                :value="item.name">
+                                :value="item.id">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -181,7 +181,7 @@
                 list: null,
                 total: null,
                 listLoading: true,
-                listLoading1: true,
+                dialogTableLoading: true,
                 dialogLoading: false,
                 listQuery: {
                     prefixName: '',
@@ -217,7 +217,7 @@
                 dialogFormVisibleItem: false,
                 selectedRows: [],
                 zwfwItemList: [],
-                itemNumberScopeList: [],
+                allItemList: [],
                 optionsName: [],
                 numberScopeList: []
             }
@@ -225,6 +225,7 @@
         created() {
             this.getList();
             this.getItemList();
+            this.getAllNumberScopeItemList();
         },
         computed: {
             ...mapGetters([
@@ -246,16 +247,25 @@
                     }
                 })
             },
-            handleSelectionChange(row) {
-                this.selectedRows = row;
+            getItemList() {
+                const query = {}
+                getAllByNameOrbasicCode(query).then(response => {
+                    if (response.httpCode === 200) {
+                        this.allItemList = response.data;
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
+                })
             },
-            handleSizeChange(val) {
-                this.listQuery.rows = val;
-                this.getList();
-            },
-            handleCurrentChange(val) {
-                this.listQuery.page = val;
-                this.getList();
+            getAllNumberScopeItemList() {
+                const query = {};
+                getAllItemNumberScope(query).then(response => {
+                    if (response.httpCode === 200) {
+                        this.numberScopeList = response.data;
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
+                });
             },
             handleCreate() {
                 this.resetTemp();
@@ -270,8 +280,7 @@
                 this.addDialogFormVisible = true;
             },
             handleDelete() {
-                const selectCounts = this.selectedRows.length;
-                if (this.selectedRows.length == 0) {
+                if (this.selectedRows.length === 0) {
                     this.$message.warning('请选择需要操作的记录');
                 } else {
                     this.$confirm('此操作将删除关联信息, 是否继续?', '提示', {
@@ -279,40 +288,22 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        this.listLoading = true;
-                        let ids = new Array();
-                        for (const deleteRow of this.selectedRows) {
-                            ids.push(deleteRow.id);
-                        }
-                        delZwfwNumberScope(ids).then(response => {
-                            this.listLoading = false;
-                            if (response.httpCode === 200) {
-                                this.total -= selectCounts;
-                                this.$message.success('删除成功');
-                            } else {
-                                this.$message.error('删除失败')
-                            }
-                        })
-                        for (const deleteRow of this.selectedRows) {
-                            const index = this.list.indexOf(deleteRow);
-                            this.list.splice(index, 1);
-                        }
+                        this.doDelete();
                     }).catch(() => {
                         console.dir('取消');
                     });
                 }
             },
-            create() {
+            doCreate() {
                 this.$refs['zwfwNumberScope'].validate(valid => {
                     if (valid) {
-                        this.addDialogFormVisible = false;
-                        this.listLoading = true;
+                        this.dialogLoading = true;
                         createZwfwNumberScope(this.zwfwNumberScope).then(response => {
-                            this.listLoading = false;
+                            this.dialogLoading = false;
                             if (response.httpCode === 200) {
-                                this.list.unshift(response.data);
-                                this.total += 1;
+                                this.resetNumberForm();
                                 this.$message.success('创建成功');
+                                this.getList();
                             } else {
                                 this.$message.error('创建失败')
                             }
@@ -322,16 +313,16 @@
                     }
                 });
             },
-            update() {
+            doUpdate() {
                 this.$refs['zwfwNumberScope'].validate(valid => {
                     if (valid) {
-                        this.addDialogFormVisible = false;
-                        this.listLoading = true;
+                        this.dialogLoading = true;
                         updateZwfwNumberScope(this.zwfwNumberScope).then(response => {
-                            this.listLoading = false;
+                            this.dialogLoading = false;
                             if (response.httpCode === 200) {
-                                copyProperties(this.currentRow, response.data);
+                                this.resetNumberForm();
                                 this.$message.success('更新成功');
+                                this.getList();
                             } else {
                                 this.$message.error('更新失败')
                             }
@@ -341,12 +332,21 @@
                     }
                 });
             },
-            resetTemp() {
-                this.zwfwNumberScope = {
-                    id: undefined,
-                    prefixName: '',
-                    beginNumber: ''
-                };
+            doDelete() {
+                this.listLoading = true;
+                let ids = [];
+                for (const deleteRow of this.selectedRows) {
+                    ids.push(deleteRow.id);
+                }
+                delZwfwNumberScope(ids.join()).then(response => {
+                    if (response.httpCode === 200) {
+                        this.$message.success('删除成功');
+                        this.getList();
+                    } else {
+                        this.$message.error('删除失败')
+                    }
+                    this.listLoading = false;
+                })
             },
             handleItemList(row) {
                 this.currentItem = row;
@@ -356,35 +356,26 @@
                 this.getItemListByNumberScopeId();
             },
             getItemListByNumberScopeId() {
-                this.listLoading1 = true;
+                this.dialogTableLoading = true;
                 const query = {
                     numberScopeId: this.numberScopeId
                 }
                 getAllItemNumberScope(query).then(response => {
-                    this.listLoading1 = false;
                     if (response.httpCode === 200) {
                         const arr = [];
                         for (const ids of response.data) {
-                            for (const idList of this.itemNumberScopeList) {
-                                if (ids.itemId == idList.id) {
+                            for (const idList of this.allItemList) {
+                                if (ids.itemId === idList.id) {
                                     arr.push(idList);
                                 }
                             }
                         }
                         this.zwfwItemList = arr
+                        this.currentItem.numberItemCount = arr.length
                     } else {
                         this.$message.error('数据加载失败')
                     }
-                })
-            },
-            getItemList() {
-                const query = {}
-                getAllByNameOrbasicCode(query).then(response => {
-                    if (response.httpCode === 200) {
-                        this.itemNumberScopeList = response.data;
-                    } else {
-                        this.$message.error('数据加载失败')
-                    }
+                    this.dialogTableLoading = false;
                 })
             },
             remoteMethod(query) {
@@ -415,62 +406,52 @@
                 }
             },
             changeMaterial(value) {
-                for (const obj of this.itemNumberScopeList) {
-                    if (obj.name == value) {
+                for (const obj of this.optionsName) {
+                    if (obj.id === value) {
                         this.zwfwItem = Object.assign({}, obj);
                     }
                 }
             },
             saveCategoryItem() {
-                const query = {};
-                getAllItemNumberScope(query).then(response => {
-                    if (response.httpCode === 200) {
-                        this.numberScopeList = response.data;
-                        this.$refs['zwfwItemForm'].validate((valid) => {
-                            if (valid) {
-                                for (let obj of this.zwfwItemList) {
-                                    if (obj.id == this.zwfwItem.id) {
-                                        this.$message.warning('事项已存在');
-                                        this.resetTemp1();
-                                        resetForm(this, 'zwfwItemForm');
-                                        return false;
-                                    }
-                                }
-                                for (const arr of this.numberScopeList) {
-                                    if (arr.itemId == this.zwfwItem.id) {
-                                        this.$message.warning('该事项已关联其他排号前缀');
-                                        this.resetTemp1();
-                                        resetForm(this, 'zwfwItemForm');
-                                        return false;
-                                    }
-                                }
-                                const query = {
-                                    numberScopeId: this.numberScopeId,
-                                    itemId: this.zwfwItem.id
-                                }
-                                this.listLoading1 = true;
-                                createZwfwNumberScopeItem(query).then(response => {
-                                    this.listLoading1 = false;
-                                    if (response.httpCode === 200) {
-                                        this.zwfwItemList.unshift(this.zwfwItem);
-                                        this.$message.success('创建成功');
-                                        this.currentItem.numberItemCount += 1;
-                                        this.resetZwfwItemForm();
-                                    } else {
-                                        this.$message.error('创建失败')
-                                    }
-                                })
-                            } else {
+                this.$refs['zwfwItemForm'].validate(valid => {
+                    if (valid) {
+                        for (let obj of this.zwfwItemList) {
+                            if (obj.id === this.zwfwItem.id) {
+                                this.$message.warning('事项已存在');
+                                this.resetZwfwItemForm();
                                 return false;
                             }
-                        });
+                        }
+                        for (const arr of this.numberScopeList) {
+                            if (arr.itemId === this.zwfwItem.id) {
+                                this.$message.warning('该事项已关联其他排号前缀');
+                                this.resetZwfwItemForm();
+                                return false;
+                            }
+                        }
+                        const query = {
+                            numberScopeId: this.numberScopeId,
+                            itemId: this.zwfwItem.id
+                        }
+                        this.dialogLoading = true;
+                        createZwfwNumberScopeItem(query).then(response => {
+                            this.dialogLoading = false;
+                            if (response.httpCode === 200) {
+                                this.resetZwfwItemForm();
+                                this.$message.success('创建成功');
+                                this.getItemListByNumberScopeId();
+                                this.getAllNumberScopeItemList();
+                            } else {
+                                this.$message.error('创建失败')
+                            }
+                        })
                     } else {
-                        this.$message.error('操作失败')
+                        return false;
                     }
-                })
+                });
             },
-            handleDeleteOne() {
-                if (this.selectedRows == 0) {
+            handleItemDelete() {
+                if (this.selectedRows.length === 0) {
                     this.$message.warning('请选择需要操作的记录');
                 } else {
                     this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
@@ -478,32 +459,38 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        this.listLoading1 = true;
-                        const length = this.selectedRows.length;
-                        const ids = new Array();
-                        for (const deleteRow of this.selectedRows) {
-                            ids.push(deleteRow.id);
-                        }
-                        deleteZwfwNumberScopeItem(this.numberScopeId, ids).then(response => {
-                            this.listLoading1 = false;
-                            if (response.httpCode === 200) {
-                                this.currentItem.numberItemCount -= length;
-                                this.$message.success('删除成功');
-                                this.resetZwfwItemForm();
-                            } else {
-                                this.$message.error('删除失败')
-                            }
-                        })
-                        for (const deleteRow of this.selectedRows) {
-                            const index = this.zwfwItemList.indexOf(deleteRow);
-                            this.zwfwItemList.splice(index, 1);
-                        }
+                        this.doItemDelete();
                     }).catch(() => {
-                        console.dir("取消");
+                        console.dir('取消');
                     });
                 }
             },
-            resetTemp1() {
+            doItemDelete() {
+                this.dialogTableLoading = true;
+                const ids = [];
+                for (const deleteRow of this.selectedRows) {
+                    ids.push(deleteRow.id);
+                }
+                deleteZwfwNumberScopeItem(this.numberScopeId, ids.join()).then(response => {
+                    if (response.httpCode === 200) {
+                        this.resetZwfwItemForm();
+                        this.$message.success('删除成功');
+                        this.getItemListByNumberScopeId();
+                        this.getAllNumberScopeItemList();
+                    } else {
+                        this.$message.error('删除失败')
+                    }
+                    this.dialogTableLoading = false;
+                })
+            },
+            resetTemp() {
+                this.zwfwNumberScope = {
+                    id: undefined,
+                    prefixName: '',
+                    beginNumber: ''
+                };
+            },
+            resetItemTemp() {
                 this.zwfwItem = {
                     id: undefined,
                     name: '',
@@ -515,10 +502,24 @@
                 this.resetTemp();
                 resetForm(this, 'zwfwNumberScope');
             },
-            resetZwfwItemForm() {
+            closeZwfwItemForm() {
                 this.dialogFormVisibleItem = false;
-                this.resetTemp1();
+                this.resetZwfwItemForm();
+            },
+            resetZwfwItemForm() {
+                this.resetItemTemp();
                 resetForm(this, 'zwfwItemForm');
+            },
+            handleSelectionChange(row) {
+                this.selectedRows = row;
+            },
+            handleSizeChange(val) {
+                this.listQuery.rows = val;
+                this.getList();
+            },
+            handleCurrentChange(val) {
+                this.listQuery.page = val;
+                this.getList();
             }
         }
     }
