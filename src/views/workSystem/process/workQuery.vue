@@ -1,22 +1,22 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item" placeholder="办件号"
-                      v-model="listQuery.search"></el-input>
+            <el-input @keyup.enter.native="getList" style="width: 300px;" class="filter-item" placeholder="办件号"
+                      v-model="listQuery.pretrialNumber"></el-input>
 
 
             <el-select
                     remote
-                    style="width: 230px;" class="filter-item" placeholder="公司名称"
-                    v-model="listQuery.companyCode"
+                    style="width: 400px;" class="filter-item" placeholder="公司名称"
+                    v-model="listQuery.companyId"
                     filterable clearable
                     :remote-method="queryCompanySearch"
                     @change="handleCompanySelect">
                 <el-option
-                        v-for="item in companyList"
-                        :key="item.companyCode"
-                        :label="item.companyName"
-                        :value="item.companyCode">
+                        v-for="companyInfo in companyList"
+                        :key="companyInfo.id"
+                        :label="companyInfo.companyName"
+                        :value="companyInfo.id">
                 </el-option>
             </el-select>
 
@@ -362,7 +362,7 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
-                    companyCode: undefined,
+                    companyId: undefined,
                     pretrialNumber: null
                 },
                 zwfwDeptWorkQuery: {
@@ -447,7 +447,7 @@
                 this.dialogFormVisible = false;
             },
             handleCompanySelect(code) {
-                this.listQuery.companyCode = code;
+                this.listQuery.companyId = code;
                 this.getList();
             },
             queryCompanySearch(queryString) {
@@ -461,7 +461,7 @@
                 }
                 // 调用 callback 返回建议列表的数据
                 const query = {
-                    name: queryString
+                    companyName: queryString
                 };
                 getAllCompany(query).then(response => {
                     if (response.httpCode === 200) {

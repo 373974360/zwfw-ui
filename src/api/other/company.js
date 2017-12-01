@@ -43,7 +43,7 @@ export function deleteZwfwCompany(id) {
 }
 export function getAllCompany(query) {
     return fetch({
-        url: '/api/zwfw/Company/getAll',
+        url: '/api/hallSystem/legalPerson/getAll',
         method: 'get',
         params: query
     })
