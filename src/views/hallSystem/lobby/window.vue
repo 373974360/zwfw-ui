@@ -64,7 +64,7 @@
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="addDialogFormVisible"
                    :close-on-click-modal="closeOnClickModal" :before-close="resetWindowForm">
             <el-form ref="windowForm" class="small-space" :model="window" label-position="left" label-width="130px"
-                     style='width: 80%; margin-left:10%;' :rules="windowRules">
+                     style='width: 80%; margin-left:10%;' :rules="windowRules" v-loading="dialogLoading">
                 <el-form-item label="窗口名称" prop="name">
                     <el-input v-model="window.name"/>
                 </el-form-item>
@@ -83,24 +83,24 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="resetWindowForm">取 消</el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
+                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="doCreate">确 定
                 </el-button>
 
-                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
+                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="doUpdate" @click="doUpdate">确 定
                 </el-button>
             </div>
         </el-dialog>
 
         <!--事项关联dialog-->
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisibleItem"
-                   :close-on-click-modal="closeOnClickModal" :before-close="resetZwfwItemForm">
+                   :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemForm">
             <div class="filter-container">
-                <el-button class="filter-item" style="margin-left: 10px;" @click="handleDeleteOne" type="danger"
+                <el-button class="filter-item" style="margin-left: 10px;" @click="handleItemDelete" type="danger"
                            icon="delete">
                     删除
                 </el-button>
             </div>
-            <el-table ref="zwfwItemTable" :data="zwfwItemList" v-loading.body="listLoading1" border fit
+            <el-table ref="zwfwItemTable" :data="zwfwItemList" v-loading.body="dialogTableLoading" border fit
                       highlight-current-row
                       style="width: 100%" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55"/>
@@ -156,7 +156,7 @@
                                 v-for="item in optionsName"
                                 :key="item.id"
                                 :label="item.name"
-                                :value="item.name">
+                                :value="item.id">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -229,7 +229,7 @@
                 list: null,
                 total: null,
                 listLoading: true,
-                listLoading1: true,
+                dialogTableLoading: true,
                 dialogLoading: false,
                 listQuery: {
                     name: '',
@@ -287,13 +287,14 @@
                 checkedUsers: [],
                 selectedRows: [],
                 zwfwItemList: [],
-                itemWindowList: [],
+                allItemList: [],
                 optionsName: []
             }
         },
         created() {
             this.getList();
             this.getItemList();
+            this.getDeptAndUsersList();
         },
         computed: {
             ...mapGetters([
@@ -315,17 +316,27 @@
                     }
                 })
             },
-            handleSelectionChange(row) {
-                this.selectedRows = row;
-                console.log(this.selectedRows);
+            getItemList() {
+                const query = {}
+                getAllByNameOrbasicCode(query).then(response => {
+                    if (response.httpCode === 200) {
+                        this.allItemList = response.data;
+                        this.zwfwItem.supportAssist = true;
+                        this.zwfwItem.supportEnquire = true;
+                        this.zwfwItem.supportNormal = true;
+                    } else {
+                        this.$message.error('事项信息加载失败')
+                    }
+                })
             },
-            handleSizeChange(val) {
-                this.listQuery.rows = val;
-                this.getList();
-            },
-            handleCurrentChange(val) {
-                this.listQuery.page = val;
-                this.getList();
+            getDeptAndUsersList() {
+                getDeptNameAndUsers(this.listQuery).then(response => {
+                    if (response.httpCode === 200) {
+                        this.userList = response.data;
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
+                })
             },
             handleCreate() {
                 this.resetTemp();
@@ -340,8 +351,7 @@
                 this.addDialogFormVisible = true;
             },
             handleDelete() {
-                const selectCounts = this.selectedRows.length;
-                if (this.selectedRows.length == 0) {
+                if (this.selectedRows.length === 0) {
                     this.$message.warning('请选择需要操作的记录');
                 } else {
                     this.$confirm('此操作将删除关联信息, 是否继续?', '提示', {
@@ -349,39 +359,22 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        let ids = new Array();
-                        for (const deleteRow of this.selectedRows) {
-                            ids.push(deleteRow.id);
-                        }
-                        delWindow(ids).then(response => {
-                            this.listLoading = false;
-                            if (response.httpCode === 200) {
-                                this.total -= selectCounts;
-                                this.$message.success('删除成功');
-                            } else {
-                                this.$message.error('删除失败')
-                            }
-                        })
-                        for (const deleteRow of this.selectedRows) {
-                            const index = this.list.indexOf(deleteRow);
-                            this.list.splice(index, 1);
-                        }
+                        this.doDelete();
                     }).catch(() => {
                         console.dir('取消');
                     });
                 }
             },
-            create() {
+            doCreate() {
                 this.$refs['windowForm'].validate(valid => {
                     if (valid) {
-                        this.addDialogFormVisible = false;
-                        this.listLoading = true;
+                        this.dialogLoading = true;
                         createWindow(this.window).then(response => {
-                            this.listLoading = false;
+                            this.dialogLoading = false;
                             if (response.httpCode === 200) {
-                                this.list.unshift(response.data);
-                                this.total += 1;
+                                this.resetWindowForm();
                                 this.$message.success('创建成功');
+                                this.getList();
                             } else {
                                 this.$message.error('创建失败')
                             }
@@ -391,14 +384,16 @@
                     }
                 });
             },
-            update() {
+            doUpdate() {
                 this.$refs['windowForm'].validate(valid => {
                     if (valid) {
-                        this.addDialogFormVisible = false;
+                        this.dialogLoading = true;
                         updateWindow(this.window).then(response => {
+                            this.dialogLoading = false;
                             if (response.httpCode === 200) {
-                                copyProperties(this.currentRow, response.data);
+                                this.resetWindowForm();
                                 this.$message.success('更新成功');
+                                this.getList();
                             } else {
                                 this.$message.error('更新失败')
                             }
@@ -408,55 +403,47 @@
                     }
                 });
             },
-            resetTemp() {
-                this.window = {
-                    id: undefined,
-                    name: '',
-                    callerKey: '',
-                    judgeKey: '',
-                    cameraKey: '',
-                    ledKey: ''
-                };
+            doDelete() {
+                this.listLoading = true;
+                let ids = [];
+                for (const deleteRow of this.selectedRows) {
+                    ids.push(deleteRow.id);
+                }
+                delWindow(ids.join()).then(response => {
+                    if (response.httpCode === 200) {
+                        this.$message.success('删除成功');
+                        this.getList();
+                    } else {
+                        this.$message.error('删除失败')
+                    }
+                    this.listLoading = false;
+                })
             },
             handleItemList(row) {
                 this.currentItem = row;
                 this.dialogStatus = 'associateItem';
                 this.dialogFormVisibleItem = true;
                 this.windowId = row.id;
-                this.getItemListByWindowId();
+                this.getWindowItemList();
             },
-            getItemListByWindowId() {
-                this.listLoading1 = true;
+            getWindowItemList() {
+                this.dialogTableLoading = true;
                 getAllItemWindow(this.windowId).then(response => {
-                    this.listLoading1 = false;
                     if (response.httpCode === 200) {
                         const arr = [];
                         for (const ids of response.data) {
-                            for (const idList of this.itemWindowList) {
-                                if (ids.itemId == idList.id) {
+                            for (const idList of this.allItemList) {
+                                if (ids.itemId === idList.id) {
                                     arr.push(idList);
                                 }
                             }
                         }
                         this.zwfwItemList = arr;
-                        console.log(arr.length);
                         this.currentItem.windowItemCount = arr.length;
                     } else {
                         this.$message.error('数据加载失败')
                     }
-                })
-            },
-            getItemList() {
-                const query = {}
-                getAllByNameOrbasicCode(query).then(response => {
-                    if (response.httpCode === 200) {
-                        this.itemWindowList = response.data;
-                        this.zwfwItem.supportAssist = true;
-                        this.zwfwItem.supportEnquire = true;
-                        this.zwfwItem.supportNormal = true;
-                    } else {
-                        this.$message.error('事项信息加载失败')
-                    }
+                    this.dialogTableLoading = false;
                 })
             },
             remoteMethod(query) {
@@ -487,20 +474,19 @@
                 }
             },
             changeMaterial(value) {
-                for (const obj of this.itemWindowList) {
-                    if (obj.name == value) {
+                for (const obj of this.optionsName) {
+                    if (obj.id === value) {
                         this.zwfwItem = Object.assign({}, obj);
                     }
                 }
             },
             saveCategoryItem() {
-                this.$refs['zwfwItemForm'].validate((valid) => {
+                this.$refs['zwfwItemForm'].validate(valid => {
                     if (valid) {
                         for (let obj of this.zwfwItemList) {
-                            if (obj.id == this.zwfwItem.id) {
+                            if (obj.id === this.zwfwItem.id) {
                                 this.$message.warning('事项已存在');
-                                this.resetTemp1();
-                                resetForm(this, 'zwfwItemForm');
+                                this.resetZwfwItemForm();
                                 return false;
                             }
                         }
@@ -511,14 +497,13 @@
                             supportAssist: this.supportAssist,
                             supportEnquire: this.supportEnquire
                         }
-                        this.listLoading1 = true;
+                        this.dialogLoading = true;
                         createZwfwWindowItem(query).then(response => {
-                            this.listLoading1 = false;
+                            this.dialogLoading = false;
                             if (response.httpCode === 200) {
-                                this.zwfwItemList.unshift(this.zwfwItem);
-                                this.$message.success('创建成功');
-                                this.currentItem.windowItemCount += 1;
                                 this.resetZwfwItemForm();
+                                this.$message.success('创建成功');
+                                this.getWindowItemList();
                             } else {
                                 this.$message.error('创建失败')
                             }
@@ -528,8 +513,8 @@
                     }
                 });
             },
-            handleDeleteOne() {
-                if (this.selectedRows == 0) {
+            handleItemDelete() {
+                if (this.selectedRows.length === 0) {
                     this.$message.warning('请选择需要操作的记录');
                 } else {
                     this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
@@ -537,48 +522,36 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        const length = this.selectedRows.length;
-                        const ids = new Array();
-                        for (const deleteRow of this.selectedRows) {
-                            ids.push(deleteRow.id);
-                        }
-                        deleteZwfwWindowItem(this.windowId, ids.join()).then(response => {
-                            if (response.httpCode === 200) {
-                                this.currentItem.windowItemCount -= length;
-                                this.$message.success('删除成功');
-                                this.resetZwfwItemForm();
-                            } else {
-                                this.$message.error('删除失败')
-                            }
-                        })
-                        for (const deleteRow of this.selectedRows) {
-                            const index = this.zwfwItemList.indexOf(deleteRow);
-                            this.zwfwItemList.splice(index, 1);
-                        }
+                        this.doItemDelete();
                     }).catch(() => {
-                        console.dir("取消");
+                        console.dir('取消');
                     });
                 }
+            },
+            doItemDelete() {
+                this.dialogTableLoading = true;
+                let ids = [];
+                for (const deleteRow of this.selectedRows) {
+                    ids.push(deleteRow.id);
+                }
+                deleteZwfwWindowItem(this.windowId, ids.join()).then(response => {
+                    if (response.httpCode === 200) {
+                        this.$message.success('删除成功');
+                        this.getWindowItemList();
+                    } else {
+                        this.$message.error('删除失败')
+                    }
+                    this.dialogTableLoading = false;
+                })
             },
             handleUserList(data) {
                 this.currentWindow = data;
                 this.dialogStatus = 'associateUser';
                 this.userWindowDialogFormVisible = true;
-                this.getDeptAndUsersList();
+                this.getWindowUserList();
             },
-            getDeptAndUsersList() {
+            getWindowUserList() {
                 this.userWindowDialogLoading = true;
-                getDeptNameAndUsers(this.listQuery).then(response => {
-                    this.userWindowDialogLoading = false;
-                    if (response.httpCode === 200) {
-                        this.userList = response.data;
-                        this.getAllUserWindows();
-                    } else {
-                        this.$message.error('数据加载失败')
-                    }
-                })
-            },
-            getAllUserWindows() {
                 this.checkedUsers = [];
                 getAllUserWindow(this.currentWindow.id).then(response => {
                     if (response.httpCode === 200) {
@@ -590,6 +563,7 @@
                     } else {
                         this.$message.error('数据加载失败')
                     }
+                    this.userWindowDialogLoading = false;
                 })
             },
             handleCheckedUsersChange(value) {
@@ -597,7 +571,7 @@
             },
             submitUserWindow() {
                 this.userWindowDialogLoading = true;
-                createUserWindow(this.currentWindow.id, this.checkedUsers).then(response => {
+                createUserWindow(this.currentWindow.id, this.checkedUsers.join()).then(response => {
                     this.userWindowDialogLoading = false;
                     if (response.httpCode === 200) {
                         this.userWindowDialogFormVisible = false;
@@ -608,7 +582,17 @@
                     }
                 })
             },
-            resetTemp1() {
+            resetTemp() {
+                this.window = {
+                    id: undefined,
+                    name: '',
+                    callerKey: '',
+                    judgeKey: '',
+                    cameraKey: '',
+                    ledKey: ''
+                };
+            },
+            resetItemTemp() {
                 this.zwfwItem = {
                     id: undefined,
                     name: '',
@@ -620,10 +604,24 @@
                 this.resetTemp();
                 resetForm(this, 'windowForm');
             },
-            resetZwfwItemForm() {
+            closeZwfwItemForm() {
                 this.dialogFormVisibleItem = false;
-                this.resetTemp1();
+                this.resetZwfwItemForm();
+            },
+            resetZwfwItemForm() {
+                this.resetItemTemp();
                 resetForm(this, 'zwfwItemForm');
+            },
+            handleSelectionChange(row) {
+                this.selectedRows = row;
+            },
+            handleSizeChange(val) {
+                this.listQuery.rows = val;
+                this.getList();
+            },
+            handleCurrentChange(val) {
+                this.listQuery.page = val;
+                this.getList();
             }
         }
     }
