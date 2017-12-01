@@ -380,7 +380,7 @@
                             </div>
                         </el-tab-pane>
                         <el-tab-pane label="内部办理流程描述" name="itemStep">
-                            <div id="itemStepInfo" style="white-space:pre-wrap">{{itemVo.workflowDescription}}</div>
+                            <div id="itemStepInfo" style="white-space:pre-wrap" v-html="itemVo.workflowDescription"></div>
                         </el-tab-pane>
                     </el-tabs>
 
