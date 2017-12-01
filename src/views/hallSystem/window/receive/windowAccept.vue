@@ -425,10 +425,6 @@
 </template>
 
 <script>
-    import {getZwfwApiHost} from 'utils/fetch';
-    import {copyProperties, resetForm} from 'utils';
-    import {mapGetters} from 'vuex';
-    import {getZwfwEnums} from 'api/zwfwSystem/common';
     import {
         takeNumberByPretrialNumber,
         takeNumberByItemCode,
@@ -470,6 +466,8 @@
                 devMockWindowKey: '',
                 itemCode: '',
                 memberCode: '91610104MA6U0WNB9B',
+                memberRealname: '',
+                memberPhone: '',
                 companyInfo: {
                     id: '',
                     node_id: '',
@@ -514,22 +512,20 @@
              * 提交非预审收件
              * */
             submitNoPretrial() {
-                var _this  = this;
-                let checked_m = this.materialSelection.map(function (m) {
+                let _this = this;
+                let checked_m = this.materialSelection.map(function(m) {
                     return m.id;
                 });
                 submitNoPretrial({
                     itemId: this.selectedItem,
                     memberCode: this.memberCode,
-                    memberRealname:this.memberRealname,
-                    memberPhone:this.memberPhone,
-                    received:checked_m.join(','),
-                    remark:this.remark
+                    memberRealname: this.memberRealname,
+                    memberPhone: this.memberPhone,
+                    received: checked_m.join(','),
+                    remark: this.remark
                 }).then(response => {
-//                    console.log(response);
-
                     if (response.httpCode === 200) {
-                        this.$message.success("提交成功");
+                        this.$message.success('提交成功');
                         let data = response.data;
                         if (data != null) {
                             _this.itemNumber = data.itemNumber;
@@ -541,14 +537,14 @@
                             _this.window = data.window;
                             _this.itemWindowUserName = data.itemWindowUserName;
                         } else {
-                            this.$message.error("提交出错 ，" + response.msg);
+                            this.$message.error('提交出错 ，' + response.msg);
                         }
                     } else {
-                        this.$message.error("提交出错 ，" + response.msg);
+                        this.$message.error('提交出错 ，' + response.msg);
                     }
                 });
             },
-            rejectNoPretrial(){
+            rejectNoPretrial() {
 
             },
             /**
@@ -594,17 +590,15 @@
                 }
             },
             changeItem(itemId) {
-//                console.log(itemId);
-                var _this = this;
                 getItemInfo({
                     id: itemId
                 }).then(response => {
                     if (response.httpCode === 200) {
                         let data = response.data;
-                        _this.itemVo = data.itemVo;
-                        _this.itemMaterialVoList = data.itemMaterialVoList;
+                        this.itemVo = data.itemVo;
+                        this.itemMaterialVoList = data.itemMaterialVoList;
                     } else {
-                        this.$message.error("网络超时");
+                        this.$message.error('网络超时');
                     }
                 });
             },
@@ -612,34 +606,30 @@
              * 模拟当前用户登录到窗口
              */
             loginToWindow() {
-                var _this = this;
                 loginToWindow({
                     windowKey: this.devMockWindowKey
-                }).then(function (response) {
-                    if (response.httpCode == 200) {
-//                    console.log(response.data.callNumber);
-                        _this.$message.success("登录到窗口");
+                }).then(response => {
+                    if (response.httpCode === 200) {
+                        this.$message.success('登录到窗口');
                     } else {
-                        _this.$message.error(response.msg);
+                        this.$message.error(response.msg);
                     }
-
                 });
             },
             /**
              * 抽号 - 根据预审号码
              */
             takeNumberByPretrialNumber() {
-                var _this = this;
+                let _this = this;
                 takeNumberByPretrialNumber({
                     pretrialNumber: this.getNumberBy_pretrialNumber
-                }).then(function (response) {
+                }).then(response => {
 //                    console.log(data.data.callNumber);
-                    if (response.httpCode == 200) {
-                        _this.$message.success("抽到的号码是：" + response.data.callNumber);
+                    if (response.httpCode === 200) {
+                        _this.$message.success('抽到的号码是：' + response.data.callNumber);
                     } else {
                         _this.$message.error(response.msg);
                     }
-
                 }).catch(e => {
                     console.log(e);
                 });
@@ -651,9 +641,9 @@
                 let _this = this;
                 takeNumberByItemCode({
                     itemCode: this.getNumberBy_itemCode
-                }).then(function (response) {
-                    if (response.httpCode == 200) {
-                        _this.$message.success("抽到的号码是：" + response.data.callNumber);
+                }).then(response => {
+                    if (response.httpCode === 200) {
+                        _this.$message.success('抽到的号码是：' + response.data.callNumber);
                     } else {
                         _this.$message.error(response.msg);
                     }
@@ -667,7 +657,7 @@
                 let _this = this;
                 queryNumberByCallNumber({
                     hallNumber: this.getNumberBy_hallNumber
-                }).then(function (response) {
+                }).then(response => {
                     if (response.httpCode === 200) {
                         if (response.data != null) {
                             let data = response.data;
@@ -696,7 +686,7 @@
              */
             queryCurrentNumber() {
                 let _this = this;
-                queryCurrentNumber({}).then(function (response) {
+                queryCurrentNumber({}).then(response => {
                     if (response.httpCode === 200) {
                         if (response.data != null) {
                             let data = response.data;
@@ -729,8 +719,8 @@
                 if (_this.itemNumber != null) {
                     callNumber({
                         numberId: _this.itemNumber.id
-                    }).then(function (response) {
-                        if (response.httpCode == 200) {
+                    }).then(response => {
+                        if (response.httpCode === 200) {
                             let data = response.data;
                             if (data != null) {
                                 _this.itemNumber = data.itemNumber;
@@ -745,11 +735,10 @@
                         } else {
                             _this.$message.error(response.msg);
                         }
-
                     });
                 } else {
-                    callNumber({}).then(function (response) {
-                        if (response.httpCode == 200) {
+                    callNumber({}).then(response => {
+                        if (response.httpCode === 200) {
                             let data = response.data;
                             if (data != null) {
                                 _this.itemNumber = data.itemNumber;
@@ -769,10 +758,8 @@
                         } else {
                             _this.$message.error(response.msg);
                         }
-
                     });
                 }
-
             },
             /**
              * 模拟欢迎
@@ -782,8 +769,8 @@
                 let _this = this;
                 welcomeNumber({
                     numberId: _this.itemNumber.id
-                }).then(function (response) {
-                    if (response.httpCode == 200) {
+                }).then(response => {
+                    if (response.httpCode === 200) {
                         let data = response.data;
                         if (data != null) {
                             _this.itemNumber = data.itemNumber;
@@ -798,16 +785,16 @@
              */
             pass() {
                 let _this = this;
-                let checked_m = this.materialSelection.map(function (m) {
+                let checked_m = this.materialSelection.map(function(m) {
                     return m.id;
                 });
                 let _itemNumber = _this.itemNumber;
 
-                let msg = "";
+                let msg = '';
                 if (checked_m.length > 0) {
-                    msg = "确认已经收件（" + checked_m.length + "项），是否确认并交由部门处理？"
+                    msg = '确认已经收件（' + checked_m.length + '项），是否确认并交由部门处理？'
                 } else {
-                    msg = "您没有勾选收件！！，是否确定直接提交部门处理？";
+                    msg = '您没有勾选收件！！，是否确定直接提交部门处理？';
                 }
 
                 this.$confirm(msg, '提示', {
@@ -820,9 +807,8 @@
                         status: 3,
                         remark: this.remark,
                         received: checked_m.join(',')
-
-                    }).then(function (response) {
-                        if (response.httpCode == 200) {
+                    }).then(response => {
+                        if (response.httpCode === 200) {
                             let data = response.data;
                             if (data != null) {
                                 _this.itemNumber = data.itemNumber;
@@ -842,7 +828,6 @@
                         } else {
                             _this.$message.error(response.msg);
                         }
-
                     });
                 }).catch(() => {
                     this.$message({
@@ -856,13 +841,11 @@
              * 不予受理
              * */
             reject() {
-
-//                console.log("不予受理。。。");
                 let _this = this;
 
                 let _itemNumber = _this.itemNumber;
 
-                let msg = "确定不予受理吗？";
+                let msg = '确定不予受理吗？';
 
                 this.$confirm(msg, '提示', {
                     confirmButtonText: '确定',
@@ -873,8 +856,8 @@
                         numberId: _itemNumber.id,
                         status: 4,
                         remark: this.remark
-                    }).then(function (response) {
-                        if (response.httpCode == 200) {
+                    }).then(response => {
+                        if (response.httpCode === 200) {
                             let data = response.data;
                             if (data != null) {
                                 _this.itemNumber = data.itemNumber;
@@ -888,7 +871,6 @@
                             }
                         } else {
                             _this.$message.error(response.msg);
-
                         }
                     });
                 }).catch(() => {
@@ -897,7 +879,6 @@
                         message: '已取消提交'
                     });
                 });
-
             },
             /**
              * 跳过处理
@@ -906,7 +887,7 @@
             skip() {
                 let _itemNumber = _this.itemNumber;
 
-                let msg = "确定跳过吗？";
+                let msg = '确定跳过吗？';
 
                 this.$confirm(msg, '提示', {
                     confirmButtonText: '确定',
@@ -917,8 +898,8 @@
                         numberId: _itemNumber.id,
                         status: 5,
                         remark: this.remark
-                    }).then(function (response) {
-                        if (response.httpCode == 200) {
+                    }).then(response => {
+                        if (response.httpCode === 200) {
                             let data = response.data;
                             if (data != null) {
                                 _this.itemNumber = data.itemNumber;
@@ -930,8 +911,7 @@
                                 _this.window = data.window;
                                 _this.itemWindowUserName = data.itemWindowUserName;
                             }
-                        }
-                        else {
+                        } else {
                             _this.$message.error(response.msg);
                         }
                     });
