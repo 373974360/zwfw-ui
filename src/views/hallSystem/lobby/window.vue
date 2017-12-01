@@ -562,13 +562,14 @@
             },
             handleUserList(data) {
                 this.currentWindow = data;
+                this.WindowId = data.id;
                 this.dialogStatus = 'associateUser';
                 this.userWindowDialogFormVisible = true;
                 this.getDeptAndUsersList();
             },
             getDeptAndUsersList() {
                 this.userWindowDialogLoading = true;
-                getDeptNameAndUsers(this.listQuery).then(response => {
+                getDeptNameAndUsers(this.WindowId).then(response => {
                     this.userWindowDialogLoading = false;
                     if (response.httpCode === 200) {
                         this.userList = response.data;

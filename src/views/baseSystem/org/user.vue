@@ -31,6 +31,11 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
+            <el-table-column prop="empNo" align="center" label="工号">
+                <template scope="scope">
+                    <span>{{scope.row.empNo}}</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="deptVo.name" align="center" label="部门">
                 <template scope="scope">
                     <span v-if="scope.row.deptVo">{{scope.row.deptVo.name}}</span>
@@ -83,6 +88,9 @@
                 <el-form-item label="姓名" prop="name">
                     <el-input v-model="sysUser.name"/>
                 </el-form-item>
+                <el-form-item label="工号" prop="empNo">
+                    <el-input v-model="sysUser.empNo"/>
+                </el-form-item>
                 <el-form-item label="性别" prop="sex">
                     <el-radio-group v-model="sysUser.sex">
                         <el-radio v-for="item in enums['Gender']"
@@ -130,9 +138,6 @@
                 </el-form-item>
                 <el-form-item label="备注">
                     <el-input type="textarea" v-model="sysUser.remark" :rows="3"/>
-                </el-form-item>
-                <el-form-item label="工号" prop="empNo">
-                    <el-input v-model="sysUser.empNo"/>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -267,8 +272,17 @@
             getList() {
                 this.listLoading = true;
                 getUserList(this.listQuery).then(response => {
-                    this.list = response.data.list;
-                    this.total = response.data.total;
+                    if (response.httpCode !== 200) {
+                        this.$message.error(response.msg);
+                    } else {
+                        if (response.data == null) {
+                            this.list = response.data;
+                            this.total = 0;
+                        } else {
+                            this.list = response.data.list;
+                            this.total = response.data.total;
+                        }
+                    }
                     this.listLoading = false;
                 })
             },
