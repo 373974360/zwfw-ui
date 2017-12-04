@@ -131,9 +131,9 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="resetZwfwLegalPersonForm">取 消</el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" :loading="btnLoading" @click="create">确 定
+                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" :loading="btnLoading" @click="doCreate">确 定
                 </el-button>
-                <el-button v-else type="primary" icon="circle-check" :loading="btnLoading" @Keyup.enter="update" @click="update">确 定
+                <el-button v-else type="primary" icon="circle-check" :loading="btnLoading" @Keyup.enter="doUpdate" @click="doUpdate">确 定
                 </el-button>
             </div>
         </el-dialog>
@@ -299,21 +299,6 @@
                     }
                 })
             },
-            handleSizeChange(val) {
-                this.listQuery.rows = val;
-                this.listQuery.name = null;
-                this.getList();
-            },
-            handleCurrentChange(val) {
-                this.listQuery.page = val;
-                this.getList();
-            },
-            handleSelectionChange(rows) {
-                this.selectedRows = rows;
-            },
-            toggleSelection(row) {
-                this.$refs.zwfwLegalPersonTable.toggleRowSelection(row);
-            },
             handleCreate(row) {
                 this.currentRow = row;
                 this.resetTemp();
@@ -334,8 +319,8 @@
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
-            handleDelete(row) {
-                if (this.selectedRows == 0) {
+            handleDelete() {
+                if (this.selectedRows.length === 0) {
                     this.$message.warning('请选择需要操作的记录');
                 } else {
                     this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
@@ -343,45 +328,25 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        this.listLoading = true;
-                        let selectCounts = this.selectedRows.length;
-                        let ids = new Array();
-                        for (const deleteRow of this.selectedRows) {
-                            ids.push(deleteRow.id);
-                        }
-                        delZwfwLegalPersons(ids).then(response => {
-                            if (response.httpCode === 200) {
-                                this.total -= selectCounts;
-                                for (const deleteRow of this.selectedRows) {
-                                    const index = this.zwfwLegalPersonList.indexOf(deleteRow);
-                                    this.zwfwLegalPersonList.splice(index, 1);
-                                }
-                                this.$message.success('删除成功');
-                                this.listLoading = false;
-                            } else {
-                                this.$message.error('删除失败');
-                                this.listLoading = false;
-                            }
-                        })
+                        this.doDelete();
                     }).catch(() => {
-                        console.dir("取消");
+                        console.dir('取消');
                     });
                 }
             },
-            create() {
-                this.$refs['zwfwLegalPersonForm'].validate((valid) => {
+            doCreate() {
+                this.$refs['zwfwLegalPersonForm'].validate(valid => {
                     if (valid) {
-
                         this.btnLoading = true;
+                        this.dialogLoading = true;
                         createZwfwLegalPerson(this.zwfwLegalPerson).then(response => {
+                            this.btnLoading = false;
+                            this.dialogLoading = false;
                             if (response.httpCode === 200) {
-                                this.btnLoading = false;
-                                this.zwfwLegalPersonList.unshift(response.data);
-                                this.total += 1;
+                                this.resetZwfwLegalPersonForm();
                                 this.$message.success('创建成功');
-                                this.dialogFormVisible = false;
+                                this.getList();
                             } else {
-                                this.btnLoading = false;
                                 this.$message.error('创建失败');
                             }
                         })
@@ -390,18 +355,19 @@
                     }
                 });
             },
-            update() {
+            doUpdate() {
                 this.$refs['zwfwLegalPersonForm'].validate(valid => {
                     if (valid) {
                         this.btnLoading = true;
+                        this.dialogLoading = true;
                         updateZwfwLegalPerson(this.zwfwLegalPerson).then(response => {
+                            this.btnLoading = false;
+                            this.dialogLoading = false;
                             if (response.httpCode === 200) {
-                                this.btnLoading = false;
-                                copyProperties(this.currentRow, response.data);
+                                this.resetZwfwLegalPersonForm();
                                 this.$message.success('更新成功');
-                                this.dialogFormVisible = false;
+                                this.getList();
                             } else {
-                                this.btnLoading = false;
                                 this.$message.error('更新失败');
                             }
                         })
@@ -409,6 +375,22 @@
                         return false;
                     }
                 });
+            },
+            doDelete() {
+                this.listLoading = true;
+                let ids = [];
+                for (const deleteRow of this.selectedRows) {
+                    ids.push(deleteRow.id);
+                }
+                delZwfwLegalPersons(ids.join()).then(response => {
+                    if (response.httpCode === 200) {
+                        this.$message.success('删除成功');
+                        this.getList();
+                    } else {
+                        this.$message.error('删除失败');
+                    }
+                    this.listLoading = false;
+                })
             },
             formatDate() {
                 this.zwfwLegalPerson.registerDate = moment(this.zwfwLegalPerson.registerDate).format('YYYY-MM-DD')
@@ -435,6 +417,21 @@
                 this.dialogFormVisible = false;
                 this.resetTemp();
                 resetForm(this, 'zwfwLegalPersonForm');
+            },
+            handleSizeChange(val) {
+                this.listQuery.rows = val;
+                this.listQuery.name = null;
+                this.getList();
+            },
+            handleCurrentChange(val) {
+                this.listQuery.page = val;
+                this.getList();
+            },
+            handleSelectionChange(rows) {
+                this.selectedRows = rows;
+            },
+            toggleSelection(row) {
+                this.$refs.zwfwLegalPersonTable.toggleRowSelection(row);
             }
         }
     }

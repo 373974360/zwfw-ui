@@ -226,6 +226,9 @@
                 <el-form-item label="办理地点" prop="handlePlace">
                     <el-input v-model="zwfwItem.handlePlace"></el-input>
                 </el-form-item>
+                <el-form-item label="工作时间" prop="handlePlace">
+                    <el-input v-model="zwfwItem.handleTime"></el-input>
+                </el-form-item>
                 <el-form-item label="行使内容" prop="handleContent">
                     <el-input v-model="zwfwItem.handleContent"></el-input>
                 </el-form-item>
@@ -564,6 +567,7 @@
                     unionAgency: '',
                     serviceObject: 'fwdx_ziranren',
                     handlePlace: '',
+                    handleTime: '',
                     handleContent: '',
                     applyMaterial: '',
                     numberLimit: '',
@@ -1142,6 +1146,7 @@
                     unionAgency: '',
                     serviceObject: 'fwdx_ziranren',
                     handlePlace: '',
+                    handleTime: '',
                     handleContent: '',
                     applyMaterial: '',
                     numberLimit: '',
