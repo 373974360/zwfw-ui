@@ -285,11 +285,11 @@
                                     </tr>
                                     <tr>
                                         <th>收费标准</th>
-                                        <td>{{itemVo.chargeStandard}}</td>
+                                        <td v-html="itemVo.chargeStandard"></td>
                                     </tr>
                                     <tr>
                                         <th>收费依据</th>
-                                        <td>{{itemVo.chargeBasis}}</td>
+                                        <td v-html="itemVo.chargeBasis"></td>
                                     </tr>
                                     <tr>
                                         <th>结果名称</th>
