@@ -23,6 +23,8 @@
                 <router-link class="pan-btn light-blue-btn" to="/dataShareSystem/index">共享数据管理系统</router-link>
             </div>
         </div>
+        <div style="float:right;z-index:2000;margin:20px;"><el-button  @click="logout" class="small">退出登录</el-button></div>
+
 
     </div>
 </template>
@@ -30,8 +32,10 @@
 <script>
     import doCanvas from 'utils/canvas';
     import {mapGetters} from 'vuex';
+    import ElButton from "element-ui/packages/button/src/button";
 
     export default {
+        components: {ElButton},
         name: 'login',
         data() {
             return {
@@ -43,6 +47,11 @@
                 if(this.permissions.length > 0){
                     return this.permissions.some(permission => permission.indexOf(system) >= 0);
                 }
+            },
+            logout() {
+                this.$store.dispatch('LogOut').then(() => {
+                    location.reload();// 为了重新实例化vue-router对象 避免bug
+                });
             }
         },
         computed: {
