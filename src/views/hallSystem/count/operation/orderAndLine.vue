@@ -223,8 +223,8 @@
                 windowWaitTopListDesc: [],
                 itemWaitTopListAsc: [],
                 itemWaitTopListDesc: [],
-                windowWaitTopListLoading: true,
-                itemWaitTopListLoading: true
+                windowWaitTopListLoading: false,
+                itemWaitTopListLoading: false
             }
         },
         created() {
@@ -400,6 +400,7 @@
                 }
             },
             loadTop5WindowData() {
+                this.windowWaitTopListLoading = true;
                 dataPlotTopWaitWindow(this.listQuery).then(response => {
                     this.windowWaitTopListLoading = false;
                     if (response.httpCode === 200) {
@@ -411,6 +412,7 @@
                 });
             },
             loadTop5ItemData() {
+                this.itemWaitTopListLoading = true;
                 dataPlotTopWaitItem(this.listQuery).then(response => {
                     this.itemWaitTopListLoading = false;
                     if (response.httpCode === 200) {

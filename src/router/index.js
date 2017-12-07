@@ -48,24 +48,28 @@ const NumberScope = () => import('../views/hallSystem/lobby/numberScope');
 const NaturePerson = () => import('../views/hallSystem/member/naturePerson');
 const LegalPerson = () => import('../views/hallSystem/member/legalPerson');
 /* 综合窗口 */
-const WindowAccept = () => import('../views/hallSystem/window/receive/windowAccept');
 /* 窗口收件*/
-const Record = () => import('../views/hallSystem/window/receive/record');
+const WindowAccept = () => import('../views/hallSystem/window/receive/windowAccept');
 /* 收件记录*/
-const TakeAway = () => import('../views/hallSystem/window/receive/takeAway');
+const Record = () => import('../views/hallSystem/window/receive/record');
 /* 办结取件*/
-const Pending = () => import('../views/hallSystem/window/pretrial/pending');
+const TakeAway = () => import('../views/hallSystem/window/receive/takeAway');
+/* 出件管理*/
+const Delivery = () => import('../views/hallSystem/window/delivery/index');
+/* 快件箱管理*/
+const Mailbox = () => import('../views/hallSystem/window/mailbox/index');
 /* 未预审 */
-const Finish = () => import('../views/hallSystem/window/pretrial/finish');
+const Pending = () => import('../views/hallSystem/window/pretrial/pending');
 /* 已预审 */
-const Correction = () => import('../views/hallSystem/window/pretrial/correction');
+const Finish = () => import('../views/hallSystem/window/pretrial/finish');
 /* 预审整改 */
-const NoAccept = () => import('../views/hallSystem/window/pretrial/noAccept');
+const Correction = () => import('../views/hallSystem/window/pretrial/correction');
 /* 预审未受理 */
-const WindowWork = () => import('../views/hallSystem/window/street/windowWork');
+const NoAccept = () => import('../views/hallSystem/window/pretrial/noAccept');
 /* 街办收件 */
-const WindowHistory = () => import('../views/hallSystem/window/street/windowHistory');
+const WindowWork = () => import('../views/hallSystem/window/street/windowWork');
 /* 街办查询 */
+const WindowHistory = () => import('../views/hallSystem/window/street/windowHistory');
 
 /************************政务服务管理系统************************/
 /* index */
@@ -354,6 +358,18 @@ export const asyncRouterMap = [
                         meta: {permission: 'hallSystem:window:receive:takeAway:list'}
                     }
                 ]
+            },
+            {
+                path: 'delivery',
+                component: Delivery,
+                name: '出件管理',
+                meta: {permission: 'hallSystem:window:delivery:list'}
+            },
+            {
+                path: 'mailbox',
+                component: Mailbox,
+                name: '快件箱管理',
+                meta: {permission: 'hallSystem:window:mailbox:list'}
             }
             // {path: 'windowWork', component: WindowWork, name: '街办收件'},
             // {path: 'windowHistory', component: WindowHistory, name: '办件查询'}
