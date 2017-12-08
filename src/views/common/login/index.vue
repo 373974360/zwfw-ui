@@ -127,12 +127,12 @@
             }
         },
         mounted() {
-            doCanvas();
+            // doCanvas();
             this.changeCaptcha();
             const _this = this;
             window.onresize = function () {
                 if (_this.canvas) {
-                    doCanvas();
+                    // doCanvas();
                 }
             }
         }

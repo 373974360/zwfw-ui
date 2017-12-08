@@ -3,27 +3,27 @@
         <el-col :span="8">
             <div class="grid-content ">
                 <div style="padding:10px">
-                    <!--<el-row type="flex" justify="center">-->
-                    <!--<el-input v-model="getNumberBy_pretrialNumber" placeholder="输入预审抽号">-->
-                    <!--<el-button slot="append" type="primary" @click="takeNumberByPretrialNumber">已预审抽号-->
-                    <!--</el-button>-->
-                    <!--</el-input>-->
-                    <!--</el-row>-->
-                    <!--<el-row type="flex" justify="center">-->
-                    <!--<el-input v-model="getNumberBy_itemCode" placeholder="输入事项编码">-->
-                    <!--<el-button slot="append" type="primary" @click="takeNumberByItemCode">未预审抽号</el-button>-->
-                    <!--</el-input>-->
-                    <!--</el-row>-->
-                    <!--<el-row type="flex" justify="center">-->
-                    <!--<el-input v-model="devMockWindowKey" placeholder="输入窗口key">-->
-                    <!--<el-button slot="append" type="primary" @click="loginToWindow">登录到窗口</el-button>-->
-                    <!--</el-input>-->
-                    <!--</el-row>-->
-                    <!--<el-row type="flex" justify="center">-->
-                    <!--<el-input v-model="getNumberBy_hallNumber" placeholder="输入呼叫号查看办理事项">-->
-                    <!--<el-button slot="append" @click="queryNumberByCallNumber">按呼叫号查询</el-button>-->
-                    <!--</el-input>-->
-                    <!--</el-row>-->
+                    <el-row type="flex" justify="center">
+                    <el-input v-model="getNumberBy_pretrialNumber" placeholder="输入预审抽号">
+                    <el-button slot="append" type="primary" @click="takeNumberByPretrialNumber">已预审抽号
+                    </el-button>
+                    </el-input>
+                    </el-row>
+                    <el-row type="flex" justify="center">
+                    <el-input v-model="getNumberBy_itemCode" placeholder="输入事项编码">
+                    <el-button slot="append" type="primary" @click="takeNumberByItemCode">未预审抽号</el-button>
+                    </el-input>
+                    </el-row>
+                    <el-row type="flex" justify="center">
+                    <el-input v-model="devMockWindowKey" placeholder="输入窗口key">
+                    <el-button slot="append" type="primary" @click="loginToWindow">登录到窗口</el-button>
+                    </el-input>
+                    </el-row>
+                    <el-row type="flex" justify="center">
+                    <el-input v-model="getNumberBy_hallNumber" placeholder="输入呼叫号查看办理事项">
+                    <el-button slot="append" @click="queryNumberByCallNumber">按呼叫号查询</el-button>
+                    </el-input>
+                    </el-row>
                     <el-row type="flex" justify="center">
                         <!--<el-input v-model="itemCode" placeholder="请输入事项编码"></el-input>-->
                         <el-select
@@ -57,7 +57,7 @@
                     <el-button v-if="itemNumber == null || itemNumber.status==1" type="primary" @click="callNumber">
                         叫号
                     </el-button>
-                    <!--<el-button type="primary" @click="queryCurrentNumber">查询当前业务</el-button>-->
+                    <el-button type="primary" @click="queryCurrentNumber">查询当前业务</el-button>
 
                     <el-button v-if="itemNumber.status==2" type="primary"
                                v-bind:disabled="itemNumber.applyFinishTime!=null"
