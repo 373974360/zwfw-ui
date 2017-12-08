@@ -38,19 +38,14 @@
                     <span>{{scope.row.source | dics('sxsqclly')}}</span>
                 </template>
             </el-table-column>
+            <el-table-column v-once prop="paperDescription" align="center" label="纸质材料份数和规格">
+                <template scope="scope">
+                    <span>{{scope.row.paperDescription}}</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="electronicMaterial" align="center" label="是否需要电子材料">
                 <template scope="scope">
                     <span>{{scope.row.electronicMaterial | enums('YesNo')}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column prop="type" align="center" label="受理标准">
-                <template scope="scope">
-                    <span>{{scope.row.acceptStandard}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column prop="type" align="center" label="填报须知">
-                <template scope="scope">
-                    <span>{{scope.row.notice}}</span>
                 </template>
             </el-table-column>
         </el-table>
@@ -101,6 +96,9 @@
                                 :value="item.code">
                         </el-option>
                     </el-select>
+                </el-form-item>
+                <el-form-item label="纸质材料份数和规格" prop="paperDescription">
+                    <el-input v-model="zwfwMaterial.paperDescription"></el-input>
                 </el-form-item>
                 <el-form-item label="材料样本" prop="example">
                     <el-upload name="uploadFile"

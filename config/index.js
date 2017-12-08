@@ -31,12 +31,6 @@ module.exports = {
         assetsPublicPath: '/',
         staticPath: '/static/',
         proxyTable: {
-            '/userJwt': {
-                target: 'http://localhost:8765',
-                pathRewrite: {
-                    '^/userJwt': '/userJwt'
-                },
-            },
             '/api': {
                 target: 'http://localhost:8765',
                 pathRewrite: {
