@@ -60,11 +60,11 @@
             ])
         },
         mounted() {
-            doCanvas();
+            // doCanvas();
             const _this = this;
             window.onresize = function () {
                 if(_this.canvas){
-                    doCanvas();
+                    // doCanvas();
                 }
             }
         }

@@ -1,7 +1,7 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="handleFilter" v-model="listDicIndexQuery.name" style="width: 180px;"
+            <el-input @keyup.enter.native="getDicIndexList" v-model="listDicIndexQuery.name" style="width: 180px;"
                       class="filter-item"
                       placeholder="字典名称"></el-input>
             <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="搜索字典" placement="top-start">
@@ -57,9 +57,9 @@
         </el-table>
 
         <el-dialog :title="textMap[dialogDicIndexStatus]" :visible.sync="dialogDicIndexVisible"
-                   :close-on-click-modal="closeOnClickModal" :before-close="resetCheckboxTable">
+                   :close-on-click-modal="closeOnClickModal" :before-close="resetDicIndexForm">
             <el-form id="checkboxTable" ref="dicIndexForm" class="small-space" :model="dicIndex" label-position="right"
-                     label-width="80px"
+                     label-width="80px" v-loading="dialogLoading"
                      style='width: 80%; margin-left:10%;' :rules="dicIndexRules">
                 <el-form-item label="字典名称" prop="name">
                     <el-input v-model="dicIndex.name"/>
@@ -73,7 +73,7 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button icon="circle-cross" type="danger" @click="resetCheckboxTable">取 消</el-button>
+                <el-button icon="circle-cross" type="danger" @click="resetDicIndexForm">取 消</el-button>
                 <el-button v-if="dialogDicIndexStatus=='create'" type="primary" icon="circle-check"
                            @click="createDicIndex">确 定
                 </el-button>
@@ -133,7 +133,7 @@
         <el-dialog :title="textMap[dialogDictFormStatus]" :visible.sync="dialogDictFormVisible"
                    :close-on-click-modal="closeOnClickModal" :before-close="resetDictForm">
             <el-form id="checkboxTable1" ref="dicForm" class="small-space" :model="dic" label-position="right"
-                     label-width="80px"
+                     label-width="80px" v-loading="dialogLoading"
                      style='width: 80%; margin-left:10%;' :rules="dicRules">
                 <el-form-item label="英文代码" prop="code">
                     <span v-if="dialogDictFormStatus=='update'"><el-input v-model="dic.code"
@@ -171,9 +171,10 @@
         updateDict,
         createDict,
         delDict
-    } from "api/baseSystem/data/dic";
+    } from 'api/baseSystem/data/dic';
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
+
     export default{
         name: 'table_demo',
         data() {
@@ -200,7 +201,7 @@
                 selectedDicIndexRows: [],
                 dialogDicIndexVisible: false,
                 dialogDicIndexStatus: '',
-
+                dialogLoading: false,
                 diclist: null,
                 indexId: '',
                 listDictLoading: true,
@@ -244,13 +245,10 @@
             this.getDicIndexList();
         },
         methods: {
-            handleFilter() {
-                this.getDicIndexList();
-            },
             getDicIndexList() {
                 this.listDicIndexLoading = true;
                 getDicIndexList(this.listDicIndexQuery).then(response => {
-                    if (response.httpCode == 200) {
+                    if (response.httpCode === 200) {
                         this.dicIndexlist = response.data;
                     } else {
                         this.$message.error(response.msg);
@@ -273,19 +271,34 @@
                 this.dialogDicIndexStatus = 'create';
                 this.dialogDicIndexVisible = true;
             },
+            handleDicIndexDelete() {
+                if (this.selectedDicIndexRows.length === 0) {
+                    this.$message.error('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.deleteDicIndex();
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
             createDicIndex() {
                 this.$refs['dicIndexForm'].validate(valid => {
                     if (valid) {
-                        this.dialogDicIndexVisible = false;
-                        this.listDicIndexLoading = true;
+                        this.dialogLoading = true;
                         createDicIndex(this.dicIndex).then(response => {
-                            if (response.httpCode == 200) {
-                                this.dicIndexlist.unshift(response.data);
+                            this.dialogLoading = false;
+                            if (response.httpCode === 200) {
+                                this.resetDicIndexForm();
                                 this.$message.success('更新成功');
+                                this.getDicIndexList();
                             } else {
                                 this.$message.error(response.msg);
                             }
-                            this.listDicIndexLoading = false;
                         })
                     } else {
                         return false;
@@ -295,63 +308,38 @@
             updateDicIndex() {
                 this.$refs['dicIndexForm'].validate(valid => {
                     if (valid) {
-                        this.dialogDicIndexVisible = false;
-                        this.listDicIndexLoading = true;
+                        this.dialogLoading = true;
                         updateDicIndex(this.dicIndex).then(response => {
-                            if (response.httpCode == 200) {
-                                copyProperties(this.currentRow, response.data);
+                            this.dialogLoading = false;
+                            if (response.httpCode === 200) {
+                                this.resetDicIndexForm();
                                 this.$message.success('更新成功');
+                                this.getDicIndexList();
                             } else {
                                 this.$message.error(response.msg);
                             }
-                            this.listDicIndexLoading = false;
                         })
                     } else {
                         return false;
                     }
                 })
             },
-            handleDicIndexDelete() {
-                const selectCounts = this.selectedDicIndexRows.length;
-                if (selectCounts == 0) {
-                    this.$message.error('请选择需要操作的记录');
-                } else {
-                    this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-                        let ids = new Array();
-                        for (const deleteRow of this.selectedDicIndexRows) {
-                            ids.push(deleteRow.id);
-                        }
-                        delDicIndex(ids).then(response => {
-                            if (response.httpCode === 200) {
-                                for (const deleteRow of this.selectedDicIndexRows) {
-                                    const index = this.dicIndexlist.indexOf(deleteRow);
-                                    this.dicIndexlist.splice(index, 1);
-                                }
-                                this.$message.success('删除成功！');
-                            } else {
-                                this.$message.error('删除失败！');
-                            }
-                            this.listDicIndexLoading = false;
-                        });
-                    }).catch(() => {
-                        console.dir('取消');
-                    });
+            deleteDicIndex() {
+                this.listDicIndexLoading = true;
+                let ids = [];
+                for (const deleteRow of this.selectedDicIndexRows) {
+                    ids.push(deleteRow.id);
                 }
+                delDicIndex(ids).then(response => {
+                    if (response.httpCode === 200) {
+                        this.$message.success('删除成功！');
+                        this.getDicIndexList();
+                    } else {
+                        this.$message.error('删除失败！');
+                    }
+                    this.listDicIndexLoading = false;
+                });
             },
-            resetDicIndexTemp() {
-                this.dicIndex = {
-                    id: '',
-                    key: '',
-                    name: '',
-                    remark: ''
-                };
-            },
-
-
             handleDicIndexClicke(row) {
                 this.indexId = row.id;
                 this.dialogDictListTitle = row.name;
@@ -361,11 +349,13 @@
             },
             handleDictSelectionChange(row) {
                 this.selectedDictRows = row;
+                console.log(this.selectedDictRows)
+                console.log(this.selectedDictRows.length)
             },
             getDictList() {
                 this.listDictLoading = true;
                 getDictList(this.listDictQuery).then(response => {
-                    if (response.httpCode == 200) {
+                    if (response.httpCode === 200) {
                         this.diclist = response.data;
                     } else {
                         this.$message.error(response.msg);
@@ -378,25 +368,6 @@
                 this.dialogDictFormStatus = 'create';
                 this.dialogDictFormVisible = true;
             },
-            createDict() {
-                this.$refs['dicForm'].validate(valid => {
-                    if (valid) {
-                        this.dialogDictFormVisible = false;
-                        this.listDictLoading = true;
-                        createDict(this.dic).then(response => {
-                            if (response.httpCode == 200) {
-                                this.diclist.unshift(response.data);
-                                this.$message.success('更新成功');
-                            } else {
-                                this.$message.error(response.msg);
-                            }
-                            this.listDictLoading = false;
-                        })
-                    } else {
-                        return false;
-                    }
-                })
-            },
             handleDictUpdate(row) {
                 this.currentRow = row;
                 this.resetDictTemp();
@@ -404,28 +375,8 @@
                 this.dialogDictFormStatus = 'update';
                 this.dialogDictFormVisible = true;
             },
-            updateDict() {
-                this.$refs['dicForm'].validate(valid => {
-                    if (valid) {
-                        this.dialogDictFormVisible = false;
-                        this.listDictLoading = true;
-                        updateDict(this.dic).then(response => {
-                            if (response.httpCode == 200) {
-                                copyProperties(this.currentRow, response.data);
-                                this.$message.success('更新成功');
-                            } else {
-                                this.$message.error(response.msg);
-                            }
-                            this.listDictLoading = false;
-                        })
-                    } else {
-                        return false;
-                    }
-                })
-            },
             handleDictDelete() {
-                const selectCounts = this.selectedDictRows.length;
-                if (selectCounts == 0) {
+                if (this.selectedDictRows.length === 0) {
                     this.$message.error('请选择需要操作的记录');
                 } else {
                     this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
@@ -433,27 +384,74 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        let ids = new Array();
-                        for (const deleteRow of this.selectedDictRows) {
-                            ids.push(deleteRow.id);
-                        }
-                        delDict(ids).then(response => {
-                            if (response.httpCode === 200) {
-                                for (const deleteRow of this.selectedDictRows) {
-                                    const index = this.diclist.indexOf(deleteRow);
-                                    this.diclist.splice(index, 1);
-                                }
-                                this.$message.success('删除成功！');
-                            } else {
-                                this.$message.error('删除失败！');
-                            }
-                            this.listDictLoading = false;
-
-                        });
+                        this.deleteDict();
                     }).catch(() => {
                         console.dir('取消');
                     });
                 }
+            },
+            createDict() {
+                this.$refs['dicForm'].validate(valid => {
+                    if (valid) {
+                        this.dialogLoading = true;
+                        createDict(this.dic).then(response => {
+                            this.dialogLoading = false;
+                            if (response.httpCode === 200) {
+                                this.resetDictForm();
+                                this.$message.success('更新成功');
+                                this.getDictList();
+                            } else {
+                                this.$message.error(response.msg);
+                            }
+                        })
+                    } else {
+                        return false;
+                    }
+                })
+            },
+            updateDict() {
+                this.$refs['dicForm'].validate(valid => {
+                    if (valid) {
+                        this.dialogLoading = true;
+                        updateDict(this.dic).then(response => {
+                            this.dialogLoading = false;
+                            if (response.httpCode === 200) {
+                                this.resetDictForm();
+                                this.$message.success('更新成功');
+                                this.getDictList();
+                            } else {
+                                this.$message.error(response.msg);
+                            }
+                        })
+                    } else {
+                        return false;
+                    }
+                })
+            },
+            deleteDict() {
+                this.listDictLoading = true;
+                let ids = [];
+                for (const deleteRow of this.selectedDictRows) {
+                    ids.push(deleteRow.id);
+                }
+                console.log(ids)
+                delDict(ids).then(response => {
+                    if (response.httpCode === 200) {
+                        this.$message.success('删除成功！');
+                        this.getDictList();
+                    } else {
+                        this.$message.error('删除失败！');
+                    }
+                    this.listDictLoading = false;
+                });
+            },
+            resetDicIndexTemp() {
+                this.dicIndex = {
+                    id: '',
+                    key: '',
+                    name: '',
+                    remark: ''
+                };
             },
             resetDictTemp() {
                 this.dic = {
@@ -465,7 +463,7 @@
                     remark: ''
                 };
             },
-            resetCheckboxTable() {
+            resetDicIndexForm() {
                 this.dialogDicIndexVisible = false;
                 this.resetDicIndexTemp();
                 resetForm(this, 'dicIndexForm');
