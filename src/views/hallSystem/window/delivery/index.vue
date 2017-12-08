@@ -12,8 +12,8 @@
             <el-select v-model="listQuery.itemId" class="filter-item" clearable filterable placeholder="事项筛选">
                 <el-option v-for="item in itemList" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
-            <el-select v-model="listQuery.memberId" class="filter-item" filterable
-                       remote
+            <el-select v-model="listQuery.memberId" class="filter-item"
+                       clearable filterable remote
                        placeholder="请输入会员名称或证件号"
                        :remote-method="remoteMethod">
                 <el-option
@@ -84,10 +84,9 @@
                         <el-button type="primary" @click="showReserveCode(scope.row)">获取开箱码</el-button>
                         <el-button type="primary" @click="mailboxCancelReserve(scope.row)">取消预约</el-button>
                     </el-button-group>
-                    <el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert == 4" type="primary">录入取件码</el-button>
+                    <!--<el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert == 4" type="primary">录入取件码</el-button>-->
                     <el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert == 6" type="primary"
                                @click="enterExpressInfo(scope.row)">录入邮寄信息</el-button>
-                    <!--<el-button></el-button>-->
                     <el-button v-else type="primary">查看</el-button>
                 </template>
             </el-table-column>
@@ -210,6 +209,7 @@
                 takeTypeInfo: {
                     id: '',
                     pretrialNumber: '',
+                    memberId: '',
                     takeType: '',
                     mailboxInfo: {
                         id: '',
@@ -315,6 +315,7 @@
                 }
                 this.takeTypeInfo.id = row.takeTypeInfo.id;
                 this.takeTypeInfo.pretrialNumber = row.pretrialNumber;
+                this.takeTypeInfo.memberId = row.memberId;
                 this.takeTypeInfo.takeType = row.takeTypeInfo.takeType;
                 if (row.takeTypeInfo.mailboxInfo) {
                     this.takeTypeInfo.mailboxInfo = copyProperties(this.takeTypeInfo.mailboxInfo, row.takeTypeInfo.mailboxInfo);

@@ -350,12 +350,6 @@ export const asyncRouterMap = [
                         component: Record,
                         name: '收件记录',
                         meta: {permission: 'hallSystem:window:receive:record:list'}
-                    },
-                    {
-                        path: 'takeAway',
-                        component: TakeAway,
-                        name: '办结取件',
-                        meta: {permission: 'hallSystem:window:receive:takeAway:list'}
                     }
                 ]
             },
