@@ -20,7 +20,7 @@ const service = axios.create({
         if (!data) {
             data = {}
         }
-        data = Qs.stringify(data, {arrayFormat: 'brackets'})
+        data = Qs.stringify(data, {arrayFormat: 'brackets', allowDots: true})
         return data
     }]
 });
