@@ -1,8 +1,20 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="名称"
-                      v-model="listQuery.name"></el-input>
+            <el-select
+                    remote
+                    style="width: 200px;" class="filter-item" placeholder="企业名称"
+                    v-model="listQuery.companyId"
+                    filterable clearable
+                    :remote-method="queryCompanySearch"
+                    @change="handleCompanySelect">
+                <el-option
+                        v-for="companyInfo in companyList"
+                        :key="companyInfo.id"
+                        :label="companyInfo.companyName"
+                        :value="companyInfo.id">
+                </el-option>
+            </el-select>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
         </div>
 
@@ -357,11 +369,14 @@
 </template>
 
 <script>
+    import {validateQueryStr} from 'utils';
     import {mapGetters} from 'vuex';
     import {
         getDeptSuperviseList, getDeptWorkDetail, workCancelSupervised, workSetSupervised
     } from 'api/zwfwSystem/business/deptSupervise';
-
+    import {
+        getAllCompany
+    } from 'api/other/company';
     export default {
         name: 'zwfwDeptWorkPending_table',
         data() {
@@ -371,10 +386,12 @@
                 list: null,
                 total: null,
                 listLoading: true,
+                companyList:[],
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
-                    name: undefined
+                    name: undefined,
+                    companyId: ''
                 },
                 itemMaterialVoList: [],
                 itemProcessVo: [],
@@ -462,6 +479,31 @@
                     console.log(response.data);
                     this.getList();
                 })
+            },
+            queryCompanySearch(queryString) {
+                let valid = validateQueryStr(queryString);
+                if (valid) {
+                    this.$message.error(`输入中包含非法字符 ${valid}`)
+                    return
+                }
+                if (queryString.length < 2) {
+                    return;
+                }
+                // 调用 callback 返回建议列表的数据
+                const query = {
+                    companyName: queryString
+                };
+                getAllCompany(query).then(response => {
+                    if (response.httpCode === 200) {
+                        this.companyList = response.data;
+                    } else {
+                        this.$message.error('查询失败');
+                    }
+                });
+            },
+            handleCompanySelect(code) {
+                this.listQuery.companyId = code;
+                this.getList();
             },
             resetTemp() {
                 this.itemNumber = {
