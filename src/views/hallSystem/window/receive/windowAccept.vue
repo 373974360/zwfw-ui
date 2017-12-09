@@ -71,7 +71,7 @@
                                     </tr>
                                     <tr v-if="itemPretrialVo!=null">
                                         <th>预审号码:</th>
-                                        <td>{{itemPretrialVo.pretrialNumber}}</td>
+                                        <td>{{itemPretrialVo.processNumber}}</td>
                                     </tr>
                                     <tr v-else>
                                         <th>预审状态:</th>
@@ -130,9 +130,9 @@
                         <el-tab-pane label="虚拟抽号机" name="virtualPanel">
                             <div>预审抽号：</div>
                             <el-row type="flex" justify="center">
-                                <el-input v-model="getNumberBy_pretrialNumber" placeholder="如根据预审号抽号，请输入预审号"></el-input>
-                                <el-button type="primary" @click="takeNumberByPretrialNumber"
-                                           :disabled="!getNumberBy_pretrialNumber">预审抽号
+                                <el-input v-model="getNumberBy_processNumber" placeholder="如根据预审号抽号，请输入预审号"></el-input>
+                                <el-button type="primary" @click="takeNumberByProcessNumber"
+                                           :disabled="!getNumberBy_processNumber">预审抽号
                                 </el-button>
                             </el-row>
                             <div style="margin-top:50px;">用户快速注册：</div>
@@ -434,7 +434,7 @@
 
 <script>
     import {
-        takeNumberByPretrialNumber,
+        takeNumberByProcessNumber,
         takeNumberByItemCode,
         queryNumberByCallNumber,
         queryCurrentNumber,
@@ -457,7 +457,7 @@
         name: 'compositeWindowWork',
         data() {
             return {
-                getNumberBy_pretrialNumber: '',
+                getNumberBy_processNumber: '',
                 getNumberBy_hallNumber: '',
                 materialSelection: [],
                 remark: '',
@@ -686,10 +686,10 @@
             /**
              * 抽号 - 根据预审号码
              */
-            takeNumberByPretrialNumber() {
+            takeNumberByProcessNumber() {
                 let _this = this;
-                takeNumberByPretrialNumber({
-                    pretrialNumber: this.getNumberBy_pretrialNumber
+                takeNumberByProcessNumber({
+                    processNumber: this.getNumberBy_processNumber
                 }).then(response => {
 //                    console.log(data.data.callNumber);
                     if (response.httpCode === 200) {

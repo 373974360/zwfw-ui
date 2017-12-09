@@ -2,7 +2,7 @@
     <div class="app-container calendar-list-container">
         <div class="filter-container">
             <el-input @keyup.enter.native="handleFilter" style="width: 300px;" class="filter-item" placeholder="预审号"
-                      v-model="listQuery.pretrialNumber" no-match-text="没有找到哦">
+                      v-model="listQuery.processNumber" no-match-text="没有找到哦">
             </el-input>
             <el-button style="margin-left: 10px;" class="filter-item" type="primary" v-waves icon="search"
                        @click="getList">搜索
@@ -12,7 +12,7 @@
                   style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column min-width="200px" align="center" label="预审号">
                 <template scope="scope">
-                    <span>{{scope.row.pretrialNumber}}<br/>({{scope.row.itemName}})</span>
+                    <span>{{scope.row.processNumber}}<br/>({{scope.row.itemName}})</span>
                 </template>
             </el-table-column>
             <el-table-column width="250px" align="center" label="申请企业（个人）">
@@ -126,7 +126,7 @@
                         <el-form ref="zwfwItemPretrial" label-width="140px" :model="ItemPretrial"
                                  :rules="ItemPretrialRules">
                             <el-form-item label="预审编号">
-                                <el-input v-model="ItemPretrial.pretrialNumber" disabled></el-input>
+                                <el-input v-model="ItemPretrial.processNumber" disabled></el-input>
                             </el-form-item>
                             <el-form-item label="办理事项">
                                 <el-input v-model="ItemPretrial.itemName" disabled></el-input>
@@ -174,7 +174,7 @@
                 total: null,
                 listLoading: true,
                 listQuery: {
-                    pretrialNumber: undefined,
+                    processNumber: undefined,
                     inStatus: 'PENDING',
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows
@@ -192,7 +192,7 @@
                 passRemark: '确认通过',
                 ItemPretrial: {
                     id: undefined,
-                    pretrialNumber: '',
+                    processNumber: '',
                     companyName: '',
                     applyTime: '',
                     auditTime: '',
@@ -251,11 +251,11 @@
                 this.resetTemp();
                 this.ItemPretrial = copyProperties(this.ItemPretrial, row);
                 this.dialogFormVisible = true;
-                this.itemPretrialId = row.id;
+                this.processNumber = row.id;
                 this.getPretrialDetail();
             },
             getPretrialDetail() {
-                getPretrialDetail(this.itemPretrialId).then(response => {
+                getPretrialDetail(this.processNumber).then(response => {
                     if (response.httpCode === 200) {
                         this.member = response.data.member;
                         this.pretrialMaterialList = response.data.pretrialMaterialList;
@@ -299,7 +299,7 @@
             resetTemp() {
                 this.ItemPretrial = {
                     id: undefined,
-                    pretrialNumber: '',
+                    processNumber: '',
                     companyName: '',
                     applyTime: '',
                     auditTime: '',

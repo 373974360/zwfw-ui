@@ -36,7 +36,7 @@
                   style="width: 100%">
             <el-table-column align="center" label="办件号" width="220">
                 <template scope="scope">
-                    <span>{{scope.row.pretrialNumber}}</span>
+                    <span>{{scope.row.processNumber}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="事项名称" min-width="180">
@@ -208,7 +208,7 @@
                 otherProcessVisible: false,
                 takeTypeInfo: {
                     id: '',
-                    pretrialNumber: '',
+                    processNumber: '',
                     memberId: '',
                     takeType: '',
                     mailboxInfo: {
@@ -225,7 +225,7 @@
                 takeTypeInfoRules: {},
                 expressInfo: {
                     id: '',
-                    pretrialNumber: '',
+                    processNumber: '',
                     expressCompany: '',
                     expressNumber: ''
                 },
@@ -314,7 +314,7 @@
                     return;
                 }
                 this.takeTypeInfo.id = row.takeTypeInfo.id;
-                this.takeTypeInfo.pretrialNumber = row.pretrialNumber;
+                this.takeTypeInfo.processNumber = row.processNumber;
                 this.takeTypeInfo.memberId = row.memberId;
                 this.takeTypeInfo.takeType = row.takeTypeInfo.takeType;
                 if (row.takeTypeInfo.mailboxInfo) {
@@ -346,7 +346,7 @@
             },
             enterExpressInfo(row) {
                 this.expressInfo.id = row.takeTypeInfo.postInfo.id;
-                this.expressInfo.pretrialNumber = row.pretrialNumber;
+                this.expressInfo.processNumber = row.processNumber;
                 this.expressInfoVisible = true;
             },
             submitTakeTypeExpress() {
@@ -389,7 +389,7 @@
             },
             mailboxReserve(row) {
                 this.listLoading = true;
-                reserve(row.pretrialNumber).then(response => {
+                reserve(row.processNumber).then(response => {
                     if (response.httpCode === 200) {
                         this.$message.success('预约已提交，请耐心等待');
                         this.getList();
@@ -401,7 +401,7 @@
             },
             mailboxCancelReserve(row) {
                 this.listLoading = true;
-                cancelReserve(row.pretrialNumber).then(response => {
+                cancelReserve(row.processNumber).then(response => {
                     if (response.httpCode === 200) {
                         this.$message.success('取消成功');
                         this.getList();
@@ -437,7 +437,7 @@
             resetExpressInfoTemp() {
                 this.expressInfo = {
                     id: '',
-                    pretrialNumber: '',
+                    processNumber: '',
                     expressCompany: '',
                     expressNumber: ''
                 }
@@ -450,7 +450,7 @@
             resetTakeTypeTemp() {
                 this.takeTypeInfo = {
                     id: '',
-                    pretrialNumber: '',
+                    processNumber: '',
                     takeType: '',
                     mailboxInfo: {
                         id: '',

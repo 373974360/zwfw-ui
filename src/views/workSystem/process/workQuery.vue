@@ -2,7 +2,7 @@
     <div class="app-container calendar-list-container">
         <div class="filter-container">
             <el-input @keyup.enter.native="getList" style="width: 300px;" class="filter-item" placeholder="办件号"
-                      v-model="listQuery.pretrialNumber"></el-input>
+                      v-model="listQuery.processNumber"></el-input>
 
 
             <el-select
@@ -37,7 +37,7 @@
             </el-table-column>
             <el-table-column align="center" label="流水号" width="200px">
                 <template scope="scope">
-                    <span>{{scope.row.pretrialNumber}}</span>
+                    <span>{{scope.row.processNumber}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="办理事项" prop="itemName" width="200px">
@@ -331,7 +331,7 @@
                 </div>
                 <div>
                     <el-button v-if="itemProcessVo.flagCorrection || itemProcessVo.status == 99"
-                               type="button" @click="print_ycxgzd(itemProcessVo.pretrialNumber)">打印一次性告知单</el-button>
+                               type="button" @click="print_ycxgzd(itemProcessVo.processNumber)">打印一次性告知单</el-button>
                 </div>
             </div>
         </el-dialog>
@@ -363,7 +363,7 @@
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     companyId: undefined,
-                    pretrialNumber: null
+                    processNumber: null
                 },
                 zwfwDeptWorkQuery: {
                     id: undefined,
@@ -473,12 +473,12 @@
             },
             showDetail(row) {
                 this.uploadAvatars = [];
-                this.pretrialNumber = row.pretrialNumber;
+                this.processNumber = row.processNumber;
                 this.taskId = row.taskId;
                 this.textMapTitle = '部门办事 - ' + row.itemName;
                 this.dialogFormVisible = true;
                 const query = {
-                    processNumber: this.pretrialNumber,
+                    processNumber: this.processNumber,
                     taskId: this.taskId
                 }
                 getZwfwDeptWorkDetail(query).then(response => {
@@ -504,9 +504,9 @@
                     }
                 });
             },
-            print_ycxgzd(pretrialNumber) {
-                if (pretrialNumber != null) {
-                    window.open('/api/workSystem/itemPretrial/downloadYcxgzd?pretrialNumber=' + pretrialNumber);
+            print_ycxgzd(processNumber) {
+                if (processNumber != null) {
+                    window.open('/api/workSystem/itemPretrial/downloadYcxgzd?processNumber=' + processNumber);
                 }
             },
             handlePictureCardPreview(file) {

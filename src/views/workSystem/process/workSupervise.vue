@@ -446,12 +446,12 @@
                 this.$refs.zwfwDeptWorkPendingTable.toggleRowSelection(row);
             },
             handleDetailList(row) {
-                this.pretrialNumber = row.pretrialNumber;
+                this.processNumber = row.processNumber;
                 this.taskId = row.taskId;
                 this.textMapTitle = '部门办事 - ' + row.itemName;
                 this.dialogFormVisible = true;
                 const query = {
-                    processNumber: this.pretrialNumber,
+                    processNumber: this.processNumber,
                     taskId: this.taskId
                 }
                 getDeptWorkDetail(query).then(response => {

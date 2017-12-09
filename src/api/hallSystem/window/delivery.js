@@ -39,8 +39,8 @@ export function complete(takeTypeId) {
     });
 }
 
-export function reserve(pretrialNumber) {
-    const data = {pretrialNumber};
+export function reserve(processNumber) {
+    const data = {processNumber};
     return fetch({
         url: '/api/hallSystem/mailbox/request/reserve',
         method: 'post',
@@ -48,8 +48,8 @@ export function reserve(pretrialNumber) {
     })
 }
 
-export function cancelReserve(pretrialNumber) {
-    const data = {pretrialNumber};
+export function cancelReserve(processNumber) {
+    const data = {processNumber};
     return fetch({
         url: '/api/hallSystem/mailbox/request/cancelReserve',
         method: 'post',

@@ -4,7 +4,7 @@
             <el-date-picker style="top: -5px;" v-model="listQuery.selectDateTime" type="datetimerange"
                             placeholder="选择时间范围" format="yyyy-MM-dd HH:mm:ss" @change="changeDate">
             </el-date-picker>
-            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="搜索用户" placement="top-start">
+            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" placement="top-start">
                 <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
                     搜索
                 </el-button>
@@ -87,7 +87,7 @@
                             <th>办理事项</th>
                             <td style="color:red">{{itemVo.name}}</td>
                         </tr>
-                        <tr v-if="member.naturePerson!=null">
+                        <tr v-if="member!=null && member.naturePerson!=null">
                             <th>申报人:</th>
                             <td>{{member.naturePerson.name}}</td>
                         </tr>
@@ -97,21 +97,21 @@
                                 <div v-if="itemNumber.personPhone!=null">
                                     {{itemNumber.personPhone}}
                                 </div>
-                                <div v-if="member.legalPerson!=null">
+                                <div v-if="member!=null && member.legalPerson!=null">
                                     {{member.legalPerson.phone}}
                                 </div>
-                                <div v-if="member.naturePerson!=null">
+                                <div v-if="member!=null && member.naturePerson!=null">
                                     {{member.naturePerson.phone}}
                                 </div>
                             </td>
                         </tr>
-                        <tr v-if="member.legalPerson!=null">
+                        <tr v-if="member!=null && member.legalPerson!=null">
                             <th>办事企业:</th>
                             <td>{{member.legalPerson.companyName}}</td>
                         </tr>
                         <tr v-if="itemPretrialVo!=null">
                             <th>预审号码:</th>
-                            <td>{{itemPretrialVo.pretrialNumber}}</td>
+                            <td>{{itemPretrialVo.processNumber}}</td>
                         </tr>
                         <tr v-if="itemPretrialVo==null">
                             <th>预审状态</th>
@@ -352,6 +352,7 @@
                     rows: this.$store.state.app.rows,
                     selectDateTime: undefined
                 },
+                tabName:'materialListPanel',
                 itemNumber: [],
                 itemWindowUserName: '',
                 windowVo: [],

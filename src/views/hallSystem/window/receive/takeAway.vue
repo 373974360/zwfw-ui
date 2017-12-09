@@ -35,7 +35,7 @@
                   style="width: 100%">
             <el-table-column align="center" label="序号">
                 <template scope="scope">
-                    <span>{{scope.row.pretrialNumber}}</span>
+                    <span>{{scope.row.processNumber}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="事项名称" min-width="140">

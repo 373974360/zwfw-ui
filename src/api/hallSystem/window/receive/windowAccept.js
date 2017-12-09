@@ -5,7 +5,7 @@ import fetch from 'utils/fetch';
  * @param query
  * @returns {*}
  */
-export function takeNumberByPretrialNumber(query) {
+export function takeNumberByProcessNumber(query) {
     return fetch({
         url: '/api/hallSystem/hallCompositeWindow/mockGetNumber',
         method: 'post',
