@@ -368,6 +368,12 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
+                <el-form-item label="显示状态" prop="showStatus">
+                    <el-select>
+                        <el-option v-for="item in enums['ShowStatus']" :key="item.code"
+                                   :value="item.code" :label="item.value"></el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="中介服务" prop="mediumService">
                     <el-input v-model="zwfwItem.mediumService"></el-input>
                 </el-form-item>
@@ -591,6 +597,7 @@
                     handleType: 'blxs_ckbl',
                     name: '',
                     mediumService: '',
+                    showStatus: '',
                     commonRequestion: '',
                     implCode: '',
                     updateType: '',
@@ -1169,6 +1176,7 @@
                     handleType: 'blxs_ckbl',
                     name: '',
                     mediumService: '',
+                    showStatus: '',
                     commonRequestion: '',
                     implCode: '',
                     updateType: '',
