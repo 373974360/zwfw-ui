@@ -135,17 +135,16 @@
                                            :disabled="!getNumberBy_pretrialNumber">预审抽号
                                 </el-button>
                             </el-row>
-                            <div style="margin-top:50px;">事项抽号：</div>
+                            <div style="margin-top:50px;">用户快速注册：</div>
                             <el-row type="flex" justify="center">
                                 <el-input v-model="memberCode" placeholder="输入企业统一信用代码或身份证号"></el-input>
-                                <el-button type="primary" @click="checkMemberExist()">用户检测</el-button>
+                                <el-button type="primary" @click="checkMemberExist()">用户检测快速注册</el-button>
                             </el-row>
                             <el-row type="flex" justify="center">
-                                <el-input v-model="memberRealname" placeholder="抽号人姓名">
+                                <el-input v-model="memberRealname" placeholder="申请人姓名或企业名称">
                                 </el-input>
-                                <el-input v-model="memberPhone" placeholder="抽号人手机号">
+                                <el-input v-model="memberPhone" placeholder="申请人当前可用手机号">
                                 </el-input>
-
                             </el-row>
                             <el-row v-show="doFastReg" type="flex" justify="center">
                                 <el-button type="primary" @click="sendFastRegPhoneCode"
@@ -157,6 +156,7 @@
                                            :disabled="!doFastReg">快速注册用户
                                 </el-button>
                             </el-row>
+                            <div style="margin-top:50px;">事项抽号：</div>
                             <el-row type="flex" justify="center">
                                 <el-select
                                         v-model="selectedItem"
@@ -644,6 +644,12 @@
                             this.member = response.data;
                             this.$message.success("用户存在，请继续操作");
                             this.doFastReg = false;
+                            if(!this.memberRealname) {
+                                this.memberRealname = this.member.name;
+                            }
+                            if(!this.memberPhone) {
+                                this.memberPhone = this.member.mobilephone;
+                            }
                         }
                     } else {
                         this.$message.error(response.msg);
@@ -702,9 +708,9 @@
                 let _this = this;
                 takeNumberByItemCode({
                     itemCode: this.itemVo.basicCode,
-                    memberCode: this.memberCode,
-                    memberRealname: this.memberRealname,
-                    memberPhone: this.memberPhone
+                    name: this.memberRealname,
+                    phone: this.memberPhone,
+                    iDNum:this.member.memberCode
                 }).then(response => {
                     if (response.httpCode === 200) {
                         _this.$message.success('抽到的号码是：' + response.data.callNumber);
