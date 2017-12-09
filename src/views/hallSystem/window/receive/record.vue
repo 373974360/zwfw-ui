@@ -363,7 +363,7 @@
                 itemVo: {},
                 selectedRows: [],
                 itemMaterialVoList: [],
-                tabName: 'materialListPanel',
+                rightTabName: 'materialListPanel',
                 dialogFormVisible: false,
                 dialogStatus: 'view',
                 dialogLoading: false
@@ -404,7 +404,7 @@
             },
             handleDetailList(row) {
                 this.resetTemp();
-                this.tabName = 'materialListPanel';
+                this.rightTabName = 'materialListPanel';
                 this.itemNumber = copyProperties(this.itemNumber, row);
                 this.dialogFormVisible = true;
                 this.itemNumberId = row.id;

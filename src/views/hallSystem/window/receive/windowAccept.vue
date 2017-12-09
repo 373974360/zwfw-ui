@@ -1,227 +1,247 @@
 <template>
     <el-row :gutter="20">
-        <el-col :span="8">
+        <el-col :span="10">
             <div class="grid-content ">
                 <div style="padding:10px">
-                    <el-row type="flex" justify="center">
-                    <el-input v-model="getNumberBy_pretrialNumber" placeholder="输入预审抽号">
-                    <el-button slot="append" type="primary" @click="takeNumberByPretrialNumber">已预审抽号
-                    </el-button>
-                    </el-input>
-                    </el-row>
-                    <el-row type="flex" justify="center">
-                    <el-input v-model="getNumberBy_itemCode" placeholder="输入事项编码">
-                    <el-button slot="append" type="primary" @click="takeNumberByItemCode">未预审抽号</el-button>
-                    </el-input>
-                    </el-row>
-                    <el-row type="flex" justify="center">
-                    <el-input v-model="devMockWindowKey" placeholder="输入窗口key">
-                    <el-button slot="append" type="primary" @click="loginToWindow">登录到窗口</el-button>
-                    </el-input>
-                    </el-row>
-                    <el-row type="flex" justify="center">
-                    <el-input v-model="getNumberBy_hallNumber" placeholder="输入呼叫号查看办理事项">
-                    <el-button slot="append" @click="queryNumberByCallNumber">按呼叫号查询</el-button>
-                    </el-input>
-                    </el-row>
-                    <el-row type="flex" justify="center">
-                        <!--<el-input v-model="itemCode" placeholder="请输入事项编码"></el-input>-->
-                        <el-select
-                                v-model="selectedItem"
-                                filterable
-                                remote
-                                placeholder="请输入事项名称或基本编码"
-                                :remote-method="queryItem"
-                                @change="changeItem" style="width:100%">
-                            <el-option
-                                    v-for="item in optionsName"
-                                    :key="item.id"
-                                    :label="item.name"
-                                    :value="item.id">
-                            </el-option>
-                        </el-select>
-                    </el-row>
-                    <el-row type="flex" justify="center">
-                        <el-input v-model="memberCode" placeholder="输入企业统一信用代码或身份证号" @change="queryCompanyInfo">
-                            <el-button slot="append" @click="queryCompanyInfo">查询</el-button>
+                    <el-row v-show="!windowInfo.id" type="flex" justify="center">
+                        <el-input v-model="loginCallerKey" placeholder="模拟叫号器操作，请先输入窗口编号登录">
                         </el-input>
+                        <el-button type="primary" @click="loginToWindow" :disabled="!loginCallerKey">登录窗口</el-button>
                     </el-row>
-                    <el-row type="flex" justify="center" >
-                        <el-input v-model="memberRealname" placeholder="联系人" >
-                        </el-input>
+                    <el-row v-show="windowInfo.id" type="flex" justify="center">
+                        <el-input :value="'已经登录到' + windowInfo.callerKey + '窗口'" disabled
+                                  placeholder="模拟叫号器操作，请先输入窗口编号登录"></el-input>
+                        <el-button type="primary" @click="windowInfo= {}">重新登录</el-button>
                     </el-row>
-                    <el-row type="flex" justify="center">
-                        <el-input v-model="memberPhone" placeholder="手机号" >
-                        </el-input>
-                    </el-row>
-                    <el-button v-if="itemNumber == null || itemNumber.status==1" type="primary" @click="callNumber">
-                        叫号
-                    </el-button>
-                    <el-button type="primary" @click="queryCurrentNumber">查询当前业务</el-button>
+                    <el-tabs v-model="leftTabName" type="card">
+                        <el-tab-pane label="业务受理" name="workPanel">
 
-                    <el-button v-if="itemNumber.status==2" type="primary"
-                               v-bind:disabled="itemNumber.applyFinishTime!=null"
-                               @click="welcomeNumber" title="仅限测试使用">
-                        模拟欢迎
-                    </el-button>
-                    <el-button v-if="itemNumber.status==2" type="primary"
-                               v-bind:disabled="itemNumber.applyFinishTime!=null"
-                               @click="skip" title="申请人未到达窗口时跳过">
-                        跳过
-                    </el-button>
+                            <el-row type="flex" justify="center">
+                                <el-input v-model="getNumberBy_hallNumber" placeholder="请输入呼叫号">
+                                </el-input>
+                                <el-button type="primary" :disabled="!getNumberBy_hallNumber"
+                                           @click="queryNumberByCallNumber">按呼叫号查询
+                                </el-button>
+                                <el-button type="primary" @click="queryCurrentNumber">查询当前叫号</el-button>
+                            </el-row>
+                            <el-row type="flex" justify="center" style="margin-top:20px;">
+                                <el-button :disabled="!itemNumber.id || itemNumber.status!=1" type="primary"
+                                           @click="callNumber" title="设置当前号码为窗口已呼叫状态时点击">
+                                    叫号
+                                </el-button>
+                                <el-button :disabled="!itemNumber.id || itemNumber.status!=2" type="primary"
+                                           @click="welcomeNumber" title="申请人到达窗口时点击">
+                                    欢迎
+                                </el-button>
+                                <el-button :disabled="!itemNumber.id || itemNumber.status!=2" type="danger"
+                                           @click="skip" title="申请人未到达窗口，跳过此号码时点击">
+                                    跳过号码
+                                </el-button>
+                            </el-row>
+                            <div id="numberInfo" v-show="itemNumber.id" class="tableDiv">
+                                <table>
+                                    <tr>
+                                        <th width="140">呼叫号:</th>
+                                        <td><strong class="font-size:5rem">{{itemNumber.orderNo}}</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <th>办理事项:</th>
+                                        <td style="color:red">{{itemVo.name}}</td>
+                                    </tr>
+                                    <!--<tr>-->
+                                    <!--<th width="140">所需服务:</th>-->
+                                    <!--<td style="color:red"><strong class="font-size:5rem">{{itemNumber.type | enum-->
+                                    <!--'ItemWindowSupport'}}</strong></td>-->
+                                    <!--</tr>-->
+                                    <tr v-if="member!=null && member.naturePerson!=null">
+                                        <th>申报人:</th>
+                                        <td>{{member.naturePerson.name}}</td>
+                                    </tr>
+                                    <tr v-if="member!=null && member.naturePerson!=null">
+                                        <th>申报人联系电话:</th>
+                                        <td>{{member.naturePerson.phone}}</td>
+                                    </tr>
+                                    <tr v-if="member!=null && member.legalPerson!=null">
+                                        <th>申报人联系电话:</th>
+                                        <td>{{member.legalPerson.phone}}</td>
+                                    </tr>
+                                    <tr v-if="member!=null && member.legalPerson!=null">
+                                        <th>办事企业:</th>
+                                        <td>{{member.legalPerson.companyName}}</td>
+                                    </tr>
+                                    <tr v-if="itemPretrialVo!=null">
+                                        <th>预审号码:</th>
+                                        <td>{{itemPretrialVo.pretrialNumber}}</td>
+                                    </tr>
+                                    <tr v-else>
+                                        <th>预审状态:</th>
+                                        <td>无预审</td>
+                                    </tr>
+                                    <tr v-if="itemPretrialVo!=null">
+                                        <th>预审状态:</th>
+                                        <td>{{itemPretrialVo.status | enums('PretrialStatus')}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>排号状态:</th>
+                                        <td style="color:red">{{itemNumber.status | enums('ItemNumberStatus')}}
+                                        </td>
+                                    </tr>
+                                    <tr v-if="itemNumber.status!=6">
+                                        <th>备注:</th>
+                                        <td>{{itemNumber.remark}}</td>
+                                    </tr>
+                                    <tr width="140">
+                                        <th>受理窗口:</th>
+                                        <td style="color:red">
+                                            <strong v-if="window!=null" class="font-size:5rem">{{window.name}}</strong>
+                                            <strong v-if="window==null" class="font-size:5rem">无</strong>
+                                        </td>
+                                    </tr>
+                                    <tr v-show="itemWindowUserName">
+                                        <th>工作人员:</th>
+                                        <td>{{itemWindowUserName}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th width="140">领号时间:</th>
+                                        <td>{{itemNumber.takeTime | date('YYYY-MM-DD HH:mm') }}
+                                        </td>
+                                    </tr>
+                                    <tr v-show="itemNumber.callTime">
+                                        <th width="140">呼叫时间:</th>
+                                        <td>{{itemNumber.callTime | date('YYYY-MM-DD HH:mm') }}
+                                        </td>
+                                    </tr>
+                                    <tr v-show="itemNumber.welcomeTime">
+                                        <th>欢迎时间:</th>
+                                        <td>{{itemNumber.welcomeTime | date('YYYY-MM-DD HH:mm') }}
+                                        </td>
+                                    </tr>
+                                    <tr v-show="itemNumber.applyFinishTime">
+                                        <th>窗口完成处理时间:</th>
+                                        <td>{{itemNumber.applyFinishTime | date('YYYY-MM-DD HH:mm') }}
+                                        </td>
+                                    </tr>
+                                </table>
 
-                    <div id="companyInfo" v-if="companyInfo.id" class="tableDiv">
-                        <table>
-                            <tr>
-                                <th width="140">统一信用代码:</th>
-                                <td>{{companyInfo.ty_code}}</td>
-                            </tr>
-                            <tr>
-                                <th width="140">企业名称:</th>
-                                <td>{{companyInfo.qymc}}</td>
-                            </tr>
-                            <tr>
-                                <th width="140">法人:</th>
-                                <td>{{companyInfo.fr}}</td>
-                            </tr>
-                            <tr>
-                                <th width="140">联系电话:</th>
-                                <td>{{companyInfo.lxdh}}</td>
-                            </tr>
-                            <tr>
-                                <th width="140">企业类型:</th>
-                                <td>{{companyInfo.qllx}}</td>
-                            </tr>
-                            <tr>
-                                <th width="140">地址:</th>
-                                <td>{{companyInfo.jgzs}}</td>
-                            </tr>
-                            <tr>
-                                <th width="140">注册资金:</th>
-                                <td>{{companyInfo.zczj}}</td>
-                            </tr>
-                            <tr>
-                                <th width="140">成立日期:</th>
-                                <td>{{companyInfo.clrq}}</td>
-                            </tr>
-                            <tr>
-                                <th width="140">营业期限:</th>
-                                <td>{{companyInfo.yyqx}}</td>
-                            </tr>
-                            <tr>
-                                <th width="140">经营范围:</th>
-                                <td>{{companyInfo.jyfw}}</td>
-                            </tr>
-                            <tr>
-                                <th width="140">状态:</th>
-                                <td>{{companyInfo.djzt}}</td>
-                            </tr>
-                            <tr>
-                                <th width="140">所属街道:</th>
-                                <td>{{companyInfo.ssjd}}</td>
-                            </tr>
-                        </table>
-                    </div>
+                            </div>
 
+                        </el-tab-pane>
+                        <el-tab-pane label="虚拟抽号机" name="virtualPanel">
+                            <div>预审抽号：</div>
+                            <el-row type="flex" justify="center">
+                                <el-input v-model="getNumberBy_pretrialNumber" placeholder="如根据预审号抽号，请输入预审号"></el-input>
+                                <el-button type="primary" @click="takeNumberByPretrialNumber"
+                                           :disabled="!getNumberBy_pretrialNumber">预审抽号
+                                </el-button>
+                            </el-row>
+                            <div style="margin-top:50px;">事项抽号：</div>
+                            <el-row type="flex" justify="center">
+                                <el-input v-model="memberCode" placeholder="输入企业统一信用代码或身份证号"></el-input>
+                                <el-button type="primary" @click="checkMemberExist()">用户检测</el-button>
+                            </el-row>
+                            <el-row type="flex" justify="center">
+                                <el-input v-model="memberRealname" placeholder="抽号人姓名">
+                                </el-input>
+                                <el-input v-model="memberPhone" placeholder="抽号人手机号">
+                                </el-input>
 
-                    <div id="numberInfo" v-show="itemNumber.id" class="tableDiv">
-                        <table>
-                            <tr>
-                                <th width="140">呼叫号:</th>
-                                <td><strong class="font-size:5rem">{{itemNumber.orderNo}}</strong></td>
-                            </tr>
-                            <tr>
-                                <th>办理事项:</th>
-                                <td style="color:red">{{itemVo.name}}</td>
-                            </tr>
-                            <!--<tr>-->
-                            <!--<th width="140">所需服务:</th>-->
-                            <!--<td style="color:red"><strong class="font-size:5rem">{{itemNumber.type | enum-->
-                            <!--'ItemWindowSupport'}}</strong></td>-->
-                            <!--</tr>-->
-                            <tr v-if="member.naturePerson!=null">
-                                <th>申报人:</th>
-                                <td>{{member.naturePerson.name}}</td>
-                            </tr>
-                            <tr v-if="member.naturePerson!=null">
-                                <th>申报人联系电话:</th>
-                                <td>{{member.naturePerson.phone}}</td>
-                            </tr>
-                            <tr v-if="member.legalPerson!=null">
-                                <th>申报人联系电话:</th>
-                                <td>{{member.legalPerson.phone}}</td>
-                            </tr>
-                            <tr v-if="member.legalPerson!=null">
-                                <th>办事企业:</th>
-                                <td>{{member.legalPerson.companyName}}</td>
-                            </tr>
-                            <tr v-if="itemPretrialVo!=null">
-                                <th>预审号码:</th>
-                                <td>{{itemPretrialVo.pretrialNumber}}</td>
-                            </tr>
-                            <tr v-else>
-                                <th>预审状态:</th>
-                                <td>没有提交预审</td>
-                            </tr>
-                            <tr v-if="itemPretrialVo!=null">
-                                <th>预审状态:</th>
-                                <td>{{itemPretrialVo.status | enums('PretrialStatus')}}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>排号状态:</th>
-                                <td style="color:red">{{itemNumber.status | enums('ItemNumberStatus')}}
-                                </td>
-                            </tr>
-                            <tr v-if="itemNumber.status!=6">
-                                <th>备注:</th>
-                                <td>{{itemNumber.remark}}</td>
-                            </tr>
-                            <tr width="140">
-                                <th>受理窗口:</th>
-                                <td style="color:red">
-                                    <strong v-if="window!=null" class="font-size:5rem">{{window.name}}</strong>
-                                    <strong v-if="window==null" class="font-size:5rem">无</strong>
-                                </td>
-                            </tr>
-                            <tr v-show="itemWindowUserName">
-                                <th>工作人员:</th>
-                                <td>{{itemWindowUserName}}</td>
-                            </tr>
-                            <tr>
-                                <th width="140">领号时间:</th>
-                                <td>{{itemNumber.takeTime | date('YYYY-MM-DD HH:mm') }}
-                                </td>
-                            </tr>
-                            <tr v-show="itemNumber.callTime">
-                                <th width="140">呼叫时间:</th>
-                                <td>{{itemNumber.callTime | date('YYYY-MM-DD HH:mm') }}
-                                </td>
-                            </tr>
-                            <tr v-show="itemNumber.welcomeTime">
-                                <th>欢迎时间:</th>
-                                <td>{{itemNumber.welcomeTime | date('YYYY-MM-DD HH:mm') }}
-                                </td>
-                            </tr>
-                            <tr v-show="itemNumber.applyFinishTime">
-                                <th>窗口完成处理时间:</th>
-                                <td>{{itemNumber.applyFinishTime | date('YYYY-MM-DD HH:mm') }}
-                                </td>
-                            </tr>
-                        </table>
+                            </el-row>
+                            <el-row v-show="doFastReg" type="flex" justify="center">
+                                <el-button type="primary" @click="sendFastRegPhoneCode"
+                                           :disabled="!doFastReg">发送注册验证码
+                                </el-button>
+                                <el-input v-model="phoneCode" :disabled="!doFastReg" placeholder="输入手机收到的验证码">
+                                </el-input>
+                                <el-button type="primary" @click="fastRegMember"
+                                           :disabled="!doFastReg">快速注册用户
+                                </el-button>
+                            </el-row>
+                            <el-row type="flex" justify="center">
+                                <el-select
+                                        v-model="selectedItem"
+                                        filterable
+                                        remote
+                                        placeholder="请输入事项名称或基本编码后选择事项"
+                                        :remote-method="queryItem"
+                                        @change="changeItem" style="width:100%">
+                                    <el-option
+                                            v-for="item in optionsName"
+                                            :key="item.id"
+                                            :label="item.name"
+                                            :value="item.id">
+                                    </el-option>
+                                </el-select>
 
-                    </div>
+                                <el-button type="primary" @click="takeNumberByItemCode"
+                                           :disabled="!itemVo.id || !member.id">事项抽号
+                                </el-button>
+                            </el-row>
+
+                            <div id="companyInfo" v-if="companyInfo.id" class="tableDiv">
+                                <table>
+                                    <tr>
+                                        <th width="140">统一信用代码:</th>
+                                        <td>{{companyInfo.ty_code}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th width="140">企业名称:</th>
+                                        <td>{{companyInfo.qymc}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th width="140">法人:</th>
+                                        <td>{{companyInfo.fr}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th width="140">联系电话:</th>
+                                        <td>{{companyInfo.lxdh}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th width="140">企业类型:</th>
+                                        <td>{{companyInfo.qllx}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th width="140">地址:</th>
+                                        <td>{{companyInfo.jgzs}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th width="140">注册资金:</th>
+                                        <td>{{companyInfo.zczj}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th width="140">成立日期:</th>
+                                        <td>{{companyInfo.clrq}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th width="140">营业期限:</th>
+                                        <td>{{companyInfo.yyqx}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th width="140">经营范围:</th>
+                                        <td>{{companyInfo.jyfw}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th width="140">状态:</th>
+                                        <td>{{companyInfo.djzt}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th width="140">所属街道:</th>
+                                        <td>{{companyInfo.ssjd}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </el-tab-pane>
+                    </el-tabs>
                 </div>
-
-
             </div>
         </el-col>
-        <el-col :span="16">
+        <el-col :span="14">
             <div class="grid-content ">
                 <div style="padding:10px">
-                    <el-tabs v-model="tabName" type="card" @tab-click="handleTabClick">
+                    <el-tabs v-model="rightTabName" type="card" @tab-click="handleRightTabClick">
                         <el-tab-pane label="所需资料" name="materialListPanel">
-                            <p v-if="itemNumber.status==6 || (companyInfo.id && itemVo.id && !itemNumber.id)">勾选收件材料：</p>
+                            <p v-if="itemNumber.status==6 || (companyInfo.id && itemVo.id && !itemNumber.id)">
+                                勾选收取的材料：</p>
                             <el-table id="materiaTable"
                                       ref="itemMaterialVoList"
                                       :data="itemMaterialVoList"
@@ -236,17 +256,31 @@
                                         width="50">
                                 </el-table-column>
                                 <el-table-column
-
-                                        v-if="itemNumber.status==6 || (companyInfo.id && itemVo.id && !itemNumber.id)"
+                                        v-if="itemNumber.status==6"
                                         type="selection"
                                         prop="received"
                                         width="55">
                                 </el-table-column>
                                 <el-table-column
-
                                         prop="name"
                                         label="材料"
                                         width="300">
+                                    <template scope="scope">
+                                        {{scope.row.name}}
+                                        <div v-if="scope.row.multipleFile">
+                                            预审资料：
+                                            <span v-for="(file,index) in scope.row.multipleFile">
+                                            <span v-if="file.url!=null && file.url!=''">
+                                            <a target="_blank"
+                                               v-if="file.fileType == 'doc' || file.fileType == 'docx' || file.fileType == 'xls' || file.fileType == 'xlsx' || file.fileType == 'ppt'"
+                                               :href="'https://view.officeapps.live.com/op/view.aspx?src=' + file.url ">[{{index + 1}}]</a>
+                                            <a v-else :href="file.url"
+                                               target="_blank">[{{index + 1}}]</a>
+                                            </span>
+                                            <span v-else>未上传</span>
+                                         </span>
+                                        </div>
+                                    </template>
                                 </el-table-column>
                                 <el-table-column
                                         prop="type"
@@ -256,12 +290,12 @@
                                     </template>
                                 </el-table-column>
                                 <!--<el-table-column-->
-                                        <!--prop="example"-->
-                                        <!--label="样本">-->
-                                    <!--<template scope="scope">-->
-                                        <!--<a v-if="scope.row.example" :href="scope.row.example" target="_blank">点击下载</a>-->
-                                        <!--<span v-else>无</span>-->
-                                    <!--</template>-->
+                                <!--prop="example"-->
+                                <!--label="样本">-->
+                                <!--<template scope="scope">-->
+                                <!--<a v-if="scope.row.example" :href="scope.row.example" target="_blank">点击下载</a>-->
+                                <!--<span v-else>无</span>-->
+                                <!--</template>-->
                                 <!--</el-table-column>-->
                                 <el-table-column
                                         prop="source"
@@ -271,40 +305,24 @@
                                     </template>
                                 </el-table-column>
                                 <!--<el-table-column-->
-                                        <!--prop="paperDescription"-->
-                                        <!--label="纸质说明">-->
+                                <!--prop="paperDescription"-->
+                                <!--label="纸质说明">-->
                                 <!--</el-table-column>-->
                                 <!--<el-table-column-->
-                                        <!--prop="notice"-->
-                                        <!--label="填报须知">-->
+                                <!--prop="notice"-->
+                                <!--label="填报须知">-->
                                 <!--</el-table-column>-->
                                 <!--<el-table-column-->
-                                        <!--prop="acceptStandard"-->
-                                        <!--label="受理标准">-->
+                                <!--prop="acceptStandard"-->
+                                <!--label="受理标准">-->
                                 <!--</el-table-column>-->
-                                <el-table-column
-                                        prop="electronicMaterial"
-                                        label="需要预审">
-                                    <template scope="scope">
-                                        {{scope.row.electronicMaterial ? '是 ' : '否'}}
-                                    </template>
-                                </el-table-column>
-                                <el-table-column
-                                        prop="multipleFile"
-                                        label="预审资料">
-                                    <template scope="scope">
-                                        <span v-for="(file,index) in scope.row.multipleFile">
-                                            <span v-if="file.url!=null && file.url!=''">
-                                            <a target="_blank"
-                                               v-if="file.fileType == 'doc' || file.fileType == 'docx' || file.fileType == 'xls' || file.fileType == 'xlsx' || file.fileType == 'ppt'"
-                                               :href="'https://view.officeapps.live.com/op/view.aspx?src=' + file.url ">[{{index + 1}}]</a>
-                                            <a v-else :href="file.url"
-                                               target="_blank">[{{index + 1}}]</a>
-                                            </span>
-                                            <span v-else>未上传</span>
-                                        </span>
-                                    </template>
-                                </el-table-column>
+                                <!--<el-table-column-->
+                                <!--prop="electronicMaterial"-->
+                                <!--label="需要预审">-->
+                                <!--<template scope="scope">-->
+                                <!--{{scope.row.electronicMaterial ? '是 ' : '否'}}-->
+                                <!--</template>-->
+                                <!--</el-table-column>-->
                             </el-table>
 
                         </el-tab-pane>
@@ -380,17 +398,18 @@
                             </div>
                         </el-tab-pane>
                         <el-tab-pane label="内部办理流程描述" name="itemStep">
-                            <div id="itemStepInfo" style="white-space:pre-wrap" v-html="itemVo.workflowDescription"></div>
+                            <div id="itemStepInfo" style="white-space:pre-wrap"
+                                 v-html="itemVo.workflowDescription"></div>
                         </el-tab-pane>
                     </el-tabs>
-
                     <!-- 打印按钮-->
                     <div v-if="itemNumber.status==3" style="margin-top:20px;">
                         <el-button type="primary" @click="print_ywsld">打印业务受理单</el-button>
                         <!--<el-button type="primary" @click="print_wlzyd">打印物料转移单</el-button>-->
                     </div>
 
-                    <div class="block full-width" style="margin-top:20px;" v-if="itemNumber.status==6 || (companyInfo.id && itemVo.id && !itemNumber.id)">
+                    <div class="block full-width" style="margin-top:20px;"
+                         v-if="itemNumber.status==6">
                         <el-input
                                 type="textarea"
                                 :autosize="{ minRows: 2, maxRows: 4}"
@@ -398,25 +417,14 @@
                                 v-model="remark">
                         </el-input>
                     </div>
-                    <div v-if="companyInfo.id && itemVo.id && !itemNumber.id"  style="margin-top:20px;">
-                        <el-button type="primary" @click="submitNoPretrial">提交收件</el-button>
-                        <el-button type="primary" @click="rejectNoPretrial">不予受理</el-button>
-                    </div>
-                    <div style="margin: 20px 0;"></div>
-                    <el-button-group>
-                        <el-button v-if="itemNumber.status==6" type="primary"
-                                   v-bind:disabled="itemNumber.applyFinishTime!=null"
-                                   @click="pass"
-                                   title="核验资料无误时点击此处">
-                            收件并转交部门
+                    <div v-if="itemNumber.status!=3" style="margin-top:20px;">
+                        <el-button :disabled="!itemNumber.id || itemNumber.status!=6" type="primary" @click="pass">
+                            确认收件
                         </el-button>
-                        <el-button v-if="itemNumber.status==6" type="primary"
-                                   v-bind:disabled="itemNumber.applyFinishTime!=null"
-                                   @click="reject">
+                        <el-button :disabled="!itemNumber.id || itemNumber.status!=6" type="primary" @click="reject">
                             不予受理
                         </el-button>
-
-                    </el-button-group>
+                    </div>
                 </div>
             </div>
         </el-col>
@@ -436,7 +444,11 @@
         submitWork,
         queryCompanyInfo,
         getItemInfo,
-        submitNoPretrial
+        submitNoPretrial,
+        getCurrentUserLoginedWindow,
+        sendFastRegPhoneCode,
+        checkMemberExist,
+        fastRegMember
     } from 'api/hallSystem/window/receive/windowAccept';
     import {getAllByNameOrbasicCode} from 'api/zwfwSystem/business/item';
 
@@ -445,8 +457,7 @@
         name: 'compositeWindowWork',
         data() {
             return {
-                getNumberBy_pretrialNumber: 'TEST002',
-                getNumberBy_itemCode: 'ZJYW000001',
+                getNumberBy_pretrialNumber: '',
                 getNumberBy_hallNumber: '',
                 materialSelection: [],
                 remark: '',
@@ -458,16 +469,17 @@
                 },
 
                 itemPretrialVo: {},
-                tabName: 'materialListPanel',
+                rightTabName: 'materialListPanel',
+                leftTabName: 'workPanel',
                 itemMaterialVoList: [],
                 window: {},
                 itemWindowUserName: '',
-                testStatus: '1',
-                devMockWindowKey: '',
+                loginCallerKey: '',
                 itemCode: '',
-                memberCode: '91610104MA6U0WNB9B',
+                memberCode: '',
                 memberRealname: '',
                 memberPhone: '',
+                phoneCode: '',
                 companyInfo: {
                     id: '',
                     node_id: '',
@@ -497,7 +509,9 @@
                     vtype: ''
                 },
                 optionsName: [],
-                selectedItem: {}
+                selectedItem: {},
+                windowInfo: {},
+                doFastReg: false
             }
         },
 //        beforeRouteEnter(to, from, next) {
@@ -513,7 +527,7 @@
              * */
             submitNoPretrial() {
                 let _this = this;
-                let checked_m = this.materialSelection.map(function(m) {
+                let checked_m = this.materialSelection.map(function (m) {
                     return m.id;
                 });
                 submitNoPretrial({
@@ -543,9 +557,6 @@
                         this.$message.error('提交出错 ，' + response.msg);
                     }
                 });
-            },
-            rejectNoPretrial() {
-
             },
             /**
              * 查询企业信息
@@ -607,14 +618,64 @@
              */
             loginToWindow() {
                 loginToWindow({
-                    windowKey: this.devMockWindowKey
+                    callerKey: this.loginCallerKey
                 }).then(response => {
                     if (response.httpCode === 200) {
+                        this.windowInfo = response.data;
                         this.$message.success('登录到窗口');
                     } else {
                         this.$message.error(response.msg);
                     }
                 });
+            },
+            /**
+             * 检测用户是否注册，如果注册，返回用户信息，如果没有注册显示出快速注册界面
+             * */
+            checkMemberExist() {
+                checkMemberExist({
+                    memberCode: this.memberCode
+                }).then(response => {
+                    if (response.httpCode === 200) {
+                        if (response.data == null) {
+                            //不存在
+                            this.$message.warning("用户不存在，请注册");
+                            this.doFastReg = true;
+                        } else {
+                            this.member = response.data;
+                            this.$message.success("用户存在，请继续操作");
+                            this.doFastReg = false;
+                        }
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                })
+            },
+
+            sendFastRegPhoneCode() {
+                sendFastRegPhoneCode({
+                    phone: this.memberPhone
+                }).then(response => {
+                    if (response.httpCode === 200) {
+                        this.$message.success("验证发送成功");
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                })
+            },
+            fastRegMember() {
+                fastRegMember({
+                    memberCode: this.memberCode,
+                    memberPhone: this.memberPhone,
+                    phoneCode: this.phoneCode,
+                    memberRealname: this.memberRealname
+                }).then(response => {
+                    if (response.httpCode === 200) {
+                        this.$message.success("用户注册成功");
+                        this.doFastReg = false;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                })
             },
             /**
              * 抽号 - 根据预审号码
@@ -640,7 +701,10 @@
             takeNumberByItemCode() {
                 let _this = this;
                 takeNumberByItemCode({
-                    itemCode: this.getNumberBy_itemCode
+                    itemCode: this.itemVo.basicCode,
+                    memberCode: this.memberCode,
+                    memberRealname: this.memberRealname,
+                    memberPhone: this.memberPhone
                 }).then(response => {
                     if (response.httpCode === 200) {
                         _this.$message.success('抽到的号码是：' + response.data.callNumber);
@@ -785,7 +849,7 @@
              */
             pass() {
                 let _this = this;
-                let checked_m = this.materialSelection.map(function(m) {
+                let checked_m = this.materialSelection.map(function (m) {
                     return m.id;
                 });
                 let _itemNumber = _this.itemNumber;
@@ -940,12 +1004,23 @@
              * @param tab
              * @param event
              */
-            handleTabClick(tab, event) {
+            handleRightTabClick(tab, event) {
                 console.log(tab, event);
             }
         },
         mounted() {
-
+            getCurrentUserLoginedWindow().then(response => {
+                if (response.httpCode == 200) {
+                    if (response.data != null) {
+                        console.log(response.data);
+                        this.windowInfo = response.data;
+                    } else {
+                        //表示当前登录的ｗｅｂ用户没有登录到窗口
+                    }
+                } else {
+                    this.$message.error('查询当前登录用户当前呼叫器登录的窗口错误');
+                }
+            });
         }
     }
 </script>
