@@ -368,17 +368,21 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="显示状态" prop="showStatus">
-                    <el-select>
-                        <el-option v-for="item in enums['ShowStatus']" :key="item.code"
-                                   :value="item.code" :label="item.value"></el-option>
-                    </el-select>
-                </el-form-item>
                 <el-form-item label="中介服务" prop="mediumService">
                     <el-input v-model="zwfwItem.mediumService"></el-input>
                 </el-form-item>
                 <el-form-item label="常见问题" prop="commonRequestion">
                     <el-input v-model="zwfwItem.commonRequestion"></el-input>
+                </el-form-item>
+                <el-form-item label="显示方式" prop="showStatus">
+                    <el-radio-group v-model="zwfwItem.showStatus">
+                        <el-radio v-for="item in enums['ShowStatus']"
+                                  :key="item.code"
+                                  :label="item.code"
+                                  :value="item.code">
+                            <span style="font-weight:normal;">{{item.value}}</span>
+                        </el-radio>
+                    </el-radio-group>
                 </el-form-item>
                 <el-form-item label="备注" prop="remark">
                     <el-input v-model="zwfwItem.remark"></el-input>
