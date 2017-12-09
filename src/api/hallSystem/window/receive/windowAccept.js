@@ -147,3 +147,39 @@ export function getCurrentUserLoginedWindow() {
         params: {}
     });
 }
+
+/**
+ * 检测用户是否有账号
+ * @param query
+ */
+export function checkMemberExist(query) {
+    return fetch({
+        url: '/api/hallSystem/hallCompositeWindow/checkMemberExist',
+        method: 'post',
+        params: query
+    });
+}
+
+/**
+ * 获取快速注册手机验证码
+ * @param query
+ */
+export function sendFastRegPhoneCode(query) {
+    return fetch({
+        url: '/api/hallSystem/hallCompositeWindow/sendFastRegPhoneCode',
+        method: 'post',
+        params: query
+    });
+}
+
+/**
+ * 快速注册会员账号，后台会验证验证码，如果手机验证码不正确会注册失败
+ * @param query
+ */
+export function fastRegMember(query) {
+    return fetch({
+        url: '/api/hallSystem/hallCompositeWindow/fastRegMember',
+        method: 'post',
+        params: query
+    });
+}

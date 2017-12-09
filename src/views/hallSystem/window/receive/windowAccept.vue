@@ -137,15 +137,25 @@
                             </el-row>
                             <div style="margin-top:50px;">事项抽号：</div>
                             <el-row type="flex" justify="center">
-                                <el-input v-model="memberCode" placeholder="输入企业统一信用代码或身份证号"
-                                          @change="queryCompanyInfo"></el-input>
-                                <!--<el-button type="primary" @click="queryCompanyInfo">身份查询</el-button>-->
+                                <el-input v-model="memberCode" placeholder="输入企业统一信用代码或身份证号"></el-input>
+                                <el-button type="primary" @click="checkMemberExist()">用户检测</el-button>
                             </el-row>
                             <el-row type="flex" justify="center">
                                 <el-input v-model="memberRealname" placeholder="抽号人姓名">
                                 </el-input>
                                 <el-input v-model="memberPhone" placeholder="抽号人手机号">
                                 </el-input>
+
+                            </el-row>
+                            <el-row v-show="doFastReg" type="flex" justify="center">
+                                <el-button type="primary" @click="sendFastRegPhoneCode"
+                                           :disabled="!doFastReg">发送注册验证码
+                                </el-button>
+                                <el-input v-model="phoneCode" :disabled="!doFastReg" placeholder="输入手机收到的验证码">
+                                </el-input>
+                                <el-button type="primary" @click="fastRegMember"
+                                           :disabled="!doFastReg">快速注册用户
+                                </el-button>
                             </el-row>
                             <el-row type="flex" justify="center">
                                 <el-select
@@ -162,8 +172,9 @@
                                             :value="item.id">
                                     </el-option>
                                 </el-select>
+
                                 <el-button type="primary" @click="takeNumberByItemCode"
-                                           :disabled="!itemVo.id || !memberRealname|| !memberPhone">事项抽号
+                                           :disabled="!itemVo.id || !member.id">事项抽号
                                 </el-button>
                             </el-row>
 
@@ -434,7 +445,10 @@
         queryCompanyInfo,
         getItemInfo,
         submitNoPretrial,
-        getCurrentUserLoginedWindow
+        getCurrentUserLoginedWindow,
+        sendFastRegPhoneCode,
+        checkMemberExist,
+        fastRegMember
     } from 'api/hallSystem/window/receive/windowAccept';
     import {getAllByNameOrbasicCode} from 'api/zwfwSystem/business/item';
 
@@ -465,6 +479,7 @@
                 memberCode: '',
                 memberRealname: '',
                 memberPhone: '',
+                phoneCode: '',
                 companyInfo: {
                     id: '',
                     node_id: '',
@@ -495,7 +510,8 @@
                 },
                 optionsName: [],
                 selectedItem: {},
-                windowInfo: {}
+                windowInfo: {},
+                doFastReg: false
             }
         },
 //        beforeRouteEnter(to, from, next) {
@@ -611,6 +627,55 @@
                         this.$message.error(response.msg);
                     }
                 });
+            },
+            /**
+             * 检测用户是否注册，如果注册，返回用户信息，如果没有注册显示出快速注册界面
+             * */
+            checkMemberExist() {
+                checkMemberExist({
+                    memberCode: this.memberCode
+                }).then(response => {
+                    if (response.httpCode === 200) {
+                        if (response.data == null) {
+                            //不存在
+                            this.$message.warning("用户不存在，请注册");
+                            this.doFastReg = true;
+                        } else {
+                            this.member = response.data;
+                            this.$message.success("用户存在，请继续操作");
+                            this.doFastReg = false;
+                        }
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                })
+            },
+
+            sendFastRegPhoneCode() {
+                sendFastRegPhoneCode({
+                    phone: this.memberPhone
+                }).then(response => {
+                    if (response.httpCode === 200) {
+                        this.$message.success("验证发送成功");
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                })
+            },
+            fastRegMember() {
+                fastRegMember({
+                    memberCode: this.memberCode,
+                    memberPhone: this.memberPhone,
+                    phoneCode: this.phoneCode,
+                    memberRealname: this.memberRealname
+                }).then(response => {
+                    if (response.httpCode === 200) {
+                        this.$message.success("用户注册成功");
+                        this.doFastReg = false;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                })
             },
             /**
              * 抽号 - 根据预审号码
