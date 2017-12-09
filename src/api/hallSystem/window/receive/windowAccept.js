@@ -125,6 +125,7 @@ export function getItemInfo(query) {
         params: query
     });
 }
+
 /**
  * 综合窗口提交非预审的收件
  * */
@@ -133,5 +134,16 @@ export function submitNoPretrial(query) {
         url: '/api/hallSystem/hallCompositeWindow/submitNoPretrial',
         method: 'post',
         params: query
+    });
+}
+
+/**
+ * 查询当前登录的后台用户用户登录的窗口
+ */
+export function getCurrentUserLoginedWindow() {
+    return fetch({
+        url: '/api/hallSystem/hallCompositeWindow/getCurrentUserLoginedWindow',
+        method: 'post',
+        params: {}
     });
 }

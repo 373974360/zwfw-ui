@@ -88,7 +88,7 @@ service.interceptors.response.use(
                 });
             }
             const refreshtoken = response.headers.refresh_token;
-            if(refreshtoken){
+            if (refreshtoken) {
                 // 刷新token
                 store.dispatch('RefreshToken').then(() => {
                     console.dir("刷新token成功");
@@ -98,11 +98,20 @@ service.interceptors.response.use(
         return response.data;
     },
     error => {
-        Message({
-            message: error.message,
-            type: 'error',
-            duration: 5 * 1000
-        });
+        //error.response.data 表示的是后台返回的内容
+        if (error.response.data && error.response.data.httpCode == 409) {
+            Message({
+                message: error.response.data.msg,
+                type: 'error',
+                duration: 10 * 1000
+            });
+        } else {
+            Message({
+                message: error.message,
+                type: 'error',
+                duration: 5 * 1000
+            });
+        }
         return Promise.reject(error);
     }
 );
