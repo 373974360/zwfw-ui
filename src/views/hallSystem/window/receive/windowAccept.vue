@@ -475,7 +475,6 @@
                 window: {},
                 itemWindowUserName: '',
                 loginCallerKey: '',
-                itemCode: '',
                 memberCode: '',
                 memberRealname: '',
                 memberPhone: '',
@@ -707,7 +706,7 @@
             takeNumberByItemCode() {
                 let _this = this;
                 takeNumberByItemCode({
-                    itemCode: this.itemVo.basicCode,
+                    itemId: this.itemVo.id,
                     name: this.memberRealname,
                     phone: this.memberPhone,
                     iDNum:this.member.memberCode
