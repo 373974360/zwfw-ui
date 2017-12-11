@@ -1,11 +1,14 @@
 <template>
     <div class="login">
         <canvas id="canvas"></canvas>
+        <div class="topTitle">
+            <h1>西安市莲湖区行政审批服务局</h1>
+        </div>
         <div class="login-container">
             <el-form autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left"
                      label-width="0px"
                      class="card-box login-form">
-                <h3 class="title">西安德雅通科技有限公司</h3>
+                <h3 class="title">政务服务管理系统</h3>
                 <el-input type="hidden" v-model="loginForm.random"></el-input>
                 <el-row type="flex" justify="center">
                     <el-col :span="24">
@@ -153,6 +156,10 @@
         left: 0;
         background-color: #2d3a4b;
     }
+    .topTitle{
+        width:850px;margin: 0 auto; text-align: center;
+        h1{color: #00A0FF; margin-top: 100px;}
+    }
     .login-container {
         input:-webkit-autofill {
             -webkit-box-shadow: 0 0 0px 1000px #283443 inset !important;
@@ -183,6 +190,7 @@
             width: 430px;
         }
         .title {
+            font-size: 26px;
             margin: 0px auto;
             text-align: center;
             color: #FFFFFF;

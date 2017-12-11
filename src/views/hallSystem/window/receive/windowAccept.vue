@@ -3,181 +3,111 @@
         <el-col :span="10">
             <div class="grid-content ">
                 <div style="padding:10px">
-                    <el-row v-show="!windowInfo.id" type="flex" justify="center">
-                        <el-input v-model="loginCallerKey" placeholder="模拟叫号器操作，请先输入窗口编号登录">
-                        </el-input>
-                        <el-button type="primary" @click="loginToWindow" :disabled="!loginCallerKey">登录窗口</el-button>
-                    </el-row>
-                    <el-row v-show="windowInfo.id" type="flex" justify="center">
-                        <el-input :value="'已经登录到' + windowInfo.callerKey + '窗口'" disabled
-                                  placeholder="模拟叫号器操作，请先输入窗口编号登录"></el-input>
-                        <el-button type="primary" @click="windowInfo= {}">重新登录</el-button>
-                    </el-row>
                     <el-tabs v-model="leftTabName" type="card">
-                        <el-tab-pane label="业务受理" name="workPanel">
-
-                            <el-row type="flex" justify="center">
-                                <el-input v-model="getNumberBy_hallNumber" placeholder="请输入呼叫号">
-                                </el-input>
-                                <el-button type="primary" :disabled="!getNumberBy_hallNumber"
-                                           @click="queryNumberByCallNumber">按呼叫号查询
-                                </el-button>
-                                <el-button type="primary" @click="queryCurrentNumber">查询当前叫号</el-button>
+                        <el-tab-pane label="业务受理" name="workPanelItl" v-if="false">
+                            <el-row :gutter="25">
+                                <el-col :span="19">
+                                    <el-button type="primary" @click="queryCurrentNumber">查询当前叫号</el-button>
+                                </el-col>
                             </el-row>
-                            <el-row type="flex" justify="center" style="margin-top:20px;">
-                                <el-button :disabled="!itemNumber.id || itemNumber.status!=1" type="primary"
-                                           @click="callNumber" title="设置当前号码为窗口已呼叫状态时点击">
-                                    叫号
-                                </el-button>
-                                <el-button :disabled="!itemNumber.id || itemNumber.status!=2" type="primary"
-                                           @click="welcomeNumber" title="申请人到达窗口时点击">
-                                    欢迎
-                                </el-button>
-                                <el-button :disabled="!itemNumber.id || itemNumber.status!=2" type="danger"
-                                           @click="skip" title="申请人未到达窗口，跳过此号码时点击">
-                                    跳过号码
-                                </el-button>
+                            <el-row :gutter="25">
+                                <el-col :span="19">
+                                    <el-input v-model="memberCode" placeholder="输入企业统一信用代码或身份证号">
+                                        <template slot="prepend">用户信息：</template>
+                                    </el-input>
+                                </el-col>
+                                <el-col :span="4">
+                                    <el-button type="primary" @click="checkMemberExist()">查找用户</el-button>
+                                </el-col>
                             </el-row>
-                            <div id="numberInfo" v-show="itemNumber.id" class="tableDiv">
-                                <table>
-                                    <tr>
-                                        <th width="140">呼叫号:</th>
-                                        <td><strong class="font-size:5rem">{{itemNumber.orderNo}}</strong></td>
-                                    </tr>
-                                    <tr>
-                                        <th>办理事项:</th>
-                                        <td style="color:red">{{itemVo.name}}</td>
-                                    </tr>
-                                    <!--<tr>-->
-                                    <!--<th width="140">所需服务:</th>-->
-                                    <!--<td style="color:red"><strong class="font-size:5rem">{{itemNumber.type | enum-->
-                                    <!--'ItemWindowSupport'}}</strong></td>-->
-                                    <!--</tr>-->
-                                    <tr v-if="member!=null && member.naturePerson!=null">
-                                        <th>申报人:</th>
-                                        <td>{{member.naturePerson.name}}</td>
-                                    </tr>
-                                    <tr v-if="member!=null && member.naturePerson!=null">
-                                        <th>申报人联系电话:</th>
-                                        <td>{{member.naturePerson.phone}}</td>
-                                    </tr>
-                                    <tr v-if="member!=null && member.legalPerson!=null">
-                                        <th>申报人联系电话:</th>
-                                        <td>{{member.legalPerson.phone}}</td>
-                                    </tr>
-                                    <tr v-if="member!=null && member.legalPerson!=null">
-                                        <th>办事企业:</th>
-                                        <td>{{member.legalPerson.companyName}}</td>
-                                    </tr>
-                                    <tr v-if="itemPretrialVo!=null">
-                                        <th>预审号码:</th>
-                                        <td>{{itemPretrialVo.processNumber}}</td>
-                                    </tr>
-                                    <tr v-else>
-                                        <th>预审状态:</th>
-                                        <td>无预审</td>
-                                    </tr>
-                                    <tr v-if="itemPretrialVo!=null">
-                                        <th>预审状态:</th>
-                                        <td>{{itemPretrialVo.status | enums('PretrialStatus')}}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>排号状态:</th>
-                                        <td style="color:red">{{itemNumber.status | enums('ItemNumberStatus')}}
-                                        </td>
-                                    </tr>
-                                    <tr v-if="itemNumber.status!=6">
-                                        <th>备注:</th>
-                                        <td>{{itemNumber.remark}}</td>
-                                    </tr>
-                                    <tr width="140">
-                                        <th>受理窗口:</th>
-                                        <td style="color:red">
-                                            <strong v-if="window!=null" class="font-size:5rem">{{window.name}}</strong>
-                                            <strong v-if="window==null" class="font-size:5rem">无</strong>
-                                        </td>
-                                    </tr>
-                                    <tr v-show="itemWindowUserName">
-                                        <th>工作人员:</th>
-                                        <td>{{itemWindowUserName}}</td>
-                                    </tr>
-                                    <tr>
-                                        <th width="140">领号时间:</th>
-                                        <td>{{itemNumber.takeTime | date('YYYY-MM-DD HH:mm') }}
-                                        </td>
-                                    </tr>
-                                    <tr v-show="itemNumber.callTime">
-                                        <th width="140">呼叫时间:</th>
-                                        <td>{{itemNumber.callTime | date('YYYY-MM-DD HH:mm') }}
-                                        </td>
-                                    </tr>
-                                    <tr v-show="itemNumber.welcomeTime">
-                                        <th>欢迎时间:</th>
-                                        <td>{{itemNumber.welcomeTime | date('YYYY-MM-DD HH:mm') }}
-                                        </td>
-                                    </tr>
-                                    <tr v-show="itemNumber.applyFinishTime">
-                                        <th>窗口完成处理时间:</th>
-                                        <td>{{itemNumber.applyFinishTime | date('YYYY-MM-DD HH:mm') }}
-                                        </td>
-                                    </tr>
-                                </table>
-
-                            </div>
-
+                            <el-row :gutter="25" v-show="doFastReg">
+                                <el-col :span="11">
+                                    <el-input v-model="memberRealname" placeholder="申请人姓名或企业名称">
+                                    </el-input>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-input v-model="memberPhone" placeholder="申请人当前可用手机号">
+                                    </el-input>
+                                </el-col>
+                                <!--<el-col :span="5">
+                                    <el-button type="primary" @click="sendFastRegPhoneCode"
+                                               :disabled="!doFastReg">发送验证码
+                                    </el-button>
+                                </el-col>-->
+                            </el-row>
+                            <!--<el-row :gutter="25" v-show="doFastReg">
+                                <el-col :span="19">
+                                    <el-input v-model="phoneCode" :disabled="!doFastReg" placeholder="输入手机收到的验证码"></el-input>
+                                </el-col>
+                                <el-col :span="4">
+                                    <el-button type="primary" @click="fastRegMember"
+                                               :disabled="!doFastReg">快速注册
+                                    </el-button>
+                                </el-col>
+                            </el-row>-->
                         </el-tab-pane>
-                        <el-tab-pane label="虚拟抽号机" name="virtualPanel">
-                            <div>预审抽号：</div>
-                            <el-row type="flex" justify="center">
-                                <el-input v-model="getNumberBy_processNumber" placeholder="如根据预审号抽号，请输入预审号"></el-input>
-                                <el-button type="primary" @click="takeNumberByProcessNumber"
-                                           :disabled="!getNumberBy_processNumber">预审抽号
-                                </el-button>
+                        <el-tab-pane label="业务受理" name="virtualPanelLianhu">
+                            <el-row :gutter="25">
+                                <el-col :span="19">
+                                    <el-cascader :options="categoryCascader" class="filter-item"
+                                                 :show-all-levels="true" clearable filterable expand-trigger="hover"
+                                                 :change-on-select="true" style="width: 180px" placeholder="选择事项分类">
+                                    </el-cascader>
+                                </el-col>
                             </el-row>
-                            <div style="margin-top:50px;">用户快速注册：</div>
-                            <el-row type="flex" justify="center">
-                                <el-input v-model="memberCode" placeholder="输入企业统一信用代码或身份证号"></el-input>
-                                <el-button type="primary" @click="checkMemberExist()">用户检测快速注册</el-button>
+                            <el-row :gutter="25">
+                                <el-col :span="19">
+                                    <el-select
+                                            v-model="selectedItem"
+                                            filterable
+                                            remote
+                                            placeholder="请输入事项名称或基本编码后选择事项"
+                                            :remote-method="queryItem"
+                                            @change="changeItem" style="width:100%">
+                                        <el-option
+                                                v-for="item in optionsName"
+                                                :key="item.id"
+                                                :label="item.name"
+                                                :value="item.id">
+                                        </el-option>
+                                    </el-select>
+                                </el-col>
                             </el-row>
-                            <el-row type="flex" justify="center">
-                                <el-input v-model="memberRealname" placeholder="申请人姓名或企业名称">
-                                </el-input>
-                                <el-input v-model="memberPhone" placeholder="申请人当前可用手机号">
-                                </el-input>
+                            <el-row :gutter="25">
+                                <el-col :span="19">
+                                    <el-input v-model="memberCode" placeholder="输入企业统一信用代码或身份证号">
+                                        <template slot="prepend">用户信息：</template>
+                                    </el-input>
+                                </el-col>
+                                <el-col :span="4">
+                                    <el-button type="primary" @click="checkMemberExist()">查找用户</el-button>
+                                </el-col>
                             </el-row>
-                            <el-row v-show="doFastReg" type="flex" justify="center">
-                                <el-button type="primary" @click="sendFastRegPhoneCode"
-                                           :disabled="!doFastReg">发送注册验证码
-                                </el-button>
-                                <el-input v-model="phoneCode" :disabled="!doFastReg" placeholder="输入手机收到的验证码">
-                                </el-input>
-                                <el-button type="primary" @click="fastRegMember"
-                                           :disabled="!doFastReg">快速注册用户
-                                </el-button>
+                            <el-row :gutter="25" v-show="doFastReg">
+                                <el-col :span="11">
+                                    <el-input v-model="memberRealname" placeholder="申请人姓名或企业名称">
+                                    </el-input>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-input v-model="memberPhone" placeholder="申请人当前可用手机号">
+                                    </el-input>
+                                </el-col>
+                                <!--<el-col :span="5">
+                                    <el-button type="primary" @click="sendFastRegPhoneCode"
+                                               :disabled="!doFastReg">发送验证码
+                                    </el-button>
+                                </el-col>-->
                             </el-row>
-                            <div style="margin-top:50px;">事项抽号：</div>
-                            <el-row type="flex" justify="center">
-                                <el-select
-                                        v-model="selectedItem"
-                                        filterable
-                                        remote
-                                        placeholder="请输入事项名称或基本编码后选择事项"
-                                        :remote-method="queryItem"
-                                        @change="changeItem" style="width:100%">
-                                    <el-option
-                                            v-for="item in optionsName"
-                                            :key="item.id"
-                                            :label="item.name"
-                                            :value="item.id">
-                                    </el-option>
-                                </el-select>
-
-                                <el-button type="primary" @click="takeNumberByItemCode"
-                                           :disabled="!itemVo.id || !member.id">事项抽号
-                                </el-button>
-                            </el-row>
-
+                            <!--<el-row :gutter="25" v-show="doFastReg">
+                                <el-col :span="19">
+                                    <el-input v-model="phoneCode" :disabled="!doFastReg" placeholder="输入手机收到的验证码"></el-input>
+                                </el-col>
+                                <el-col :span="4">
+                                    <el-button type="primary" @click="fastRegMember"
+                                               :disabled="!doFastReg">快速注册
+                                    </el-button>
+                                </el-col>
+                            </el-row>-->
                             <div id="companyInfo" v-if="companyInfo.id" class="tableDiv">
                                 <table>
                                     <tr>
@@ -231,7 +161,173 @@
                                 </table>
                             </div>
                         </el-tab-pane>
+                        <el-tab-pane label="虚拟抽号机" name="virtualPanel">
+                            <el-row v-show="!windowInfo.id" :gutter="25">
+                                <el-col :span="19">
+                                    <el-input v-model="loginCallerKey" placeholder="模拟叫号器操作，请先输入窗口编号登录">
+                                    </el-input>
+                                </el-col>
+                                <el-col :span="4">
+                                    <el-button type="primary" @click="loginToWindow" :disabled="!loginCallerKey">登录窗口
+                                    </el-button>
+                                </el-col>
+                            </el-row>
+                            <el-row v-show="windowInfo.id" :gutter="25">
+                                <el-col :span="19">
+                                    <el-input :value="'已经登录到' + windowInfo.callerKey + '窗口'" disabled
+                                              placeholder="模拟叫号器操作，请先输入窗口编号登录"></el-input>
+                                </el-col>
+                                <el-col :span="4">
+                                    <el-button type="primary" @click="windowInfo= {}">重新登录</el-button>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="25">
+                                <el-col :span="19">
+                                    <el-select
+                                            v-model="selectedItem"
+                                            filterable
+                                            remote
+                                            placeholder="请输入事项名称或基本编码后选择事项"
+                                            :remote-method="queryItem"
+                                            @change="changeItem" style="width:100%">
+                                        <el-option
+                                                v-for="item in optionsName"
+                                                :key="item.id"
+                                                :label="item.name"
+                                                :value="item.id">
+                                        </el-option>
+                                    </el-select>
+                                </el-col>
+                                <el-col :span="4">
+                                    <el-button type="primary" @click="takeNumberByItemCode"
+                                               :disabled="!itemVo.id || !member.id">事项抽号
+                                    </el-button>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="25">
+                                <el-col :span="19">
+                                    <el-input v-model="getNumberBy_processNumber" placeholder="如根据预审号抽号，请输入预审号">
+                                    </el-input>
+                                </el-col>
+                                <el-col :span="4">
+                                    <el-button type="primary" @click="takeNumberByProcessNumber"
+                                               :disabled="!getNumberBy_processNumber">预审抽号
+                                    </el-button>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="25">
+                                <el-col :span="19">
+                                    <el-input v-model="getNumberBy_hallNumber" placeholder="请输入呼叫号">
+                                    </el-input>
+                                </el-col>
+                                <el-col :span="4">
+                                    <el-button type="primary" :disabled="!getNumberBy_hallNumber"
+                                               @click="queryNumberByCallNumber">查询事项
+                                    </el-button>
+                                </el-col>
+                            </el-row>
+                            <el-row type="flex" justify="center" style="margin-top:20px;">
+                                <el-button :disabled="!itemNumber.id || itemNumber.status!=1" type="primary"
+                                           @click="callNumber" title="设置当前号码为窗口已呼叫状态时点击">
+                                    叫号
+                                </el-button>
+                                <el-button :disabled="!itemNumber.id || itemNumber.status!=2" type="primary"
+                                           @click="welcomeNumber" title="申请人到达窗口时点击">
+                                    欢迎
+                                </el-button>
+                                <el-button :disabled="!itemNumber.id || itemNumber.status!=2" type="danger"
+                                           @click="skip" title="申请人未到达窗口，跳过此号码时点击">
+                                    跳过号码
+                                </el-button>
+                            </el-row>
+                        </el-tab-pane>
                     </el-tabs>
+                    <div id="numberInfo" v-show="itemNumber.id" class="tableDiv">
+                        <table>
+                            <tr>
+                                <th width="140">呼叫号:</th>
+                                <td><strong class="font-size:5rem">{{itemNumber.orderNo}}</strong></td>
+                            </tr>
+                            <tr>
+                                <th>办理事项:</th>
+                                <td style="color:red">{{itemVo.name}}</td>
+                            </tr>
+                            <!--<tr>-->
+                            <!--<th width="140">所需服务:</th>-->
+                            <!--<td style="color:red"><strong class="font-size:5rem">{{itemNumber.type | enum-->
+                            <!--'ItemWindowSupport'}}</strong></td>-->
+                            <!--</tr>-->
+                            <tr v-if="member!=null && member.naturePerson!=null">
+                                <th>申报人:</th>
+                                <td>{{member.naturePerson.name}}</td>
+                            </tr>
+                            <tr v-if="member!=null && member.naturePerson!=null">
+                                <th>申报人联系电话:</th>
+                                <td>{{member.naturePerson.phone}}</td>
+                            </tr>
+                            <tr v-if="member!=null && member.legalPerson!=null">
+                                <th>申报人联系电话:</th>
+                                <td>{{member.legalPerson.phone}}</td>
+                            </tr>
+                            <tr v-if="member!=null && member.legalPerson!=null">
+                                <th>办事企业:</th>
+                                <td>{{member.legalPerson.companyName}}</td>
+                            </tr>
+                            <tr v-if="itemPretrialVo!=null">
+                                <th>预审号码:</th>
+                                <td>{{itemPretrialVo.processNumber}}</td>
+                            </tr>
+                            <tr v-else>
+                                <th>预审状态:</th>
+                                <td>无预审</td>
+                            </tr>
+                            <tr v-if="itemPretrialVo!=null">
+                                <th>预审状态:</th>
+                                <td>{{itemPretrialVo.status | enums('PretrialStatus')}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>排号状态:</th>
+                                <td style="color:red">{{itemNumber.status | enums('ItemNumberStatus')}}
+                                </td>
+                            </tr>
+                            <tr v-if="itemNumber.status!=6">
+                                <th>备注:</th>
+                                <td>{{itemNumber.remark}}</td>
+                            </tr>
+                            <tr width="140">
+                                <th>受理窗口:</th>
+                                <td style="color:red">
+                                    <strong v-if="window!=null" class="font-size:5rem">{{window.name}}</strong>
+                                    <strong v-if="window==null" class="font-size:5rem">无</strong>
+                                </td>
+                            </tr>
+                            <tr v-show="itemWindowUserName">
+                                <th>工作人员:</th>
+                                <td>{{itemWindowUserName}}</td>
+                            </tr>
+                            <tr>
+                                <th width="140">领号时间:</th>
+                                <td>{{itemNumber.takeTime | date('YYYY-MM-DD HH:mm') }}
+                                </td>
+                            </tr>
+                            <tr v-show="itemNumber.callTime">
+                                <th width="140">呼叫时间:</th>
+                                <td>{{itemNumber.callTime | date('YYYY-MM-DD HH:mm') }}
+                                </td>
+                            </tr>
+                            <tr v-show="itemNumber.welcomeTime">
+                                <th>欢迎时间:</th>
+                                <td>{{itemNumber.welcomeTime | date('YYYY-MM-DD HH:mm') }}
+                                </td>
+                            </tr>
+                            <tr v-show="itemNumber.applyFinishTime">
+                                <th>窗口完成处理时间:</th>
+                                <td>{{itemNumber.applyFinishTime | date('YYYY-MM-DD HH:mm') }}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             </div>
         </el-col>
@@ -451,6 +547,7 @@
         fastRegMember
     } from 'api/hallSystem/window/receive/windowAccept';
     import {getAllByNameOrbasicCode} from 'api/zwfwSystem/business/item';
+    import {getCategoryCascader} from 'api/zwfwSystem/business/category';
 
 
     export default {
@@ -470,7 +567,7 @@
 
                 itemPretrialVo: {},
                 rightTabName: 'materialListPanel',
-                leftTabName: 'workPanel',
+                leftTabName: 'virtualPanelLianhu',
                 itemMaterialVoList: [],
                 window: {},
                 itemWindowUserName: '',
@@ -511,7 +608,9 @@
                 optionsName: [],
                 selectedItem: {},
                 windowInfo: {},
-                doFastReg: false
+                doFastReg: false,
+                // categoryId: 7344364064835072,
+                categoryCascader: []
             }
         },
 //        beforeRouteEnter(to, from, next) {
@@ -520,7 +619,15 @@
 //            })
 //        },
         methods: {
-
+            getCategoryCascader(){
+                getCategoryCascader().then(response => {
+                    if (response.httpCode === 200) {
+                        this.categoryCascader = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                })
+            },
             /**
              *
              * 提交非预审收件
@@ -644,10 +751,10 @@
                             this.member = response.data;
                             this.$message.success("用户存在，请继续操作");
                             this.doFastReg = false;
-                            if(!this.memberRealname) {
+                            if (!this.memberRealname) {
                                 this.memberRealname = this.member.name;
                             }
-                            if(!this.memberPhone) {
+                            if (!this.memberPhone) {
                                 this.memberPhone = this.member.mobilephone;
                             }
                         }
@@ -710,7 +817,7 @@
                     itemCode: this.itemVo.basicCode,
                     name: this.memberRealname,
                     phone: this.memberPhone,
-                    iDNum:this.member.memberCode
+                    iDNum: this.member.memberCode
                 }).then(response => {
                     if (response.httpCode === 200) {
                         _this.$message.success('抽到的号码是：' + response.data.callNumber);
@@ -1027,6 +1134,7 @@
                     this.$message.error('查询当前登录用户当前呼叫器登录的窗口错误');
                 }
             });
+            this.getCategoryCascader();
         }
     }
 </script>
