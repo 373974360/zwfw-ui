@@ -49,7 +49,8 @@
                         <el-tab-pane label="业务受理" name="virtualPanelLianhu">
                             <el-row :gutter="25">
                                 <el-col :span="19">
-                                    <el-cascader @change="handleCategoryChange" :options="categoryCascader" class="filter-item"
+                                    <el-cascader @change="handleCategoryChange" :options="categoryCascader"
+                                                 class="filter-item"
                                                  :show-all-levels="true" clearable filterable expand-trigger="hover"
                                                  :change-on-select="true" style="width: 180px" placeholder="选择事项分类">
                                     </el-cascader>
@@ -78,7 +79,8 @@
                                     </el-input>
                                 </el-col>
                                 <el-col :span="4">
-                                    <el-button type="primary" @click="checkMemberExist() &queryCompanyInfo()">查找用户</el-button>
+                                    <el-button type="primary" @click="checkMemberExist() &queryCompanyInfo()">查找用户
+                                    </el-button>
                                 </el-col>
                             </el-row>
                             <el-row :gutter="25" v-show="doFastReg">
@@ -334,7 +336,7 @@
                 <div style="padding:10px">
                     <el-tabs v-model="rightTabName" type="card" @tab-click="handleRightTabClick">
                         <el-tab-pane label="所需资料" name="materialListPanel">
-                            <p v-if="itemNumber.status==6 || (companyInfo.id && itemVo.id && !itemNumber.id)">
+                            <p v-if="itemNumber.status==6 || (itemVo.id && !itemNumber.id)">
                                 勾选收取的材料：</p>
                             <el-table id="materiaTable"
                                       ref="itemMaterialVoList"
@@ -350,7 +352,7 @@
                                         width="50">
                                 </el-table-column>
                                 <el-table-column
-                                        v-if="itemNumber.status==6 || (companyInfo.id && itemVo.id && !itemNumber.id)"
+                                        v-if="itemNumber.status==6 || (itemVo.id && !itemNumber.id)"
                                         type="selection"
                                         prop="received"
                                         width="55">
@@ -512,7 +514,9 @@
                         </el-input>
                     </div>
                     <div v-if="itemNumber.status!=3" style="margin-top:20px;">
-                        <el-button :disabled="(itemNumber.id &&  itemNumber.status!=6)" type="primary" @click="pass">
+                        <el-button
+                                :disabled="(itemNumber.id &&  itemNumber.status!=6) || !memberPhone || !memberRealname ||!memberCode"
+                                type="primary" @click="pass">
                             确认收件
                         </el-button>
                         <el-button :disabled="!itemNumber.id || itemNumber.status!=6" type="primary" @click="reject">
@@ -608,7 +612,7 @@
                 doFastReg: false,
                 // categoryId: 7344364064835072,
                 categoryCascader: [],
-                itemCategory:null
+                itemCategory: null
             }
         },
 //        beforeRouteEnter(to, from, next) {
@@ -617,7 +621,7 @@
 //            })
 //        },
         methods: {
-            getCategoryCascader(){
+            getCategoryCascader() {
                 getCategoryCascader().then(response => {
                     if (response.httpCode === 200) {
                         this.categoryCascader = response.data;
@@ -638,11 +642,15 @@
                     memberCode: this.memberCode
                 }).then(response => {
                     if (response.httpCode === 200) {
-                        this.companyInfo = response.data;
+                        let c = response.data;
+                        if (c) {
+                            this.companyInfo = c;
+                            this.memberPhone = c.lxdh;
+                            this.memberRealname = c.qymc;
+                        }
                     } else {
                         this.companyInfo = {};
                     }
-//                    console.log(response);
                 })
             },
 
@@ -650,7 +658,7 @@
                 const listQueryName = {
                     name: undefined,
                     basicCode: undefined,
-                    itemCategories:this.itemCategory
+                    itemCategories: this.itemCategory
                 }
                 // this.selectedItem= null;
                 if (query !== '') {
@@ -674,7 +682,7 @@
             changeItem(itemId) {
                 // alert(itemId)
                 if (!itemId) {
-                    return ;
+                    return;
                 }
                 // this.itemVo = null;
                 // this.itemMaterialVoList= null;
@@ -691,8 +699,8 @@
                 });
             },
             //事项分类变化时触发
-            handleCategoryChange(value){
-                if(value.length>0) {
+            handleCategoryChange(value) {
+                if (value.length > 0) {
                     this.itemCategory = value[value.length - 1];
                     this.queryItem();
                 }
@@ -956,7 +964,7 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    if(!this.itemNumber.id){
+                    if (!this.itemNumber.id) {
                         submitNoPretrial({
                             itemId: this.itemVo.id,
                             memberCode: this.memberCode,
@@ -984,7 +992,7 @@
                                 this.$message.error('提交出错 ，' + response.msg);
                             }
                         });
-                    }else{
+                    } else {
                         submitWork({
                             numberId: _itemNumber.id,
                             status: 3,
