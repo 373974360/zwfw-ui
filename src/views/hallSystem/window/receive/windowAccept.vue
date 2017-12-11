@@ -20,7 +20,7 @@
                                     <el-button type="primary" @click="checkMemberExist()">查找用户</el-button>
                                 </el-col>
                             </el-row>
-                            <el-row :gutter="25" v-show="doFastReg">
+                            <el-row :gutter="25">
                                 <el-col :span="11">
                                     <el-input v-model="memberRealname" placeholder="申请人姓名或企业名称">
                                     </el-input>
@@ -732,6 +732,8 @@
                             //不存在
                             this.$message.warning("未注册");
                             this.doFastReg = true;
+                            this.memberRealname = '';
+                            this.memberPhone = '';
                         } else {
                             this.member = response.data;
                             this.$message.success("已注册");
