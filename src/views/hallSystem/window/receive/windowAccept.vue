@@ -49,7 +49,7 @@
                         <el-tab-pane label="业务受理" name="virtualPanelLianhu">
                             <el-row :gutter="25">
                                 <el-col :span="19">
-                                    <el-cascader :options="categoryCascader" class="filter-item"
+                                    <el-cascader @change="handleCategoryChange" :options="categoryCascader" class="filter-item"
                                                  :show-all-levels="true" clearable filterable expand-trigger="hover"
                                                  :change-on-select="true" style="width: 180px" placeholder="选择事项分类">
                                     </el-cascader>
@@ -60,9 +60,7 @@
                                     <el-select
                                             v-model="selectedItem"
                                             filterable
-                                            remote
                                             placeholder="请输入事项名称或基本编码后选择事项"
-                                            :remote-method="queryItem"
                                             @change="changeItem" style="width:100%">
                                         <el-option
                                                 v-for="item in optionsName"
@@ -80,7 +78,7 @@
                                     </el-input>
                                 </el-col>
                                 <el-col :span="4">
-                                    <el-button type="primary" @click="checkMemberExist()">查找用户</el-button>
+                                    <el-button type="primary" @click="checkMemberExist() &queryCompanyInfo()">查找用户</el-button>
                                 </el-col>
                             </el-row>
                             <el-row :gutter="25" v-show="doFastReg">
@@ -352,7 +350,7 @@
                                         width="50">
                                 </el-table-column>
                                 <el-table-column
-                                        v-if="itemNumber.status==6"
+                                        v-if="itemNumber.status==6 || (companyInfo.id && itemVo.id && !itemNumber.id)"
                                         type="selection"
                                         prop="received"
                                         width="55">
@@ -514,7 +512,7 @@
                         </el-input>
                     </div>
                     <div v-if="itemNumber.status!=3" style="margin-top:20px;">
-                        <el-button :disabled="!itemNumber.id || itemNumber.status!=6" type="primary" @click="pass">
+                        <el-button :disabled="(itemNumber.id &&  itemNumber.status!=6)" type="primary" @click="pass">
                             确认收件
                         </el-button>
                         <el-button :disabled="!itemNumber.id || itemNumber.status!=6" type="primary" @click="reject">
@@ -605,11 +603,12 @@
                     vtype: ''
                 },
                 optionsName: [],
-                selectedItem: {},
+                selectedItem: null,
                 windowInfo: {},
                 doFastReg: false,
                 // categoryId: 7344364064835072,
-                categoryCascader: []
+                categoryCascader: [],
+                itemCategory:null
             }
         },
 //        beforeRouteEnter(to, from, next) {
@@ -626,43 +625,6 @@
                         this.$message.error(response.msg);
                     }
                 })
-            },
-            /**
-             *
-             * 提交非预审收件
-             * */
-            submitNoPretrial() {
-                let _this = this;
-                let checked_m = this.materialSelection.map(function (m) {
-                    return m.id;
-                });
-                submitNoPretrial({
-                    itemId: this.selectedItem,
-                    memberCode: this.memberCode,
-                    memberRealname: this.memberRealname,
-                    memberPhone: this.memberPhone,
-                    received: checked_m.join(','),
-                    remark: this.remark
-                }).then(response => {
-                    if (response.httpCode === 200) {
-                        this.$message.success('提交成功');
-                        let data = response.data;
-                        if (data != null) {
-                            _this.itemNumber = data.itemNumber;
-                            _this.itemVo = data.itemVo;
-                            _this.member = data.member;
-                            _this.company = data.company;
-                            _this.itemPretrialVo = data.itemPretrialVo;
-                            _this.itemMaterialVoList = data.itemMaterialVoList;
-                            _this.window = data.window;
-                            _this.itemWindowUserName = data.itemWindowUserName;
-                        } else {
-                            this.$message.error('提交出错 ，' + response.msg);
-                        }
-                    } else {
-                        this.$message.error('提交出错 ，' + response.msg);
-                    }
-                });
             },
             /**
              * 查询企业信息
@@ -687,26 +649,35 @@
             queryItem(query) {
                 const listQueryName = {
                     name: undefined,
-                    basicCode: undefined
+                    basicCode: undefined,
+                    itemCategories:this.itemCategory
                 }
+                // this.selectedItem= null;
                 if (query !== '') {
                     if (/.*[\u4e00-\u9fa5]+.*$/.test(query)) {
                         listQueryName.name = query;
                     } else {
                         listQueryName.basicCode = query
                     }
-                    getAllByNameOrbasicCode(listQueryName).then(response => {
-                        if (response.httpCode === 200) {
-                            this.optionsName = response.data;
-                        } else {
-                            this.$message.error('数据加载失败')
-                        }
-                    })
+
                 } else {
                     this.optionsName = [];
                 }
+                getAllByNameOrbasicCode(listQueryName).then(response => {
+                    if (response.httpCode === 200) {
+                        this.optionsName = response.data;
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
+                });
             },
             changeItem(itemId) {
+                // alert(itemId)
+                if (!itemId) {
+                    return ;
+                }
+                // this.itemVo = null;
+                // this.itemMaterialVoList= null;
                 getItemInfo({
                     id: itemId
                 }).then(response => {
@@ -718,6 +689,13 @@
                         this.$message.error('网络超时');
                     }
                 });
+            },
+            //事项分类变化时触发
+            handleCategoryChange(value){
+                if(value.length>0) {
+                    this.itemCategory = value[value.length - 1];
+                    this.queryItem();
+                }
             },
             /**
              * 模拟当前用户登录到窗口
@@ -744,11 +722,11 @@
                     if (response.httpCode === 200) {
                         if (response.data == null) {
                             //不存在
-                            this.$message.warning("用户不存在，请注册");
+                            this.$message.warning("未注册");
                             this.doFastReg = true;
                         } else {
                             this.member = response.data;
-                            this.$message.success("用户存在，请继续操作");
+                            this.$message.success("已注册");
                             this.doFastReg = false;
                             if (!this.memberRealname) {
                                 this.memberRealname = this.member.name;
@@ -978,33 +956,64 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    submitWork({
-                        numberId: _itemNumber.id,
-                        status: 3,
-                        remark: this.remark,
-                        received: checked_m.join(',')
-                    }).then(response => {
-                        if (response.httpCode === 200) {
-                            let data = response.data;
-                            if (data != null) {
-                                _this.itemNumber = data.itemNumber;
-                                _this.itemVo = data.itemVo;
-                                _this.member = data.member;
-                                _this.company = data.company;
-                                _this.itemPretrialVo = data.itemPretrialVo;
-                                _this.itemMaterialVoList = data.itemMaterialVoList;
-                                _this.window = data.window;
-                                _this.itemWindowUserName = data.itemWindowUserName;
+                    if(!this.itemNumber.id){
+                        submitNoPretrial({
+                            itemId: this.itemVo.id,
+                            memberCode: this.memberCode,
+                            memberRealname: this.memberRealname,
+                            memberPhone: this.memberPhone,
+                            received: checked_m.join(','),
+                            remark: this.remark
+                        }).then(response => {
+                            if (response.httpCode === 200) {
+                                this.$message.success('提交成功');
+                                let data = response.data;
+                                if (data != null) {
+                                    _this.itemNumber = data.itemNumber;
+                                    _this.itemVo = data.itemVo;
+                                    _this.member = data.member;
+                                    _this.company = data.company;
+                                    _this.itemPretrialVo = data.itemPretrialVo;
+                                    _this.itemMaterialVoList = data.itemMaterialVoList;
+                                    _this.window = data.window;
+                                    _this.itemWindowUserName = data.itemWindowUserName;
+                                } else {
+                                    this.$message.error('提交出错 ，' + response.msg);
+                                }
                             } else {
-                                _this.$message({
-                                    showClose: true,
-                                    message: '没有下一个号码了'
-                                });
+                                this.$message.error('提交出错 ，' + response.msg);
                             }
-                        } else {
-                            _this.$message.error(response.msg);
-                        }
-                    });
+                        });
+                    }else{
+                        submitWork({
+                            numberId: _itemNumber.id,
+                            status: 3,
+                            remark: this.remark,
+                            received: checked_m.join(',')
+                        }).then(response => {
+                            if (response.httpCode === 200) {
+                                let data = response.data;
+                                if (data != null) {
+                                    _this.itemNumber = data.itemNumber;
+                                    _this.itemVo = data.itemVo;
+                                    _this.member = data.member;
+                                    _this.company = data.company;
+                                    _this.itemPretrialVo = data.itemPretrialVo;
+                                    _this.itemMaterialVoList = data.itemMaterialVoList;
+                                    _this.window = data.window;
+                                    _this.itemWindowUserName = data.itemWindowUserName;
+                                } else {
+                                    _this.$message({
+                                        showClose: true,
+                                        message: '没有下一个号码了'
+                                    });
+                                }
+                            } else {
+                                _this.$message.error(response.msg);
+                            }
+                        });
+                    }
+
                 }).catch(() => {
                     this.$message({
                         type: 'info',
