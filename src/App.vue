@@ -9,3 +9,6 @@
       name: 'APP'
     }
 </script>
+<style rel="stylesheet/scss" lang="scss" scoped>
+    #app{overflow-x: hidden;}
+</style>
