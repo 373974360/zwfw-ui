@@ -20,7 +20,7 @@
                                     <el-button type="primary" @click="checkMemberExist()">查找用户</el-button>
                                 </el-col>
                             </el-row>
-                            <el-row :gutter="25" v-show="doFastReg">
+                            <el-row :gutter="25">
                                 <el-col :span="11">
                                     <el-input v-model="memberRealname" placeholder="申请人姓名或企业名称">
                                     </el-input>
@@ -49,7 +49,8 @@
                         <el-tab-pane label="业务受理" name="virtualPanelLianhu">
                             <el-row :gutter="25">
                                 <el-col :span="19">
-                                    <el-cascader @change="handleCategoryChange" :options="categoryCascader" class="filter-item"
+                                    <el-cascader v-model="categoryCascaderModel" @change="handleCategoryChange" :options="categoryCascader"
+                                                 class="filter-item"
                                                  :show-all-levels="true" clearable filterable expand-trigger="hover"
                                                  :change-on-select="true" style="width: 180px" placeholder="选择事项分类">
                                     </el-cascader>
@@ -59,7 +60,6 @@
                                 <el-col :span="19">
                                     <el-select
                                             v-model="selectedItem"
-                                            filterable
                                             placeholder="请输入事项名称或基本编码后选择事项"
                                             @change="changeItem" style="width:100%">
                                         <el-option
@@ -78,10 +78,11 @@
                                     </el-input>
                                 </el-col>
                                 <el-col :span="4">
-                                    <el-button type="primary" @click="checkMemberExist() &queryCompanyInfo()">查找用户</el-button>
+                                    <el-button type="primary" @click="checkMemberExist() & queryCompanyInfo()">查找用户
+                                    </el-button>
                                 </el-col>
                             </el-row>
-                            <el-row :gutter="25" v-show="doFastReg">
+                            <el-row :gutter="25">
                                 <el-col :span="11">
                                     <el-input v-model="memberRealname" placeholder="申请人姓名或企业名称">
                                     </el-input>
@@ -181,12 +182,18 @@
                             </el-row>
                             <el-row :gutter="25">
                                 <el-col :span="19">
+                                    <el-cascader v-model="categoryCascaderModel" @change="handleCategoryChange" :options="categoryCascader"
+                                                 class="filter-item"
+                                                 :show-all-levels="true" clearable filterable expand-trigger="hover"
+                                                 :change-on-select="true" style="width: 180px" placeholder="选择事项分类">
+                                    </el-cascader>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="25">
+                                <el-col :span="19">
                                     <el-select
                                             v-model="selectedItem"
-                                            filterable
-                                            remote
                                             placeholder="请输入事项名称或基本编码后选择事项"
-                                            :remote-method="queryItem"
                                             @change="changeItem" style="width:100%">
                                         <el-option
                                                 v-for="item in optionsName"
@@ -334,7 +341,7 @@
                 <div style="padding:10px">
                     <el-tabs v-model="rightTabName" type="card" @tab-click="handleRightTabClick">
                         <el-tab-pane label="所需资料" name="materialListPanel">
-                            <p v-if="itemNumber.status==6 || (companyInfo.id && itemVo.id && !itemNumber.id)">
+                            <p v-if="itemNumber.status==6 || (itemVo.id && !itemNumber.id)">
                                 勾选收取的材料：</p>
                             <el-table id="materiaTable"
                                       ref="itemMaterialVoList"
@@ -350,7 +357,7 @@
                                         width="50">
                                 </el-table-column>
                                 <el-table-column
-                                        v-if="itemNumber.status==6 || (companyInfo.id && itemVo.id && !itemNumber.id)"
+                                        v-if="itemNumber.status==6 || (itemVo.id && !itemNumber.id)"
                                         type="selection"
                                         prop="received"
                                         width="55">
@@ -500,6 +507,10 @@
                     <div v-if="itemNumber.status==3" style="margin-top:20px;">
                         <el-button type="primary" @click="print_ywsld">打印业务受理单</el-button>
                         <!--<el-button type="primary" @click="print_wlzyd">打印物料转移单</el-button>-->
+
+                        <el-button type="primary" @click="resetForm">
+                            清空
+                        </el-button>
                     </div>
 
                     <div class="block full-width" style="margin-top:20px;"
@@ -512,13 +523,18 @@
                         </el-input>
                     </div>
                     <div v-if="itemNumber.status!=3" style="margin-top:20px;">
-                        <el-button :disabled="(itemNumber.id &&  itemNumber.status!=6)" type="primary" @click="pass">
+                        <el-button
+                                :disabled="(itemNumber.id &&  itemNumber.status!=6) || !memberPhone || !memberRealname ||!memberCode"
+                                type="primary" @click="pass">
                             确认收件
+
                         </el-button>
                         <el-button :disabled="!itemNumber.id || itemNumber.status!=6" type="primary" @click="reject">
                             不予受理
                         </el-button>
+
                     </div>
+
                 </div>
             </div>
         </el-col>
@@ -608,7 +624,8 @@
                 doFastReg: false,
                 // categoryId: 7344364064835072,
                 categoryCascader: [],
-                itemCategory:null
+                itemCategory: null,
+                categoryCascaderModel:[]
             }
         },
 //        beforeRouteEnter(to, from, next) {
@@ -617,7 +634,7 @@
 //            })
 //        },
         methods: {
-            getCategoryCascader(){
+            getCategoryCascader() {
                 getCategoryCascader().then(response => {
                     if (response.httpCode === 200) {
                         this.categoryCascader = response.data;
@@ -630,6 +647,7 @@
              * 查询企业信息
              */
             queryCompanyInfo() {
+                this.companyInfo = {};
                 if (this.memberCode == '' || this.memberCode.length != 18) {
                     this.companyInfo = {};
                     return;
@@ -638,11 +656,15 @@
                     memberCode: this.memberCode
                 }).then(response => {
                     if (response.httpCode === 200) {
-                        this.companyInfo = response.data;
+                        let c = response.data;
+                        if (c) {
+                            this.companyInfo = c;
+                            this.memberPhone = c.lxdh;
+                            this.memberRealname = c.qymc;
+                        }
                     } else {
                         this.companyInfo = {};
                     }
-//                    console.log(response);
                 })
             },
 
@@ -650,7 +672,7 @@
                 const listQueryName = {
                     name: undefined,
                     basicCode: undefined,
-                    itemCategories:this.itemCategory
+                    itemCategories: this.itemCategory
                 }
                 // this.selectedItem= null;
                 if (query !== '') {
@@ -672,9 +694,15 @@
                 });
             },
             changeItem(itemId) {
+
+
+                //清空事项信息
+                this.itemVo = {};
+                //清空所需材料列表信息
+                this.itemMaterialVoList = [];
                 // alert(itemId)
                 if (!itemId) {
-                    return ;
+                    return;
                 }
                 // this.itemVo = null;
                 // this.itemMaterialVoList= null;
@@ -691,10 +719,11 @@
                 });
             },
             //事项分类变化时触发
-            handleCategoryChange(value){
-                if(value.length>0) {
+            handleCategoryChange(value) {
+                if (value.length > 0) {
                     this.itemCategory = value[value.length - 1];
-                    this.queryItem();
+                    this.queryItem(); // 重新根据新的分类查询事项列表
+                    this.selectedItem = null;
                 }
             },
             /**
@@ -724,6 +753,8 @@
                             //不存在
                             this.$message.warning("未注册");
                             this.doFastReg = true;
+                            this.memberRealname = '';
+                            this.memberPhone = '';
                         } else {
                             this.member = response.data;
                             this.$message.success("已注册");
@@ -739,6 +770,19 @@
                         this.$message.error(response.msg);
                     }
                 })
+            },
+            /**
+             * 清除
+             * */
+            resetForm() {
+                this.itemNumber = {};
+                this.companyInfo = {};
+                this.memberPhone = '';
+                this.memberRealname = '';
+                this.memberCode = '';
+                this.itemVo = {};
+                this.itemMaterialVoList = [];
+                this.selectedItem = null;
             },
 
             sendFastRegPhoneCode() {
@@ -956,7 +1000,7 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    if(!this.itemNumber.id){
+                    if (!this.itemNumber.id) {
                         submitNoPretrial({
                             itemId: this.itemVo.id,
                             memberCode: this.memberCode,
@@ -984,7 +1028,7 @@
                                 this.$message.error('提交出错 ，' + response.msg);
                             }
                         });
-                    }else{
+                    } else {
                         submitWork({
                             numberId: _itemNumber.id,
                             status: 3,
