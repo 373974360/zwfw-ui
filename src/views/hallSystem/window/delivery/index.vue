@@ -34,17 +34,18 @@
 
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row
                   style="width: 100%">
-            <el-table-column align="center" label="办件号" width="220">
+            <!--<el-table-column align="center" label="办件号" width="100">-->
+                <!--<template scope="scope">-->
+                    <!--<span>{{scope.row.processNumber}}</span>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
+            <el-table-column align="left" label="事项名称" min-width="300">
                 <template scope="scope">
-                    <span>{{scope.row.processNumber}}</span>
+                    <div>{{scope.row.itemName}}</div>
+                    <div>办件号: {{scope.row.processNumber}}</div>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="事项名称" min-width="180">
-                <template scope="scope">
-                    <span>{{scope.row.itemName}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="申请人信息" min-width="180">
+            <el-table-column align="left" label="申请人信息" min-width="260">
                 <template scope="scope">
                     <span>
                         <span v-if="scope.row.companyName!=null">
@@ -59,7 +60,7 @@
                     <span>{{scope.row.finishItemTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="取件方式">
+            <el-table-column align="center" label="取件方式" >
                 <template scope="scope">
                     <el-tooltip class="item" effect="dark" placement="top" content="点击修改取件方式">
                         <el-button type="text" @click="changeTakeType(scope.row)">
@@ -68,12 +69,12 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="取件状态" width="120">
+            <el-table-column align="center" label="取件状态" >
                 <template scope="scope">
                     <span>{{scope.row.takeTypeInfo.flagTakeCert | enums('TakeStatus')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="操作" width="240">
+            <el-table-column align="center" label="操作" width="130">
                 <template scope="scope">
                     <el-button v-if="scope.row.takeTypeInfo.flagTakeCert == 1 || scope.row.takeTypeInfo.flagTakeCert == 7"
                                type="primary" @click="completeTake(scope.row)">确认收件</el-button>
