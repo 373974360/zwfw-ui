@@ -49,7 +49,7 @@
                         <el-tab-pane label="业务受理" name="virtualPanelLianhu">
                             <el-row :gutter="25">
                                 <el-col :span="19">
-                                    <el-cascader @change="handleCategoryChange" :options="categoryCascader"
+                                    <el-cascader v-model="categoryCascaderModel" @change="handleCategoryChange" :options="categoryCascader"
                                                  class="filter-item"
                                                  :show-all-levels="true" clearable filterable expand-trigger="hover"
                                                  :change-on-select="true" style="width: 180px" placeholder="选择事项分类">
@@ -60,7 +60,6 @@
                                 <el-col :span="19">
                                     <el-select
                                             v-model="selectedItem"
-                                            filterable
                                             placeholder="请输入事项名称或基本编码后选择事项"
                                             @change="changeItem" style="width:100%">
                                         <el-option
@@ -79,7 +78,7 @@
                                     </el-input>
                                 </el-col>
                                 <el-col :span="4">
-                                    <el-button type="primary" @click="checkMemberExist() &queryCompanyInfo()">查找用户
+                                    <el-button type="primary" @click="checkMemberExist() & queryCompanyInfo()">查找用户
                                     </el-button>
                                 </el-col>
                             </el-row>
@@ -183,12 +182,18 @@
                             </el-row>
                             <el-row :gutter="25">
                                 <el-col :span="19">
+                                    <el-cascader v-model="categoryCascaderModel" @change="handleCategoryChange" :options="categoryCascader"
+                                                 class="filter-item"
+                                                 :show-all-levels="true" clearable filterable expand-trigger="hover"
+                                                 :change-on-select="true" style="width: 180px" placeholder="选择事项分类">
+                                    </el-cascader>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="25">
+                                <el-col :span="19">
                                     <el-select
                                             v-model="selectedItem"
-                                            filterable
-                                            remote
                                             placeholder="请输入事项名称或基本编码后选择事项"
-                                            :remote-method="queryItem"
                                             @change="changeItem" style="width:100%">
                                         <el-option
                                                 v-for="item in optionsName"
@@ -619,7 +624,8 @@
                 doFastReg: false,
                 // categoryId: 7344364064835072,
                 categoryCascader: [],
-                itemCategory: null
+                itemCategory: null,
+                categoryCascaderModel:[]
             }
         },
 //        beforeRouteEnter(to, from, next) {
@@ -641,6 +647,7 @@
              * 查询企业信息
              */
             queryCompanyInfo() {
+                this.companyInfo = {};
                 if (this.memberCode == '' || this.memberCode.length != 18) {
                     this.companyInfo = {};
                     return;
