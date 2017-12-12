@@ -1,7 +1,7 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="getItemList" style="width: 130px;" class="filter-item" placeholder="名称"
+            <el-input @keyup.enter.native="getItemList" style="width: 230px;" class="filter-item" placeholder="输入事项名称/基本编码"
                       v-model="listQuery.name"></el-input>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getItemList">搜索</el-button>
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleItemCreate" type="primary"
@@ -102,8 +102,8 @@
                             expand-trigger="hover" :show-all-levels="true"
                             :change-on-select="true"
                             :options="deptTree"
-                            v-model="deptCascader"
-                            @change="handleDeptChange"
+                            v-model="belongDeptCascader"
+                            @change="handleBelongDeptChange"
                             style="width: 100%">
                     </el-cascader>
                 </el-form-item>
@@ -112,9 +112,6 @@
                 </el-form-item>
                 <el-form-item label="实施编码" prop="implCode">
                     <el-input v-model="zwfwItem.implCode"></el-input>
-                </el-form-item>
-                <el-form-item label="设定依据" prop="setBasis">
-                    <el-input v-model="zwfwItem.setBasis" type="textarea" :rows="3"></el-input>
                 </el-form-item>
                 <table>
                     <tr>
@@ -211,7 +208,37 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="联办机构" prop="unionAgency">
-                    <el-input v-model="zwfwItem.unionAgency"></el-input>
+                    <el-cascader
+                            expand-trigger="hover" :show-all-levels="true"
+                            :change-on-select="true"
+                            :options="deptTree"
+                            v-model="unionAgencyDeptCascader"
+                            @change="handleUnionAgencyChange"
+                            style="width: 100%">
+                    </el-cascader>
+                </el-form-item>
+                <el-form-item label="监督部门" prop="superviseDepartmentId">
+                    <el-cascader
+                            expand-trigger="hover" :show-all-levels="true"
+                            :change-on-select="true"
+                            :options="deptTree"
+                            v-model="superviseDeptCascader"
+                            @change="handleSuperviseChange"
+                            style="width: 100%">
+                    </el-cascader>
+                </el-form-item>
+                <el-form-item label="监督电话" prop="supervisePhone">
+                    <el-input v-model="zwfwItem.supervisePhone"></el-input>
+                </el-form-item>
+                <el-form-item label="实施机构" prop="implAgency">
+                    <el-cascader
+                            expand-trigger="hover" :show-all-levels="true"
+                            :change-on-select="true"
+                            :options="deptTree"
+                            v-model="implAgencyDeptCascader"
+                            @change="handleImplAgencyChange"
+                            style="width: 100%">
+                    </el-cascader>
                 </el-form-item>
                 <el-form-item label="服务对象" prop="serviceObject">
                     <el-radio-group v-model="zwfwItem.serviceObject">
@@ -274,21 +301,16 @@
                     <el-date-picker v-model="zwfwItem.versionAvailableTime" type="datetime"
                                     placeholder="选择日期"></el-date-picker>
                 </el-form-item>
-                <el-form-item label="监督部门" prop="superviseDepartmentId">
-                    <el-cascader
-                            expand-trigger="hover" :show-all-levels="true"
-                            :change-on-select="true"
-                            :options="deptTrees"
-                            v-model="updateModel"
-                            @change="handleChanges"
-                            style="width: 100%">
-                    </el-cascader>
-                </el-form-item>
-                <el-form-item label="监督电话" prop="supervisePhone">
-                    <el-input v-model="zwfwItem.supervisePhone"></el-input>
-                </el-form-item>
-                <el-form-item label="实施机构" prop="implAgency">
-                    <el-input v-model="zwfwItem.implAgency"></el-input>
+                <el-form-item label="设定依据" prop="setBasis">
+                    <!--<el-input v-model="zwfwItem.setBasis" type="textarea" :rows="3"></el-input>-->
+                    <quill-editor ref="setBasisEditor" v-model="setBasisHtml"
+                                  :options="quillEditorOption" @focus="onEditorFocus($event)">
+                    </quill-editor>
+                    <el-upload name="uploadFile" v-show="false" :show-file-list="false"
+                               :action="uploadAction" :accept="imageAccepts"
+                               :on-success="handleEditorUploadSuccess" :on-error="handleEditorUploadError">
+                        <el-button id="setBasis_btn"></el-button>
+                    </el-upload>
                 </el-form-item>
                 <el-form-item label="受理条件" prop="acceptCondition">
                     <!--<el-input v-model="zwfwItem.acceptCondition" type="textarea"></el-input>-->
@@ -381,6 +403,16 @@
                                   :label="item.code"
                                   :value="item.code">
                             <span style="font-weight:normal;">{{item.value}}</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="业务状态" prop="enable">
+                    <el-radio-group v-model="zwfwItem.enable">
+                        <el-radio :label="1">
+                            <span style="font-weight:normal;">启用</span>
+                        </el-radio>
+                        <el-radio :label="0">
+                            <span style="font-weight:normal;">禁用</span>
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
@@ -562,6 +594,8 @@
                     id: undefined,
                     departmentId: [],
                     superviseDepartmentId: [],
+                    unionAgency: [],
+                    implAgency: [],
                     setBasis: '',
                     chargeable: true,
                     orderable: true,
@@ -574,7 +608,6 @@
                     type: '',
                     resultExample: '',
                     handleLevel: 'xscj_guojiaji',
-                    unionAgency: '',
                     serviceObject: 'fwdx_ziranren',
                     handlePlace: '',
                     handleTime: '',
@@ -591,7 +624,6 @@
                     versionAvailableTime: '',
                     supervisePhone: '',
                     pretrialDays: '',
-                    implAgency: '',
                     acceptCondition: '',
                     chargeBasis: '',
                     workflowDescription: '',
@@ -607,7 +639,10 @@
                     updateType: '',
                     pretrialUserIds: [],
                     departmentTreePosition: '',
-                    departmentTreePositions: ''
+                    superviseTreePosition: '',
+                    implAgencyTreePosition: '',
+                    unionAgencyTreePosition: '',
+                    enable: ''
                 },
                 zwfwItemMaterial: {
                     id: undefined,
@@ -675,7 +710,6 @@
                 },
                 allUserList: [],
                 deptTree: [],
-                deptTrees: [],
                 quillEditorOption: {
                     modules: {
                         toolbar: [
@@ -693,13 +727,13 @@
                 workflowDescriptionHtml: '',
                 chargeStandardHtml: '',
                 chargeBasisHtml: '',
+                setBasisHtml: '',
                 editor: {}
             }
         },
         computed: {
-            deptCascader() {
+            belongDeptCascader() {
                 if (this.zwfwItem.departmentId) {
-                    // 找到对应的部门
                     if (this.zwfwItem.departmentTreePosition) {
                         const arr = this.zwfwItem.departmentTreePosition.split('&');
                         return arr
@@ -707,12 +741,28 @@
                     return [];
                 }
             },
-            updateModel() {
+            superviseDeptCascader() {
                 if (this.zwfwItem.superviseDepartmentId) {
-                    //找到对应的部门
-//                    console.log(this.zwfwItem.departmentTreePosition);
-                    if (this.zwfwItem.departmentTreePositions) {
-                        const arr = this.zwfwItem.departmentTreePositions.split('&');
+                    if (this.zwfwItem.superviseTreePosition) {
+                        const arr = this.zwfwItem.superviseTreePosition.split('&');
+                        return arr
+                    }
+                    return [];
+                }
+            },
+            unionAgencyDeptCascader() {
+                if (this.zwfwItem.unionAgency) {
+                    if (this.zwfwItem.unionAgencyTreePosition) {
+                        const arr = this.zwfwItem.unionAgencyTreePosition.split('&');
+                        return arr
+                    }
+                    return [];
+                }
+            },
+            implAgencyDeptCascader() {
+                if (this.zwfwItem.implAgency) {
+                    if (this.zwfwItem.implAgencyTreePosition) {
+                        const arr = this.zwfwItem.implAgencyTreePosition.split('&');
                         return arr
                     }
                     return [];
@@ -736,7 +786,14 @@
                     this.$refs.workflowEditor.quill.getModule('toolbar').addHandler('image', this.imgHandlerWorkflow);
                     this.$refs.standardEditor.quill.getModule('toolbar').addHandler('image', this.imgHandlerStandard);
                     this.$refs.basisEditor.quill.getModule('toolbar').addHandler('image', this.imgHandlerBasis);
+                    this.$refs.setBasisEditor.quill.getModule('toolbar').addHandler('image', this.imgHandlerSetBasis);
                 })
+            },
+            imgHandlerSetBasis(image) {
+                if (image) {
+                    let fileUploader = document.getElementById('setBasis_btn');
+                    fileUploader.click()
+                }
             },
             imgHandlerCondition(image) {
                 if (image) {
@@ -778,7 +835,6 @@
                 getDeptCascader().then(response => {
                     if (response.httpCode === 200) {
                         this.deptTree = response.data;
-                        this.deptTrees = response.data;
                     } else {
                         this.$message.error('加载部门信息失败');
                     }
@@ -891,7 +947,7 @@
                 getPretrialUserListByItemId(this.zwfwItem.id).then(response => {
                     if (response.httpCode === 200) {
                         this.allUserList = response.data;
-                        this.zwfwItem.pretrialUserIdsArray = response.data.map(function(o) {
+                        this.zwfwItem.pretrialUserIdsArray = response.data.map(function (o) {
                             return o.id;
                         });
                     } else {
@@ -899,7 +955,7 @@
                     }
                 });
             },
-            handleDeptChange(value) {
+            handleBelongDeptChange(value) {
                 if (value.length > 0) {
                     this.zwfwItem.departmentId = parseInt(value[value.length - 1]);
                     this.zwfwItem.departmentTreePosition = value.join('&');
@@ -908,13 +964,31 @@
                     this.zwfwItem.departmentTreePosition = [];
                 }
             },
-            handleChanges(value) {
+            handleSuperviseChange(value) {
                 if (value.length > 0) {
                     this.zwfwItem.superviseDepartmentId = parseInt(value[value.length - 1]);
-                    this.zwfwItem.departmentTreePositions = value.join('&');
+                    this.zwfwItem.superviseTreePosition = value.join('&');
                 } else {
                     this.zwfwItem.superviseDepartmentId = 0;
-                    this.zwfwItem.departmentTreePositions = [];
+                    this.zwfwItem.superviseTreePosition = [];
+                }
+            },
+            handleUnionAgencyChange(value) {
+                if (value.length > 0) {
+                    this.zwfwItem.unionAgency = parseInt(value[value.length - 1]);
+                    this.zwfwItem.unionAgencyTreePosition = value.join('&');
+                } else {
+                    this.zwfwItem.unionAgency = 0;
+                    this.zwfwItem.unionAgencyTreePosition = [];
+                }
+            },
+            handleImplAgencyChange(value) {
+                if (value.length > 0) {
+                    this.zwfwItem.implAgency = parseInt(value[value.length - 1]);
+                    this.zwfwItem.implAgencyTreePosition = value.join('&');
+                } else {
+                    this.zwfwItem.implAgency = 0;
+                    this.zwfwItem.implAgencyTreePosition = [];
                 }
             },
             submitUpload() {
@@ -1114,12 +1188,14 @@
                 this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(this.workflowDescriptionHtml));
                 this.zwfwItem.chargeStandard = encodeURIComponent(encodeURIComponent(this.chargeStandardHtml));
                 this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(this.chargeBasisHtml));
+                this.zwfwItem.setBasis = encodeURIComponent(encodeURIComponent(this.setBasisHtml));
             },
             decodeEditorHtml() {
                 this.acceptConditionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.acceptCondition));
                 this.workflowDescriptionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.workflowDescription));
                 this.chargeStandardHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeStandard));
                 this.chargeBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeBasis));
+                this.setBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.setBasis));
             },
             closeZwfwItemForm() {
                 this.dialogItemFormVisible = false;
@@ -1140,8 +1216,10 @@
             resetItemTemp() {
                 this.zwfwItem = {
                     id: undefined,
-                    departmentId: undefined,
-                    superviseDepartmentId: undefined,
+                    departmentId: [],
+                    superviseDepartmentId: [],
+                    unionAgency: [],
+                    implAgency: [],
                     setBasis: '',
                     chargeable: true,
                     orderable: true,
@@ -1154,7 +1232,6 @@
                     type: '',
                     resultExample: '',
                     handleLevel: 'xscj_guojiaji',
-                    unionAgency: '',
                     serviceObject: 'fwdx_ziranren',
                     handlePlace: '',
                     handleTime: '',
@@ -1170,7 +1247,6 @@
                     postable: true,
                     versionAvailableTime: '',
                     supervisePhone: '',
-                    implAgency: '',
                     acceptCondition: '',
                     chargeBasis: '',
                     workflowDescription: '',
@@ -1187,7 +1263,10 @@
                     pretrialDays: '',
                     pretrialUserIdsArray: [],
                     departmentTreePosition: '',
-                    departmentTreePositions: ''
+                    superviseTreePosition: '',
+                    implAgencyTreePosition: '',
+                    unionAgencyTreePosition: '',
+                    enable: ''
                 };
                 this.acceptConditionHtml = '';
                 this.workflowDescriptionHtml = '';
