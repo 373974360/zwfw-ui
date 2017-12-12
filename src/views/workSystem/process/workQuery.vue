@@ -150,7 +150,7 @@
                     <el-tabs v-model="tabPaneShow" type="card">
                         <el-tab-pane label="申请企业/个人" name="first">
                             <div>
-                                <div v-if="member.legalPerson!=null">
+                                <div v-if="member!=null && member.legalPerson!=null">
                                     <table class="table table-responsive table-bordered">
                                         <tr>
                                             <th width="140">办事企业/机构</th>
@@ -170,7 +170,7 @@
                                         </tr>
                                     </table>
                                 </div>
-                                <div v-if="member.naturePerson!=null">
+                                <div v-if="member!=null && member.naturePerson!=null">
                                     <table class="table table-responsive table-bordered">
                                         <tr>
                                             <th width="140">姓名</th>

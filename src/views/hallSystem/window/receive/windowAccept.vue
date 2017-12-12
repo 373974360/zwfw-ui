@@ -227,7 +227,7 @@
                                 </el-col>
                                 <el-col :span="4">
                                     <el-button type="primary" :disabled="!getNumberBy_hallNumber"
-                                               @click="queryNumberByCallNumber">查询事项
+                                               @click="queryNumberByCallNumber">查询
                                     </el-button>
                                 </el-col>
                             </el-row>
@@ -867,6 +867,12 @@
                             _this.itemMaterialVoList = data.itemMaterialVoList;
                             _this.window = data.window;
                             _this.itemWindowUserName = data.itemWindowUserName;
+
+                           if(data.member) {
+                               _this.memberCode = data.member.memberCode;
+                               _this.memberPhone = data.member.mobilephone;
+                               _this.memberRealname = data.member.name;
+                           }
                         } else {
                             _this.$message({
                                 showClose: true,

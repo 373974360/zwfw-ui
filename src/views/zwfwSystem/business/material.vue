@@ -21,7 +21,7 @@
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="name" align="center" label="材料名称">
+            <el-table-column prop="name" align="left" label="材料名称" width="600">
                 <template scope="scope">
                     <el-tooltip content="点击编辑" placement="right" effect="dark">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
