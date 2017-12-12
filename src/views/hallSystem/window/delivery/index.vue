@@ -61,7 +61,7 @@
             </el-table-column>
             <el-table-column align="center" label="取件方式">
                 <template scope="scope">
-                    <el-tooltip class="item" effect="dark" placement="top" content="点击修改取件方式">
+                    <el-tooltip class="item" effect="dark" placement="right" content="点击修改">
                         <el-button type="text" @click="changeTakeType(scope.row)">
                             <span>{{scope.row.takeTypeInfo.takeType | enums('TakeType')}}</span>
                         </el-button>
@@ -79,12 +79,18 @@
                                type="primary" @click="completeTake(scope.row)">确认收件</el-button>
                     <el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert == 3 && scope.row.takeTypeInfo.mailboxInfo.status == 1"
                                type="primary" @click="mailboxReserve(scope.row)">预约投递</el-button>
-                    <span v-else-if="scope.row.takeTypeInfo.flagTakeCert == 3 && scope.row.takeTypeInfo.mailboxInfo.status == 2">预约中...</span>
+                    <el-tooltip v-else-if="scope.row.takeTypeInfo.flagTakeCert == 3 && scope.row.takeTypeInfo.mailboxInfo.status == 2"
+                                class="item" effect="dark" placement="right" content="点击更新状态">
+                        <el-button type="text" @click="mailboxStatusUpdate(scope.row)">预约中...</el-button>
+                    </el-tooltip>
                     <el-button-group v-else-if="scope.row.takeTypeInfo.flagTakeCert == 3 && scope.row.takeTypeInfo.mailboxInfo.status == 3">
-                        <el-button type="primary" @click="showReserveCode(scope.row)">获取开箱码</el-button>
-                        <el-button type="primary" @click="mailboxCancelReserve(scope.row)">取消预约</el-button>
+                        <el-button type="primary" @click="showReserveCode(scope.row)">获取<br>开箱码</el-button>
+                        <el-button type="primary" @click="mailboxCancelReserve(scope.row)">取消<br>预约</el-button>
+                        <el-button type="primary" @click="mailboxInfoUpdate(scope.row)">更新<br>状态</el-button>
                     </el-button-group>
-                    <!--<el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert == 4" type="primary">录入取件码</el-button>-->
+                    <el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert == 4" type="primary" @click="mailboxStatusUpdate(scope.row)">
+                        更新状态
+                    </el-button>
                     <el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert == 6" type="primary"
                                @click="enterExpressInfo(scope.row)">录入邮寄信息</el-button>
                     <el-button v-else type="primary">查看</el-button>
@@ -135,12 +141,6 @@
             </div>
         </el-dialog>
 
-        <el-dialog :visible.sync="takeCodeVisible">
-            <el-form>
-                <el-form-item label="取件码"></el-form-item>
-            </el-form>
-        </el-dialog>
-
         <!--快递邮寄 确定标记为已邮寄dialog-->
         <el-dialog title="邮寄信息" :visible.sync="expressInfoVisible" :close-on-click-modal="closeOnClickModal"
                    :before-close="resetExpressInfoForm">
@@ -183,7 +183,7 @@
     import {getAllByNameOrbasicCode} from 'api/zwfwSystem/business/item';
     import {getAllMailbox} from 'api/hallSystem/window/mailbox'
     import {getByNameOrLoginName} from '../../../../api/hallSystem/member/member'
-    import {getFinishList, saveExpressInfo, saveTakeType, complete, reserve, cancelReserve} from '../../../../api/hallSystem/window/delivery'
+    import {getFinishList, saveExpressInfo, saveTakeType, complete, reserve, cancelReserve, getOrderStatus, getOrderDetail} from '../../../../api/hallSystem/window/delivery'
 
     export default {
         name: 'table_demo',
@@ -411,6 +411,30 @@
                     this.listLoading = false;
                 })
             },
+            mailboxInfoUpdate(row) {
+                this.listLoading = true;
+                getOrderDetail(row.processNumber).then(response => {
+                    if (response.httpCode === 200) {
+                        this.$message.success('快件信息已更新');
+                        this.getList();
+                    } else {
+                        this.$message.error('获取快件信息失败');
+                    }
+                    this.listLoading = false;
+                });
+            },
+            mailboxStatusUpdate(row) {
+                this.listLoading = true;
+                getOrderStatus(row.processNumber).then(response => {
+                    if (response.httpCode === 200) {
+                        this.$message.success('快件状态已更新');
+                        this.getList();
+                    } else {
+                        this.$message.error('获取快件信息失败');
+                    }
+                    this.listLoading = false;
+                })
+            },
             showReserveCode(row) {
                 const h = this.$createElement;
                 this.$msgbox({
@@ -475,4 +499,8 @@
     .el-textarea.is-disabled .el-textarea__inner {
         color: #1f2d3d;
     }
+    /*.el-button-group .el-button {
+        white-space: inherit;
+        width: 64px;
+    }*/
 </style>

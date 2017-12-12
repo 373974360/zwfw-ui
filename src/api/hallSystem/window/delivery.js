@@ -56,3 +56,21 @@ export function cancelReserve(processNumber) {
         data
     });
 }
+
+export function getOrderStatus(processNumber) {
+    const data = {processNumber};
+    return fetch({
+        url: '/api/hallSystem/mailbox/request/getOrderStatus',
+        method: 'post',
+        data
+    })
+}
+
+export function getOrderDetail(processNumber) {
+    const data = {processNumber};
+    return fetch({
+        url: '/api/hallSystem/mailbox/request/getOrderDetail',
+        method: 'post',
+        data
+    });
+}
