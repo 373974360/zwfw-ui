@@ -16,34 +16,34 @@
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column type="selection" width="55"/>
-            <el-table-column align="center" label="序号" width="200px">
+            <el-table-column align="center" label="序号" width="100">
                 <template scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="姓名" prop="name">
+            <el-table-column align="center" label="姓名" prop="name" width="150">
                 <template scope="scope">
                     <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="身份证号" prop="idcard" width="250px">
+            <el-table-column align="center" label="身份证号" prop="idcard" width="200">
                 <template scope="scope">
                     <span>{{scope.row.idcard}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="性别" prop="gender">
+            <el-table-column align="center" label="性别" prop="gender" >
                 <template scope="scope">
                     <span>{{scope.row.gender | enums('Gender')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="出生日期" prop="birthday">
-                <template scope="scope">
-                    <span>{{scope.row.birthday | date('YYYY-MM-DD')}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="住址" prop="address">
+            <!--<el-table-column align="center" label="出生日期" prop="birthday" width="150">-->
+                <!--<template scope="scope">-->
+                    <!--<span>{{scope.row.birthday | date('YYYY-MM-DD')}}</span>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
+            <el-table-column align="left" label="住址" prop="address" width="300">
                 <template scope="scope">
                     <span>{{scope.row.address}}</span>
                 </template>
@@ -53,7 +53,7 @@
                     <span>{{scope.row.nation | dics('mz')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="联系电话" prop="phone">
+            <el-table-column align="center" label="联系电话" prop="phone" width="150">
                 <template scope="scope">
                     <span>{{scope.row.phone}}</span>
                 </template>

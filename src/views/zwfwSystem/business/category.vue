@@ -155,24 +155,25 @@
                     {
                         text: '序号',
                         dataIndex: 'id',
-                        width: '300'
+                        width: 300
                     },
                     {
                         text: '事项分类名称',
                         dataIndex: 'name',
-                        editAble: true
+                        editAble: true,
+                        width:300
                     },
                     {
                         text: '创建时间',
                         dataIndex: 'createTime',
                         dateformart: 'YYYY-MM-DD HH:mm:ss',
-                        width: '450'
+                        width: 450
                     },
                     {
                         text: '状态',
                         dataIndex: 'enable',
                         enums: 'Enable',
-                        width: '150'
+                        width: 150
                     }
                 ],
                 category: {

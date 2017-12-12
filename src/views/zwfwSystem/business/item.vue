@@ -22,7 +22,7 @@
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="left" label="事项名称" prop="name">
+            <el-table-column align="left" label="事项名称" prop="name" width="300">
                 <template scope="scope">
                     <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
                         <span class="link-type" @click="handleItemUpdate(scope.row)">{{scope.row.name}}</span>
@@ -46,12 +46,12 @@
                     </el-tag>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="承诺办结时间" prop="promiseEndTime">
+            <el-table-column align="center" label="承诺时限" prop="promiseEndTime">
                 <template scope="scope">
                     <span>{{scope.row.promiseEndTime}} 工作日</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="法定办结时限" prop="legalEndTime">
+            <el-table-column align="center" label="法定时限" prop="legalEndTime">
                 <template scope="scope">
                     <span>{{scope.row.legalEndTime}} 工作日</span>
                 </template>
@@ -70,10 +70,10 @@
                     </el-tag>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="操作">
+            <el-table-column align="left" label="操作" width="110">
                 <template scope="scope">
                     <el-badge :value="scope.row.itemMaterialCount" class="item">
-                        <el-button class="filter-item" style="margin-left: 10px;" @click="handleMaterialList(scope.row)"
+                        <el-button class="filter-item" style="" @click="handleMaterialList(scope.row)"
                                    type="primary" size="small">
                             办件材料
                         </el-button>

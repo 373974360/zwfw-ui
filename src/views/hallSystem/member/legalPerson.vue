@@ -16,12 +16,12 @@
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column type="selection" width="55"/>
-            <el-table-column align="center" label="序号" width="200px">
+            <el-table-column align="center" label="序号" width="100">
                 <template scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="统一社会信用代码" prop="companyCode" width="200px">
+            <el-table-column align="center" label="统一社会信用代码" prop="companyCode" width="200">
                 <template scope="scope">
                     <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.companyCode}}</span>
@@ -33,12 +33,12 @@
                     <span>{{scope.row.companyType | dics('gsxz')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="机构名称" prop="companyName">
+            <el-table-column align="left" label="机构名称" prop="companyName" width="300">
                 <template scope="scope">
                     <span>{{scope.row.companyName}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="机构代码" prop="agencyCode">
+            <el-table-column align="left" label="机构代码" prop="agencyCode" width="100">
                 <template scope="scope">
                     <span>{{scope.row.agencyCode}}</span>
                 </template>
@@ -48,7 +48,7 @@
                     <span>{{scope.row.legalPerson}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="注册地址" prop="registerPlace">
+            <el-table-column align="left" label="注册地址" prop="registerPlace" width="300">
                 <template scope="scope">
                     <span>{{scope.row.registerPlace}}</span>
                 </template>
