@@ -2,7 +2,7 @@ import {asyncRouterMap, constantRouterMap} from 'src/router';
 import Cookies from 'js-cookie';
 
 function hasPermission(permissions, route) {
-    const currentSystem = Cookies.get('CurrentSystem',);
+    const currentSystem = Cookies.get('CurrentSystem');
     if (currentSystem) {
         if (route.meta && route.meta.permission) {
             return permissions.some(permission => route.meta.permission.indexOf(permission) >= 0 && route.meta.permission.indexOf(currentSystem) >= 0)
