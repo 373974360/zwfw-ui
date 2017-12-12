@@ -694,6 +694,12 @@
                 });
             },
             changeItem(itemId) {
+
+
+                //清空事项信息
+                this.itemVo = {};
+                //清空所需材料列表信息
+                this.itemMaterialVoList = [];
                 // alert(itemId)
                 if (!itemId) {
                     return;
@@ -716,7 +722,8 @@
             handleCategoryChange(value) {
                 if (value.length > 0) {
                     this.itemCategory = value[value.length - 1];
-                    this.queryItem();
+                    this.queryItem(); // 重新根据新的分类查询事项列表
+                    this.selectedItem = null;
                 }
             },
             /**
