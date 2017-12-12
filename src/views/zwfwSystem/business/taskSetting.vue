@@ -123,43 +123,43 @@
                                     <el-input-number v-model="task.defaultTimeLimit" :min="0"
                                                      :max="999"></el-input-number>
                                 </el-form-item>
-                                <el-form-item label="任务开始通知：">
-                                    <el-select v-model="task.beginNotifyTarget" placeholder="请选择">
-                                        <el-option label="不通知" :value="0"></el-option>
-                                        <el-option label="申请办件的注册用户" :value="1"></el-option>
-                                        <el-option label="下一个步骤的工作人员" :value="2"></el-option>
-                                    </el-select>
-                                </el-form-item>
-                                <el-form-item label="开始时通知模板：">
-                                    <el-select v-model="task.beginNotifyTemplate" placeholder="请选择">
-                                        <el-option value="">不通知</el-option>
-                                        <el-option
-                                                v-for="t in messageTemplate"
-                                                :key="t.template_id"
-                                                :label="t.sms_title"
-                                                :value="t.template_id" :title="t.sms_content">
-                                        </el-option>
-                                    </el-select>
-                                </el-form-item>
+                                <!--<el-form-item label="任务开始通知：">-->
+                                    <!--<el-select v-model="task.beginNotifyTarget" placeholder="请选择">-->
+                                        <!--<el-option label="不通知" :value="0"></el-option>-->
+                                        <!--<el-option label="申请办件的注册用户" :value="1"></el-option>-->
+                                        <!--<el-option label="下一个步骤的工作人员" :value="2"></el-option>-->
+                                    <!--</el-select>-->
+                                <!--</el-form-item>-->
+                                <!--<el-form-item label="开始时通知模板：">-->
+                                    <!--<el-select v-model="task.beginNotifyTemplate" placeholder="请选择">-->
+                                        <!--<el-option value="">不通知</el-option>-->
+                                        <!--<el-option-->
+                                                <!--v-for="t in messageTemplate"-->
+                                                <!--:key="t.template_id"-->
+                                                <!--:label="t.sms_title"-->
+                                                <!--:value="t.template_id" :title="t.sms_content">-->
+                                        <!--</el-option>-->
+                                    <!--</el-select>-->
+                                <!--</el-form-item>-->
 
-                                <el-form-item label="任务结束通知：">
-                                    <el-select v-model="task.completeNotifyTarget" placeholder="请选择">
-                                        <el-option label="不通知" :value="0"></el-option>
-                                        <el-option label="申请办件的注册用户" :value="1"></el-option>
-                                        <el-option label="下一个步骤的工作人员" :value="2"></el-option>
-                                    </el-select>
-                                </el-form-item>
-                                <el-form-item label="结束通知模板：">
-                                    <el-select v-model="task.completeNotifyTemplate" placeholder="请选择">
-                                        <el-option value="">不通知</el-option>
-                                        <el-option
-                                                v-for="t in messageTemplate"
-                                                :key="t.template_id"
-                                                :label="t.sms_title"
-                                                :value="t.template_id" :title="t.sms_content">
-                                        </el-option>
-                                    </el-select>
-                                </el-form-item>
+                                <!--<el-form-item label="任务结束通知：">-->
+                                    <!--<el-select v-model="task.completeNotifyTarget" placeholder="请选择">-->
+                                        <!--<el-option label="不通知" :value="0"></el-option>-->
+                                        <!--<el-option label="申请办件的注册用户" :value="1"></el-option>-->
+                                        <!--<el-option label="下一个步骤的工作人员" :value="2"></el-option>-->
+                                    <!--</el-select>-->
+                                <!--</el-form-item>-->
+                                <!--<el-form-item label="结束通知模板：">-->
+                                    <!--<el-select v-model="task.completeNotifyTemplate" placeholder="请选择">-->
+                                        <!--<el-option value="">不通知</el-option>-->
+                                        <!--<el-option-->
+                                                <!--v-for="t in messageTemplate"-->
+                                                <!--:key="t.template_id"-->
+                                                <!--:label="t.sms_title"-->
+                                                <!--:value="t.template_id" :title="t.sms_content">-->
+                                        <!--</el-option>-->
+                                    <!--</el-select>-->
+                                <!--</el-form-item>-->
                                 <el-form-item>
                                     <el-button class="el-button--primary" @click="saveOtherSetting">保存其他设置</el-button>
                                 </el-form-item>
