@@ -83,7 +83,7 @@
                                     </el-button>
                                 </el-col>
                             </el-row>
-                            <el-row :gutter="25" v-show="doFastReg">
+                            <el-row :gutter="25">
                                 <el-col :span="11">
                                     <el-input v-model="memberRealname" placeholder="申请人姓名或企业名称">
                                     </el-input>
@@ -502,6 +502,10 @@
                     <div v-if="itemNumber.status==3" style="margin-top:20px;">
                         <el-button type="primary" @click="print_ywsld">打印业务受理单</el-button>
                         <!--<el-button type="primary" @click="print_wlzyd">打印物料转移单</el-button>-->
+
+                        <el-button type="primary" @click="resetForm">
+                            清空
+                        </el-button>
                     </div>
 
                     <div class="block full-width" style="margin-top:20px;"
@@ -518,11 +522,14 @@
                                 :disabled="(itemNumber.id &&  itemNumber.status!=6) || !memberPhone || !memberRealname ||!memberCode"
                                 type="primary" @click="pass">
                             确认收件
+
                         </el-button>
                         <el-button :disabled="!itemNumber.id || itemNumber.status!=6" type="primary" @click="reject">
                             不予受理
                         </el-button>
+
                     </div>
+
                 </div>
             </div>
         </el-col>
@@ -749,6 +756,19 @@
                         this.$message.error(response.msg);
                     }
                 })
+            },
+            /**
+             * 清除
+             * */
+            resetForm() {
+                this.itemNumber = {};
+                this.companyInfo = {};
+                this.memberPhone = '';
+                this.memberRealname = '';
+                this.memberCode = '';
+                this.itemVo = {};
+                this.itemMaterialVoList = [];
+                this.selectedItem = null;
             },
 
             sendFastRegPhoneCode() {
