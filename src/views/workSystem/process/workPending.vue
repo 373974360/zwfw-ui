@@ -514,7 +514,7 @@
                 this.uploadAvatars = []
                 this.processNumber = row.processNumber;
                 this.taskId = row.taskId;
-                this.textMapTitle = '部门办事 - ' + row.itemName;
+                this.textMapTitle = '部门办事 - ' + row.itemName + " | 办件号："+row.processNumber;
                 this.dialogFormVisible = true;
 
                 this.passRemark = '确认通过';

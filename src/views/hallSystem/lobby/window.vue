@@ -93,7 +93,7 @@
 
         <!--事项关联dialog-->
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisibleItem"
-                   :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemForm">
+                   :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemForm" size="large">
             <div class="filter-container">
                 <el-button class="filter-item" style="margin-left: 10px;" @click="handleItemDelete" type="danger"
                            icon="delete">
@@ -109,9 +109,9 @@
                         <span>{{scope.row.id}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column align="center" label="事项名称" prop="name">
+                <el-table-column align="left" label="事项名称" prop="name" width="400">
                     <template scope="scope">
-                        <span>{{scope.row.name}}</span>
+                        <span>{{scope.row.itemName}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="基本编码" prop="basicCode">
@@ -150,8 +150,8 @@
                             filterable
                             remote
                             placeholder="请输入事项名称或基本编码"
-                            :remote-method="remoteMethod"
-                            @change="changeMaterial" style="width:100%">
+                            :remote-method="queryItem"
+                            @change="itemNameChange" style="width:100%">
                         <el-option
                                 v-for="item in optionsName"
                                 :key="item.id"
@@ -167,7 +167,7 @@
                 </el-form-item>
             </el-form>
             <div style="text-align: center" slot="footer" class="dialog-footer">
-                <el-button type="primary" icon="circle-check" @click="saveCategoryItem">保 存
+                <el-button type="primary" icon="circle-check" @click="saveWindowItem">保 存
                 </el-button>
             </div>
         </el-dialog>
@@ -293,7 +293,7 @@
         },
         created() {
             this.getList();
-            this.getItemList();
+            // this.getItemList();
             this.getDeptAndUsersList();
         },
         computed: {
@@ -316,19 +316,19 @@
                     }
                 })
             },
-            getItemList() {
-                const query = {}
-                getAllByNameOrbasicCode(query).then(response => {
-                    if (response.httpCode === 200) {
-                        this.allItemList = response.data;
-                        this.zwfwItem.supportAssist = true;
-                        this.zwfwItem.supportEnquire = true;
-                        this.zwfwItem.supportNormal = true;
-                    } else {
-                        this.$message.error('事项信息加载失败')
-                    }
-                })
-            },
+            // getItemList() {
+            //     const query = {}
+            //     getAllByNameOrbasicCode(query).then(response => {
+            //         if (response.httpCode === 200) {
+            //             this.allItemList = response.data;
+            //             this.zwfwItem.supportAssist = true;
+            //             this.zwfwItem.supportEnquire = true;
+            //             this.zwfwItem.supportNormal = true;
+            //         } else {
+            //             this.$message.error('事项信息加载失败')
+            //         }
+            //     })
+            // },
             getDeptAndUsersList() {
                 getDeptNameAndUsers(this.listQuery).then(response => {
                     if (response.httpCode === 200) {
@@ -430,23 +430,15 @@
                 this.dialogTableLoading = true;
                 getAllItemWindow(this.windowId).then(response => {
                     if (response.httpCode === 200) {
-                        const arr = [];
-                        for (const ids of response.data) {
-                            for (const idList of this.allItemList) {
-                                if (ids.itemId === idList.id) {
-                                    arr.push(idList);
-                                }
-                            }
-                        }
-                        this.zwfwItemList = arr;
-                        this.currentItem.windowItemCount = arr.length;
+                        this.zwfwItemList = response.data || [];
+                        this.currentItem.windowItemCount = response.data ? response.data.length : 0;
                     } else {
                         this.$message.error('数据加载失败')
                     }
                     this.dialogTableLoading = false;
                 })
             },
-            remoteMethod(query) {
+            queryItem(query) {
                 const listQueryName = {
                     name: undefined,
                     basicCode: undefined
@@ -473,14 +465,14 @@
                     this.optionsName = [];
                 }
             },
-            changeMaterial(value) {
+            itemNameChange(value) {
                 for (const obj of this.optionsName) {
                     if (obj.id === value) {
                         this.zwfwItem = Object.assign({}, obj);
                     }
                 }
             },
-            saveCategoryItem() {
+            saveWindowItem() {
                 this.$refs['zwfwItemForm'].validate(valid => {
                     if (valid) {
                         for (let obj of this.zwfwItemList) {
@@ -631,6 +623,7 @@
         margin-top: 10px;
         margin-right: 40px;
     }
+
     .el-checkbox__label {
         font-weight: normal;
     }

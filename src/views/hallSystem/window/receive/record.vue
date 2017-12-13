@@ -350,7 +350,8 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
-                    selectDateTime: undefined
+                    selectDateTime: undefined,
+                    inStatus:[3,4].join(",")
                 },
                 tabName:'materialListPanel',
                 itemNumber: [],
