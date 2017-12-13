@@ -160,8 +160,7 @@
                     {
                         text: '事项分类名称',
                         dataIndex: 'name',
-                        editAble: true,
-                        width:300
+                        editAble: true
                     },
                     {
                         text: '创建时间',
