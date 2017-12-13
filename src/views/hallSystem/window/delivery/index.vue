@@ -74,7 +74,7 @@
                     <span>{{scope.row.takeTypeInfo.flagTakeCert | enums('TakeStatus')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="操作" width="130">
+            <el-table-column align="center" label="操作" width="240">
                 <template scope="scope">
                     <el-button v-if="scope.row.takeTypeInfo.flagTakeCert == 1 || scope.row.takeTypeInfo.flagTakeCert == 7"
                                type="primary" @click="completeTake(scope.row)">确认收件</el-button>
@@ -422,6 +422,8 @@
                         this.$message.error('获取快件信息失败');
                     }
                     this.listLoading = false;
+                }).catch(err => {
+                    this.$message.error(err || '获取快件信息失败');
                 });
             },
             mailboxStatusUpdate(row) {
