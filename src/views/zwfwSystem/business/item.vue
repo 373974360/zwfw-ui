@@ -514,7 +514,7 @@
                         <td>
                             <el-form-item label="是否需要电子材料:" :inline="true" prop="electronicMaterial"
                                           v-show="changeMaterialInfo">
-                                <span v-if="zwfwItemMaterial.electronicMaterial">{{zwfwItemMaterial.electronicMaterial | enums('YesNo')}}</span>
+                                <span>{{zwfwItemMaterial.electronicMaterial | enums('YesNo')}}</span>
                             </el-form-item>
                         </td>
                     </tr>
