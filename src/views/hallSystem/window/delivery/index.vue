@@ -94,7 +94,7 @@
                     </el-button>
                     <el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert == 6" type="primary"
                                @click="enterExpressInfo(scope.row)">录入邮寄信息</el-button>
-                    <el-button v-else type="primary">查看</el-button>
+                    <el-button v-else type="primary" @click="">查看</el-button>
                 </template>
             </el-table-column>
         </el-table>
