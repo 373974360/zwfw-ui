@@ -1,7 +1,7 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="getMaterialList" style="width: 130px;" class="filter-item" placeholder="名称"
+            <el-input @keyup.enter.native="getMaterialList" style="width: 250px;" class="filter-item" placeholder="材料名称"
                       v-model="listQuery.name"></el-input>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getMaterialList">搜索</el-button>
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">
@@ -36,11 +36,6 @@
             <el-table-column v-once prop="source" align="center" label="来源渠道">
                 <template scope="scope">
                     <span>{{scope.row.source | dics('sxsqclly')}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column v-once prop="paperDescription" align="center" label="纸质材料份数和规格">
-                <template scope="scope">
-                    <span>{{scope.row.paperDescription}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="electronicMaterial" align="center" label="是否需要电子材料">
@@ -96,9 +91,6 @@
                                 :value="item.code">
                         </el-option>
                     </el-select>
-                </el-form-item>
-                <el-form-item label="纸质材料份数和规格" prop="paperDescription">
-                    <el-input v-model="zwfwMaterial.paperDescription"></el-input>
                 </el-form-item>
                 <el-form-item label="材料样本" prop="example">
                     <el-upload name="uploadFile"

@@ -34,10 +34,12 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="closeCategoryForm">取 消</el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="doCategoryCreate">确 定
+                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="doCategoryCreate">确
+                    定
                 </el-button>
 
-                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="doCategoryUpdate" @click="doCategoryUpdate">确 定
+                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="doCategoryUpdate"
+                           @click="doCategoryUpdate">确 定
                 </el-button>
             </div>
         </el-dialog>
@@ -62,7 +64,7 @@
                 </el-table-column>
                 <el-table-column align="center" label="事项名称" prop="name">
                     <template scope="scope">
-                        <span>{{scope.row.name}}</span>
+                        <span>{{scope.row.itemName}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="基本编码" prop="basicCode">
@@ -160,14 +162,12 @@
                     {
                         text: '事项分类名称',
                         dataIndex: 'name',
-                        editAble: true,
-                        width:300
+                        editAble: true
                     },
                     {
                         text: '创建时间',
                         dataIndex: 'createTime',
-                        dateformart: 'YYYY-MM-DD HH:mm:ss',
-                        width: 450
+                        dateformart: 'YYYY-MM-DD HH:mm:ss'
                     },
                     {
                         text: '状态',
@@ -381,15 +381,7 @@
                 this.dialogTableLoading = true;
                 getAllCategoeyItem(this.categoryId).then(response => {
                     if (response.httpCode === 200) {
-                        let arr = [];
-                        for (const ids of response.data) {
-                            for (const idList of this.itemList) {
-                                if (ids.itemId === idList.id) {
-                                    arr.push(idList);
-                                }
-                            }
-                        }
-                        this.categoryItemList = arr;
+                        this.categoryItemList = response.data;
                     } else {
                         this.$message.error(response.msg);
                     }
