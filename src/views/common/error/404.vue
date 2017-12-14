@@ -21,7 +21,7 @@
   export default {
     computed: {
       message() {
-        return '特朗普说这个页面你不能进......'
+        return '页面找不到'
       }
     }
   }
