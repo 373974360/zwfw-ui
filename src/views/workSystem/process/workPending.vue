@@ -326,7 +326,7 @@
                                     <div style="white-space: pre-line"><strong v-if="h.correctionFlag">整改：</strong>
                                         <strong v-if="h.status==1">通过：</strong>
                                         <strong v-if="h.status==2">未通过：</strong>
-                                        <strong v-else></strong>{{h.reason}}
+                                        <strong v-else></strong>{{h.correctionReason}}
                                     </div>
                                     <td>{{h.correctionUserName}}</td>
                                 </tr>
