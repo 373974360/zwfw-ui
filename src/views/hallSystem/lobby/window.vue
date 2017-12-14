@@ -528,8 +528,12 @@
                 }
                 deleteZwfwWindowItem(this.windowId, ids.join()).then(response => {
                     if (response.httpCode === 200) {
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.zwfwItemList.indexOf(deleteRow);
+                            this.zwfwItemList.splice(index, 1);
+                        }
                         this.$message.success('删除成功');
-                        this.getWindowItemList();
+                        this.currentItem.windowItemCount -= this.selectedRows.length;
                     } else {
                         this.$message.error('删除失败')
                     }
