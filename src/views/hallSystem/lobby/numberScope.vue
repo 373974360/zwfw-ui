@@ -84,7 +84,7 @@
 
         <!--事项关联dialog-->
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisibleItem"
-                   :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemForm">
+                   :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemForm" size="large">
             <div class="filter-container">
                 <el-button class="filter-item" style="margin-left: 10px;" @click="handleItemDelete" type="danger"
                            icon="delete">
@@ -102,7 +102,7 @@
                 </el-table-column>
                 <el-table-column align="center" label="事项名称" prop="name">
                     <template scope="scope">
-                        <span>{{scope.row.name}}</span>
+                        <span>{{scope.row.itemName}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="基本编码" prop="basicCode">
@@ -153,7 +153,7 @@
                 </el-form-item>
             </el-form>
             <div style="text-align: center" slot="footer" class="dialog-footer">
-                <el-button type="primary" icon="circle-check" @click="saveCategoryItem">保 存
+                <el-button type="primary" icon="circle-check" @click="saveCategoryItem">添加
                 </el-button>
             </div>
         </el-dialog>
@@ -224,7 +224,7 @@
         },
         created() {
             this.getList();
-            this.getItemList();
+            // this.getItemList();
             this.getAllNumberScopeItemList();
         },
         computed: {
@@ -247,16 +247,16 @@
                     }
                 })
             },
-            getItemList() {
-                const query = {}
-                getAllByNameOrbasicCode(query).then(response => {
-                    if (response.httpCode === 200) {
-                        this.allItemList = response.data;
-                    } else {
-                        this.$message.error('数据加载失败')
-                    }
-                })
-            },
+            // getItemList() {
+            //     const query = {}
+            //     getAllByNameOrbasicCode(query).then(response => {
+            //         if (response.httpCode === 200) {
+            //             this.allItemList = response.data;
+            //         } else {
+            //             this.$message.error('数据加载失败')
+            //         }
+            //     })
+            // },
             getAllNumberScopeItemList() {
                 const query = {};
                 getAllItemNumberScope(query).then(response => {
@@ -362,16 +362,16 @@
                 }
                 getAllItemNumberScope(query).then(response => {
                     if (response.httpCode === 200) {
-                        const arr = [];
-                        for (const ids of response.data) {
-                            for (const idList of this.allItemList) {
-                                if (ids.itemId === idList.id) {
-                                    arr.push(idList);
-                                }
-                            }
-                        }
-                        this.zwfwItemList = arr
-                        this.currentItem.numberItemCount = arr.length
+                        // const arr = [];
+                        // for (const ids of response.data) {
+                        //     for (const idList of this.allItemList) {
+                        //         if (ids.itemId === idList.id) {
+                        //             arr.push(idList);
+                        //         }
+                        //     }
+                        // }
+                        this.zwfwItemList = response.data;
+                        this.currentItem.numberItemCount = response.data? response.data.length:0;
                     } else {
                         this.$message.error('数据加载失败')
                     }

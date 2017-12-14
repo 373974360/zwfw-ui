@@ -46,7 +46,7 @@
 
         <!--事项关联dialog-->
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisibleItem"
-                   :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemForm">
+                   :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemForm" size="large">
             <div class="filter-container">
                 <el-button class="filter-item" style="margin-left: 10px;" @click="handleItemDelete" type="danger"
                            icon="delete">
@@ -115,7 +115,7 @@
                 </el-form-item>
             </el-form>
             <div style="text-align: center" slot="footer" class="dialog-footer">
-                <el-button type="primary" icon="circle-check" @click="saveCategoryItem">保 存
+                <el-button type="primary" icon="circle-check" @click="saveCategoryItem">添加
                 </el-button>
             </div>
         </el-dialog>
@@ -215,7 +215,7 @@
         },
         created() {
             this.getCategoryList();
-            this.getItemList();
+            // this.getItemList();
         },
         computed: {
             cascaderModel() {

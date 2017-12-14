@@ -167,7 +167,7 @@
                 </el-form-item>
             </el-form>
             <div style="text-align: center" slot="footer" class="dialog-footer">
-                <el-button type="primary" icon="circle-check" @click="saveWindowItem">保 存
+                <el-button type="primary" icon="circle-check" @click="saveWindowItem">添加
                 </el-button>
             </div>
         </el-dialog>
