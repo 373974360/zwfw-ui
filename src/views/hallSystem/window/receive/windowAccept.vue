@@ -61,11 +61,12 @@
                                     <el-select
                                             v-model="selectedItem"
                                             placeholder="请输入事项名称或基本编码后选择事项"
+                                            filterable
                                             @change="changeItem" style="width:100%">
                                         <el-option
                                                 v-for="item in optionsName"
                                                 :key="item.id"
-                                                :label="item.name"
+                                                :label="item.name+' ' + item.basicCode"
                                                 :value="item.id">
                                         </el-option>
                                     </el-select>
@@ -193,12 +194,13 @@
                                 <el-col :span="19">
                                     <el-select
                                             v-model="selectedItem"
+                                            filterable
                                             placeholder="请输入事项名称或基本编码后选择事项"
                                             @change="changeItem" style="width:100%">
                                         <el-option
                                                 v-for="item in optionsName"
-                                                :key="item.id"
-                                                :label="item.name"
+                                                 :key="item.id"
+                                                :label="item.name+' ' + item.basicCode"
                                                 :value="item.id">
                                         </el-option>
                                     </el-select>
