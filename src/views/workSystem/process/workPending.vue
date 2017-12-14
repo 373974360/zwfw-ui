@@ -9,7 +9,7 @@
                         :value="item.value">
                 </el-option>
             </el-select>
-            <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="办件号"
+            <el-input @keyup.enter.native="handleFilter" style="width: 230px;" class="filter-item" placeholder="办件号"
                       v-model="listQuery.processNumber"></el-input>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
         </div>
@@ -84,7 +84,6 @@
         <el-dialog class="s-dialog-title" size="large" :title="textMapTitle" :visible.sync="dialogFormVisible"
                    :close-on-click-modal="closeOnClickModal" :before-close="resetWorkPendingForm">
             <div>
-                <div>
                     <h2 class="h2-style-show">审批处理：{{itemProcessVo.currentTaskName}} </h2>
                     <input type="hidden" name="taskId" :value='itemProcessVo.taskId'/>
                     <input type="hidden" name="id" :value='itemProcessVo.id'/>
@@ -157,8 +156,6 @@
                             确定不予受理
                         </el-button>
                     </el-form>
-                </div>
-                <div>
                     <h2 class="h2-style-show">上传附件：</h2>
                     <div style="margin-bottom:20px;">
                         <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
@@ -171,8 +168,6 @@
                             <i class="el-icon-plus"></i>
                         </el-upload>
                     </div>
-                </div>
-                <div>
                     <h2 class="h2-style-show">审批记录：</h2>
                     <table class="table table-responsive table-bordered">
                         <tr>
@@ -197,9 +192,7 @@
                                 </table>
                             </td>
                             <!--<td>X</td>-->
-                            <td>
-                                <div style="white-space: pre-line">{{h.reason }}</div>
-                            </td>
+                            <td>{{h.reason}}</td>
                             <td>
                                 <template v-if="h.endTime">{{h.endTime | date('YYYY-MM-DD HH:mm')}}
                                 </template>
@@ -213,8 +206,6 @@
                             </td>
                         </tr>
                     </table>
-                </div>
-                <div>
                     <el-tabs v-model="tabPaneShow" type="card">
                         <el-tab-pane label="申请企业/个人" name="first">
                             <div>
@@ -323,11 +314,8 @@
                                 <tr v-for="h in correctionList">
                                     <td>{{h.correctionTime | date('YYYY-MM-DD HH:mm')}}</td>
                                     <td>{{h.taskName}}</td>
-                                    <div style="white-space: pre-line"><strong v-if="h.correctionFlag">整改：</strong>
-                                        <strong v-if="h.status==1">通过：</strong>
-                                        <strong v-if="h.status==2">未通过：</strong>
-                                        <strong v-else></strong>{{h.correctionReason}}
-                                    </div>
+                                    <td style="white-space: pre-line">{{h.correctionReason}}
+                                    </td>
                                     <td>{{h.correctionUserName}}</td>
                                 </tr>
                             </table>
@@ -373,7 +361,7 @@
                                 <tr v-for="(c,index) in itemMaterialVoList">
                                     <td>{{index + 1}}</td>
                                     <td>{{c.name}}</td>
-                                    <td>
+                                    <td  style="text-align: center;">
                                         <template v-for="(file,index) in c.multipleFile">
                                             <template v-if="file.url!=null && file.url!=''">
                                                 <a target="_blank"
@@ -388,7 +376,6 @@
                             </table>
                         </el-tab-pane>
                     </el-tabs>
-                </div>
                 <div>
                     <el-button v-if="itemProcessVo.flagCorrection || itemProcessVo.status == 99"
                                type="button" @click="print_ycxgzd(itemProcessVo.processNumber)">打印一次性告知单
@@ -674,7 +661,7 @@
             },
             print_ycxgzd(processNumber) {
                 if (processNumber != null) {
-                    window.open('/api/workSystem/itemPretrial/downloadYcxgzd?processNumber=' + processNumber);
+                    window.open('/api/hallSystem/hallCompositeWindow/downloadYcxgzd?processNumber=' + processNumber);
                 }
             },
 
@@ -766,11 +753,13 @@
 
     .table-bordered > tr > td, .table-bordered > tr > th {
         border: 1px solid #e7e7e7;
+        font-weight: 500;
     }
 
     .h2-style-show {
         font-weight: 100;
         font-size: 24px;
+        margin-top: 5px;
     }
 
     .s-dialog-title .el-form-item__label {
@@ -782,12 +771,8 @@
     }
 
     .s-dialog-title .el-dialog__title {
-        font-size: 17px;
+        font-size: 20px;
         font-weight: 500;
-    }
-
-    .s-dialog-title .el-dialog__header {
-        margin-bottom: -29px;
     }
 
     .s-dialog-title .input-textarea .el-textarea__inner {

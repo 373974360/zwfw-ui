@@ -70,7 +70,7 @@
                     <span>{{scope.row.status | enums('ItemProcessStatus')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column>
+            <el-table-column align="center" label="操作" >
                 <template scope="scope">
                     <el-button @click="showDetail(scope.row)" type="primary">查看</el-button>
                 </template>
@@ -116,11 +116,7 @@
                             </td>
                             <!--<td>X</td>-->
                             <td>
-                                <div style="white-space: pre-line"><strong v-if="h.correctionFlag">整改：</strong>
-                                    <strong v-if="h.status==1">通过：</strong>
-                                    <strong v-if="h.status==2">未通过：</strong>
-                                    <strong v-else></strong>{{h.reason}}
-                                </div>
+                                {{h.reason}}
                             </td>
                             <td>
                                 <template v-if="h.endTime">{{h.endTime | date('YYYY-MM-DD HH:mm')}}
@@ -559,10 +555,6 @@
     .s-dialog-title .el-dialog__title {
         font-size: 17px;
         font-weight: 500;
-    }
-
-    .s-dialog-title .el-dialog__header {
-        margin-bottom: -29px;
     }
 
     .s-dialog-title .input-textarea .el-textarea__inner {

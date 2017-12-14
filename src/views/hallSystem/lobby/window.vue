@@ -476,7 +476,7 @@
                 this.$refs['zwfwItemForm'].validate(valid => {
                     if (valid) {
                         for (let obj of this.zwfwItemList) {
-                            if (obj.id === this.zwfwItem.id) {
+                            if (obj.itemId === this.zwfwItem.id) {
                                 this.$message.warning('事项已存在');
                                 this.resetZwfwItemForm();
                                 return false;

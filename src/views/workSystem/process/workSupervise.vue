@@ -593,10 +593,6 @@
         font-weight: 500;
     }
 
-    .s-dialog-title .el-dialog__header {
-        margin-bottom: -29px;
-    }
-
     .s-dialog-title .input-textarea .el-textarea__inner {
         height: 10em;
     }

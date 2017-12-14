@@ -48,7 +48,7 @@
             </el-table-column>
             <el-table-column align="center" label="操作">
                 <template scope="scope">
-                    <el-button class="filter-item" style="margin-left: 10px;" type="primary"
+                    <el-button class="filter-item"  type="primary"
                                @click="editAudit(scope.row)">审 核
                     </el-button>
                 </template>
@@ -60,11 +60,12 @@
                            :page-size="listQuery.rows" layout="total, sizes, prev, pager, next, jumper" :total="total">
             </el-pagination>
         </div>
-        <el-dialog :close-on-click-modal="closeOnClickModal" :title="titleName" :visible.sync="dialogFormVisible"
+        <el-dialog size="large" :close-on-click-modal="closeOnClickModal" :title="titleName"
+                   :visible.sync="dialogFormVisible"
                    :before-close="resetItemPretrialForm">
             <div>
                 <div v-if="member.legalPerson != null">
-                    <h3>办事企业/机构信息:</h3>
+                    <h2 class="h2-style-show">办事企业/机构信息:</h2>
                     <table class="table table-responsive table-bordered">
                         <tr>
                             <th width="140">办事企业/机构</th>
@@ -85,7 +86,7 @@
                     </table>
                 </div>
                 <div v-if="member.naturePerson != null">
-                    <h3>申请人信息:</h3>
+                    <h2 class="h2-style-show">申请人信息:</h2>
                     <table class="table table-responsive table-bordered">
                         <tr>
                             <th width="140">姓名</th>
@@ -98,14 +99,14 @@
                             <th width="140">手机</th>
                             <td>{{member.naturePerson.phone}}</td>
                             <th width="140">地址</th>
-                            <td >{{member.naturePerson.address}}</td>
+                            <td>{{member.naturePerson.address}}</td>
                         </tr>
 
                     </table>
                 </div>
                 <div class="table-show">
                     <div class="table-inline">
-                        <h3>预审材料:</h3>
+                        <h2 class="h2-style-show">预审材料:</h2>
                         <table class="table table-bordered table-responsive">
                             <tr>
                                 <th>名称</th>
@@ -113,7 +114,7 @@
                             </tr>
                             <tr v-for="m in pretrialMaterialList">
                                 <td>{{m.itemMaterialName}}</td>
-                                <td>
+                                <td style="text-align: center;">
                                     <template v-for="(file,index) in m.itemMaterialUrl.split('|')">
                                         <a v-if="index>0" target="_blank" :href="file">[{{index}}]</a>
                                     </template>
@@ -122,7 +123,7 @@
                         </table>
                     </div>
                     <div class="table-inline" style="padding-left: 30px;">
-                        <h3>审核结果:</h3>
+                        <h2 class="h2-style-show">审核结果:</h2>
                         <el-form ref="zwfwItemPretrial" label-width="140px" :model="ItemPretrial"
                                  :rules="ItemPretrialRules">
                             <el-form-item label="预审编号">
@@ -162,7 +163,11 @@
     </div>
 </template>
 <script>
-    import {getZwfwItemPretrialList, getPretrialDetail, submitReview} from 'api/hallSystem/window/pretrial/itemPretrial';
+    import {
+        getZwfwItemPretrialList,
+        getPretrialDetail,
+        submitReview
+    } from 'api/hallSystem/window/pretrial/itemPretrial';
     import {mapGetters} from 'vuex';
     import {copyProperties, resetForm} from 'utils';
 
@@ -182,7 +187,7 @@
                 legalPerson: [],
                 member: [],
                 pretrialMaterialList: [],
-                titleName: '办件预审',
+                titleName: '',
                 currentItemPretrial: [],
                 pretrialInfo: [],
                 statusPreSubmit: '',
@@ -250,8 +255,9 @@
                 this.currentItemPretrial = row;
                 this.resetTemp();
                 this.ItemPretrial = copyProperties(this.ItemPretrial, row);
-                this.dialogFormVisible = true;
                 this.processNumber = row.id;
+                this.titleName = '办件预审' + " | 办件号：" + row.processNumber;
+                this.dialogFormVisible = true;
                 this.getPretrialDetail();
             },
             getPretrialDetail() {
@@ -335,6 +341,10 @@
         border-collapse: collapse;
     }
 
+    label {
+        font-weight: 500;
+    }
+
     .table > tr > td, .table > tr > th {
         border-top: 1px solid #e7eaec;
         line-height: 1.42857;
@@ -344,6 +354,7 @@
 
     .table-bordered > tr > td, .table-bordered > tr > th {
         border: 1px solid #e7e7e7;
+        font-weight: 500;
     }
 
     .table-inline {
@@ -360,5 +371,16 @@
 
     a {
         color: #337ab7;
+    }
+
+    .el-dialog__title {
+        font-size: 20px;
+        font-weight: 500;
+    }
+
+    .h2-style-show {
+        font-weight: 100;
+        font-size: 24px;
+        margin-top: 5px;
     }
 </style>
