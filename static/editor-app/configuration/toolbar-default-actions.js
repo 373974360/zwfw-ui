@@ -326,7 +326,9 @@ var SaveModelCtrl = [ '$rootScope', '$scope', '$http', '$route', '$location',
 
     $scope.saveAndClose = function () {
     	$scope.save(function() {
-    		window.location.href = "./";
+    		// window.location.href = "./";
+            alert('保存成功，此页面将关闭');
+            window.opener=null;window.open('','_self');window.close();
     	});
     };
     $scope.save = function (successCallback) {
@@ -416,6 +418,8 @@ var SaveModelCtrl = [ '$rootScope', '$scope', '$http', '$route', '$location',
                 // Execute any callback
                 if (successCallback) {
                     successCallback();
+                }else{
+                    alert('保存成功')
                 }
 
             })
