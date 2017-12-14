@@ -1119,6 +1119,7 @@
                         this.getItemMaterialList();
                         this.resetZwfwMaterialForm();
                         this.$message.success('关联成功');
+                        this.currentItem.itemMaterialCount += 1;
                     } else {
                         this.$message.error('关联失败');
                     }
