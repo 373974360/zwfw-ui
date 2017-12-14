@@ -506,11 +506,15 @@
                     <!-- 打印按钮-->
                     <div v-if="itemNumber.status==3" style="margin-top:20px;">
                         <el-button type="primary" @click="print_ywsld">打印业务受理单</el-button>
-                        <!--<el-button type="primary" @click="print_wlzyd">打印物料转移单</el-button>-->
+                        <el-button type="primary" @click="print_wlzyd">打印物料转移单</el-button>
 
                         <el-button type="primary" @click="resetForm">
                             清空
                         </el-button>
+                    </div>
+
+                    <div v-if="itemNumber.status==4" style="margin-top:20px;">
+                        <el-button type="primary" @click="print_ycxgzd">打印一次性告知单</el-button>
                     </div>
 
                     <div class="block full-width" style="margin-top:20px;"
@@ -1168,6 +1172,11 @@
             print_wlzyd() {
                 if (this.itemNumber != null) {
                     window.open('/api/hallSystem/hallCompositeWindow/downloadWlzyd?numberId=' + this.itemNumber.id);
+                }
+            },
+            print_ycxgzd() {
+                if (this.itemNumber != null) {
+                    window.open('/api/hallSystem/hallCompositeWindow/downloadYcxgzd?numberId=' + this.itemNumber.id);
                 }
             },
             /**
