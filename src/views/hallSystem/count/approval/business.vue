@@ -33,7 +33,8 @@
             <div class="splitBar"></div>
             <div class="filter-container">
                 <el-date-picker style="top: -5px;" v-model="listQuery.startDate" type="datetime" :editable="false"
-                                placeholder="开始时间" :clearable="false" format="yyyy-MM-dd HH:mm" @change="formatStartDate">
+                                placeholder="开始时间" :clearable="false" format="yyyy-MM-dd HH:mm"
+                                @change="formatStartDate">
                 </el-date-picker>
                 <el-date-picker style="top: -5px;" v-model="listQuery.endDate" type="datetime" :editable="false"
                                 placeholder="结束时间" :clearable="false" format="yyyy-MM-dd HH:mm" @change="formatEndDate">
@@ -48,10 +49,12 @@
             <div class="splitBar"></div>
             <div class="filter-container">
                 <el-date-picker style="top: -5px;" v-model="listQuery2.startDate" type="date" :editable="false"
-                                placeholder="开始时间" :clearable="false" format="yyyy-MM-dd HH:mm" @change="formatStartDate2">
+                                placeholder="开始时间" :clearable="false" format="yyyy-MM-dd HH:mm"
+                                @change="formatStartDate2">
                 </el-date-picker>
                 <el-date-picker style="top: -5px;" v-model="listQuery2.endDate" type="date" :editable="false"
-                                placeholder="结束时间" :clearable="false" format="yyyy-MM-dd HH:mm" @change="formatEndDate2">
+                                placeholder="结束时间" :clearable="false" format="yyyy-MM-dd HH:mm"
+                                @change="formatEndDate2">
                 </el-date-picker>
                 <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="统计" placement="top-start">
                     <el-button class="filter-item" type="primary" v-waves icon="search" @click="doPlot2">
@@ -76,7 +79,11 @@
     require('echarts/lib/component/visualMap');
     import {mapGetters} from 'vuex';
     import {date} from '../../../../filters';
-    import {dataPlotProcessCount, dataPlotFlagByProcess, dataPlotBusinessByProcess} from '../../../../api/hallSystem/count/count'
+    import {
+        dataPlotProcessCount,
+        dataPlotFlagByProcess,
+        dataPlotBusinessByProcess
+    } from '../../../../api/hallSystem/count/count'
 
     export default {
         name: 'table_demo',
@@ -323,7 +330,7 @@
         }
 
         .card-container {
-            padding: 0 300px 0 300px;
+            padding: 0 6%;
             .el-card {
                 width: 300px;
                 .card-title {
@@ -353,7 +360,7 @@
         }
 
         .className {
-            width: 1614px;
+            width: 100%;
             height: 540px;
         }
 

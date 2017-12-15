@@ -450,7 +450,7 @@
             }
             .el-card {
                 width: 300px;
-                margin-left: 400px;
+                margin-left: 50%;
                 .card-title {
                     font-weight: bold;
                     font-size: 20px;
@@ -475,7 +475,7 @@
 
         .chart-container {
             .className {
-                width: 1614px;
+                width: 100%;
                 height: 540px;
             }
         }

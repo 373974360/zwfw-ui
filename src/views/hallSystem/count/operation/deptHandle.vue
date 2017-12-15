@@ -212,7 +212,7 @@
     }
 
     .className {
-        width: 1614px;
+        width: 100%;
         height: 540px
     }
 

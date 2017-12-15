@@ -83,7 +83,7 @@
                     <el-input v-model="zwfwNaturePerson.name"></el-input>
                 </el-form-item>
                 <el-form-item label="身份证号" prop="idcard">
-                    <el-input :disabled="readonlyFlag" v-model="zwfwNaturePerson.idcard" @blur="handleIdCard"></el-input>
+                    <el-input  v-model="zwfwNaturePerson.idcard" @blur="handleIdCard"></el-input>
                 </el-form-item>
                 <el-form-item label="性别" prop="gender">
                     <el-radio-group disabled v-model="zwfwNaturePerson.gender">
@@ -234,7 +234,7 @@
                 dialogStatus: '',
                 dialogLoading: false,
                 btnLoading: false,
-                readonlyFlag: false,
+                readonlyFlag: true,
                 zwfwNaturePersonRules: {
                     name: [
                         {required: true, message: '请输入姓名', trigger: 'blur'}
