@@ -385,7 +385,7 @@
                                             预审资料：
                                             <span v-for="(file,index) in scope.row.multipleFile">
                                             <span v-if="file.url!=null && file.url!=''">
-                                            <a  :href="file.url"
+                                            <a  :href="file.url" :download="file.fileName"
                                                target="_blank">[{{index + 1}}]</a>
                                             </span>
                                             <span v-else>未上传</span>
