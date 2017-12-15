@@ -4,55 +4,65 @@
             <div class="grid-content ">
                 <div style="padding:10px">
                     <el-tabs v-model="leftTabName" type="card">
-                        <el-tab-pane label="业务受理" name="workPanelItl" v-if="false">
-                            <el-row :gutter="25">
-                                <el-col :span="19">
-                                    <el-button type="primary" @click="queryCurrentNumber">查询当前叫号</el-button>
-                                </el-col>
-                            </el-row>
-                            <el-row :gutter="25">
-                                <el-col :span="19">
-                                    <el-input v-model="memberCode" placeholder="输入企业统一信用代码或身份证号">
-                                        <template slot="prepend">用户信息：</template>
-                                    </el-input>
-                                </el-col>
-                                <el-col :span="4">
-                                    <el-button type="primary" @click="checkMemberExist()">查找用户</el-button>
-                                </el-col>
-                            </el-row>
-                            <el-row :gutter="25">
-                                <el-col :span="11">
-                                    <el-input v-model="memberRealname" placeholder="申请人姓名或企业名称">
-                                    </el-input>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-input v-model="memberPhone" placeholder="申请人当前可用手机号">
-                                    </el-input>
-                                </el-col>
-                                <!--<el-col :span="5">
-                                    <el-button type="primary" @click="sendFastRegPhoneCode"
-                                               :disabled="!doFastReg">发送验证码
-                                    </el-button>
-                                </el-col>-->
-                            </el-row>
-                            <!--<el-row :gutter="25" v-show="doFastReg">
-                                <el-col :span="19">
-                                    <el-input v-model="phoneCode" :disabled="!doFastReg" placeholder="输入手机收到的验证码"></el-input>
-                                </el-col>
-                                <el-col :span="4">
-                                    <el-button type="primary" @click="fastRegMember"
-                                               :disabled="!doFastReg">快速注册
-                                    </el-button>
-                                </el-col>
-                            </el-row>-->
-                        </el-tab-pane>
+                        <!--<el-tab-pane label="业务受理" name="workPanelItl" v-if="false">-->
+                            <!--<el-row :gutter="25">-->
+                                <!--<el-col :span="19">-->
+                                    <!--<el-button type="primary" @click="queryCurrentNumber">查询当前叫号</el-button>-->
+                                <!--</el-col>-->
+                            <!--</el-row>-->
+                            <!--<el-row :gutter="25">-->
+                                <!--<el-col :span="19">-->
+                                    <!--<el-input v-model="memberCode" placeholder="输入企业统一信用代码或身份证号">-->
+                                        <!--<template slot="prepend">用户信息：</template>-->
+                                    <!--</el-input>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="4">-->
+                                    <!--<el-button type="primary" @click="checkMemberExist()">查找用户</el-button>-->
+                                <!--</el-col>-->
+                            <!--</el-row>-->
+                            <!--<el-row :gutter="25">-->
+                                <!--<el-col :span="11">-->
+                                    <!--<el-input v-model="memberRealname" placeholder="申请人姓名或企业名称">-->
+                                    <!--</el-input>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-input v-model="memberPhone" placeholder="申请人当前可用手机号">-->
+                                    <!--</el-input>-->
+                                <!--</el-col>-->
+                                <!--&lt;!&ndash;<el-col :span="5">-->
+                                    <!--<el-button type="primary" @click="sendFastRegPhoneCode"-->
+                                               <!--:disabled="!doFastReg">发送验证码-->
+                                    <!--</el-button>-->
+                                <!--</el-col>&ndash;&gt;-->
+                            <!--</el-row>-->
+                            <!--&lt;!&ndash;<el-row :gutter="25" v-show="doFastReg">-->
+                                <!--<el-col :span="19">-->
+                                    <!--<el-input v-model="phoneCode" :disabled="!doFastReg" placeholder="输入手机收到的验证码"></el-input>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="4">-->
+                                    <!--<el-button type="primary" @click="fastRegMember"-->
+                                               <!--:disabled="!doFastReg">快速注册-->
+                                    <!--</el-button>-->
+                                <!--</el-col>-->
+                            <!--</el-row>&ndash;&gt;-->
+                        <!--</el-tab-pane>-->
                         <el-tab-pane label="业务受理" name="virtualPanelLianhu">
                             <el-row :gutter="25">
-                                <el-col :span="19">
+
+                                <el-col :span="23">
+                                    <el-button type="primary" @click="queryCurrentNumber">查询当前叫号</el-button>
+                                    <el-button type="primary" @click="showInputForm=true">新增办件</el-button>
+
+
+                                </el-col>
+                            </el-row>
+                            <template v-if="showInputForm">
+                            <el-row :gutter="25">
+                                <el-col :span="12">
                                     <el-cascader v-model="categoryCascaderModel" @change="handleCategoryChange" :options="categoryCascader"
                                                  class="filter-item"
                                                  :show-all-levels="true" clearable filterable expand-trigger="hover"
-                                                 :change-on-select="true" style="width: 180px" placeholder="选择事项分类">
+                                                 :change-on-select="true"  placeholder="选择事项分类">
                                     </el-cascader>
                                 </el-col>
                             </el-row>
@@ -98,6 +108,7 @@
                                     </el-button>
                                 </el-col>-->
                             </el-row>
+                            </template>
                             <!--<el-row :gutter="25" v-show="doFastReg">
                                 <el-col :span="19">
                                     <el-input v-model="phoneCode" :disabled="!doFastReg" placeholder="输入手机收到的验证码"></el-input>
@@ -631,7 +642,8 @@
                 // categoryId: 7344364064835072,
                 categoryCascader: [],
                 itemCategory: null,
-                categoryCascaderModel:[]
+                categoryCascaderModel:[],
+                showInputForm:false
             }
         },
 //        beforeRouteEnter(to, from, next) {
@@ -896,6 +908,7 @@
              */
             queryCurrentNumber() {
                 let _this = this;
+                this.showInputForm = false;
                 queryCurrentNumber({}).then(response => {
                     if (response.httpCode === 200) {
                         if (response.data != null) {
