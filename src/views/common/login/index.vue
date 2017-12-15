@@ -2,7 +2,7 @@
     <div class="login">
         <canvas id="canvas"></canvas>
         <div class="topTitle">
-            <h1>西安市莲湖区行政审批服务局</h1>
+            <h1>{{siteTitle}}</h1>
         </div>
         <div class="login-container">
             <el-form autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left"
@@ -102,6 +102,12 @@
                 canvas: true
             }
         },
+        computed:{
+            siteTitle:function () {
+                return window.siteTitle;
+            }
+        },
+
         methods: {
             handleLogin() {
                 this.$refs.loginForm.validate(valid => {

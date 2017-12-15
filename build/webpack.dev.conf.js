@@ -40,8 +40,9 @@ module.exports = merge(baseWebpackConfig, {
             template: 'index.html',
             favicon: resolveApp('favicon.ico'),
             inject: true,
-            path:config.dev.staticPath
+            path: config.dev.staticPath,
+            title: '德雅通科技有限公司'
         }),
         new FriendlyErrorsPlugin()
     ]
-})
+});
