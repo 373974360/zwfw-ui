@@ -209,15 +209,15 @@
     }
 </script>
 <style>
-    .form-suie {
-        position: absolute;
-        padding: 50px 0px 0px 586px;
-    }
 
     .form-suie .el-input {
         width: 300px;
     }
-
+    .form-suie .el-form {
+        width: 80%;
+        margin-left: 30%;
+        position: static;
+    }
     .avatar-uploader .el-upload {
         border: 1px dashed #d9d9d9;
         border-radius: 6px;
