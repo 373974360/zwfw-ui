@@ -6,7 +6,7 @@
     <meta name="renderer" content="webkit">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title><%= htmlWebpackPlugin.options.title %> —— 政务服务管理系统</title>
-    <link type="text/css" rel="stylesheet" href="/static/diagram-viewer/style.css">
+    <link type="text/css" rel="stylesheet" href="<%= htmlWebpackPlugin.options.path %>diagram-viewer/style.css">
 </head>
 <body>
 <script>
@@ -14,17 +14,17 @@
 </script>
 <script src="/static/jquery.min.js"></script>
 <!--<script src="<%= htmlWebpackPlugin.options.path %>tinymce/tinymce.min.js"></script>-->
-<script src='/static/diagram-viewer/js/jstools.js'></script>
-<script src='/static/diagram-viewer/js/raphael.js'></script>
-<script src='/static/diagram-viewer/js/jquery/jquery.progressbar.js'></script>
-<script src='/static/diagram-viewer/js/jquery/jquery.asyncqueue.js'></script>
-<script src='/static/diagram-viewer/js/Color.js'></script>
-<script src='/static/diagram-viewer/js/Polyline.js'></script>
-<script src='/static/diagram-viewer/js/ActivityImpl.js'></script>
-<script src='/static/diagram-viewer/js/ActivitiRest.js'></script>
-<script src='/static/diagram-viewer/js/LineBreakMeasurer.js'></script>
-<script src='/static/diagram-viewer/js/ProcessDiagramGenerator.js'></script>
-<script src='/static/diagram-viewer/js/ProcessDiagramCanvas.js'></script>
+<script src='<%= htmlWebpackPlugin.options.path %>diagram-viewer/js/jstools.js'></script>
+<script src='<%= htmlWebpackPlugin.options.path %>diagram-viewer/js/raphael.js'></script>
+<script src='<%= htmlWebpackPlugin.options.path %>diagram-viewer/js/jquery/jquery.progressbar.js'></script>
+<script src='<%= htmlWebpackPlugin.options.path %>diagram-viewer/js/jquery/jquery.asyncqueue.js'></script>
+<script src='<%= htmlWebpackPlugin.options.path %>diagram-viewer/js/Color.js'></script>
+<script src='<%= htmlWebpackPlugin.options.path %>diagram-viewer/js/Polyline.js'></script>
+<script src='<%= htmlWebpackPlugin.options.path %>diagram-viewer/js/ActivityImpl.js'></script>
+<script src='<%= htmlWebpackPlugin.options.path %>diagram-viewer/js/ActivitiRest.js'></script>
+<script src='<%= htmlWebpackPlugin.options.path %>diagram-viewer/js/LineBreakMeasurer.js'></script>
+<script src='<%= htmlWebpackPlugin.options.path %>diagram-viewer/js/ProcessDiagramGenerator.js'></script>
+<script src='<%= htmlWebpackPlugin.options.path %>diagram-viewer/js/ProcessDiagramCanvas.js'></script>
 <div id="app"></div>
 <!-- built files will be auto injected -->
 </body>
