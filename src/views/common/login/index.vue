@@ -79,7 +79,7 @@
             };
             return {
                 loginForm: {
-                    account: '373974360@qq.com',
+                    account: '',
                     password: '',
                     verifyCode: '',
                     imgUrl: '',

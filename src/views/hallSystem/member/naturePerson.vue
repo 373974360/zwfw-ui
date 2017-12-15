@@ -95,9 +95,9 @@
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item label="出生日期" prop="birthday">
-                    <el-date-picker disabled v-model="zwfwNaturePerson.birthday" type="date" placeholder="选择日期"></el-date-picker>
-                </el-form-item>
+                <!--<el-form-item label="出生日期" prop="birthday">-->
+                    <!--<el-date-picker v-model="zwfwNaturePerson.birthday" type="date" placeholder="选择日期"></el-date-picker>-->
+                <!--</el-form-item>-->
                 <el-form-item label="住址" prop="address">
                     <el-input v-model="zwfwNaturePerson.address"></el-input>
                 </el-form-item>
@@ -151,7 +151,8 @@
 <script>
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
-    import { isIdCardNo, validatMobiles } from 'utils/validate'
+    import { isIdCardNo, validatMobiles } from 'utils/validate';
+    import {moment} from 'moment';
     import {
         getAllZwfwNaturePerson,
         getZwfwNaturePersonList,
@@ -354,6 +355,7 @@
                     if (valid) {
                         this.btnLoading = true;
                         this.dialogLoading = true;
+                        this.zwfwNaturePerson.birthday = moment(this.zwfwNaturePerson.birthday).format('YYYY-MM-DD');
                         createZwfwNaturePerson(this.zwfwNaturePerson).then(response => {
                             this.btnLoading = false;
                             this.dialogLoading = false;
@@ -375,6 +377,8 @@
                     if (valid) {
                         this.btnLoading = true;
                         this.dialogLoading = true;
+                        // console.log(this.zwfwNaturePerson);
+                        this.zwfwNaturePerson.birthday = moment(this.zwfwNaturePerson.birthday).format('YYYY-MM-DD');
                         updateZwfwNaturePerson(this.zwfwNaturePerson).then(response => {
                             this.btnLoading = false;
                             this.dialogLoading = false;
