@@ -51,7 +51,7 @@
 
                                 <el-col :span="23">
                                     <el-button type="primary" @click="queryCurrentNumber">查询当前叫号</el-button>
-                                    <el-button type="primary" @click="showInputForm=true">新增办件</el-button>
+                                    <el-button type="primary" @click="resetForm">新增办件</el-button>
 
 
                                 </el-col>
@@ -790,6 +790,7 @@
              * 清除
              * */
             resetForm() {
+                this.showInputForm = true;
                 this.itemNumber = {};
                 this.companyInfo = {};
                 this.memberPhone = '';
