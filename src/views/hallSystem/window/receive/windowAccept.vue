@@ -921,6 +921,12 @@
                             _this.itemMaterialVoList = data.itemMaterialVoList;
                             _this.window = data.window;
                             _this.itemWindowUserName = data.itemWindowUserName;
+
+                            if(data.member) {
+                                _this.memberPhone = data.member.mobilephone;
+                                _this.memberRealname = data.member.name;
+                                _this.memberCode = data.member.memberCode;
+                            }
                         } else {
                             _this.$message({
                                 showClose: true,
