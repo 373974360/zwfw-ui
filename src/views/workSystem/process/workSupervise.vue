@@ -120,6 +120,34 @@
                                     <th width="140">企业/机构地址</th>
                                     <td colspan="3">{{member.legalPerson.registerPlace}}</td>
                                 </tr>
+                                <template v-if="companyInfo.id" >
+                                    <tr>
+                                        <th width="140">联系电话</th>
+                                        <td>{{companyInfo.lxdh}}</td>
+                                        <th width="140">企业类型</th>
+                                        <td>{{companyInfo.qllx}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th width="140">注册资金</th>
+                                        <td>{{companyInfo.zczj}}</td>
+                                        <th width="140">成立日期</th>
+                                        <td>{{companyInfo.clrq}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th width="140">营业期限</th>
+                                        <td colspan="3">{{companyInfo.yyqx}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th width="140">经营范围</th>
+                                        <td colspan="3">{{companyInfo.jyfw}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th width="140">状态</th>
+                                        <td>{{companyInfo.djzt}}</td>
+                                        <th width="140">所属街道</th>
+                                        <td>{{companyInfo.ssjd}}</td>
+                                    </tr>
+                                </template>
                             </table>
                         </div>
                         <div v-if="member.naturePerson!=null">
@@ -377,6 +405,9 @@
     import {
         getAllCompany
     } from 'api/other/company';
+    import {
+        queryCompanyInfo
+    } from 'api/hallSystem/window/receive/windowAccept';
     export default {
         name: 'zwfwDeptWorkPending_table',
         data() {
@@ -408,7 +439,35 @@
                 dialogFormVisible: false,
                 dialogStatus: '',
                 dialogLoading: false,
-                tabPaneShow: 'first'
+                tabPaneShow: 'first',
+                companyInfo: {
+                    id: '',
+                    node_id: '',
+                    ty_code: '',
+                    zz_code: '',
+                    gs_code: '',
+                    qymc: '',
+                    fr: '',
+                    lxr: '',
+                    lxdh: '',
+                    qllx: '',
+                    jgzs: '',
+                    zczj: '',
+                    clrq: '',
+                    yyqx: '',
+                    jyfw: '',
+                    djjg: '',
+                    hzrq: '',
+                    djzt: '',
+                    bak: '',
+                    add_type: '',
+                    add_time: '',
+                    add_user: '',
+                    up_time: '',
+                    up_user: '',
+                    ssjd: '',
+                    vtype: ''
+                }
             }
         },
         created() {
@@ -466,7 +525,30 @@
                     this.users = response.data.users;
                     this.correctionList = response.data.correctionList;
                     this.extendTimeVoList = response.data.extendTimeVoList;
+                    this.queryCompanyInfo(this.member);
                 });
+            },
+            /**
+             * 查询企业信息
+             */
+            queryCompanyInfo(memberInfo) {
+                this.companyInfo = {};
+                if (memberInfo.memberCode == '' || memberInfo.memberCode.length != 18) {
+                    this.companyInfo = {};
+                    return;
+                }
+                queryCompanyInfo({
+                    memberCode: memberInfo.memberCode
+                }).then(response => {
+                    if (response.httpCode === 200) {
+                        let c = response.data;
+                        if (c) {
+                            this.companyInfo = c;
+                        }
+                    } else {
+                        this.companyInfo = {};
+                    }
+                })
             },
             setSupervised(id) {
                 workSetSupervised(id).then(response => {

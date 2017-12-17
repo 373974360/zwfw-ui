@@ -561,6 +561,12 @@ export const asyncRouterMap = [
                 component: WorkSupervise,
                 name: '督办管理',
                 meta: {permission: 'workSystem:process:workSupervise:list'}
+            },
+            {
+                path: 'workFinishSupervise',
+                component: WorkFinish,
+                name: '待监管事项',
+                meta: {permission: 'workSystem:process:workFinishSupervise:list'}
             }
         ]
     },
