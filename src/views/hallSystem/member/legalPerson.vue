@@ -394,6 +394,9 @@
                 })
             },
             formatDate() {
+                if (!this.zwfwLegalPerson.registerDate) {
+                    return '';
+                }
                 this.zwfwLegalPerson.registerDate = moment(this.zwfwLegalPerson.registerDate).format('YYYY-MM-DD')
             },
             resetTemp() {

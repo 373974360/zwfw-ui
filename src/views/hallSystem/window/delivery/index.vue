@@ -23,13 +23,12 @@
                         :value="item.id">
                 </el-option>
             </el-select>
-            <el-tooltip style="margin-left: 10px; margin-top: 0px;" class="item" effect="dark" content="搜索"
-                        placement="top-start">
-                <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
-                    搜索
-                </el-button>
-            </el-tooltip>
-            <el-button class="filter-item" type="primary">添加</el-button>
+            <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
+                搜索
+            </el-button>
+            <el-button class="filter-item" style="margin-left: 10px;" type="primary" @click="createProcessOffline" icon="plus">
+                添加
+            </el-button>
         </div>
 
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row
@@ -77,7 +76,7 @@
             <el-table-column align="center" label="操作" width="240">
                 <template scope="scope">
                     <el-button v-if="scope.row.takeTypeInfo.flagTakeCert == 1 || scope.row.takeTypeInfo.flagTakeCert == 7"
-                               type="primary" @click="completeTake(scope.row)">确认收件</el-button>
+                               type="primary" @click="completeTake(scope.row)">确认取件</el-button>
                     <el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert == 3 && scope.row.takeTypeInfo.mailboxInfo.status == 1"
                                type="primary" @click="mailboxReserve(scope.row)">预约投递</el-button>
                     <el-tooltip v-else-if="scope.row.takeTypeInfo.flagTakeCert == 3 && scope.row.takeTypeInfo.mailboxInfo.status == 2"
@@ -138,7 +137,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="resetTakeTypeForm">取 消</el-button>
-                <el-button type="primary" icon="circle-check" @click="submitTakeTypeInfo">确 定</el-button>
+                <el-button type="primary" icon="circle-check" @click="submitTakeTypeInfo" :loading="btnLoading">确 定</el-button>
             </div>
         </el-dialog>
 
@@ -156,23 +155,113 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="submitTakeTypeExpress" type="primary" icon="circle-check">确 定</el-button>
+                <el-button @click="submitTakeTypeExpress" type="primary" icon="circle-check" :loading="btnLoading">确 定</el-button>
             </div>
         </el-dialog>
 
-        <el-dialog :visible.sync="otherProcessVisible">
-            <el-form>
-                <el-form-item label="事项名称"></el-form-item>
-                <el-form-item label="发件名称"></el-form-item>
-                <el-form-item label="文件形式"></el-form-item>
-                <el-form-item label="文件数量"></el-form-item>
+        <el-dialog title="办件信息" :visible.sync="processOfflineVisible" :close-on-click-modal="closeOnClickModal"
+                   :before-close="resetProcessOfflineForm">
+            <el-form ref="processOfflineForm" :model="processOfflineInfo" :rules="processOfflineInfoRules"
+                     label-width="100px" class="small-space" label-position="left"
+                     style="width: 80%; margin-left:10%;" v-loading="dialogLoading">
+                <el-form-item label="事项名称">
+                    <el-select v-model="processOfflineInfo.itemId" clearable filterable placeholder="选择事项">
+                        <el-option v-for="item in itemList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+                    </el-select>
+                </el-form-item>
+                <!--<el-form-item label="开始办件时间">
+                    <el-date-picker v-model="processOfflineInfo.startItemTime" type="datetime" placeholder=""
+                                    :editable="false" @change="formatDateTime">
+                    </el-date-picker>
+                </el-form-item>-->
+                <el-form-item label="办结时间">
+                    <el-date-picker v-model="processOfflineInfo.finishItemTime" type="datetime" placeholder=""
+                                    :editable="false" @change="formatDateTime">
+                    </el-date-picker>
+                </el-form-item>
                 <el-form-item label="取件方式">
-                    <el-select>
+                    <el-select v-model="processOfflineInfo.takeTypeInfo.takeType">
                         <el-option v-for="item in enums['TakeType']" :key="item.code"
                                    :value="item.code" :label="item.value"></el-option>
                     </el-select>
                 </el-form-item>
+                <el-form-item label="快件箱" v-show="processOfflineInfo.takeTypeInfo.takeType == 2">
+                    <el-select v-model="processOfflineInfo.takeTypeInfo.mailboxInfo.mailboxId">
+                        <el-option v-for="item in mailboxList" :key="item.id"
+                                   :value="item.id" :label="item.name"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="取件人手机号" v-show="processOfflineInfo.takeTypeInfo.takeType == 2">
+                    <el-input v-model="processOfflineInfo.takeTypeInfo.mailboxInfo.consigneeMobile"></el-input>
+                </el-form-item>
+                <el-form-item label="收件人姓名" v-show="processOfflineInfo.takeTypeInfo.takeType == 3">
+                    <el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.name"></el-input>
+                </el-form-item>
+                <el-form-item label="收件人手机号" v-show="processOfflineInfo.takeTypeInfo.takeType == 3">
+                    <el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.mobilephone"></el-input>
+                </el-form-item>
+                <el-form-item label="收件地址" v-show="processOfflineInfo.takeTypeInfo.takeType == 3">
+                    <el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.address"></el-input>
+                </el-form-item>
+                <el-form-item label="申请人是否注册帐号">
+                    <el-radio-group v-model="processOfflineInfo.hasMemberId">
+                        <el-radio :label="true">已注册</el-radio>
+                        <el-radio :label="false">未注册</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="申请人" v-show="processOfflineInfo.hasMemberId">
+                    <el-select v-model="processOfflineInfo.memberId"
+                               clearable filterable remote
+                               placeholder="请输入会员名称或证件号"
+                               :remote-method="remoteMethod"
+                               @change="changeConsigneeMobile">
+                        <el-option
+                                v-for="item in optionsName"
+                                :key="item.id"
+                                :label="item.name + ' | ' + item.loginName"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
             </el-form>
+            <el-form  ref="memberInfoForm" :model="memberInfo" :rules="memberInfoRules"
+                      v-show="!processOfflineInfo.hasMemberId"
+                      label-width="100px" class="small-space" label-position="left"
+                      style="width: 80%; margin-left:10%;" v-loading="dialogLoading">
+                <el-form-item label="用户类型">
+                    <el-radio-group v-model="memberInfo.type">
+                        <el-radio v-for="item in enums['MemberType']" :key="item.code" :label="item.code">{{item.value}}</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="姓名" v-show="memberInfo.type == 1">
+                    <el-input v-model="memberInfo.naturePerson.name"></el-input>
+                </el-form-item>
+                <el-form-item label="身份证号" v-show="memberInfo.type == 1">
+                    <el-input v-model="memberInfo.naturePerson.idcard"></el-input>
+                </el-form-item>
+                <el-form-item label="手机号" v-show="memberInfo.type == 1">
+                    <el-input v-model="memberInfo.naturePerson.phone"></el-input>
+                </el-form-item>
+                <el-form-item label="公司名称" v-show="memberInfo.type == 2">
+                    <el-input v-model="memberInfo.legalPerson.companyName"></el-input>
+                </el-form-item>
+                <el-form-item label="统一社会信用代码" v-show="memberInfo.type == 2">
+                    <el-input v-model="memberInfo.legalPerson.companyCode"></el-input>
+                </el-form-item>
+                <el-form-item label="法人姓名" v-show="memberInfo.type == 2">
+                    <el-input v-model="memberInfo.legalPerson.legalPerson"></el-input>
+                </el-form-item>
+                <el-form-item label="法人身份证号" v-show="memberInfo.type == 2">
+                    <el-input v-model="memberInfo.legalPerson.idcard"></el-input>
+                </el-form-item>
+                <el-form-item label="联系电话" v-show="memberInfo.type == 2">
+                    <el-input v-model="memberInfo.legalPerson.phone"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button icon="circle-cross" type="danger" @click="resetProcessOfflineForm">取 消</el-button>
+                <el-button type="primary" icon="circle-check" @click="submitProcessOffline" :loading="btnLoading">确 定</el-button>
+            </div>
         </el-dialog>
     </div>
 </template>
@@ -181,10 +270,12 @@
 <script>
     import {copyProperties, validateQueryStr, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
+    import {date} from '../../../../filters';
     import {getAllByNameOrbasicCode} from 'api/zwfwSystem/business/item';
     import {getAllMailbox} from 'api/hallSystem/window/mailbox'
-    import {getByNameOrLoginName} from '../../../../api/hallSystem/member/member'
-    import {getFinishList, saveExpressInfo, saveTakeType, complete, reserve, cancelReserve, getOrderStatus, getOrderDetail} from '../../../../api/hallSystem/window/delivery'
+    import {getByNameOrLoginName, getMemberById} from '../../../../api/hallSystem/member/member'
+    import {getFinishList, addProcessOffline, saveExpressInfo, saveTakeType, complete, reserve, cancelReserve,
+        getOrderStatus, getOrderDetail} from '../../../../api/hallSystem/window/delivery'
 
     export default {
         name: 'table_demo',
@@ -197,6 +288,7 @@
                 total: null,
                 listLoading: true,
                 dialogLoading: false,
+                btnLoading: false,
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
@@ -206,7 +298,43 @@
                 takeTypeVisible: false,
                 takeCodeVisible: false,
                 expressInfoVisible: false,
-                otherProcessVisible: false,
+                processOfflineVisible: false,
+                processOfflineInfo: {
+                    itemId: '',
+                    hasMemberId: true,
+                    memberId: '',
+                    startItemTime: '',
+                    finishItemTime: '',
+                    takeTypeInfo: {
+                        takeType: 1,
+                        mailboxInfo: {
+                            mailboxId: '',
+                            consigneeMobile: ''
+                        },
+                        postInfo: {
+                            name: '',
+                            mobilephone: '',
+                            address: ''
+                        }
+                    }
+                },
+                memberInfo: {
+                    type: 1,
+                    naturePerson: {
+                        name: '',
+                        idcard: '',
+                        phone: ''
+                    },
+                    legalPerson: {
+                        companyName: '',
+                        companyCode: '',
+                        legalPerson: '',
+                        idcard: '',
+                        phone: ''
+                    }
+                },
+                processOfflineInfoRules: {},
+                memberInfoRules: {},
                 takeTypeInfo: {
                     id: '',
                     processNumber: '',
@@ -237,10 +365,6 @@
                     expressNumber: [
                         {required: true, message: '请输入快递单号', trigger: 'blur'}
                     ]
-                },
-                otherProcessInfo: {
-                    itemId: '',
-                    resultName: ''
                 }
             }
         },
@@ -307,6 +431,57 @@
                     this.optionsName = [];
                 }
             },
+            createProcessOffline() {
+                this.processOfflineVisible = true;
+            },
+            changeConsigneeMobile(memberId) {
+                if (!memberId || this.processOfflineInfo.takeTypeInfo.takeType !== 2) {
+                    return;
+                }
+                getMemberById(memberId).then(response => {
+                    if (response.httpCode === 200) {
+                        let member = response.data;
+                        this.$confirm('查询到用户手机号，是否更新取件人手机号？', '提示', {
+                            confirmButtonText: '确定',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                        }).then(() => {
+                            if (member.type === 1) {
+                                this.processOfflineInfo.takeTypeInfo.mailboxInfo.consigneeMobile = member.naturePerson.phone;
+                            } else {
+                                this.processOfflineInfo.takeTypeInfo.mailboxInfo.consigneeMobile = member.legalPerson.phone;
+                            }
+                        }).catch(() => {
+                            console.dir('取消');
+                        });
+                    }
+                })
+            },
+            submitProcessOffline() {
+                this.$refs['processOfflineForm'].validate(valid => {
+                    if (!valid) {
+                        return false;
+                    }
+                    this.$refs['memberInfoForm'].validate(valid2 => {
+                        if (!valid2) {
+                            return false;
+                        }
+                        this.btnLoading = true;
+                        this.dialogLoading = true;
+                        addProcessOffline(this.processOfflineInfo, this.memberInfo).then(response => {
+                            this.dialogLoading = false;
+                            this.btnLoading = false;
+                            if (response.httpCode === 200) {
+                                this.resetProcessOfflineForm();
+                                this.$message.success('添加成功');
+                                this.getList();
+                            } else {
+                                this.$message.error('添加失败');
+                            }
+                        })
+                    })
+                })
+            },
             changeTakeType(row) {
                 if (row.takeTypeInfo.flagTakeCert !== 1
                     && row.takeTypeInfo.flagTakeCert !== 3
@@ -329,9 +504,11 @@
             submitTakeTypeInfo() {
                 this.$refs['takeTypeForm'].validate(valid => {
                     if (valid) {
+                        this.btnLoading = true;
                         this.dialogLoading = true;
                         saveTakeType(this.takeTypeInfo).then(response => {
                             this.dialogLoading = false;
+                            this.btnLoading = false;
                             if (response.httpCode === 200) {
                                 this.resetTakeTypeForm();
                                 this.$message.success('修改成功');
@@ -353,9 +530,11 @@
             submitTakeTypeExpress() {
                 this.$refs['expressInfoForm'].validate(valid => {
                     if (valid) {
+                        this.btnLoading = true;
                         this.dialogLoading = true;
                         saveExpressInfo(this.expressInfo).then(response => {
                             this.dialogLoading = false;
+                            this.btnLoading = false;
                             if (response.httpCode === 200) {
                                 this.resetExpressInfoForm();
                                 this.$message.success('信息保存成功');
@@ -448,6 +627,10 @@
                     confirmButtonText: '关闭'
                 })
             },
+            formatDateTime() {
+                this.processOfflineInfo.startItemTime = date(this.processOfflineInfo.startItemTime, 'YYYY-MM-DD HH:mm:ss')
+                this.processOfflineInfo.finishItemTime = date(this.processOfflineInfo.finishItemTime, 'YYYY-MM-DD HH:mm:ss')
+            },
             handlePageChange(val) {
                 this.listQuery.page = val;
                 this.getList();
@@ -474,6 +657,12 @@
                 this.resetTakeTypeTemp();
                 resetForm(this, 'takeTypeForm')
             },
+            resetProcessOfflineForm() {
+                this.processOfflineVisible = false;
+                this.resetProcessOfflineTemp();
+                resetForm(this, 'processOfflineForm');
+                resetForm(this, 'memberInfoForm');
+            },
             resetTakeTypeTemp() {
                 this.takeTypeInfo = {
                     id: '',
@@ -490,6 +679,42 @@
                         address: ''
                     }
                 }
+            },
+            resetProcessOfflineTemp() {
+                this.processOfflineInfo = {
+                    itemId: '',
+                    hasMemberId: true,
+                    memberId: '',
+                    startItemTime: '',
+                    finishItemTime: '',
+                    takeTypeInfo: {
+                        takeType: 1,
+                        mailboxInfo: {
+                            mailboxId: '',
+                            consigneeMobile: ''
+                        },
+                        postInfo: {
+                            name: '',
+                            mobilephone: '',
+                            address: ''
+                        }
+                    }
+                };
+                this.memberInfo = {
+                    type: 1,
+                    naturePerson: {
+                        name: '',
+                        idcard: '',
+                        phone: ''
+                    },
+                    legalPerson: {
+                        companyName: '',
+                        companyCode: '',
+                        legalPerson: '',
+                        idcard: '',
+                        phone: ''
+                    }
+                }
             }
         }
     }
@@ -502,8 +727,4 @@
     .el-textarea.is-disabled .el-textarea__inner {
         color: #1f2d3d;
     }
-    /*.el-button-group .el-button {
-        white-space: inherit;
-        width: 64px;
-    }*/
 </style>

@@ -7,3 +7,11 @@ export function getByNameOrLoginName(name) {
         params: {name}
     });
 }
+
+export function getMemberById(id) {
+    return fetch({
+        url: '/api/hallSystem/member/get',
+        method: 'get',
+        params: {id}
+    })
+}

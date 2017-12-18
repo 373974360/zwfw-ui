@@ -12,6 +12,15 @@ export function getFinishList(query) {
     });
 }
 
+export function addProcessOffline(itemProcessOfflineVo, memberVo) {
+    const data = Object.assign(itemProcessOfflineVo, memberVo);
+    return fetch({
+        url: '/api/hallSystem/hallCompositeWindowCert/addProcessOffline',
+        method: 'post',
+        data
+    })
+}
+
 export function saveTakeType(takeTypeInfo) {
     const data = takeTypeInfo;
     return fetch({
