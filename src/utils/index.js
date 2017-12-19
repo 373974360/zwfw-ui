@@ -215,13 +215,17 @@ export function getTime(type) {
     }
 }
 
-export function copyProperties(source, target) {
-    for (const item in source) {
-        if (target[item] != undefined) {
-            source[item] = target[item];
+export function copyProperties(target, source) {
+    for (const item in target) {
+        if (source[item] != undefined) {
+            if ((target[item] instanceof Object) && !(target[item] instanceof Array)) {
+                copyProperties(target[item], source[item])
+            } else {
+                target[item] = source[item];
+            }
         }
     }
-    return source;
+    return target;
 }
 
 export function cloneObject(source) {

@@ -15,3 +15,11 @@ export function getMemberById(id) {
         params: {id}
     })
 }
+
+export function loginNameExist(loginName) {
+    return fetch({
+        url: '/api/hallSystem/member/loginNameExist',
+        method: 'get',
+        params: {loginName}
+    })
+}

@@ -40,8 +40,12 @@
             <!--</el-table-column>-->
             <el-table-column align="left" label="事项名称" min-width="300">
                 <template scope="scope">
-                    <div>{{scope.row.itemName}}</div>
-                    <div>办件号: {{scope.row.processNumber}}</div>
+                    <el-tooltip class="item" effect="dark" placement="right" content="点击查看">
+                        <div style="cursor:pointer;" @click="showProcessTakeInfo(scope.row)">
+                            <div>{{scope.row.itemName}}</div>
+                            <div>办件号: {{scope.row.processNumber}}</div>
+                        </div>
+                    </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column align="left" label="申请人信息" min-width="260">
@@ -81,7 +85,7 @@
                                type="primary" @click="mailboxReserve(scope.row)">预约投递</el-button>
                     <el-tooltip v-else-if="scope.row.takeTypeInfo.flagTakeCert == 3 && scope.row.takeTypeInfo.mailboxInfo.status == 2"
                                 class="item" effect="dark" placement="right" content="点击更新状态">
-                        <el-button type="text" @click="mailboxStatusUpdate(scope.row)">预约中...</el-button>
+                        <el-button type="text" @click="mailboxInfoUpdate(scope.row)">预约中...</el-button>
                     </el-tooltip>
                     <el-button-group v-else-if="scope.row.takeTypeInfo.flagTakeCert == 3 && scope.row.takeTypeInfo.mailboxInfo.status == 3">
                         <el-button type="primary" @click="showReserveCode(scope.row)">获取<br>开箱码</el-button>
@@ -93,7 +97,7 @@
                     </el-button>
                     <el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert == 6" type="primary"
                                @click="enterExpressInfo(scope.row)">录入邮寄信息</el-button>
-                    <el-button v-else type="primary" @click="">查看</el-button>
+                    <el-button v-else type="primary" @click="showProcessTakeInfo(scope.row)">查看</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -116,23 +120,31 @@
                                    :value="item.code" :label="item.value"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="快件箱" prop="mailboxInfo.mailboxId" v-show="takeTypeInfo.takeType == 2">
+                <el-form-item label="快件箱" prop="mailboxInfo.mailboxId" v-show="takeTypeInfo.takeType == 2"
+                              :rules="takeTypeInfo.takeType === 2 ? takeTypeInfoRules.mailboxId : []">
                     <!--<el-radio-group v-model="takeTypeInfo.mailboxId">
                         <el-radio-button v-for="item in mailboxList" :key="item.id" :label="item.id">{{item.name}}</el-radio-button>
                     </el-radio-group>-->
-                    <el-select v-model="takeTypeInfo.mailboxInfo.mailboxId">
+                    <el-select v-model="takeTypeInfo.mailboxInfo.mailboxId"
+                               @change="validateField('takeTypeForm', 'mailboxInfo.mailboxId')">
                         <el-option v-for="item in mailboxList" :key="item.id"
                                    :value="item.id" :label="item.name"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="收件人姓名" prop="postInfo.name" v-show="takeTypeInfo.takeType == 3">
-                    <el-input v-model="takeTypeInfo.postInfo.name"></el-input>
+                <el-form-item label="收件人姓名" prop="postInfo.name" v-show="takeTypeInfo.takeType == 3"
+                              :rules="takeTypeInfo.takeType === 3 ? takeTypeInfoRules.postName : []">
+                    <el-input v-model="takeTypeInfo.postInfo.name"
+                              @blur="validateField('takeTypeForm', 'postInfo.name')"></el-input>
                 </el-form-item>
-                <el-form-item label="手机号" prop="postInfo.mobilephone" v-show="takeTypeInfo.takeType == 3">
-                    <el-input v-model="takeTypeInfo.postInfo.mobilephone"></el-input>
+                <el-form-item label="手机号" prop="postInfo.mobilephone" v-show="takeTypeInfo.takeType == 3"
+                              :rules="takeTypeInfo.takeType === 3 ? takeTypeInfoRules.postPhone : []">
+                    <el-input v-model="takeTypeInfo.postInfo.mobilephone"
+                              @blur="validateField('takeTypeForm', 'postInfo.mobilephone')"></el-input>
                 </el-form-item>
-                <el-form-item label="收件地址" prop="postInfo.address" v-show="takeTypeInfo.takeType == 3">
-                    <el-input v-model="takeTypeInfo.postInfo.address"></el-input>
+                <el-form-item label="收件地址" prop="postInfo.address" v-show="takeTypeInfo.takeType == 3"
+                              :rules="takeTypeInfo.takeType === 3 ? takeTypeInfoRules.postAddress : []">
+                    <el-input v-model="takeTypeInfo.postInfo.address"
+                              @blur="validateField('takeTypeForm', 'postInfo.address')"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -162,10 +174,17 @@
         <el-dialog title="办件信息" :visible.sync="processOfflineVisible" :close-on-click-modal="closeOnClickModal"
                    :before-close="resetProcessOfflineForm">
             <el-form ref="processOfflineForm" :model="processOfflineInfo" :rules="processOfflineInfoRules"
-                     label-width="100px" class="small-space" label-position="left"
+                     label-width="100px" class="small-space" label-position="right"
                      style="width: 80%; margin-left:10%;" v-loading="dialogLoading">
-                <el-form-item label="事项名称">
-                    <el-select v-model="processOfflineInfo.itemId" clearable filterable placeholder="选择事项">
+                <el-form-item label="办件号" v-show="offlineReadonly">
+                    <el-input v-model="processOfflineInfo.processNumber" :disabled="offlineReadonly"></el-input>
+                </el-form-item>
+                <el-form-item label="事项名称" v-show="offlineReadonly">
+                    <el-input v-model="processOfflineInfo.itemName" :disabled="offlineReadonly"></el-input>
+                </el-form-item>
+                <el-form-item label="事项" prop="itemId" v-show="!offlineReadonly">
+                    <el-select v-model="processOfflineInfo.itemId" clearable filterable placeholder="选择事项"
+                               :disabled="offlineReadonly">
                         <el-option v-for="item in itemList" :key="item.id" :label="item.name" :value="item.id"></el-option>
                     </el-select>
                 </el-form-item>
@@ -174,42 +193,79 @@
                                     :editable="false" @change="formatDateTime">
                     </el-date-picker>
                 </el-form-item>-->
-                <el-form-item label="办结时间">
-                    <el-date-picker v-model="processOfflineInfo.finishItemTime" type="datetime" placeholder=""
-                                    :editable="false" @change="formatDateTime">
+                <el-form-item label="办结时间" prop="finishItemTime">
+                    <el-date-picker v-model="processOfflineInfo.finishItemTime" type="datetime" :editable="false"
+                                    :disabled="offlineReadonly" @change="formatDateTime">
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item label="取件方式">
-                    <el-select v-model="processOfflineInfo.takeTypeInfo.takeType">
+                    <el-select v-model="processOfflineInfo.takeTypeInfo.takeType" :disabled="offlineReadonly">
                         <el-option v-for="item in enums['TakeType']" :key="item.code"
                                    :value="item.code" :label="item.value"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="快件箱" v-show="processOfflineInfo.takeTypeInfo.takeType == 2">
-                    <el-select v-model="processOfflineInfo.takeTypeInfo.mailboxInfo.mailboxId">
+                <el-form-item label="取件状态" v-show="offlineReadonly">
+                    <span>&nbsp;&nbsp;<b>{{processOfflineInfo.takeTypeInfo.flagTakeCert | enums('TakeStatus')}}</b></span>
+                </el-form-item>
+                <el-form-item label="取件时间" v-show="offlineReadonly && [2,5,8].includes(processOfflineInfo.takeTypeInfo.flagTakeCert)">
+                    <el-date-picker v-model="processOfflineInfo.takeTypeInfo.takeCertTime" type="datetime" :disabled="offlineReadonly"></el-date-picker>
+                </el-form-item>
+                <el-form-item label="快件箱" prop="takeTypeInfo.mailboxInfo.mailboxId"
+                              v-show="processOfflineInfo.takeTypeInfo.takeType == 2"
+                              :rules="mailboxRequired ? processOfflineInfoRules.mailboxId : []">
+                    <el-select v-model="processOfflineInfo.takeTypeInfo.mailboxInfo.mailboxId" :disabled="offlineReadonly"
+                               @change="validateField('processOfflineForm', 'takeTypeInfo.mailboxInfo.mailboxId')">
                         <el-option v-for="item in mailboxList" :key="item.id"
                                    :value="item.id" :label="item.name"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="取件人手机号" v-show="processOfflineInfo.takeTypeInfo.takeType == 2">
-                    <el-input v-model="processOfflineInfo.takeTypeInfo.mailboxInfo.consigneeMobile"></el-input>
+                <el-form-item label="箱格序号" v-show="offlineReadonly && processOfflineInfo.takeTypeInfo.mailboxInfo.status > 2 && processOfflineInfo.takeTypeInfo.mailboxInfo.boxNo">
+                    <el-input v-model="processOfflineInfo.takeTypeInfo.mailboxInfo.boxNo" :disabled="offlineReadonly"></el-input>
                 </el-form-item>
-                <el-form-item label="收件人姓名" v-show="processOfflineInfo.takeTypeInfo.takeType == 3">
-                    <el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.name"></el-input>
+                <el-form-item label="取件人手机号" prop="takeTypeInfo.mailboxInfo.consigneeMobile"
+                              v-show="processOfflineInfo.takeTypeInfo.takeType == 2"
+                              :rules="mailboxRequired ? processOfflineInfoRules.consigneeMobile : []">
+                    <el-input v-model="processOfflineInfo.takeTypeInfo.mailboxInfo.consigneeMobile" :disabled="offlineReadonly"
+                              @blur="validateField('processOfflineForm', 'takeTypeInfo.mailboxInfo.consigneeMobile')"></el-input>
                 </el-form-item>
-                <el-form-item label="收件人手机号" v-show="processOfflineInfo.takeTypeInfo.takeType == 3">
-                    <el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.mobilephone"></el-input>
+                <el-form-item label="开箱码" v-show="offlineReadonly && processOfflineInfo.takeTypeInfo.mailboxInfo.status > 2">
+                    <el-input v-model="processOfflineInfo.takeTypeInfo.mailboxInfo.resvCode" :disabled="offlineReadonly"></el-input>
                 </el-form-item>
-                <el-form-item label="收件地址" v-show="processOfflineInfo.takeTypeInfo.takeType == 3">
-                    <el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.address"></el-input>
+                <el-form-item label="取件码" v-show="offlineReadonly && processOfflineInfo.takeTypeInfo.mailboxInfo.openCode">
+                    <el-input v-model="processOfflineInfo.takeTypeInfo.mailboxInfo.openCode" :disabled="offlineReadonly"></el-input>
                 </el-form-item>
-                <el-form-item label="申请人是否注册帐号">
+                <el-form-item label="快递公司" v-show="offlineReadonly && processOfflineInfo.takeTypeInfo.postInfo.expressCompany">
+                    <el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.expressCompany" :disabled="offlineReadonly"></el-input>
+                </el-form-item>
+                <el-form-item label="快递单号" v-show="offlineReadonly && processOfflineInfo.takeTypeInfo.postInfo.expressNumber">
+                    <el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.expressNumber" :disabled="offlineReadonly"></el-input>
+                </el-form-item>
+                <el-form-item label="收件人姓名" prop="takeTypeInfo.postInfo.name"
+                              v-show="processOfflineInfo.takeTypeInfo.takeType == 3"
+                              :rules="postRequired ? processOfflineInfoRules.postName : []">
+                    <el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.name" :disabled="offlineReadonly"
+                              @blur="validateField('processOfflineForm', 'takeTypeInfo.postInfo.name')"></el-input>
+                </el-form-item>
+                <el-form-item label="收件人手机号" prop="takeTypeInfo.postInfo.mobilephone"
+                              v-show="processOfflineInfo.takeTypeInfo.takeType == 3"
+                              :rules="postRequired ? processOfflineInfoRules.postPhone : []">
+                    <el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.mobilephone" :disabled="offlineReadonly"
+                              @blur="validateField('processOfflineForm', 'takeTypeInfo.postInfo.mobilephone')"></el-input>
+                </el-form-item>
+                <el-form-item label="收件地址" prop="takeTypeInfo.postInfo.address"
+                              v-show="processOfflineInfo.takeTypeInfo.takeType == 3"
+                              :rules="postRequired ? processOfflineInfoRules.postAddress : []">
+                    <el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.address" :disabled="offlineReadonly"
+                              @blur="validateField('processOfflineForm', 'takeTypeInfo.postInfo.address')"></el-input>
+                </el-form-item>
+                <el-form-item label="申请人是否注册帐号" v-show="!offlineReadonly">
                     <el-radio-group v-model="processOfflineInfo.hasMemberId">
                         <el-radio :label="true">已注册</el-radio>
                         <el-radio :label="false">未注册</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item label="申请人" v-show="processOfflineInfo.hasMemberId">
+                <el-form-item label="申请人帐号" prop="memberId" v-show="!offlineReadonly && processOfflineInfo.hasMemberId"
+                              :rules="processOfflineInfo.hasMemberId ? processOfflineInfoRules.memberId : []">
                     <el-select v-model="processOfflineInfo.memberId"
                                clearable filterable remote
                                placeholder="请输入会员名称或证件号"
@@ -219,48 +275,65 @@
                                 v-for="item in optionsName"
                                 :key="item.id"
                                 :label="item.name + ' | ' + item.loginName"
-                                :value="item.id">
+                                :value="item.id + ''">
                         </el-option>
                     </el-select>
                 </el-form-item>
             </el-form>
-            <el-form  ref="memberInfoForm" :model="memberInfo" :rules="memberInfoRules"
+            <el-form ref="memberInfoForm" :model="memberInfo" :rules="memberInfoRules"
                       v-show="!processOfflineInfo.hasMemberId"
-                      label-width="100px" class="small-space" label-position="left"
+                      label-width="100px" class="small-space" label-position="right"
                       style="width: 80%; margin-left:10%;" v-loading="dialogLoading">
                 <el-form-item label="用户类型">
                     <el-radio-group v-model="memberInfo.type">
                         <el-radio v-for="item in enums['MemberType']" :key="item.code" :label="item.code">{{item.value}}</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item label="姓名" v-show="memberInfo.type == 1">
-                    <el-input v-model="memberInfo.naturePerson.name"></el-input>
+                <el-form-item label="姓名" prop="naturePerson.name" v-show="memberInfo.type == 1"
+                              :rules="natureRequired ? memberInfoRules.name : []">
+                    <el-input v-model="memberInfo.naturePerson.name"
+                              @blur="validateField('memberInfoForm', 'naturePerson.name')"></el-input>
                 </el-form-item>
-                <el-form-item label="身份证号" v-show="memberInfo.type == 1">
-                    <el-input v-model="memberInfo.naturePerson.idcard"></el-input>
+                <el-form-item label="身份证号" prop="naturePerson.idcard" v-show="memberInfo.type == 1"
+                              :rules="natureRequired ? memberInfoRules.idcard : []">
+                    <el-input v-model="memberInfo.naturePerson.idcard"
+                              @blur="validateField('memberInfoForm', 'naturePerson.idcard')"></el-input>
                 </el-form-item>
-                <el-form-item label="手机号" v-show="memberInfo.type == 1">
-                    <el-input v-model="memberInfo.naturePerson.phone"></el-input>
+                <el-form-item label="手机号" prop="naturePerson.phone" v-show="memberInfo.type == 1"
+                              :rules="natureRequired ? memberInfoRules.phone : []">
+                    <el-input v-model="memberInfo.naturePerson.phone"
+                              @blur="validateField('memberInfoForm', 'naturePerson.phone')"></el-input>
                 </el-form-item>
-                <el-form-item label="公司名称" v-show="memberInfo.type == 2">
-                    <el-input v-model="memberInfo.legalPerson.companyName"></el-input>
+                <el-form-item label="公司名称" prop="legalPerson.companyName" v-show="memberInfo.type == 2"
+                              :rules="legalRequired ? memberInfoRules.companyName : []">
+                    <el-input v-model="memberInfo.legalPerson.companyName"
+                              @blur="validateField('memberInfoForm', 'legalPerson.companyName')"></el-input>
                 </el-form-item>
-                <el-form-item label="统一社会信用代码" v-show="memberInfo.type == 2">
-                    <el-input v-model="memberInfo.legalPerson.companyCode"></el-input>
+                <el-form-item label="统一社会信用代码" prop="legalPerson.companyCode" v-show="memberInfo.type == 2"
+                              :rules="legalRequired ? memberInfoRules.companyCode : []">
+                    <el-input v-model="memberInfo.legalPerson.companyCode"
+                              @blur="validateField('memberInfoForm', 'legalPerson.companyCode')"></el-input>
                 </el-form-item>
-                <el-form-item label="法人姓名" v-show="memberInfo.type == 2">
-                    <el-input v-model="memberInfo.legalPerson.legalPerson"></el-input>
+                <el-form-item label="法人姓名" prop="legalPerson.legalPerson" v-show="memberInfo.type == 2"
+                              :rules="legalRequired ? memberInfoRules.legalPerson : []">
+                    <el-input v-model="memberInfo.legalPerson.legalPerson"
+                              @blur="validateField('memberInfoForm', 'legalPerson.legalPerson')"></el-input>
                 </el-form-item>
-                <el-form-item label="法人身份证号" v-show="memberInfo.type == 2">
-                    <el-input v-model="memberInfo.legalPerson.idcard"></el-input>
+                <el-form-item label="法人身份证号" prop="legalPerson.idcard" v-show="memberInfo.type == 2"
+                              :rules="legalRequired ? memberInfoRules.legalPersonCard : []">
+                    <el-input v-model="memberInfo.legalPerson.idcard"
+                              @blur="validateField('memberInfoForm', 'legalPerson.idcard')"></el-input>
                 </el-form-item>
-                <el-form-item label="联系电话" v-show="memberInfo.type == 2">
-                    <el-input v-model="memberInfo.legalPerson.phone"></el-input>
+                <el-form-item label="联系电话" prop="legalPerson.phone" v-show="memberInfo.type == 2"
+                              :rules="legalRequired ? memberInfoRules.legalPersonPhone : []">
+                    <el-input v-model="memberInfo.legalPerson.phone"
+                              @blur="validateField('memberInfoForm', 'legalPerson.phone')"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="resetProcessOfflineForm">取 消</el-button>
-                <el-button type="primary" icon="circle-check" @click="submitProcessOffline" :loading="btnLoading">确 定</el-button>
+                <el-button v-if="!offlineReadonly" type="primary" icon="circle-check" @click="submitProcessOffline"
+                           :loading="btnLoading">确 定</el-button>
             </div>
         </el-dialog>
     </div>
@@ -271,15 +344,56 @@
     import {copyProperties, validateQueryStr, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import {date} from '../../../../filters';
+    import {isIdCardNo, validatMobiles, checkSocialCreditCode} from 'utils/validate'
     import {getAllByNameOrbasicCode} from 'api/zwfwSystem/business/item';
     import {getAllMailbox} from 'api/hallSystem/window/mailbox'
-    import {getByNameOrLoginName, getMemberById} from '../../../../api/hallSystem/member/member'
+    import {getByNameOrLoginName, getMemberById, loginNameExist} from '../../../../api/hallSystem/member/member'
     import {getFinishList, addProcessOffline, saveExpressInfo, saveTakeType, complete, reserve, cancelReserve,
         getOrderStatus, getOrderDetail} from '../../../../api/hallSystem/window/delivery'
 
     export default {
         name: 'table_demo',
         data() {
+            const validateIdcard = (rule, value, callback) => {
+                if (!isIdCardNo(value)) {
+                    callback(new Error('身份证号格式不正确，请重新输入'));
+                } else {
+                    loginNameExist(value).then(response => {
+                        if (response.httpCode === 200) {
+                            if (!response.data) {
+                                callback();
+                            } else {
+                                callback(new Error('身份证号已存在'))
+                            }
+                        } else {
+                            callback(new Error(response.msg))
+                        }
+                    })
+                }
+            };
+            const validateMobiles = (rule, value, callback) => {
+                if (!validatMobiles(value)) {
+                    callback(new Error('手机号码格式不正确'));
+                }
+                callback();
+            };
+            const validateCompanyCode = (rule, value, callback) => {
+                if (!checkSocialCreditCode(value)) {
+                    callback(new Error('不是有效的社会统一信用代码，请重新输入'));
+                } else {
+                    loginNameExist(value).then(response => {
+                        if (response.httpCode === 200) {
+                            if (!response.data) {
+                                callback();
+                            } else {
+                                callback(new Error('社会统一信用代码已存在'))
+                            }
+                        } else {
+                            callback(new Error(response.msg))
+                        }
+                    })
+                }
+            };
             return {
                 list: null,
                 itemList: [],
@@ -299,7 +413,10 @@
                 takeCodeVisible: false,
                 expressInfoVisible: false,
                 processOfflineVisible: false,
+                offlineReadonly: false,
                 processOfflineInfo: {
+                    processNumber: undefined,
+                    itemName: undefined,
                     itemId: '',
                     hasMemberId: true,
                     memberId: '',
@@ -307,14 +424,22 @@
                     finishItemTime: '',
                     takeTypeInfo: {
                         takeType: 1,
+                        flagTakeCert: undefined,
+                        takeCertTime: undefined,
                         mailboxInfo: {
                             mailboxId: '',
-                            consigneeMobile: ''
+                            status: undefined,
+                            consigneeMobile: '',
+                            boxNo: undefined,
+                            resvCode: undefined,
+                            openCode: undefined
                         },
                         postInfo: {
                             name: '',
                             mobilephone: '',
-                            address: ''
+                            address: '',
+                            expressCompany: undefined,
+                            expressNumber: undefined
                         }
                     }
                 },
@@ -333,8 +458,65 @@
                         phone: ''
                     }
                 },
-                processOfflineInfoRules: {},
-                memberInfoRules: {},
+                processOfflineInfoRules: {
+                    itemId: [
+                        {required: true, message: '请选择事项', trigger: 'change'}
+                    ],
+                    finishItemTime: [
+                        {required: true, message: '办结时间不能为空', trigger: 'change'}
+                    ],
+                    memberId: [
+                        {required: true, message: '请选择申请人帐号', trigger: 'change'}
+                    ],
+                    mailboxId: [
+                        {required: true, message: '请选择快件箱', trigger: 'change'}
+                    ],
+                    consigneeMobile: [
+                        {required: true, message: '取件人手机号不能为空', trigger: 'blur'},
+                        {validator: validateMobiles, trigger: 'blur'}
+                    ],
+                    postName: [
+                        {required: true, message: '收件人姓名不能为空', trigger: 'blur'}
+                    ],
+                    postPhone: [
+                        {required: true, message: '收件人手机号不能为空', trigger: 'blur'},
+                        {validator: validateMobiles, trigger: 'blur'}
+                    ],
+                    postAddress: [
+                        {required: true, message: '收件地址不能为空', trigger: 'blur'}
+                    ]
+                },
+                memberInfoRules: {
+                    name: [
+                        {required: true, message: '姓名不能为空', trigger: 'blur'}
+                    ],
+                    idcard: [
+                        {required: true, message: '身份证号不能为空', trigger: 'blur'},
+                        {validator: validateIdcard, trigger: 'blur'}
+                    ],
+                    phone: [
+                        {required: true, message: '手机号不能为空', trigger: 'blur'},
+                        {validator: validateMobiles, trigger: 'blur'}
+                    ],
+                    companyName: [
+                        {required: true, message: '公司名称不能为空', trigger: 'blur'}
+                    ],
+                    companyCode: [
+                        {required: true, message: '统一社会信用代码不能为空', trigger: 'blur'},
+                        {validator: validateCompanyCode, trigger: 'blur'}
+                    ],
+                    legalPerson: [
+                        {required: true, message: '法人姓名不能为空', trigger: 'blur'}
+                    ],
+                    legalPersonCard: [
+                        {required: true, message: '法人身份证号不能为空', trigger: 'blur'},
+                        {validator: validateIdcard, trigger: 'blur'}
+                    ],
+                    legalPersonPhone: [
+                        {required: true, message: '联系电话不能为空', trigger: 'blur'},
+                        {validator: validateMobiles, trigger: 'blur'}
+                    ]
+                },
                 takeTypeInfo: {
                     id: '',
                     processNumber: '',
@@ -351,7 +533,21 @@
                         address: ''
                     }
                 },
-                takeTypeInfoRules: {},
+                takeTypeInfoRules: {
+                    mailboxId: [
+                        {required: true, message: '请选择快件箱', trigger: 'change'}
+                    ],
+                    postName: [
+                        {required: true, message: '收件人姓名不能为空', trigger: 'blur'}
+                    ],
+                    postPhone: [
+                        {required: true, message: '收件人手机号不能为空', trigger: 'blur'},
+                        {validator: validateMobiles, trigger: 'blur'}
+                    ],
+                    postAddress: [
+                        {required: true, message: '收件地址不能为空', trigger: 'blur'}
+                    ]
+                },
                 expressInfo: {
                     id: '',
                     processNumber: '',
@@ -373,7 +569,19 @@
                 'textMap',
                 'enums',
                 'closeOnClickModal'
-            ])
+            ]),
+            natureRequired() {
+                return !this.processOfflineInfo.hasMemberId && this.memberInfo.type === 1;
+            },
+            legalRequired() {
+                return !this.processOfflineInfo.hasMemberId && this.memberInfo.type === 2;
+            },
+            mailboxRequired() {
+                return this.processOfflineInfo.takeTypeInfo.takeType === 2;
+            },
+            postRequired() {
+                return this.processOfflineInfo.takeTypeInfo.takeType === 3;
+            }
         },
         created() {
             this.getList();
@@ -432,9 +640,14 @@
                 }
             },
             createProcessOffline() {
+                this.offlineReadonly = false;
                 this.processOfflineVisible = true;
             },
             changeConsigneeMobile(memberId) {
+                if (this.offlineReadonly) {
+                    return;
+                }
+                this.validateField('processOfflineForm', 'memberId');
                 if (!memberId || this.processOfflineInfo.takeTypeInfo.takeType !== 2) {
                     return;
                 }
@@ -627,6 +840,15 @@
                     confirmButtonText: '关闭'
                 })
             },
+            showProcessTakeInfo(row) {
+                this.processOfflineInfo = copyProperties(this.processOfflineInfo, row);
+                this.processOfflineInfo.hasMemberId = true;
+                this.offlineReadonly = true;
+                this.processOfflineVisible = true;
+            },
+            validateField(form, field) {
+                this.$refs[form].validateField(field)
+            },
             formatDateTime() {
                 this.processOfflineInfo.startItemTime = date(this.processOfflineInfo.startItemTime, 'YYYY-MM-DD HH:mm:ss')
                 this.processOfflineInfo.finishItemTime = date(this.processOfflineInfo.finishItemTime, 'YYYY-MM-DD HH:mm:ss')
@@ -682,6 +904,8 @@
             },
             resetProcessOfflineTemp() {
                 this.processOfflineInfo = {
+                    processNumber: undefined,
+                    itemName: undefined,
                     itemId: '',
                     hasMemberId: true,
                     memberId: '',
@@ -689,14 +913,22 @@
                     finishItemTime: '',
                     takeTypeInfo: {
                         takeType: 1,
+                        flagTakeCert: undefined,
+                        takeCertTime: undefined,
                         mailboxInfo: {
                             mailboxId: '',
-                            consigneeMobile: ''
+                            status: undefined,
+                            consigneeMobile: '',
+                            boxNo: undefined,
+                            resvCode: undefined,
+                            openCode: undefined
                         },
                         postInfo: {
                             name: '',
                             mobilephone: '',
-                            address: ''
+                            address: '',
+                            expressCompany: undefined,
+                            expressNumber: undefined
                         }
                     }
                 };
