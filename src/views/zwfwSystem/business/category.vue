@@ -99,7 +99,8 @@
                      :rules="categoryItemRules">
                 <el-form-item label="事项名称" prop="name">
                     <el-select
-                            v-model="zwfwItem.name"
+                            v-model="zwfwItem"
+                            value-key="id"
                             filterable
                             remote
                             placeholder="请输入事项名称或基本编码"
@@ -109,7 +110,7 @@
                                 v-for="item in optionsName"
                                 :key="item.id"
                                 :label="item.name"
-                                :value="item.id">
+                                :value="item">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -416,11 +417,11 @@
                 }
             },
             changeItem(value) {
-                for (const obj of this.itemList) {
-                    if (obj.id === value) {
-                        this.zwfwItem = Object.assign({}, obj);
-                    }
-                }
+                // for (const obj of this.itemList) {
+                //     if (obj.id === value) {
+                //         this.zwfwItem = Object.assign({}, obj);
+                //     }
+                // }
             },
             handleItemDelete() {
                 if (this.selectedRows.length === 0) {

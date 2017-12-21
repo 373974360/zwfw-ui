@@ -439,7 +439,7 @@
                             this.itemMaterialVoList = response.data.itemMaterialVoList;
                             this.itemPretrialMaterialVoList = response.data.itemPretrialMaterialVoList;
                             this.itemPretrialVo = response.data.itemPretrialVo;
-                            this.windowVo = response.data.windowVo;
+                            this.windowVo = response.data.window;
                             this.itemWindowUserName = response.data.itemWindowUserName;
                         }
                     } else {
