@@ -21,7 +21,7 @@ export function getZwfwActivitiModelList(query) {
  * @param id
  */
 export function getZwfwActivitiModelEditUrl(id) {
-    return '/static/modeler.html?modelId=' + id;
+    return '/admin/modeler.html?modelId=' + id;
 }
 
 /**
