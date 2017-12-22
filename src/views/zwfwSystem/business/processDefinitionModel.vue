@@ -17,6 +17,7 @@
                     :multiple="true"
                     :show-file-list="false"
                     :action="getUploadUrl"
+                    :headers="uploadHeader"
             :on-success="onUploadSuccess"
             :before-upload="onBeforeUpload"
             :on-error="onUploadError">
@@ -130,7 +131,8 @@
                     name: [{
                         required: true, message: '请输入模型名称'
                     }]
-                }
+                },
+
             }
         },
         created() {
@@ -144,6 +146,9 @@
             ]),
             getUploadUrl() {
                 return getZwfwActivitiModelUploadUrl();
+            },
+            uploadHeader() {
+                return {'User-Authorization': this.$store.getters.token}
             }
         },
         methods: {
