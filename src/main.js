@@ -68,6 +68,20 @@ router.beforeEach((to, from, next) => {
                         router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
                         next(to.path); // hack方法 确保addRoutes已完成
                     })
+                    if(permissions.length > 0){
+                        let systemCount = 0;
+                        for(let permission of permissions){
+                            if(permission.indexOf('System:admin') >= 0){
+                                systemCount++;
+                            }
+                        }
+                        if(systemCount == 1 && to.path == "/"){
+                            const currentSystem = permissions[0].substr(0,permissions[0].indexOf(':'));
+                            Cookies.set('CurrentSystem',currentSystem);
+                            Cookies.set('SystemCount',1);
+                            next(currentSystem + '/index');
+                        }
+                    }
                 }).catch(err => {
                     console.log(err);
                 });
