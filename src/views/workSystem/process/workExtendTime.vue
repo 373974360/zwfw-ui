@@ -16,17 +16,17 @@
                   v-loading.body="listLoading" border fit
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
-            <el-table-column align="center" label="ID" width="">
+            <el-table-column align="center" label="ID" >
                 <template scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="办件流水" width="">
+            <el-table-column align="center" label="办件流水" >
                 <template scope="scope">
                     <span>{{scope.row.processNumber}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="延期任务" width="">
+            <el-table-column align="center" label="延期任务" >
                 <template scope="scope">
                     <span>{{scope.row.taskName}}</span>
                 </template>

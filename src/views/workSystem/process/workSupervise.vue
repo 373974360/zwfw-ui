@@ -21,7 +21,7 @@
         <el-table ref="zwfwDeptWorkPendingTable" :data="list" v-loading.body="listLoading" border fit
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
-            <el-table-column align="center" label="办件序号" width="100px">
+            <el-table-column align="center" label="办件序号" >
                 <template scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
@@ -71,9 +71,9 @@
                     <span>{{scope.row.status | enums('ItemProcessStatus')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="操作" width="250px">
+            <el-table-column align="center" label="操作" width="200px">
                 <template scope="scope">
-                    <el-button class="filter-item" type="primary" @click="handleDetailList(scope.row)">查看
+                    <el-button  type="primary" @click="handleDetailList(scope.row)">查看
                     </el-button>
                     <el-button v-show="scope.row.flagSupervied != null && scope.row.flagSupervied == 0"
                                class="filter-item"

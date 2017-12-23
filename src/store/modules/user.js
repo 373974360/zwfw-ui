@@ -7,60 +7,29 @@ import {
 const user = {
     state: {
         user: '',
-        status: '',
         account: '',
-        code: '',
         uid: undefined,
-        auth_type: '',
         token: getToken(),
         name: '',
+        deptName: '',
+        empNo: '',
         avatar: '',
         introduction: '',
-        permissions: [],
-        setting: {
-            articlePlatform: []
-        }
+        permissions: []
     },
 
     mutations: {
-        SET_AUTH_TYPE: (state, type) => {
-            state.auth_type = type;
-        },
-        SET_CODE: (state, code) => {
-            state.code = code;
-        },
         SET_TOKEN: (state, token) => {
             state.token = token;
         },
-        SET_UID: (state, uid) => {
-            state.uid = uid;
-        },
-        SET_EMAIL: (state, account) => {
-            state.account = account;
-        },
-        SET_INTRODUCTION: (state, introduction) => {
-            state.introduction = introduction;
-        },
-        SET_SETTING: (state, setting) => {
-            state.setting = setting;
-        },
-        SET_STATUS: (state, status) => {
-            state.status = status;
-        },
-        SET_NAME: (state, name) => {
-            state.name = name;
-        },
-        SET_AVATAR: (state, avatar) => {
-            state.avatar = avatar;
-        },
-        SET_PERMISSINSS: (state, permissions) => {
-            state.permissions = permissions;
-        },
-        LOGIN_SUCCESS: () => {
-            console.log('login success')
-        },
-        LOGOUT_USER: state => {
-            state.user = '';
+        SET_INFO: (state, info) => {
+            state.uid = info.id;
+            state.introduction = info.remark;
+            state.name = info.name;
+            state.empNo = info.empNo;
+            state.avatar = info.avatar;
+            state.permissions = info.permissions;
+            state.deptName = info.deptVo.name;
         }
     },
 
@@ -78,11 +47,6 @@ const user = {
                         setToken(data);
                         commit('SET_TOKEN', data);
                         resolve();
-                        // Cookies.set('User-Authorization', data.token);
-                        // commit('SET_TOKEN', data.token);
-                        // commit('SET_UID', data.id);
-                        // commit('SET_EMAIL', data.account);
-                        // resolve();
                     }
                 }).catch(error => {
                     reject(error);
@@ -95,11 +59,7 @@ const user = {
             return new Promise((resolve, reject) => {
                 getInfo().then(response => {
                     const data = response.data;
-                    commit('SET_PERMISSINSS', data.permissions);
-                    commit('SET_NAME', data.userName);
-                    commit('SET_AVATAR', data.avatar);
-                    commit('SET_UID', data.id);
-                    commit('SET_INTRODUCTION', data.remark);
+                    commit('SET_INFO', data);
                     resolve(response);
                 }).catch(error => {
                     reject(error);

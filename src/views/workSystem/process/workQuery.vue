@@ -30,12 +30,12 @@
         <el-table ref="zwfwDeptWorkQueryTable" :data="zwfwDeptWorkQueryList" v-loading.body="listLoading" border fit
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
-            <el-table-column align="center" label="ID" width="100px">
+            <el-table-column align="center" label="ID">
                 <template scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="流水号" width="200px">
+            <el-table-column align="center" label="流水号" >
                 <template scope="scope">
                     <span>{{scope.row.processNumber}}</span>
                 </template>

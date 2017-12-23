@@ -10,7 +10,7 @@
         </div>
         <el-table :data="pretrialList" v-loading.body="listLoading" border fit highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange">
-            <el-table-column min-width="200px" align="center" label="预审号">
+            <el-table-column align="center" label="预审号">
                 <template scope="scope">
                     <span>{{scope.row.processNumber}}<br/>({{scope.row.itemName}})</span>
                 </template>
@@ -21,27 +21,27 @@
                     <span v-if="scope.row.memberName != null">{{scope.row.memberName}}</span>
                 </template>
             </el-table-column>
-            <el-table-column width="200px" align="center" label="提交预审的时间">
+            <el-table-column align="center" label="申请时间">
                 <template scope="scope">
                     <span>{{scope.row.applyTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column width="200px" align="center" label="审核时间">
+            <el-table-column align="center" label="审核时间">
                 <template scope="scope">
                     <span>{{scope.row.auditTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column width="200px" align="center" label="审核期限">
+            <el-table-column align="center" label="审核期限">
                 <template scope="scope">
                     <span>{{scope.row.expireDate | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column width="200px" align="center" label="状态">
+            <el-table-column align="center" label="状态">
                 <template scope="scope">
                     <span>{{scope.row.status | enums('PretrialStatus')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column width="250px" align="center" label="备注">
+            <el-table-column align="center" label="备注">
                 <template scope="scope">
                     <div style="white-space:pre-wrap;text-align: left;">{{scope.row.remark}}</div>
                 </template>
