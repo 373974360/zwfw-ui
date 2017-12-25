@@ -17,12 +17,12 @@
         <el-table ref="zwfwDeptWorkPendingTable" :data="zwfwDeptWorkPendingList" v-loading.body="listLoading" border fit
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange">
-            <el-table-column align="center" label="ID">
-                <template scope="scope">
-                    <span>{{scope.row.id}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="流水号">
+            <!--<el-table-column align="center" label="ID">-->
+                <!--<template scope="scope">-->
+                    <!--<span>{{scope.row.id}}</span>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
+            <el-table-column align="center" label="办件号">
                 <template scope="scope">
                     <span>{{scope.row.processNumber}}</span>
                 </template>
@@ -82,7 +82,8 @@
         </div>
         <!--查看-->
         <el-dialog class="s-dialog-title" size="large" :title="textMapTitle" :visible.sync="dialogFormVisible"
-                   :close-on-click-modal="closeOnClickModal" :before-close="resetWorkPendingForm">
+                   :close-on-click-modal="closeOnClickModal" :before-close="resetWorkPendingForm" v-loading="dialogLoading"
+                   element-loading-text="拼命加载中">
             <div>
                     <h2 class="h2-style-show">审批处理：{{itemProcessVo.currentTaskName}} </h2>
                     <input type="hidden" name="taskId" :value='itemProcessVo.taskId'/>
@@ -92,14 +93,14 @@
                     <div style="margin-bottom:20px;">
                         <el-button class="filter-item" type="primary" @click="action='pass'">提交办理</el-button>
                         <el-button v-if="itemTaskSetting.supportCorrection" class="filter-item" type="primary"
-                                   @click="action='correction'" :disabled="itemProcessVo.flagCorrection">整改
+                                   @click="action='correction'" :disabled="itemProcessVo.flagCorrection || dialogLoading">整改
                         </el-button>
                         <el-button v-if="itemTaskSetting.supportExtendTime" class="filter-item" type="primary"
                                    @click="action='extendTime'"
-                                   :disabled="itemProcessVo.flagCorrection || itemProcessVo.extendTimeApplying ">申请延期
+                                   :disabled="itemProcessVo.flagCorrection || itemProcessVo.extendTimeApplying || dialogLoading ">申请延期
                         </el-button>
                         <el-button v-if="itemTaskSetting.supportClose" class="filter-item" type="primary"
-                                   @click="action='close'">不予处理
+                                   @click="action='close' || dialogLoading">不予处理
                         </el-button>
                     </div>
 
@@ -124,7 +125,7 @@
                         <el-form-item v-show="action=='pass'" class="h2-style-show" label="提交办理意见">
                             <el-input v-model="passRemark" type="textarea"></el-input>
                         </el-form-item>
-                        <el-button v-show="action=='pass'" style="width: 100%;" type="primary" @click="submitComplete">
+                        <el-button v-show="action=='pass'" style="width: 100%;" type="primary" @click="submitComplete" :disabled="dialogLoading">
                             确定提交
                         </el-button>
                         <el-form-item v-show="action=='correction'" class="h2-style-show" label="请输入整改原因">
@@ -136,7 +137,7 @@
                                       min="1"></el-input>
                         </el-form-item>
                         <el-button v-show="action=='correction'" type="primary" style="width: 100%;"
-                                   @click="submitCorrection">确定整改
+                                   @click="submitCorrection" :disabled="dialogLoading">确定整改
                         </el-button>
                         <el-form-item v-show="action=='extendTime'" label="申请延期">
                             <el-input v-model="extendTimeReason" type="textarea"></el-input>
@@ -147,12 +148,12 @@
                                       min="1"></el-input>
                         </el-form-item>
                         <el-button style="width: 100%;" v-show="action=='extendTime'" type="primary"
-                                   @click="submitExtendTime">确定延期申请
+                                   @click="submitExtendTime" :disabled="dialogLoading">确定延期申请
                         </el-button>
                         <el-form-item v-show="action=='close'" label="请输入不予受理原因">
                             <el-input class="input-textarea" v-model="closeReason" type="textarea"></el-input>
                         </el-form-item>
-                        <el-button style="width: 100%;" v-show="action=='close'" type="primary" @click="submitClose">
+                        <el-button style="width: 100%;" v-show="action=='close'" type="primary" @click="submitClose" :disabled="dialogLoading">
                             确定不予受理
                         </el-button>
                     </el-form>
@@ -545,25 +546,29 @@
             getList() {
                 this.listLoading = true;
                 getZwfwDeptWorkPendingList(this.listQuery).then(response => {
+                    this.listLoading = false;
                     if (response.httpCode === 200) {
                         this.zwfwDeptWorkPendingList = response.data.list;
                         this.total = response.data.total;
-                        this.listLoading = false;
                     } else {
                         this.$message.error(response.msg);
                     }
+                }).catch(e=>{
+                    this.listLoading = false;
+                    this.$message.error(response.msg || '加载超时');
                 })
             },
             /**
              * 显示详细
              * */
             showDetail(row) {
+                this.dialogLoading = true;
+
                 this.uploadAvatars = []
                 this.processNumber = row.processNumber;
                 this.taskId = row.taskId;
                 this.textMapTitle = '部门办事 - ' + row.itemName + " | 办件号："+row.processNumber;
                 this.dialogFormVisible = true;
-
                 this.passRemark = '确认通过';
                 this.correctionReason = '1、\n2、\n3、\n4、\n5、\n';
                 this.closeReason = '1、\n2、\n3、\n4、\n5、\n';
@@ -575,6 +580,7 @@
                 }
                 getZwfwDeptWorkDetail(query).then(response => {
                     if (response.httpCode === 200) {
+                        this.dialogLoading = false;
                         this.approveStepList = response.data.approveStepList;
                         this.itemConditionVoList = response.data.itemConditionVoList;
                         this.itemMaterialVoList = response.data.itemMaterialVoList;
@@ -598,9 +604,11 @@
                         }
                         this.queryCompanyInfo(this.member);
                     } else {
-                        this.$message.error(response.msg);
                     }
 
+                }).catch(e => {
+                    this.dialogLoading = false;
+                    this.$message.error(response.msg || '加载超时');
                 });
             },
             /**
@@ -647,14 +655,15 @@
              * 提交到下一步
              * */
             submitComplete() {
+                this.dialogLoading = true;
                 var form = this.$refs.deptWorkPendingForm;
                 console.log(this.formData);
-
                 const query = Object.assign({
                     taskId: this.itemProcessVo.taskId,
                     passReason: this.passRemark
                 }, this.formData);
                 workComplete(query).then(response => {
+                    this.dialogLoading = false;
                     if (response.httpCode === 200) {
                         this.dialogFormVisible = false;
                         this.$message.success('提交成功');
@@ -662,12 +671,15 @@
                     } else {
                         this.$message.error(response.msg);
                     }
+                }).catch(e=>{
+                    this.dialogLoading = false;
                 })
             },
             /**
              * 提交整改
              * */
             submitCorrection() {
+                this.dialogLoading = true;
                 const query = {
                     taskId: this.itemProcessVo.taskId,
                     correctionReason: this.correctionReason,
@@ -678,22 +690,27 @@
                         this.dialogFormVisible = false;
                         this.$message.success('提交成功');
                         this.getList();
-
+                        this.this.dialogLoading =  false;
                     } else {
                         this.$message.error(response.msg);
                     }
+                }).catch(e =>{
+                    this.dialogLoading =false;
                 })
             },
             /**
              * 提交延期申请
              * */
             submitExtendTime() {
+                this.dialogLoading = true;
                 const query = {
                     taskId: this.itemProcessVo.taskId,
                     extendTimeDays: this.extendTimeDays,
                     extendTimeReason: this.extendTimeReason
                 }
                 workExtendTime(query).then(response => {
+                    this.dialogLoading = false;
+
                     if (response.httpCode === 200) {
                         this.dialogFormVisible = false;
                         this.$message.success('提交成功');
@@ -702,17 +719,22 @@
                     } else {
                         this.$message.error(response.msg);
                     }
+                }).catch(e=>{
+                    this.dialogLoading = true;
                 })
             },
             /**
              * 提交不予受理
              * */
             submitClose() {
+                this.dialogLoading = true;
+
                 const query = {
                     taskId: this.itemProcessVo.taskId,
                     closeReason: this.closeReason
                 }
                 workClose(query).then(response => {
+                    this.dialogLoading = false;
                     if (response.httpCode === 200) {
                         this.dialogFormVisible = false;
                         this.$message.success('提交成功');
@@ -721,6 +743,8 @@
                     } else {
                         this.$message.error(response.msg);
                     }
+                }).catch(e =>{
+                    this.dialogLoading = false;
                 })
             },
             resetTemp() {
@@ -786,17 +810,22 @@
                 window.open(file.url);
             },
             handleRemove(file) {
+                this.dialogLoading = true;
+
                 console.log(file);
                 const data = {
                     id: file.id,
                     taskId: file.taskId
                 }
                 workUploadImgRemove(data).then(response => {
+                    this.dialogLoading = false;
                     if(response.httpCode === 200){
                         this.$message.success("删除成功");
                     }else{
                         this.$message.error("删除失败");
                     }
+                }).then(e=>{
+                    this.dialogLoading = false;
                 })
             }
 

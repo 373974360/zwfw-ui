@@ -26,23 +26,22 @@
 
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
         </div>
-
         <el-table ref="zwfwDeptWorkQueryTable" :data="zwfwDeptWorkQueryList" v-loading.body="listLoading" border fit
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
-            <el-table-column align="center" label="ID">
-                <template scope="scope">
-                    <span>{{scope.row.id}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="流水号" >
+            <!--<el-table-column align="center" label="ID">-->
+                <!--<template scope="scope">-->
+                    <!--<span>{{scope.row.id}}</span>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
+            <el-table-column align="center" label="办件号">
                 <template scope="scope">
                     <span>{{scope.row.processNumber}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="办理事项" prop="itemName" width="200px">
+            <el-table-column align="center" label="办理事项" prop="itemName" width="200">
                 <template scope="scope">
-                        <span >{{scope.row.itemName}}</span>
+                    <span>{{scope.row.itemName}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="当前步骤" prop="currentTaskName">
@@ -75,12 +74,12 @@
                     <span>{{scope.row.companyName}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="enable" class-name="status-col" label="状态">
+            <el-table-column prop="enable" class-name="status-col" label="状态" width="50">
                 <template scope="scope">
                     <span>{{scope.row.status | enums('ItemProcessStatus')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column  align="center"  label="操作">
+            <el-table-column align="center" label="操作">
                 <template scope="scope">
                     <el-button @click="showDetail(scope.row)" type="primary">查看</el-button>
                 </template>
@@ -95,8 +94,10 @@
         </div>
 
         <!--查看-->
-        <el-dialog class="s-dialog-title" size="large"  :title="textMapTitle" :visible.sync="dialogFormVisible"
-                   :close-on-click-modal="closeOnClickModal" :before-close="resetWorkPengingForm">
+        <el-dialog class="s-dialog-title" size="large" :title="textMapTitle" :visible.sync="dialogFormVisible"
+                   :close-on-click-modal="closeOnClickModal" :before-close="resetWorkPengingForm"
+                   v-loading="dialogLoading"
+                   element-loading-text="拼命加载中">
             <div>
                 <div>
                     <h2 class="h2-style-show">审批记录：</h2>
@@ -164,7 +165,7 @@
                                             <th width="140">企业/机构地址</th>
                                             <td colspan="3">{{member.legalPerson.registerPlace}}</td>
                                         </tr>
-                                        <template v-if="companyInfo.id" >
+                                        <template v-if="companyInfo.id">
                                             <tr>
                                                 <th width="140">联系电话</th>
                                                 <td>{{companyInfo.lxdh}}</td>
@@ -259,6 +260,10 @@
                                         </td>
                                     </tr>
                                 </table>
+                                <div style="text-align: center;">
+                                    <img :src="'/api/workSystem/itemProcessWork/showDiagram?processNumber=' + itemProcessVo.processNumber"
+                                         style="max-width:100%"/>
+                                </div>
                             </div>
                             <div v-if="itemProcessVo.status==15">
                                 已办结
@@ -331,8 +336,8 @@
                                         <div v-if="c.multipleFile" style="color:blue">
                                             <span v-for="(file,index) in c.multipleFile">
                                             <span v-if="file.url!=null && file.url!=''">
-                                            <a  :href="file.url" :download="file.fileName"
-                                                target="_blank">[{{index + 1}}]</a>
+                                            <a :href="file.url" :download="file.fileName"
+                                               target="_blank">[{{index + 1}}]</a>
                                             </span>
                                             <span v-else>未上传</span>
                                          </span>
@@ -347,7 +352,7 @@
                 <div v-if="uploadAvatars!=null && uploadAvatars.length>0">
                     <h2 class="h2-style-show">附件材料：</h2>
                     <el-row>
-                        <el-col :span="4" v-for="(item, index) in uploadAvatars" :key="item" :offset="1" >
+                        <el-col :span="4" v-for="(item, index) in uploadAvatars" :key="item" :offset="1">
                             <el-card :body-style="{ padding: '0px' }">
                                 <img :src="item.url" @click="handlePictureCardPreview(item)" class="image">
                             </el-card>
@@ -356,7 +361,8 @@
                 </div>
                 <div>
                     <el-button v-if="itemProcessVo.flagCorrection || itemProcessVo.status == 99"
-                               type="button" @click="print_ycxgzd(itemProcessVo.processNumber)">打印一次性告知单</el-button>
+                               type="button" @click="print_ycxgzd(itemProcessVo.processNumber)">打印一次性告知单
+                    </el-button>
                 </div>
             </div>
         </el-dialog>
@@ -406,7 +412,7 @@
                     enable: 1,
                     agencyCode: ''
                 },
-                companyList:[],
+                companyList: [],
                 currentRow: null,
                 selectedRows: [],
                 dialogFormVisible: false,
@@ -474,7 +480,14 @@
                 'textMap',
                 'enums',
                 'closeOnClickModal'
-            ])
+            ]),
+            processTaskDiagramSrc() {
+                if (this.itemProcessVo.processNumber) {
+                    return '/api/workSystem/itemProcessWork/showDiagram?processNumber=' + this.itemProcessVo.processNumber;
+                } else {
+                    return '';
+                }
+            }
         },
         methods: {
             getList() {
@@ -528,6 +541,7 @@
                 });
             },
             showDetail(row) {
+                this.dialogLoading = true;
                 this.uploadAvatars = [];
                 this.processNumber = row.processNumber;
                 this.taskId = row.taskId;
@@ -537,8 +551,11 @@
                     processNumber: this.processNumber,
                     taskId: this.taskId
                 }
+
                 getZwfwDeptWorkDetail(query).then(response => {
                     console.log(response.data);
+                    this.dialogLoading = false;
+
                     this.approveStepList = response.data.approveStepList;
                     this.itemConditionVoList = response.data.itemConditionVoList;
                     this.itemMaterialVoList = response.data.itemMaterialVoList;
@@ -553,12 +570,14 @@
                     this.correctionList = response.data.correctionList;
                     this.extendTimeVoList = response.data.extendTimeVoList;
                     const itemProcessAttachmentList = response.data.itemProcessAttachmentList;
-                    for (var o in itemProcessAttachmentList) {
+                    for (let o in itemProcessAttachmentList) {
                         this.uploadAvatars.push(
                             {url: itemProcessAttachmentList[o].fileUrl}
                         );
                     }
                     this.queryCompanyInfo(this.member);
+                }).catch(e => {
+                    this.dialogLoading = false;
                 });
             },
             /**

@@ -30,12 +30,12 @@
         <el-table ref="zwfwDeptWorkQueryTable" :data="zwfwDeptWorkQueryList" v-loading.body="listLoading" border fit
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
-            <el-table-column align="center" label="ID" >
-                <template scope="scope">
-                    <span>{{scope.row.id}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="流水号">
+            <!--<el-table-column align="center" label="ID" >-->
+            <!--<template scope="scope">-->
+            <!--<span>{{scope.row.id}}</span>-->
+            <!--</template>-->
+            <!--</el-table-column>-->
+            <el-table-column align="center" label="办件号">
                 <template scope="scope">
                     <span>{{scope.row.processNumber}}</span>
                 </template>
@@ -70,7 +70,7 @@
                     <span>{{scope.row.status | enums('ItemProcessStatus')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="操作" >
+            <el-table-column align="center" label="操作">
                 <template scope="scope">
                     <el-button @click="showDetail(scope.row)" type="primary">查看</el-button>
                 </template>
@@ -86,7 +86,9 @@
 
         <!--查看-->
         <el-dialog class="s-dialog-title" size="large" :title="textMapTitle" :visible.sync="dialogFormVisible"
-                   :close-on-click-modal="closeOnClickModal" :before-close="resetWorkPengingForm">
+                   :close-on-click-modal="closeOnClickModal" :before-close="resetWorkPengingForm"
+                   v-loading="dialogLoading"
+                   element-loading-text="拼命加载中">
             <div>
                 <div>
                     <h2 class="h2-style-show">审批记录：</h2>
@@ -154,7 +156,7 @@
                                             <th width="140">企业/机构地址</th>
                                             <td colspan="3">{{member.legalPerson.registerPlace}}</td>
                                         </tr>
-                                        <template v-if="companyInfo.id" >
+                                        <template v-if="companyInfo.id">
                                             <tr>
                                                 <th width="140">联系电话</th>
                                                 <td>{{companyInfo.lxdh}}</td>
@@ -204,58 +206,6 @@
                                         </tr>
                                     </table>
                                 </div>
-                            </div>
-                        </el-tab-pane>
-                        <el-tab-pane label="办件进度" name="second">
-
-                            <div v-if="itemProcessVo.status==10">
-                                <table class="table table-bordered table-responsive">
-                                    <tr v-if="itemProcessVo.taskLimitTime">
-                                        <td>当前步骤期限</td>
-                                        <td>
-                                            {{itemProcessVo.taskLimitTime | date('YYYY-MM-DD HH:mm:ss')}}
-                                            <!--包括工作日{{itemProcessVo.taskLimitTime|fromNow}}-->
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>当前办理步骤</td>
-                                        <td>{{itemProcessVo.currentTaskName}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>督办件</td>
-                                        <td>{{itemProcessVo.flagSupervied | enums('YesNo')}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>超期件</td>
-                                        <td>{{itemProcessVo.flagTimeout | enums('YesNo')}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>整改状态</td>
-                                        <td>{{itemProcessVo.flagCorrection | enums('YesNo')}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>申请办件时间</td>
-                                        <td>{{itemProcessVo.startItemTime | date('YYYY-MM-DD HH:mm:ss')}}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>承诺办结日期</td>
-                                        <td>{{itemProcessVo.promiseFinishTime | date('YYYY-MM-DD HH:mm:ss')}}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>流入当前步骤时间</td>
-                                        <td>{{itemProcessVo.taskCreateTime | date('YYYY-MM-DD HH:mm:ss')}}
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div v-if="itemProcessVo.status==15">
-                                已办结
-                            </div>
-
-                            <div v-if="itemProcessVo.status==99">
-                                不予受理
                             </div>
                         </el-tab-pane>
                         <el-tab-pane label="整改记录" name="third">
@@ -321,8 +271,8 @@
                                         <div v-if="c.multipleFile" style="color:blue">
                                             <span v-for="(file,index) in c.multipleFile">
                                             <span v-if="file.url!=null && file.url!=''">
-                                            <a  :href="file.url" :download="file.fileName"
-                                                target="_blank">[{{index + 1}}]</a>
+                                            <a :href="file.url" :download="file.fileName"
+                                               target="_blank">[{{index + 1}}]</a>
                                             </span>
                                             <span v-else>未上传</span>
                                          </span>
@@ -336,7 +286,7 @@
                 <div v-if="uploadAvatars!=null && uploadAvatars.length>0">
                     <h2 class="h2-style-show">附件材料：</h2>
                     <el-row>
-                        <el-col :span="4" v-for="(item, index) in uploadAvatars" :key="item" :offset="1" >
+                        <el-col :span="4" v-for="(item, index) in uploadAvatars" :key="item" :offset="1">
                             <el-card :body-style="{ padding: '0px' }">
                                 <img :src="item.url" @click="handlePictureCardPreview(item)" class="image">
                             </el-card>
@@ -520,6 +470,7 @@
                 });
             },
             showDetail(row) {
+                this.dialogLoading = true;
                 this.uploadAvatars = [];
                 this.processNumber = row.processNumber;
                 this.taskId = row.taskId;
@@ -531,6 +482,7 @@
                 }
                 getZwfwDeptWorkDetail(query).then(response => {
                     console.log(response.data);
+                    this.dialogLoading = false;
                     this.approveStepList = response.data.approveStepList;
                     this.itemConditionVoList = response.data.itemConditionVoList;
                     this.itemMaterialVoList = response.data.itemMaterialVoList;
@@ -551,6 +503,8 @@
                         );
                     }
                     this.queryCompanyInfo(this.member);
+                }).catch(e => {
+                    this.dialogLoading = false;
                 });
             },
             /**
