@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网上政务大厅管理平台 - 业务受理单</title>
+    <style media="print">button {
+        display: none;
+    }</style>
+
+    <style type="text/css">
+
+        body{
+            font-size:16px;
+            line-height:2em;
+        }
+        table{
+            border-collapse:collapse;
+        }
+        table tr td {
+            border: solid black 1px;
+            padding:10px;
+
+        }
+
+
+        #wl_list li {
+            line-height: 2.5em;
+        }
+    </style>
+</head>
+
+<body>
+<div class="printTable">
+
+    <p style="font-size: medium;text-align: center;white-space: normal;background-color: rgb(255, 255, 255)">
+        <span style="font-size: 24px;font-weight: bold">政务服务中心</span>
+    </p>
+
+    <p style="font-size: medium;text-align: center;white-space: normal;background-color: rgb(255, 255, 255)">
+        <span style="font-size: 24px;font-weight: bold">综合窗口业务受理单</span>
+    </p>
+    <div style="text-align: center;">
+        <button onclick="window.print()">打印</button>
+    </div>
+
+    <div style="width:600px;margin:10px auto">
+
+    <table width="100%" >
+        <tbody>
+        <tr>
+            <td colspan="100" align="right">办件号：{{processNumber}}</td>
+        </tr>
+        <tr>
+            <td colspan="2" align="left">事项名称：{{itemName}}</td>
+        </tr>
+        <tr>
+            <td colspan="2" align="left">申请单位：{{companyName}}</td>
+        </tr>
+        <tr>
+            <td colspan="1" align="left" width="50%">联系人：{{memberName}}</td>
+            <td colspan="1" align="left">联系电话：{{memberMobilephone}}</td>
+        </tr>
+        <tr>
+            <td colspan="1" align="left">证件类型：身份证</td>
+            <td colspan="1" align="left">身份证号：{{memberIdNumber}}</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div style=" margin-top:1em">
+                    物料清单：
+                    <div style="min-height:200px;">
+                        <ol id="wl_list" style="margin:0px;">
+                            <li v-for="material in materialList">
+                                {{material}}
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div style="min-height: 8em;">
+
+                    <p>备注：</p>
+
+
+
+                </div>
+                <div style="margin-top:1em;font-size:1em;">* 取件时，需要申请人携带受理单与本人身份证（缺一不可），请妥善保管。</div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="1" align="left" style="height: 5em">
+                申请人：
+            </td>
+            <td colspan="1" align="left">
+                收件人：
+            </td>
+        </tr>
+        <tr>`
+            <td colspan="1" align="right">
+                日期：{{date}}
+            </td>
+            <td colspan="1" align="right">
+                日期：{{date}}
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+    </div>
+
+
+</div>
+<script src="../vue.min.js"></script>
+<script src="../jquery.min.js"></script>
+<script type="text/javascript">
+    var interfaceUrl = "/api/hallSystem";
+
+    function getParam(name) {
+        return location.search.match(new RegExp('[?&]' + name + '=([^?&]+)', 'i')) ? decodeURIComponent(RegExp.$1) : '';
+    }
+
+    var numberId = getParam("numberId");
+    console.log(numberId);
+
+    var d = new Date();
+    var printTable = new Vue({
+        el: '.printTable',
+        data: {
+            date: "",
+            reason: [],
+            itemName: "",
+            msgType: "",
+            memberMobilephone: "",
+            companyName: "",
+            memberIdNumber: "",
+            processNumber: "",
+            memberName: "",
+            remark: "",
+            askPhone: "",
+            materialList: []
+        },
+        mounted: function () {
+            var _this = this;
+            if (numberId == null) {
+                return;
+            }
+            $.post(interfaceUrl + '/hallCompositeWindow/ywsldData', {
+                numberId: numberId
+            }, function (response) {
+                if (response.httpCode === 200) {
+                    _this.date = response.data.date;
+                    _this.reason = response.data.reason;
+                    _this.itemName = response.data.itemName;
+                    _this.msgType = response.data.msgType;
+                    _this.memberMobilephone = response.data.memberMobilephone;
+                    _this.companyName = response.data.companyName;
+                    _this.memberIdNumber = response.data.memberIdNumber;
+                    _this.processNumber = response.data.processNumber;
+                    _this.memberName = response.data.memberName;
+                    _this.remark = response.data.remark;
+                    _this.askPhone = response.data.askPhone;
+                    _this.materialList = response.data.materialList;
+                } else {
+                    alert(response.msg);
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+
+
+</html>
