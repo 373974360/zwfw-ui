@@ -1,103 +1,53 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-/* layout */
-import Layout from '../views/layout/Layout';
+/* 后台布局 */
+import Layout from '../views/common/layout/Layout';
+import AppMain from '../views/common/layout/AppMain';
 
-/* login */
-import Login from '../views/login/';
-const authRedirect = () => import('../views/login/authredirect');
-const sendPWD = () => import('../views/login/sendpwd');
-const reset = () => import('../views/login/reset');
+/* 登录 */
+import Login from '../views/common/login/';
+const AuthRedirect = () => import('../views/common/login/authredirect');
+const SendPWD = () => import('../views/common/login/sendpwd');
+const Reset = () => import('../views/common/login/reset');
 
-/* dashboard */
-const dashboard = () => import('../views/dashboard/index');
+/* 选择系统 */
+import System from '../views/common/login/system';
 
-/* org */
-const Dept = () => import('../views/sys/org/dept');
-const User = () => import('../views/sys/org/user');
-const Menu = () => import('../views/sys/org/menu');
-const Role = () => import('../views/sys/org/role');
+/************************个人设置************************/
+const Profile = () => import('../views/common/login/profile');
 
-/* system */
-const Holiday = () => import('../views/sys/system/holiday');
-const Log = () => import('../views/sys/system/log');
-const Cache = () => import('../views/sys/system/cache');
-const Dict = () => import('../views/sys/system/dict');
-const MetadataType = () => import('../views/sys/system/metadataType');
-const SysMessageFiled = () => import('../views/sys/system/sysMessageFiled');
-const SysMessageTemplate = () => import('../views/sys/system/SysMessageTemplate');
+/************************基础信息管理************************/
+/* index */
+const BaseSystem = () => import('../views/baseSystem/index');
+/* 组织机构 */
+const Dept = () => import('../views/baseSystem/org/dept');
+const User = () => import('../views/baseSystem/org/user');
+const Menu = () => import('../views/baseSystem/org/menu');
+const Role = () => import('../views/baseSystem/org/role');
+const Dict = () => import('../views/baseSystem/data/dic');
+/* 系统管理 */
+const Cache = () => import('../views/baseSystem/setting/cache');
+const Log = () => import('../views/baseSystem/setting/log');
 
-
-/* components */
-const componentsIndex = () => import('../views/components/index');
-const Tinymce = () => import('../views/components/tinymce');
-const Markdown = () => import('../views/components/markdown');
-const JsonEditor = () => import('../views/components/jsoneditor');
-const DndList = () => import('../views/components/dndlist');
-const AvatarUpload = () => import('../views/components/avatarUpload');
-const Dropzone = () => import('../views/components/dropzone');
-const Sticky = () => import('../views/components/sticky');
-const SplitPane = () => import('../views/components/splitpane');
-const CountTo = () => import('../views/components/countTo');
-const Mixin = () => import('../views/components/mixin');
-
-/* Member */
-const MemberPersonal = () => import('../views/job/member/personal');
-const MemberOrgan = () => import('../views/job/member/organ');
-const Zpxx = () => import('../views/job/member/zpxx');
-const MemberLevel = () => import('../views/job/member/jobMemberLevel');
-
-
-/* 广告位管理 */
-const JobAd = () => import('../views/job/ad/jobAd');
-const JobAdType = () => import('../views/job/ad/jobAdType');
-
+/************************应用组件管理************************/
+/* index */
+const AppSystem = () => import('../views/appSystem/index');
 /* 友情链接 */
-const JobLink = () => import('../views/job/link/jobLink');
-const JobLinkType = () => import('../views/job/link/jobLinkType');
+const LinkType = () => import('../views/appSystem/link/jobLinkType');
+const Link = () => import('../views/appSystem/link/jobLink');
+/* 广告管理 */
+const AdType = () => import('../views/appSystem/ad/jobAdType');
+const Ad = () => import('../views/appSystem/ad/jobAd');
+/* 分信息管理 */
+const Hyfl = () => import('../views/appSystem/flxx/hyfl');
+const Znfl = () => import('../views/appSystem/flxx/znfl');
+const Zyfl = () => import('../views/appSystem/flxx/zyfl');
 
-/* 内容管理 */
-const JobInfo = () => import('../views/job/info/jobInfo');
-const JobInfoCatalog = () => import('../views/job/info/jobInfoCatalog');
-
-/* 分类信息 */
-const Zyfl = () => import('../views/job/flxx/zyfl');
-const Hyfl = () => import('../views/job/flxx/hyfl');
-const Znfl = () => import('../views/job/flxx/znfl');
-
-/* 统计分析 */
-const OrganCharts = () => import('../views/job/charts/organ');
-const PersonalCharts = () => import('../views/job/charts/personal');
-
-/* charts */
-const chartIndex = () => import('../views/charts/index');
-const KeyboardChart = () => import('../views/charts/keyboard');
-const KeyboardChart2 = () => import('../views/charts/keyboard2');
-const LineMarker = () => import('../views/charts/line');
-const MixChart = () => import('../views/charts/mixchart');
 
 /* error page */
-const Err404 = () => import('../views/error/404');
-const Err401 = () => import('../views/error/401');
-
-/* error log */
-const ErrorLog = () => import('../views/errlog/index');
-
-/* excel */
-const ExcelDownload = () => import('../views/excel/index');
-
-/* theme  */
-const Theme = () => import('../views/theme/index');
-
-/* example*/
-const TableLayout = () => import('../views/example/table/index');
-const DynamicTable = () => import('../views/example/table/dynamictable');
-const Table = () => import('../views/example/table/table');
-const DragTable = () => import('../views/example/table/dragTable');
-const InlineEditTable = () => import('../views/example/table/inlineEditTable');
-const Form1 = () => import('../views/example/form1');
-
+const Err404 = () => import('../views/common/error/404');
+const Err401 = () => import('../views/common/error/401');
 
 Vue.use(Router);
 
@@ -106,23 +56,33 @@ Vue.use(Router);
  * hidden : if hidden:true will not show in the sidebar
  * redirect : if redirect:noredirect will not redirct in the levelbar
  * noDropdown : if noDropdown:true will not has submenu
- * meta : { role: ['admin'] }  will control the page role
+ * meta : { role: ·· }  will control the page role
  **/
 
 export const constantRouterMap = [
     {path: '/login', component: Login, hidden: true},
-    {path: '/authredirect', component: authRedirect, hidden: true},
-    {path: '/sendpwd', component: sendPWD, hidden: true},
-    {path: '/reset', component: reset, hidden: true},
+    {path: '/', name: '首页', component: System, hidden: true},
+    {path: '/authredirect', component: AuthRedirect, hidden: true},
+    {path: '/sendpwd', component: SendPWD, hidden: true},
+    {path: '/reset', component: Reset, hidden: true},
     {path: '/404', component: Err404, hidden: true},
     {path: '/401', component: Err401, hidden: true},
     {
-        path: '/',
+        path: '/baseSystem',
         component: Layout,
-        redirect: '/dashboard',
-        name: '首页',
+        redirect: '/baseSystem/index',
+        name: '基础信息管理',
+        meta: {permission: 'baseSystem:admin'},
         hidden: true,
-        children: [{path: 'dashboard', component: dashboard}]
+        children: [{path: 'index', component: BaseSystem}]
+    },
+    {
+        path: '/appSystem',
+        component: Layout,
+        name: '应用组件管理',
+        meta: {permission: 'appSystem:admin'},
+        hidden: true,
+        children: [{path: 'index', component: AppSystem}]
     }
 ]
 
@@ -133,197 +93,167 @@ export default new Router({
 });
 
 export const asyncRouterMap = [
+
+    /************************基础信息管理系统************************/
     {
-        path: '/member',
-        component: Layout,
+        path: '/org',
         redirect: 'noredirect',
-        name: '会员管理',
-        icon: 'huiyuan',
+        name: '组织机构',
+        meta: {permission: 'baseSystem:org:admin'},
+        icon: 'zuzhi',
+        component: Layout,
         children: [
-            {path: 'personal', component: MemberPersonal, name: '个人会员'},
-            {path: 'organ', component: MemberOrgan, name: '企业会员'},
-            {path: 'zpxx', component: Zpxx, name: '招聘信息'},
-            {path: 'memberLevel', component: MemberLevel, name: '会员级别'}
+            {
+                path: 'dept',
+                component: Dept,
+                name: '部门管理 ',
+                meta: {permission: 'baseSystem:org:dept:list'}
+            },
+            {
+                path: 'user',
+                component: User,
+                name: '用户管理',
+                meta: {permission: 'baseSystem:org:user:list'}
+            },
+            {
+                path: 'menu',
+                component: Menu,
+                name: '菜单管理',
+                meta: {permission: 'baseSystem:org:menu:list'}
+            },
+            {
+                path: 'role',
+                component: Role,
+                name: '角色管理',
+                meta: {permission: 'baseSystem:org:role:list'}
+            }
         ]
     },
     {
-        path: '/info',
-        component: Layout,
+        path: '/data',
         redirect: 'noredirect',
-        name: '内容管理',
-        icon: 'neirongguanli',
+        name: '数据管理',
+        meta: {permission: 'baseSystem:data:admin'},
+        icon: 'data',
+        component: Layout,
         children: [
-            {path: 'jobInfo', component: JobInfo, name: '内容管理'},
-            {path: 'jobInfoCatalog', component: JobInfoCatalog, name: '目录管理'}
+            {
+                path: 'dict',
+                component: Dict,
+                name: '数据字典',
+                meta: {permission: 'baseSystem:data:dicIndex:list'}
+            }
+        ]
+    },
+    {
+        path: '/setting',
+        redirect: 'noredirect',
+        name: '系统管理',
+        meta: {permission: 'baseSystem:setting:admin'},
+        icon: 'system',
+        component: Layout,
+        children: [
+            {
+                path: 'cache',
+                component: Cache,
+                name: '缓存管理',
+                meta: {permission: 'baseSystem:setting:cache:list'}
+            },
+            {
+                path: 'log',
+                component: Log,
+                name: '日志管理',
+                meta: {permission: 'baseSystem:setting:log:list'}
+            }
+        ]
+    },
+    /**************************应用组件管理*****************************/
+    {
+        path: '/link',
+        redirect: 'noredirect',
+        name: '友情链接',
+        meta: {permission: 'appSystem:link:admin'},
+        icon: 'link',
+        component: Layout,
+        children: [
+            {
+                path: 'linktype',
+                component: LinkType,
+                name: '链接类型',
+                meta: {permission: 'appSystem:link:linktype:list'}
+            },
+            {
+                path: 'link',
+                component: Link,
+                name: '链接管理',
+                meta: {permission: 'appSystem:link:link:list'}
+            }
         ]
     },
     {
         path: '/ad',
-        component: Layout,
         redirect: 'noredirect',
         name: '广告管理',
-        icon: 'msnui-ad',
-        children: [
-            {path: 'jobad', component: JobAd, name: '广告内容'},
-            {path: 'jobadtype', component: JobAdType, name: '广告位'}
-        ]
-    },
-    {
-        path: '/link',
+        meta: {permission: 'appSystem:ad:admin'},
+        icon: 'ad',
         component: Layout,
-        redirect: 'noredirect',
-        name: '友情链接',
-        icon: 'lianjie',
         children: [
-            {path: 'joblink', component: JobLink, name: '友情链接'},
-            {path: 'joblinktype', component: JobLinkType, name: '链接分类'}
+            {
+                path: 'adtype',
+                component: AdType,
+                name: '广告位类型',
+                meta: {permission: 'appSystem:ad:adtype:list'}
+            },
+            {
+                path: 'ad',
+                component: Ad,
+                name: '广告内容管理',
+                meta: {permission: 'appSystem:ad:ad:list'}
+            }
         ]
     },
     {
         path: '/flxx',
-        component: Layout,
         redirect: 'noredirect',
-        name: '分类设置',
-        icon: 'fenlei',
-        children: [
-            {path: 'zyfl', component: Zyfl, name: '专业分类'},
-            {path: 'hyfl', component: Hyfl, name: '行业分类'},
-            {path: 'znfl', component: Znfl, name: '职能分类'}
-        ]
-    },
-    {
-        path: '/jobcharts',
+        name: '分类信息',
+        meta: {permission: 'appSystem:flxx:admin'},
+        icon: 'flxx',
         component: Layout,
-        redirect: 'noredirect',
-        name: '统计分析',
-        icon: 'statisticalAnalysis',
-        children: [
-            {path: 'organ', component: OrganCharts, name: '企业数据统计'},
-            {path: 'personal', component: PersonalCharts, name: '个人数据统计'}
-        ]
-    },
-    {
-        path: '/org',
-        component: Layout,
-        redirect: 'noredirect',
-        name: '组织机构',
-        icon: 'zuzhi',
-        children: [
-            {path: 'dept', component: Dept, name: '部门管理 '},
-            {path: 'user', component: User, name: '用户管理'},
-            {path: 'menu', component: Menu, name: '菜单管理'},
-            {path: 'role', component: Role, name: '角色管理'}
-        ]
-    },
-    {
-        path: '/system',
-        component: Layout,
-        redirect: 'noredirect',
-        name: '系统管理',
-        icon: 'system',
-        children: [
-            {path: 'metadataType', component: MetadataType, name: '元数据类型'},
-            {path: 'dict', component: Dict, name: '数据字典'},
-            {path: 'cache', component: Cache, name: '缓存管理'},
-            {path: 'sysMessageFiled', component: SysMessageFiled, name: '短信字段管理'},
-            {path: 'sysMessageTemplate', component: SysMessageTemplate, name: '短信模板管理'},
-            {path: 'date', component: Holiday, name: '节假日管理'},
-            {path: 'log', component: Log, name: '日志管理'}
-        ]
-    },
-    {
-        path: '/components',
-        component: Layout,
-        redirect: '/components/index',
-        name: '组件',
-        icon: 'zujian',
-        children: [
-            {path: 'index', component: componentsIndex, name: '介绍 '},
-            {path: 'tinymce', component: Tinymce, name: '富文本编辑器'},
-            {path: 'markdown', component: Markdown, name: 'Markdown'},
-            {path: 'jsoneditor', component: JsonEditor, name: 'JSON编辑器'},
-            {path: 'dndlist', component: DndList, name: '列表拖拽'},
-            {path: 'splitpane', component: SplitPane, name: 'SplitPane'},
-            {path: 'avatarupload', component: AvatarUpload, name: '头像上传'},
-            {path: 'dropzone', component: Dropzone, name: 'Dropzone'},
-            {path: 'sticky', component: Sticky, name: 'Sticky'},
-            {path: 'countto', component: CountTo, name: 'CountTo'},
-            {path: 'mixin', component: Mixin, name: '小组件'}
-        ]
-    },
-    {
-        path: '/charts',
-        component: Layout,
-        redirect: '/charts/index',
-        name: '图表',
-        icon: 'tubiaoleixingzhengchang',
-        children: [
-            {path: 'index', component: chartIndex, name: '介绍'},
-            {path: 'keyboard', component: KeyboardChart, name: '键盘图表'},
-            {path: 'keyboard2', component: KeyboardChart2, name: '键盘图表2'},
-            {path: 'line', component: LineMarker, name: '折线图'},
-            {path: 'mixchart', component: MixChart, name: '混合图表'}
-        ]
-    },
-    {
-        path: '/errorpage',
-        component: Layout,
-        redirect: 'noredirect',
-        name: '错误页面',
-        icon: '404',
-        children: [
-            {path: '401', component: Err401, name: '401'},
-            {path: '404', component: Err404, name: '404'}
-        ]
-    },
-    {
-        path: '/errlog',
-        component: Layout,
-        redirect: 'noredirect',
-        name: 'errlog',
-        icon: 'bug',
-        noDropdown: true,
-        children: [{path: 'log', component: ErrorLog, name: '错误日志'}]
-    },
-    {
-        path: '/excel',
-        component: Layout,
-        redirect: 'noredirect',
-        name: 'excel',
-        icon: 'EXCEL',
-        noDropdown: true,
-        children: [{path: 'download', component: ExcelDownload, name: '导出excel'}]
-    },
-    {
-        path: '/theme',
-        component: Layout,
-        redirect: 'noredirect',
-        name: 'theme',
-        icon: 'theme',
-        noDropdown: true,
-        children: [{path: 'index', component: Theme, name: '换肤'}]
-    },
-    {
-        path: '/example',
-        component: Layout,
-        redirect: 'noredirect',
-        name: '综合实例',
-        icon: 'zonghe',
         children: [
             {
-                path: '/table',
-                component: TableLayout,
-                redirect: '/table/table',
-                name: 'table',
-                children: [
-                    {path: 'dynamictable', component: DynamicTable, name: '动态table'},
-                    {path: 'dragtable', component: DragTable, name: '拖拽table'},
-                    {path: 'inline_edit_table', component: InlineEditTable, name: 'table内编辑'},
-                    {path: 'table', component: Table, name: '综合table'}
-                ]
+                path: 'znfl',
+                component: Znfl,
+                name: '职能分类',
+                meta: {permission: 'appSystem:flxx:znfl:list'}
             },
-            {path: 'form1', component: Form1, name: '综合form1'}
+            {
+                path: 'zyfl',
+                component: Zyfl,
+                name: '专业分类',
+                meta: {permission: 'appSystem:flxx:zyfl:list'}
+            },
+            {
+                path: 'hyfl',
+                component: Hyfl,
+                name: '行业分类',
+                meta: {permission: 'appSystem:flxx:hyfl:list'}
+            }
         ]
     },
-    {path: '*', redirect: '/404', hidden: true}
+    /*************************404页面******************************/
+    {path: '*', redirect: '/404', hidden: true},
+    /*************************个人设置 修改个人信息******************************/
+    {
+        hidden: true,
+        name: '个人设置',
+        path: '/admin',
+        component: Layout,
+        children: [
+            {
+                name: '修改资料',
+                path: 'profile',
+                component: Profile
+            }
+        ]
+    }
 ];

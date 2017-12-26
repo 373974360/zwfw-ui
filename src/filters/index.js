@@ -42,6 +42,10 @@ export function smsStatusFilter(status) {
 
 export function enums(value, type) {
     var array = app.state.enums[type];
+    if(!array) {
+        console.warn('没有枚举类型' + type);
+        return '';
+    }
     var result = array.filter(function (item) {
         return item.code === value;
     });
@@ -51,9 +55,8 @@ export function enums(value, type) {
         return '';
     }
 }
-
-export function dicts(value, type) {
-    var array = app.state.dicts[type];
+export function dics(value, type) {
+    var array = app.state.dics[type];
     var result = array.filter(function (item) {
         return item.code === value;
     });
@@ -69,4 +72,19 @@ export function dicts(value, type) {
             return '';
         }
     }
+}
+
+export function stringToJson(value){
+    if(value){
+        return JSON.parse(value);
+    }
+}
+
+/**
+ * 把度过的毫秒数转换为人类的语言
+ * @param value
+ * @returns {*}
+ */
+export function duration(value) {
+    return moment.duration(value).humanize();
 }

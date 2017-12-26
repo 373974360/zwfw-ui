@@ -7,7 +7,8 @@
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
-    "build:prod": "cross-env NODE_ENV=production node build/build.js",
+    "build:itl": "cross-env NODE_ENV=production node build/build_itl.js",
+    "build:lianhu": "cross-env NODE_ENV=production node build/build_lianhu.js",
     "build:sit": "cross-env NODE_ENV=sit node build/build.js",
     "build:sit-preview": "cross-env NODE_ENV=sit npm_config_preview=true  npm_config_report=true node build/build.js",
     "lint": "eslint --ext .js,.vue src"
@@ -17,7 +18,7 @@
     "codemirror": "5.26.0",
     "dropzone": "5.1.0",
     "echarts": "3.6.1",
-    "element-ui": "1.3.7",
+    "element-ui": "1.4.10",
     "file-saver": "1.3.3",
     "hsy-vue-datepicker": "^0.1.3",
     "jquery": "3.1.1",
@@ -32,6 +33,7 @@
     "vue": "2.3.3",
     "vue-count-to": "1.0.5",
     "vue-multiselect": "2.0.0-beta.15",
+    "vue-quill-editor": "^2.3.3",
     "vue-router": "2.5.3",
     "vuedraggable": "2.13.1",
     "vuejs-datepicker": "^0.8.5",

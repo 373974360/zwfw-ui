@@ -1,6 +1,7 @@
 /**
  * Created by jiachenpan on 16/11/18.
  */
+import app from 'store/modules/app';
 
 export function parseTime(time, cFormat) {
     if (arguments.length === 0) {
@@ -214,13 +215,17 @@ export function getTime(type) {
     }
 }
 
-export function copyProperties(source, target) {
-    for (const item in source) {
-        if (target[item] != undefined) {
-            source[item] = target[item];
+export function copyProperties(target, source) {
+    for (const item in target) {
+        if (source[item] != undefined) {
+            if ((target[item] instanceof Object) && !(target[item] instanceof Array)) {
+                copyProperties(target[item], source[item])
+            } else {
+                target[item] = source[item];
+            }
         }
     }
-    return source;
+    return target;
 }
 
 export function cloneObject(source) {
@@ -243,4 +248,15 @@ export function mergeTree(list, data, isAppend) {
 
 export function resetForm(el, form) {
     el.$refs[form].resetFields();
+}
+
+export function validateQueryStr(str) {
+    if (str) {
+        for (let reg of app.state.invalidStr) {
+            if (str.indexOf(reg) > -1) {
+                return reg;
+            }
+        }
+    }
+    return '';
 }

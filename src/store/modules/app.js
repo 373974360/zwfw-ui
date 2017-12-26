@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie';
-import {getEnums,getDicts} from 'api/common';
+import {getDicts, getEnums, getZwfwEnums} from 'api/common/common';
 
 const app = {
     state: {
@@ -12,17 +12,25 @@ const app = {
             view: '查看',
             associateMenu: '关联权限',
             associateUser: '关联用户',
-            associateMaterial: '关联资料',
+            associateMaterial: '关联材料',
             associateItem: '关联事项'
         },
         sidebar: {
             opened: !+Cookies.get('sidebarStatus')
         },
         enums: [],
-        dicts: [],
+        dics: [],
         theme: 'default',
         livenewsChannels: Cookies.get('livenewsChannels') || '[]',
-        closeOnClickModal: false
+        closeOnClickModal: false,
+        loadedEnums: [],
+        currentSystem: Cookies.get('CurrentSystem'),
+        routeComplete: false,
+        uploadUrl: '/api/common/upload',
+        imageAccepts: 'image/jpg, image/jpeg, image/png, image/bmp, image/gif',
+        fileAccepts: 'image/jpg,image/jpeg,image/png,image/bmp,image/gif,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/pdf,text/plain,application/zip,application/rar',
+        invalidStr: ['script', 'mid', 'master', 'truncate', 'insert', 'select', 'delete', 'update', 'declare', 'iframe', '\'', 'onreadystatechange', 'alert', 'atestu', 'xss', ';', '"', '<', '>', '\\', 'svg', 'confirm', 'prompt', 'onload', 'onmouseover', 'onfocus', 'onerror'],
+        invalidReg: /script|mid|master|truncate|insert|select|delete|update|declare|iframe|'|onreadystatechange|alert|atestu|xss|;|"|<|>|\\|svg|confirm|prompt|onload|onmouseover|onfocus|onerror/g
     },
     mutations: {
         TOGGLE_SIDEBAR: state => {
@@ -36,9 +44,15 @@ const app = {
         SET_ENUMS: (state, enums) => {
             state.enums = enums;
         },
-        SET_DICTS: (state, dicts) => {
-            state.dicts = dicts;
+        SET_ZWFWEDATADATA: (state, enums) => {
+            state.enums = enums;
         },
+        SET_DICTS: (state, dics) => {
+            state.dics = dics;
+        },
+        SET_SYSTEM: (state, currentSystem) => {
+            state.currentSystem = currentSystem;
+        }
     },
     actions: {
         ToggleSideBar: ({commit}) => {
@@ -51,9 +65,9 @@ const app = {
                     if (response.httpCode !== 200) {
                         reject(response.msg);
                     } else {
-                        let enums = {};
-                        let result = response.data;
-                        for(let obj of result){
+                        const enums = {};
+                        const result = response.data;
+                        for (const obj of result) {
                             enums[obj.name] = obj.value;
                         }
                         commit('SET_ENUMS', enums);
@@ -70,18 +84,24 @@ const app = {
                     if (response.httpCode !== 200) {
                         reject(response.msg);
                     } else {
-                        let dicts = {};
+                        let dics = {};
                         let result = response.data;
-                        for(let obj of result){
-                            dicts[obj.name] = obj.value;
+                        for (let obj of result) {
+                            dics[obj.name] = obj.value;
                         }
-                        commit('SET_DICTS', dicts);
+                        commit('SET_DICTS', dics);
                     }
                 }).catch(error => {
                     reject(error);
                 });
             });
         },
+        SetSystem({commit}, data) {
+            return new Promise(resolve => {
+                commit('SET_SYSTEM', data);
+                resolve();
+            })
+        }
     }
 };
 
