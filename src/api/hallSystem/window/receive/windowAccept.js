@@ -113,6 +113,17 @@ export function queryCompanyInfo(query) {
         params: query
     });
 }
+/**
+ * 分页查询企业信息
+ * @param query
+ */
+export function queryCompanysInfo(query) {
+    return fetch({
+        url: '/api/hallSystem/hallCompositeWindow/queryCompanysInfo',
+        method: 'post',
+        params: query
+    });
+}
 
 /**
  * 查询事项信息和办件材料列表

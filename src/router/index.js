@@ -58,6 +58,8 @@ const TakeAway = () => import('../views/hallSystem/window/receive/takeAway');
 const Delivery = () => import('../views/hallSystem/window/delivery/index');
 /* 快件箱管理*/
 const Mailbox = () => import('../views/hallSystem/window/mailbox/index');
+/* 企业信息 */
+const CompanyInfo = () => import('../views/hallSystem/window/companyInfo/index');
 /* 未预审 */
 const Pending = () => import('../views/hallSystem/window/pretrial/pending');
 /* 已预审 */
@@ -364,15 +366,20 @@ export const asyncRouterMap = [
                 component: Mailbox,
                 name: '快件箱管理',
                 meta: {permission: 'hallSystem:window:mailbox:list'}
+            },
+            {
+                path: 'companyInfo',
+                component: CompanyInfo,
+                name: '企业信息',
+                meta: {permission: 'hallSystem:window:companyInfo:list'}
             }
             // {path: 'windowWork', component: WindowWork, name: '街办收件'},
             // {path: 'windowHistory', component: WindowHistory, name: '办件查询'}
         ]
     },
-    {
-        path: '/count',
-        redirect: 'noredirect',
+    {redirect: 'noredirect',
         name: '统计分析',
+        path:'analysis',
         meta: {permission: 'hallSystem:count:admin'},
         icon: 'count',
         component: Layout,
