@@ -415,10 +415,10 @@
                                         {{scope.row.source | dics('sxsqclly')}}
                                     </template>
                                 </el-table-column>
-                                <!--<el-table-column-->
-                                <!--prop="paperDescription"-->
-                                <!--label="纸质说明">-->
-                                <!--</el-table-column>-->
+                                <el-table-column
+                                prop="paperDescription"
+                                label="纸质说明">
+                                </el-table-column>
                                 <!--<el-table-column-->
                                 <!--prop="notice"-->
                                 <!--label="填报须知">-->
