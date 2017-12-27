@@ -118,7 +118,9 @@
                                 </tr>
                                 <tr>
                                     <th width="140">企业/机构地址</th>
-                                    <td colspan="3">{{member.legalPerson.registerPlace}}</td>
+                                    <td >{{member.legalPerson.registerPlace}}</td>
+                                    <th width="140">联系电话</th>
+                                    <td >{{member.legalPerson.phone}}</td>
                                 </tr>
                                 <template v-if="companyInfo.id" >
                                     <tr>
@@ -156,7 +158,7 @@
                                     <th width="140">姓名</th>
                                     <td>{{member.naturePerson.name}}</td>
                                     <th width="140">身份证号</th>
-                                    <td>{{member.naturePerson.idNumber}}</td>
+                                    <td>{{member.naturePerson.idcard}}</td>
                                 </tr>
                                 <tr>
                                     <th width="140">邮箱</th>
@@ -229,7 +231,7 @@
                             <td>{{h.name}}</td>
                             <td>
                                 <table v-if="h.formValue!=null" class="table table-bordered">
-                                    <tr v-for="(k,v) in h.formValue">
+                                    <tr v-for="(v,k) in h.formValue">
                                         <th>{{k}}:</th>
                                         <td>{{v}}</td>
                                     </tr>
