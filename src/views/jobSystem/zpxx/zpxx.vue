@@ -1,0 +1,509 @@
+<template>
+    <div class="app-container calendar-list-container">
+        <div class="filter-container">
+            <el-input v-model="listQuery.zwmc" style="width: 180px;" class="filter-item"
+                      placeholder="职位/关键字"></el-input>
+            <!--<el-select v-model="listQuery.zdxl" placeholder="学历学位" class="filter-item" style="width: 180px">-->
+                <!--<el-option-->
+                        <!--v-for="item in dicts['xueli']"-->
+                        <!--:key="item.code"-->
+                        <!--:label="item.value"-->
+                        <!--:value="item.code"/>-->
+            <!--</el-select>-->
+            <!--<el-select v-model="listQuery.gzxz" placeholder="工作性质" class="filter-item" style="width: 180px">-->
+                <!--<el-option-->
+                        <!--v-for="item in dicts['gzxz']"-->
+                        <!--:key="item.code"-->
+                        <!--:label="item.value"-->
+                        <!--:value="item.code"/>-->
+            <!--</el-select>-->
+            <!--<el-select v-model="listQuery.xzlx" placeholder="薪资范围" class="filter-item" style="width: 180px">-->
+                <!--<el-option-->
+                        <!--v-for="item in dicts['xzfw']"-->
+                        <!--:key="item.code"-->
+                        <!--:label="item.value"-->
+                        <!--:value="item.code"/>-->
+            <!--</el-select>-->
+            <!--<el-cascader :options="cascader" class="filter-item" @change="handleChange"-->
+                         <!--:show-all-levels="true" clearable filterable expand-trigger="hover"-->
+                         <!--:change-on-select="true" style="width: 180px" placeholder="选择职能">-->
+            <!--</el-cascader>-->
+            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="搜索" placement="top-start">
+                <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
+                    搜索
+                </el-button>
+            </el-tooltip>
+            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="审核" placement="top-start">
+                <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="circle-check"
+                           @click="handleSh">
+                    审核
+                </el-button>
+            </el-tooltip>
+            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="撤销审核" placement="top-start">
+                <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="circle-cross"
+                           @click="handleCx">
+                    撤销审核
+                </el-button>
+            </el-tooltip>
+            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="推荐" placement="top-start">
+                <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="circle-check"
+                           @click="handleTj">
+                    推荐
+                </el-button>
+            </el-tooltip>
+            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="取消推荐" placement="top-start">
+                <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="circle-cross"
+                           @click="handleQxtj">
+                    取消推荐
+                </el-button>
+            </el-tooltip>
+            <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
+                <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="delete"
+                           @click="handleDelete">
+                    删除
+                </el-button>
+            </el-tooltip>
+        </div>
+        <el-table :data="list" v-loading.body="listLoading" border fit style="width: 100%"
+                  @selection-change="handleSelectionChange">
+            <el-table-column type="selection" width="55"/>
+            <el-table-column align="left" label="职位名称" min-width="300">
+                <template scope="scope">
+                    <nobr class="link-type" @click="handleView(scope.row)">
+                        <el-tag v-if="scope.row.isrec==1" type="danger">推荐</el-tag>
+                        <el-tag v-if="scope.row.status==1" type="gray">未审核</el-tag>
+                        {{scope.row.zwmc}}
+                    </nobr>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="公司名称" width="200">
+                <template scope="scope">
+                    <nobr>{{scope.row.organName}}</nobr>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="职位编号" width="120">
+                <template scope="scope">
+                    <nobr>{{scope.row.zwbh}}</nobr>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="招聘人数" width="100">
+                <template scope="scope">
+                    <nobr>{{scope.row.zprs}}</nobr>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="最低学历" width="100">
+                <template scope="scope">
+                    <nobr>{{scope.row.zdxl | dicts('xueli')}}</nobr>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="年龄" width="100">
+                <template scope="scope">
+                    <nobr>{{scope.row.nlmin}} 至 {{scope.row.nlmax}}</nobr>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="工作年限" width="100">
+                <template scope="scope">
+                    <nobr>{{scope.row.gznx}}</nobr>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="工作性质" width="100">
+                <template scope="scope">
+                    <nobr>{{scope.row.gzxz | dicts('gzxz')}}</nobr>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="薪资标准" width="150">
+                <template scope="scope">
+                    <nobr>{{scope.row.xzlx | dicts('xzfw')}}</nobr>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="关键字" width="170">
+                <template scope="scope">
+                    <nobr>{{scope.row.zwgjz}}</nobr>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="刷新日期" width="173">
+                <template scope="scope">
+                    <nobr>{{scope.row.reloadtime | date('YYYY-MM-DD HH:mm:ss')}}</nobr>
+                </template>
+            </el-table-column>
+        </el-table>
+        <div v-show="!listLoading" class="pagination-container">
+            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                           :current-page.sync="listQuery.page" :page-sizes="this.$store.state.app.pageSize"
+                           :page-size="listQuery.rows" layout="total, sizes, prev, pager, next, jumper" :total="total">
+            </el-pagination>
+        </div>
+        <!-- 招聘信息查看弹出框  开始 -->
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogVisible">
+            <el-tabs v-model="activeName" type="card">
+                <el-tab-pane label="招聘信息" name="zpxx">
+                    <table class="member_view" width="100%">
+                        <tr>
+                            <th>公司名称:</th>
+                            <td>{{zpxx.organName}}</td>
+                            <th>职位名称:</th>
+                            <td>{{zpxx.zwmc}}</td>
+                            <th>职位编号:</th>
+                            <td>{{zpxx.zwbh}}</td>
+                        </tr>
+                        <tr>
+                            <th>招聘人数:</th>
+                            <td>{{zpxx.zprs}}</td>
+                            <th>最低学历:</th>
+                            <td>{{zpxx.zdxl | dicts('xueli')}}</td>
+                            <th>年龄要求:</th>
+                            <td>{{zpxx.nlmin}} 至 {{zpxx.nlmax}}</td>
+                        </tr>
+                        <tr>
+                            <th>职能类别:</th>
+                            <td>{{zpxx.znflName}}</td>
+                            <th>工作年限:</th>
+                            <td>{{zpxx.gznx}}</td>
+                            <th>工作性质:</th>
+                            <td>{{zpxx.gzxz | dicts('gzxz')}}</td>
+                        </tr>
+                        <tr>
+                            <th>关 键 字:</th>
+                            <td>{{zpxx.zwgjz}}</td>
+                            <th>刷新日期:</th>
+                            <td>{{zpxx.reloadtime | date("YYYY-MM-DD HH:mm:ss")}}</td>
+                            <th>薪资标准:</th>
+                            <td>{{zpxx.xzlx | dicts('xzfw')}}</td>
+                        </tr>
+                        <tr>
+                            <th>工作地点:</th>
+                            <td colspan="5">{{zpxx.sbdz}}</td>
+                        </tr>
+                        <tr>
+                            <th>要求/描述:</th>
+                            <td colspan="5">{{zpxx.zwms}}</td>
+                        </tr>
+                    </table>
+                </el-tab-pane>
+                <el-tab-pane label="投递记录" name="tdjl">
+
+                </el-tab-pane>
+            </el-tabs>
+        </el-dialog>
+        <!-- 招聘信息查看弹出框  结束 -->
+    </div>
+</template>
+<style>
+    .member_view td, th {
+        line-height: 45px;
+    }
+
+    .member_view th {
+        text-align: right;
+        width: 100px;
+    }
+
+    .member_view td {
+        text-align: left;
+        padding-left: 10px;
+    }
+</style>
+<script>
+    import {getZnflCascader} from 'api/jobSystem/flxx/znfl';
+    import {
+        getOrganZpxxList,
+        delOrganZpxx,
+        shOrganZpxx,
+        cxOrganZpxx,
+        tjOrganZpxx,
+        qxtjOrganZpxx
+    } from "api/jobSystem/zpxx/zpxx";
+    import {copyProperties} from 'utils';
+    import {mapGetters} from 'vuex';
+    import SplitPane from "../../../components/SplitPane/index";
+    export default{
+        components: {SplitPane},
+        name: 'table_demo',
+        data() {
+            return {
+                list: null,
+                total: null,
+                listLoading: true,
+                activeName: 'zpxx',
+                cascader: [],
+                listQuery: {
+                    page: this.$store.state.app.page,
+                    rows: this.$store.state.app.rows,
+                    zwmc: '',
+                    zdxl: '',
+                    gzxz: '',
+                    xzlx: '',
+                    znlb: ''
+                },
+                selectedRows: [],
+                dialogVisible: false,
+                dialogStatus: '',
+                zpxx: {
+                    organName: '',
+                    znflName: '',
+                    zwmc: '',
+                    zwbh: '',
+                    zprs: '',
+                    sbdz: '',
+                    zdxl: '',
+                    nlmax: '',
+                    nlmin: '',
+                    znlb: '',
+                    gznx: '',
+                    gzxz: '',
+                    xzlx: '',
+                    zwgjz: '',
+                    zwms: '',
+                    reloadtime: ''
+                }
+            }
+        },
+        computed: {
+            ...mapGetters([
+                'textMap',
+                'enums',
+                'dicts'
+            ])
+        },
+        created() {
+            this.getList();
+            this.getOptions();
+        },
+        methods: {
+            getOptions(id) {
+                this.dialogLoading = true;
+                getZnflCascader(id).then(response => {
+                    if (response.httpCode == 200) {
+                        this.cascader = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                    this.dialogLoading = false;
+                })
+            },
+            handleChange(value) {
+                this.listQuery.znlb = null;
+                if (value.length > 0) {
+                    this.listQuery.znlb = value[value.length - 1];
+                }
+            },
+            getList() {
+                this.listLoading = true;
+                getOrganZpxxList(this.listQuery).then(response => {
+                    if (response.httpCode == 200) {
+                        this.list = response.data.list;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                    this.listLoading = false;
+                })
+            },
+            handleSelectionChange(row) {
+                this.selectedRows = row;
+            },
+            handleSizeChange(val) {
+                this.listQuery.rows = val;
+                this.getList();
+            },
+            handleCurrentChange(val) {
+                this.listQuery.page = val;
+                this.getList();
+            },
+            handleView(row) {
+                this.resetTemp();
+                this.zpxx = copyProperties(this.zpxx, row);
+                this.dialogVisible = true;
+                this.dialogStatus = 'view';
+            },
+            handleDelete() {
+                var selectCounts = this.selectedRows.length;
+                if (this.selectedRows == 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        let ids = new Array();
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        this.listLoading = true;
+                        delOrganZpxx(ids).then(response => {
+                            if (response.httpCode == 200) {
+                                this.total -= selectCounts;
+                                for (const deleteRow of this.selectedRows) {
+                                    const index = this.list.indexOf(deleteRow);
+                                    this.list.splice(index, 1);
+                                }
+                                this.$message.success('删除成功');
+                            } else {
+                                this.$message.error(response.msg);
+                            }
+                            this.listLoading = false;
+                        })
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.list.indexOf(deleteRow);
+                            this.list.splice(index, 1);
+                        }
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
+            handleSh() {
+                var selectCounts = this.selectedRows.length;
+                if (this.selectedRows == 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('确定通过审核选中的信息?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        let ids = new Array();
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        this.listLoading = true;
+                        shOrganZpxx(ids).then(response => {
+                            if (response.httpCode == 200) {
+                                this.getList();
+                                this.$message.success('审核成功');
+                            } else {
+                                this.$message.error(response.msg);
+                            }
+                            this.listLoading = false;
+                        })
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.list.indexOf(deleteRow);
+                            this.list.splice(index, 1);
+                        }
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
+            handleCx() {
+                var selectCounts = this.selectedRows.length;
+                if (this.selectedRows == 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('确定撤销选中的信息?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        let ids = new Array();
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        this.listLoading = true;
+                        cxOrganZpxx(ids).then(response => {
+                            if (response.httpCode == 200) {
+                                this.getList();
+                                this.$message.success('撤销成功');
+                            } else {
+                                this.$message.error(response.msg);
+                            }
+                            this.listLoading = false;
+                        })
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.list.indexOf(deleteRow);
+                            this.list.splice(index, 1);
+                        }
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
+            handleTj() {
+                var selectCounts = this.selectedRows.length;
+                if (this.selectedRows == 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('确定推荐选中的信息?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        let ids = new Array();
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        this.listLoading = true;
+                        tjOrganZpxx(ids).then(response => {
+                            if (response.httpCode == 200) {
+                                this.getList();
+                                this.$message.success('推荐成功');
+                            } else {
+                                this.$message.error(response.msg);
+                            }
+                            this.listLoading = false;
+                        })
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.list.indexOf(deleteRow);
+                            this.list.splice(index, 1);
+                        }
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
+            handleQxtj() {
+                var selectCounts = this.selectedRows.length;
+                if (this.selectedRows == 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('确定取消推荐选中的信息?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        let ids = new Array();
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        this.listLoading = true;
+                        qxtjOrganZpxx(ids).then(response => {
+                            if (response.httpCode == 200) {
+                                this.getList();
+                                this.$message.success('取消成功');
+                            } else {
+                                this.$message.error(response.msg);
+                            }
+                            this.listLoading = false;
+                        })
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.list.indexOf(deleteRow);
+                            this.list.splice(index, 1);
+                        }
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
+            resetTemp() {
+                this.zpxx = {
+                    organName: '',
+                    znflName: '',
+                    zwmc: '',
+                    zwbh: '',
+                    zprs: '',
+                    sbdz: '',
+                    zdxl: '',
+                    nlmax: '',
+                    nlmin: '',
+                    znlb: '',
+                    gznx: '',
+                    gzxz: '',
+                    xzlx: '',
+                    zwgjz: '',
+                    zwms: '',
+                    reloadtime: ''
+                };
+            }
+        }
+    }
+</script>

@@ -45,6 +45,20 @@ const Znfl = () => import('../views/appSystem/flxx/znfl');
 const Zyfl = () => import('../views/appSystem/flxx/zyfl');
 
 
+
+
+/************************招聘信息管理************************/
+/* index */
+const JobSystem = () => import('../views/jobSystem/index');
+
+/* 会员管理 */
+const MemberPersonal = () => import('../views/jobSystem/member/personal');
+const MemberOrgan = () => import('../views/jobSystem/member/organ');
+const MemberLevel = () => import('../views/jobSystem/member/jobMemberLevel');
+/* 招聘信息 */
+const Zpxx = () => import('../views/jobSystem/zpxx/zpxx');
+
+
 /* error page */
 const Err404 = () => import('../views/common/error/404');
 const Err401 = () => import('../views/common/error/401');
@@ -83,6 +97,14 @@ export const constantRouterMap = [
         meta: {permission: 'appSystem:admin'},
         hidden: true,
         children: [{path: 'index', component: AppSystem}]
+    },
+    {
+        path: '/jobSystem',
+        component: Layout,
+        name: '招聘信息管理',
+        meta: {permission: 'jobSystem:admin'},
+        hidden: true,
+        children: [{path: 'index', component: JobSystem}]
     }
 ]
 
@@ -173,7 +195,7 @@ export const asyncRouterMap = [
         redirect: 'noredirect',
         name: '友情链接',
         meta: {permission: 'appSystem:link:admin'},
-        icon: 'link',
+        icon: 'lianjie',
         component: Layout,
         children: [
             {
@@ -195,7 +217,7 @@ export const asyncRouterMap = [
         redirect: 'noredirect',
         name: '广告管理',
         meta: {permission: 'appSystem:ad:admin'},
-        icon: 'ad',
+        icon: 'msnui-ad',
         component: Layout,
         children: [
             {
@@ -217,7 +239,7 @@ export const asyncRouterMap = [
         redirect: 'noredirect',
         name: '分类信息',
         meta: {permission: 'appSystem:flxx:admin'},
-        icon: 'flxx',
+        icon: 'fenlei',
         component: Layout,
         children: [
             {
@@ -237,6 +259,51 @@ export const asyncRouterMap = [
                 component: Hyfl,
                 name: '行业分类',
                 meta: {permission: 'appSystem:flxx:hyfl:list'}
+            }
+        ]
+    },
+    /**************************招聘信息管理*****************************/
+    {
+        path: '/member',
+        redirect: 'noredirect',
+        name: '会员管理',
+        meta: {permission: 'jobSystem:member:admin'},
+        icon: 'zuzhi',
+        component: Layout,
+        children: [
+            {
+                path: 'personal',
+                component: MemberPersonal,
+                name: '个人会员',
+                meta: {permission: 'jobSystem:member:personal:list'}
+            },
+            {
+                path: 'organ',
+                component: MemberOrgan,
+                name: '企业会员',
+                meta: {permission: 'jobSystem:member:organ:list'}
+            },
+            {
+                path: 'memberLevel',
+                component: MemberLevel,
+                name: '会员级别',
+                meta: {permission: 'jobSystem:member:level:list'}
+            }
+        ]
+    },
+    {
+        path: '/zpxx',
+        redirect: 'noredirect',
+        name: '招聘信息',
+        meta: {permission: 'jobSystem:zpxx:admin'},
+        icon: 'neirongguanli',
+        component: Layout,
+        children: [
+            {
+                path: 'zpxx',
+                component: Zpxx,
+                name: '招聘信息',
+                meta: {permission: 'jobSystem:zpxx:zpxx:list'}
             }
         ]
     },
