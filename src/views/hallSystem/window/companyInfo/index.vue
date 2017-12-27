@@ -21,19 +21,24 @@
 
 
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row style="width: 100%">
-            <el-table-column align="center" label="编号" width="140">
+            <el-table-column type="expand">
                 <template scope="scope">
-                    {{scope.row.id}}
+                    <span>{{scope.row.jyfw}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="统一社会信用代码">
+            <!--<el-table-column align="center" label="编号" width="140">-->
+                <!--<template scope="scope">-->
+                    <!--{{scope.row.id}}-->
+                <!--</template>-->
+            <!--</el-table-column>-->
+            <el-table-column align="left" label="企业名称" width="300">
                 <template scope="scope">
-                    <span>{{scope.row.ty_code}}</span>
+                    <span >{{scope.row.qymc}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="企业名称">
+            <el-table-column align="center" label="统一社会信用代码" width="200">
                 <template scope="scope">
-                    <span>{{scope.row.qymc}}</span>
+                    <span style="font-family: Consolas,Monaco,monospace">{{scope.row.ty_code}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="法人姓名">
@@ -49,11 +54,6 @@
             <el-table-column align="center" label="企业类型">
                 <template scope="scope">
                     <span>{{scope.row.qllx}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="经营类型">
-                <template scope="scope">
-                    <span>{{scope.row.jyfw}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="所属街道">
