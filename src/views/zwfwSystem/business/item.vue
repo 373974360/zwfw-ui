@@ -288,7 +288,7 @@
                 <el-form-item label="法定办结时限" prop="legalEndTime">
                     <el-input v-model="zwfwItem.legalEndTime"></el-input>
                 </el-form-item>
-                <el-form-item label="是否支持物流快递" prop="postable">
+                <!--<el-form-item label="是否支持物流快递" prop="postable">
                     <el-switch
                             v-model="zwfwItem.postable"
                             on-color="#13ce66"
@@ -296,6 +296,48 @@
                             :on-value="true"
                             :off-value="false">
                     </el-switch>
+                </el-form-item>-->
+                <el-form-item label="交件方式" prop="handTypes">
+                    <el-checkbox-group v-model="zwfwItem.handTypes" @change="handleHandTypesChange">
+                        <el-checkbox v-for="item in enums['HandType']" :key="item.code" :label="item.code + ''">{{item.value}}</el-checkbox>
+                    </el-checkbox-group>
+                </el-form-item>
+                <el-form-item v-if="zwfwItem.handTypes.includes('2')" label="收件人员" prop="handUserId">
+                    <el-select v-model="zwfwItem.handUserId" remote :remote-method="queryUser" filterable
+                               placeholder="请选择" style="width: 100%">
+                        <el-option v-for="u in allUserList" :key="u.id" :label="u.name + ' (工号：' + u.empNo +')'" :value="u.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item v-if="zwfwItem.handTypes.includes('3')" label="收件地址" prop="addresseeId">
+                    <el-card class="box-card">
+                        <div slot="header" class="clearfix card-header">
+                            <div class="card-item">
+                                <p class="p1">
+                                    {{cardHeader.name}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{cardHeader.phone}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <span v-if="cardHeader.defaultFlag">默认</span>
+                                </p>
+                                <p>{{cardHeader.address}}</p>
+                            </div>
+                            <el-button type="primary" @click="showCardItems">选择地址</el-button>
+                        </div>
+                        <div class="card-body" v-show="cardItemVisible">
+                            <div v-for="item in addresseeList" :key="item.id" class="card-item">
+                                <el-radio v-model="zwfwItem.addresseeId" :label="item.id">{{item.remark}}</el-radio>
+                                <p class="p1">
+                                    {{item.name}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{item.phone}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <span v-if="item.defaultFlag">默认</span>
+                                </p>
+                                <p>{{item.address}}</p>
+                            </div>
+                            <div v-if="!addresseeList || addresseeList.length <= 0">没有任何收件地址信息</div>
+                        </div>
+                    </el-card>
+                </el-form-item>
+                <el-form-item label="取件方式" prop="takeTypes">
+                    <el-checkbox-group v-model="zwfwItem.takeTypes">
+                        <el-checkbox v-for="item in enums['TakeType']" :key="item.code" :label="item.code + ''">{{item.value}}</el-checkbox>
+                    </el-checkbox-group>
                 </el-form-item>
                 <el-form-item label="版本生效时间" prop="versionAvailableTime">
                     <el-date-picker v-model="zwfwItem.versionAvailableTime" type="datetime"
@@ -379,7 +421,7 @@
                     <el-input v-model="zwfwItem.pretrialDays"></el-input>
                 </el-form-item>
                 <el-form-item label="预审人员">
-                    <el-select style="width:100%" v-model="zwfwItem.pretrialUserIdsArray" remote
+                    <el-select style="width:100%" v-model="zwfwItem.pretrialUserIds" remote
                                :remote-method="queryUser"
                                multiple filterable placeholder="请选择">
                         <el-option
@@ -563,6 +605,7 @@
     import {getAllMaterial, updateZwfwMaterial} from 'api/zwfwSystem/business/material';
     import {getAllUser} from 'api/baseSystem/org/user';
     import {getDeptCascader} from 'api/baseSystem/org/dept';
+    import {getAllAddressees} from 'api/hallSystem/window/addressee';
     import {quillEditor} from 'vue-quill-editor'
 
     export default {
@@ -571,6 +614,24 @@
             quillEditor
         },
         data() {
+            const handTakeTypesValidate = (rule, value, callback) => {
+                if (!value || value.length <= 0) {
+                    callback(new Error(rule.message))
+                }
+                callback();
+            };
+            const handUserIdValidate = (rule, value, callback) => {
+                if (this.zwfwItem.handTypes.includes('2') && !value) {
+                    callback(new Error('请选择收件人员'));
+                }
+                callback();
+            };
+            const addresseeIdValidate = (rule, value, callback) => {
+                if (this.zwfwItem.handTypes.includes('3') && !value) {
+                    callback(new Error('请选择收件地址'));
+                }
+                callback();
+            };
             return {
                 changeMaterialName: false,
                 changeMaterialInfo: false,
@@ -578,6 +639,7 @@
                 zwfwItemMaterialList: [],
                 ItemMaterial: [],
                 optionsName: [],
+                addresseeList: [],
                 list: [],
                 total: null,
                 pageLoading: true,
@@ -621,6 +683,10 @@
                     processType: 'bjlx_cnj',
                     legalEndTime: '',
                     postable: true,
+                    handTypes: ['1'],
+                    takeTypes: ['1'],
+                    handUserId: '',
+                    addresseeId: '',
                     versionAvailableTime: '',
                     supervisePhone: '',
                     pretrialDays: '',
@@ -701,6 +767,18 @@
                     ],
                     departmentId: [
                         {required: true, message: '请选择所属部门'}
+                    ],
+                    handTypes: [
+                        {validator: handTakeTypesValidate, message: '请选择交件方式', trigger: 'blur'}
+                    ],
+                    takeTypes: [
+                        {validator: handTakeTypesValidate, message: '请选择取件方式', trigger: 'blur'}
+                    ],
+                    handUserId: [
+                        {validator: handUserIdValidate, trigger: 'blur'}
+                    ],
+                    addresseeId: [
+                        {validator: addresseeIdValidate, trigger: 'blur'}
                     ]
                 },
                 zwfwItemMaterialRules: {
@@ -728,7 +806,14 @@
                 chargeStandardHtml: '',
                 chargeBasisHtml: '',
                 setBasisHtml: '',
-                editor: {}
+                editor: {},
+                cardHeader: {
+                    name: '',
+                    phone: '',
+                    address: '',
+                    defaultFlag: false
+                },
+                cardItemVisible: false
             }
         },
         computed: {
@@ -778,6 +863,13 @@
         created() {
             this.getItemList();
             this.getDeptTree();
+            this.getAddresseeList();
+        },
+        watch: {
+            'zwfwItem.addresseeId'() {
+                this.initCardHeader();
+                this.cardItemVisible = false;
+            }
         },
         methods: {
             initEditor() {
@@ -840,8 +932,53 @@
                     }
                 });
             },
+            getAddresseeList() {
+                getAllAddressees().then(response => {
+                    if (response.httpCode === 200) {
+                        this.addresseeList = response.data;
+                    } else {
+                        this.$message.error('加载收件地址信息失败');
+                    }
+                })
+            },
+            handleHandTypesChange() {
+                this.initCardHeader();
+                if (!this.zwfwItem.handTypes.includes('2')) {
+                    this.zwfwItem.handUserId = undefined;
+                }
+            },
+            initCardHeader() {
+                if (!this.addresseeList || this.addresseeList.length <= 0) {
+                    return;
+                }
+                if (!this.zwfwItem.handTypes.includes('3')) {
+                    this.zwfwItem.addresseeId = undefined;
+                    this.cardItemVisible = false;
+                    return;
+                }
+                let addressee;
+                if (this.zwfwItem.addresseeId) {
+                    for (let item of this.addresseeList) {
+                        if (item.id === this.zwfwItem.addresseeId) {
+                            addressee = item;
+                        }
+                    }
+                } else {
+                    for (let item of this.addresseeList) {
+                        if (item.defaultFlag) {
+                            addressee = item;
+                        }
+                    }
+                    if (!addressee) {
+                        addressee = this.addresseeList[0];
+                    }
+                }
+                this.zwfwItem.addresseeId = addressee.id;
+                copyProperties(this.cardHeader, addressee);
+            },
             handleItemCreate() {
                 this.resetItemTemp();
+                this.initCardHeader();
                 this.dialogStatus = 'create';
                 this.dialogItemFormVisible = true;
             },
@@ -852,6 +989,17 @@
                 if (this.zwfwItem.resultExample) {
                     this.resultExampleFileList.push({url: this.zwfwItem.resultExample, name: '结果样本'});
                 }
+                if (this.zwfwItem.handTypes) {
+                    this.zwfwItem.handTypes = this.zwfwItem.handTypes.split(',');
+                } else {
+                    this.zwfwItem.handTypes = []
+                }
+                if (this.zwfwItem.takeTypes) {
+                    this.zwfwItem.takeTypes = this.zwfwItem.takeTypes.split(',');
+                } else {
+                    this.zwfwItem.takeTypes = []
+                }
+                this.initCardHeader();
                 this.decodeEditorHtml();
                 this.dialogStatus = 'update';
                 this.dialogItemFormVisible = true;
@@ -877,7 +1025,9 @@
                 this.$refs['zwfwItemForm'].validate(valid => {
                     if (valid) {
                         this.dialogFormLoading = true;
-                        this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIdsArray.join(',');
+                        this.zwfwItem.handTypes = this.zwfwItem.handTypes.join();
+                        this.zwfwItem.takeTypes = this.zwfwItem.takeTypes.join();
+                        this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIds.join(',');
                         this.encodeEditorHtml();
                         createZwfwItem(this.zwfwItem).then(response => {
                             this.dialogFormLoading = false;
@@ -898,7 +1048,9 @@
                 this.$refs['zwfwItemForm'].validate(valid => {
                     if (valid) {
                         this.dialogFormLoading = true;
-                        this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIdsArray.join(',');
+                        this.zwfwItem.handTypes = this.zwfwItem.handTypes.join();
+                        this.zwfwItem.takeTypes = this.zwfwItem.takeTypes.join();
+                        this.zwfwItem.pretrialUserIds = this.zwfwItem.pretrialUserIds.join(',');
                         this.encodeEditorHtml();
                         updateZwfwItem(this.zwfwItem).then(response => {
                             this.dialogFormLoading = false;
@@ -947,7 +1099,7 @@
                 getPretrialUserListByItemId(this.zwfwItem.id).then(response => {
                     if (response.httpCode === 200) {
                         this.allUserList = response.data;
-                        this.zwfwItem.pretrialUserIdsArray = response.data.map(function (o) {
+                        this.zwfwItem.pretrialUserIds = response.data.map(function (o) {
                             return o.id;
                         });
                     } else {
@@ -990,6 +1142,9 @@
                     this.zwfwItem.implAgency = 0;
                     this.zwfwItem.implAgencyTreePosition = [];
                 }
+            },
+            showCardItems() {
+                this.cardItemVisible = !this.cardItemVisible;
             },
             submitUpload() {
                 this.$refs.upload.submit();
@@ -1246,6 +1401,10 @@
                     processType: 'bjlx_cnj',
                     legalEndTime: '',
                     postable: true,
+                    handTypes: ['1'],
+                    takeTypes: ['1'],
+                    handUserId: '',
+                    addresseeId: '',
                     versionAvailableTime: '',
                     supervisePhone: '',
                     acceptCondition: '',
@@ -1262,13 +1421,14 @@
                     implCode: '',
                     updateType: '',
                     pretrialDays: '',
-                    pretrialUserIdsArray: [],
+                    pretrialUserIds: [],
                     departmentTreePosition: '',
                     superviseTreePosition: '',
                     implAgencyTreePosition: '',
                     unionAgencyTreePosition: '',
                     enable: ''
                 };
+                this.setBasisHtml = '';
                 this.acceptConditionHtml = '';
                 this.workflowDescriptionHtml = '';
                 this.chargeStandardHtml = '';
@@ -1321,6 +1481,70 @@
         }
         .ql-container {
             height: 180px;
+        }
+    }
+
+    .card-header {
+        .card-item {
+            border: none;
+            margin: 0;
+            width: 80%;
+            float: left;
+        }
+        .el-button {
+            float: right;
+        }
+    }
+
+    .card-item {
+        padding: 8px;
+        margin: 8px 0;
+        font-size: 14px;
+        border: 1px solid #d0d0d0;
+        height: 80px;
+        .el-radio {
+            height: 64px;
+            line-height: 64px;
+            text-align: center;
+            width: 10%;
+            float: left;
+        }
+        p {
+            margin: 0;
+            height: 32px;
+            line-height: 32px;
+            width: 88%;
+            float: left;
+        }
+        .p1 {
+            font-size: 16px;
+            font-weight: bold;
+            span {
+                padding: 3px 6px;
+                color: #dd1100;
+                font-size: 14px;
+                font-weight: normal;
+                border: 1px solid #dd1100;
+                border-radius: 3px;
+            }
+        }
+    }
+
+    .clearfix:before, .clearfix:after {
+        display: table;
+        content: "";
+    }
+    .clearfix:after {
+        clear: both
+    }
+
+    .box-card {
+        width: 100%;
+        .el-card__body {
+            padding: 0;
+        }
+        .card-body {
+            padding: 12px;
         }
     }
 </style>

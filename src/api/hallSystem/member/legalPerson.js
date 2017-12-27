@@ -50,4 +50,10 @@ export function deleteZwfwLegalPerson(id) {
     })
 }
 
-
+export function creditCodeExist(companyCode) {
+    return fetch({
+        url: '/api/hallSystem/legalPerson/creditCodeExist',
+        method: 'get',
+        params: {companyCode}
+    })
+}

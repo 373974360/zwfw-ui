@@ -146,12 +146,12 @@
     import moment from 'moment';
     import { isIdCardNo, validatMobiles, checkSocialCreditCode } from 'utils/validate'
     import {
-        getAllZwfwLegalPerson,
+        creditCodeExist,
         getZwfwLegalPersonList,
         createZwfwLegalPerson,
         updateZwfwLegalPerson,
         delZwfwLegalPersons
-    } from 'api/hallSystem/member/legalPerson';
+    } from '../../../api/hallSystem/member/legalPerson';
 
     export default {
         name: 'zwfwLegalPerson_table',
@@ -162,14 +162,18 @@
                     return;
                 }
                 if (!checkSocialCreditCode(value)) {
-                    return callback(new Error('不是有效的社会统一信用代码，请重新输入'));
+                    return callback(new Error('不是有效的统一社会信用代码，请重新输入'));
                 } else {
-                    this.listQuery.companyCode = value
-                    getAllZwfwLegalPerson(this.listQuery).then(response => {
-                        if (response.httpCode === 200 && response.data && response.data.length > 0) {
-                            callback(new Error('统一社会信用代码已存在，请重新输入'))
+                    creditCodeExist(value).then(response => {
+                        if (response.httpCode === 200) {
+                            if (!response.data) {
+                                callback();
+                            } else {
+                                callback(new Error('统一社会信用代码已存在'))
+                            }
+                        } else {
+                            callback(new Error(response.msg))
                         }
-                        callback()
                     }).catch(error => {
                         callback(new Error(error))
                     })
