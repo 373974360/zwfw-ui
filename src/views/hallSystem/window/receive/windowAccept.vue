@@ -276,19 +276,23 @@
                             <!--'ItemWindowSupport'}}</strong></td>-->
                             <!--</tr>-->
                             <tr v-if="member!=null && member.naturePerson!=null">
-                                <th>申报人:</th>
+                                <th>姓名:</th>
                                 <td>{{member.naturePerson.name}}</td>
                             </tr>
                             <tr v-if="member!=null && member.naturePerson!=null">
-                                <th>申报人联系电话:</th>
+                                <th>联系电话:</th>
                                 <td>{{member.naturePerson.phone}}</td>
                             </tr>
                             <tr v-if="member!=null && member.legalPerson!=null">
-                                <th>申报人联系电话:</th>
+                                <th>企业法人:</th>
+                                <td>{{member.legalPerson.legalPerson}}</td>
+                            </tr>
+                            <tr v-if="member!=null && member.legalPerson!=null">
+                                <th>联系电话:</th>
                                 <td>{{member.legalPerson.phone}}</td>
                             </tr>
                             <tr v-if="member!=null && member.legalPerson!=null">
-                                <th>办事企业:</th>
+                                <th>企业名称:</th>
                                 <td>{{member.legalPerson.companyName}}</td>
                             </tr>
                             <tr v-if="itemPretrialVo!=null">

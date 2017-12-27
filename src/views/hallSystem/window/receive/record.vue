@@ -91,19 +91,17 @@
                             <th>申报人:</th>
                             <td>{{member.naturePerson.name}}</td>
                         </tr>
-                        <tr>
-                            <th>申报人联系电话:</th>
-                            <td>
-                                <div v-if="itemNumber.personPhone!=null">
-                                    {{itemNumber.personPhone}}
-                                </div>
-                                <div v-if="member!=null && member.legalPerson!=null">
-                                    {{member.legalPerson.phone}}
-                                </div>
-                                <div v-if="member!=null && member.naturePerson!=null">
-                                    {{member.naturePerson.phone}}
-                                </div>
-                            </td>
+                        <tr v-if="member!=null && member.naturePerson!=null">
+                            <th>联系电话:</th>
+                            <td>{{member.naturePerson.phone}}</td>
+                        </tr>
+                        <tr v-if="member!=null && member.legalPerson!=null">
+                            <th>企业法人:</th>
+                            <td>{{member.legalPerson.legalPerson}}</td>
+                        </tr>
+                        <tr v-if="member!=null && member.legalPerson!=null">
+                            <th>联系电话:</th>
+                            <td>{{member.legalPerson.phone}}</td>
                         </tr>
                         <tr v-if="member!=null && member.legalPerson!=null">
                             <th>办事企业:</th>

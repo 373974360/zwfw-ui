@@ -1,7 +1,8 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="getItemList" style="width: 230px;" class="filter-item" placeholder="输入事项名称/基本编码"
+            <el-input @keyup.enter.native="getItemList" style="width: 230px;" class="filter-item"
+                      placeholder="输入事项名称/基本编码"
                       v-model="listQuery.name"></el-input>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getItemList">搜索</el-button>
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleItemCreate" type="primary"
@@ -229,6 +230,7 @@
                 </el-form-item>
                 <el-form-item label="监督电话" prop="supervisePhone">
                     <el-input v-model="zwfwItem.supervisePhone"></el-input>
+                   
                 </el-form-item>
                 <el-form-item label="实施机构" prop="implAgency">
                     <el-cascader
@@ -273,7 +275,7 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="咨询电话" prop="askPhone">
-                    <el-input v-model="zwfwItem.askPhone"></el-input>
+                    <el-input type="textarea" v-model="zwfwItem.askPhone"></el-input>
                 </el-form-item>
                 <el-form-item label="办件类型" prop="processType">
                     <el-radio-group v-model="zwfwItem.processType">
@@ -458,8 +460,16 @@
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item label="备注" prop="remark">
-                    <el-input v-model="zwfwItem.remark"></el-input>
+                <el-form-item label="注意事项" prop="remark">
+                    <!--<el-input v-model="zwfwItem.remark"></el-input>-->
+                    <quill-editor ref="noticeTextEditor" v-model="noticeTextHtml"
+                                  :options="quillEditorOption" @focus="onEditorFocus($event)">
+                    </quill-editor>
+                    <el-upload name="uploadFile" v-show="false" :show-file-list="false"
+                               :action="uploadAction" :accept="imageAccepts"
+                               :on-success="handleEditorUploadSuccess" :on-error="handleEditorUploadError">
+                        <el-button id="notice_text_btn"></el-button>
+                    </el-upload>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer" style="text-align: center;">
@@ -805,6 +815,7 @@
                 workflowDescriptionHtml: '',
                 chargeStandardHtml: '',
                 chargeBasisHtml: '',
+                noticeTextHtml: '',
                 setBasisHtml: '',
                 editor: {},
                 cardHeader: {
@@ -879,11 +890,18 @@
                     this.$refs.standardEditor.quill.getModule('toolbar').addHandler('image', this.imgHandlerStandard);
                     this.$refs.basisEditor.quill.getModule('toolbar').addHandler('image', this.imgHandlerBasis);
                     this.$refs.setBasisEditor.quill.getModule('toolbar').addHandler('image', this.imgHandlerSetBasis);
+                    this.$refs.noticeTextEditor.quill.getModule('toolbar').addHandler('image', this.imgHandlerNoticeText);
                 })
             },
             imgHandlerSetBasis(image) {
                 if (image) {
                     let fileUploader = document.getElementById('setBasis_btn');
+                    fileUploader.click()
+                }
+            },
+            imgHandlerNoticeText(image) {
+                if (image) {
+                    let fileUploader = document.getElementById('notice_text_btn');
                     fileUploader.click()
                 }
             },
@@ -1345,6 +1363,7 @@
                 this.zwfwItem.chargeStandard = encodeURIComponent(encodeURIComponent(this.chargeStandardHtml));
                 this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(this.chargeBasisHtml));
                 this.zwfwItem.setBasis = encodeURIComponent(encodeURIComponent(this.setBasisHtml));
+                this.zwfwItem.remark = encodeURIComponent(encodeURIComponent(this.noticeTextHtml));
             },
             decodeEditorHtml() {
                 this.acceptConditionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.acceptCondition));
@@ -1352,6 +1371,7 @@
                 this.chargeStandardHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeStandard));
                 this.chargeBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeBasis));
                 this.setBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.setBasis));
+                this.noticeTextHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.remark));
             },
             closeZwfwItemForm() {
                 this.dialogItemFormVisible = false;
