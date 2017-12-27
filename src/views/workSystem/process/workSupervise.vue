@@ -58,7 +58,8 @@
             </el-table-column>
             <el-table-column align="center" label="申请办理人" prop="memberRealname">
                 <template scope="scope">
-                    <span>{{scope.row.memberRealname}}</span>
+                    <div>{{scope.row.memberRealname}}</div>
+                    <div>{{scope.row.memberPhonenumber}}</div>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="企业名称" prop="companyName">
