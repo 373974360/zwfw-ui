@@ -228,7 +228,15 @@
                     </el-cascader>
                 </el-form-item>
                 <el-form-item label="监督电话" prop="supervisePhone">
-                    <el-input v-model="zwfwItem.supervisePhone"></el-input>
+                    <!--<el-input v-model="zwfwItem.supervisePhone"></el-input>-->
+                    <quill-editor ref="supervisePhoneEditor" v-model="supervisePhoneHtml"
+                                  :options="quillEditorOption" @focus="onEditorFocus($event)">
+                    </quill-editor>
+                    <el-upload name="uploadFile" v-show="false" :show-file-list="false"
+                               :action="uploadAction" :accept="imageAccepts"
+                               :on-success="handleEditorUploadSuccess" :on-error="handleEditorUploadError">
+                        <el-button id="supervisePhone_btn"></el-button>
+                    </el-upload>
                 </el-form-item>
                 <el-form-item label="实施机构" prop="implAgency">
                     <el-cascader
@@ -416,8 +424,16 @@
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item label="备注" prop="remark">
-                    <el-input v-model="zwfwItem.remark"></el-input>
+                <el-form-item label="注意事项" prop="remark">
+                    <!--<el-input v-model="zwfwItem.remark"></el-input>-->
+                    <quill-editor ref="noticeTextEditor" v-model="noticeTextHtml"
+                                  :options="quillEditorOption" @focus="onEditorFocus($event)">
+                    </quill-editor>
+                    <el-upload name="uploadFile" v-show="false" :show-file-list="false"
+                               :action="uploadAction" :accept="imageAccepts"
+                               :on-success="handleEditorUploadSuccess" :on-error="handleEditorUploadError">
+                        <el-button id="notice_text_btn"></el-button>
+                    </el-upload>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer" style="text-align: center;">
@@ -727,7 +743,9 @@
                 workflowDescriptionHtml: '',
                 chargeStandardHtml: '',
                 chargeBasisHtml: '',
+                noticeTextHtml: '',
                 setBasisHtml: '',
+                supervisePhoneHtml: '',
                 editor: {}
             }
         },
@@ -1190,6 +1208,8 @@
                 this.zwfwItem.chargeStandard = encodeURIComponent(encodeURIComponent(this.chargeStandardHtml));
                 this.zwfwItem.chargeBasis = encodeURIComponent(encodeURIComponent(this.chargeBasisHtml));
                 this.zwfwItem.setBasis = encodeURIComponent(encodeURIComponent(this.setBasisHtml));
+                this.zwfwItem.remark = encodeURIComponent(encodeURIComponent(this.noticeTextHtml));
+                this.zwfwItem.supervisePhone = encodeURIComponent(encodeURIComponent(this.supervisePhoneHtml));
             },
             decodeEditorHtml() {
                 this.acceptConditionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.acceptCondition));
@@ -1197,6 +1217,8 @@
                 this.chargeStandardHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeStandard));
                 this.chargeBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeBasis));
                 this.setBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.setBasis));
+                this.noticeTextHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.remark));
+                this.supervisePhoneHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.supervisePhone));
             },
             closeZwfwItemForm() {
                 this.dialogItemFormVisible = false;

@@ -201,7 +201,7 @@
                                             <th width="140">姓名</th>
                                             <td>{{member.naturePerson.name}}</td>
                                             <th width="140">身份证号</th>
-                                            <td>{{member.naturePerson.idNumber}}</td>
+                                            <td>{{member.naturePerson.idcard}}</td>
                                         </tr>
                                         <tr>
                                             <th width="140">邮箱</th>
