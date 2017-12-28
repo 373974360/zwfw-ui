@@ -58,6 +58,8 @@ const TakeAway = () => import('../views/hallSystem/window/receive/takeAway');
 const Delivery = () => import('../views/hallSystem/window/delivery/index');
 /* 快件箱管理*/
 const Mailbox = () => import('../views/hallSystem/window/mailbox/index');
+/* 收件地址管理*/
+const Addressee = () => import('../views/hallSystem/window/addressee/index');
 /* 企业信息 */
 const CompanyInfo = () => import('../views/hallSystem/window/companyInfo/index');
 /* 未预审 */
@@ -366,6 +368,12 @@ export const asyncRouterMap = [
                 component: Mailbox,
                 name: '快件箱管理',
                 meta: {permission: 'hallSystem:window:mailbox:list'}
+            },
+            {
+                path: 'addressee',
+                component: Addressee,
+                name: '收件地址管理',
+                meta: {permission: 'hallSystem:window:addressee:list'}
             },
             {
                 path: 'companyInfo',

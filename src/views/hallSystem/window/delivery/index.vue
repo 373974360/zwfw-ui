@@ -347,7 +347,9 @@
     import {isIdCardNo, validatMobiles, checkSocialCreditCode} from 'utils/validate'
     import {getAllByNameOrbasicCode} from 'api/zwfwSystem/business/item';
     import {getAllMailbox} from 'api/hallSystem/window/mailbox'
-    import {getByNameOrLoginName, getMemberById, loginNameExist} from '../../../../api/hallSystem/member/member'
+    import {getByNameOrLoginName, getMemberById} from '../../../../api/hallSystem/member/member'
+    import {idCardExist} from '../../../../api/hallSystem/member/naturePerson'
+    import {creditCodeExist} from '../../../../api/hallSystem/member/legalPerson'
     import {getFinishList, addProcessOffline, saveExpressInfo, saveTakeType, complete, reserve, cancelReserve,
         getOrderStatus, getOrderDetail} from '../../../../api/hallSystem/window/delivery'
 
@@ -358,7 +360,7 @@
                 if (!isIdCardNo(value)) {
                     callback(new Error('身份证号格式不正确，请重新输入'));
                 } else {
-                    loginNameExist(value).then(response => {
+                    idCardExist(value).then(response => {
                         if (response.httpCode === 200) {
                             if (!response.data) {
                                 callback();
@@ -379,14 +381,14 @@
             };
             const validateCompanyCode = (rule, value, callback) => {
                 if (!checkSocialCreditCode(value)) {
-                    callback(new Error('不是有效的社会统一信用代码，请重新输入'));
+                    callback(new Error('不是有效的统一社会信用代码，请重新输入'));
                 } else {
-                    loginNameExist(value).then(response => {
+                    creditCodeExist(value).then(response => {
                         if (response.httpCode === 200) {
                             if (!response.data) {
                                 callback();
                             } else {
-                                callback(new Error('社会统一信用代码已存在'))
+                                callback(new Error('统一社会信用代码已存在'))
                             }
                         } else {
                             callback(new Error(response.msg))

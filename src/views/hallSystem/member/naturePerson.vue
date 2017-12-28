@@ -154,12 +154,12 @@
     import { isIdCardNo, validatMobiles } from 'utils/validate';
     import {moment} from 'moment';
     import {
-        getAllZwfwNaturePerson,
+        idCardExist,
         getZwfwNaturePersonList,
         createZwfwNaturePerson,
         updateZwfwNaturePerson,
         delZwfwNaturePersons
-    } from 'api/hallSystem/member/naturePerson';
+    } from '../../../api/hallSystem/member/naturePerson';
 
     export default {
         name: 'zwfwNaturePerson_table',
@@ -172,12 +172,16 @@
                 if (!isIdCardNo(value)) {
                     callback(new Error('身份证号格式不正确，请重新输入'))
                 } else {
-                    this.listQuery.idcard = value
-                    getAllZwfwNaturePerson(this.listQuery).then(response => {
-                        if (response.httpCode === 200 && response.data && response.data.length > 0) {
-                            callback(new Error('身份证号码已存在，请重新输入'))
+                    idCardExist(value).then(response => {
+                        if (response.httpCode === 200) {
+                            if (!response.data) {
+                                callback();
+                            } else {
+                                callback(new Error('身份证号已存在'))
+                            }
+                        } else {
+                            callback(new Error(response.msg))
                         }
-                        callback()
                     }).catch(error => {
                         callback(new Error(error))
                     })

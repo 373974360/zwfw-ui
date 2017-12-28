@@ -50,4 +50,10 @@ export function deleteZwfwNaturePerson(id) {
     })
 }
 
-
+export function idCardExist(idcard) {
+    return fetch({
+        url: '/api/hallSystem/naturePerson/idCardExist',
+        method: 'get',
+        params: {idcard}
+    })
+}
