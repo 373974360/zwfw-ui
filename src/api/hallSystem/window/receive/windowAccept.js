@@ -27,6 +27,18 @@ export function takeNumberByItemCode(query) {
 }
 
 /**
+ * 根据快递号抽号
+ * @param query
+ */
+export function takeNumberByExpressNumber(query) {
+    return fetch({
+        url: '/api/hallSystem/hallCompositeWindow/mockGetNumber',
+        method: 'post',
+        params: query
+    })
+}
+
+/**
  * 根据呼叫号查询号码
  * @param query
  * @returns {*}
