@@ -9,8 +9,20 @@
                         :value="item.value">
                 </el-option>
             </el-select>-->
-            <el-select v-model="listQuery.itemId" class="filter-item" clearable filterable placeholder="事项筛选">
-                <el-option v-for="item in itemList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            <el-select
+                    v-model="listQuery.itemId"
+                    value-key="id"
+                    filterable
+                    remote
+                    placeholder="请输入事项名称"
+                    :remote-method="searchItem"
+                     style="width: 320px;">
+                <el-option
+                        v-for="item in optionsNames"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id">
+                </el-option>
             </el-select>
             <el-select v-model="listQuery.memberId" class="filter-item"
                        clearable filterable remote
@@ -183,9 +195,12 @@
                     <el-input v-model="processOfflineInfo.itemName" :disabled="offlineReadonly"></el-input>
                 </el-form-item>
                 <el-form-item label="事项" prop="itemId" v-show="!offlineReadonly">
-                    <el-select v-model="processOfflineInfo.itemId" clearable filterable placeholder="选择事项"
-                               :disabled="offlineReadonly">
-                        <el-option v-for="item in itemList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+                    <el-select v-model="processOfflineInfo.itemId" value-key="id"
+                               filterable
+                               remote
+                               placeholder="请输入事项名称"
+                               :remote-method="searchItem1":disabled="offlineReadonly">
+                        <el-option v-for="item in optionsNamess" :key="item.id" :label="item.name" :value="item.id"></el-option>
                     </el-select>
                 </el-form-item>
                 <!--<el-form-item label="开始办件时间">
@@ -400,6 +415,8 @@
                 list: null,
                 itemList: [],
                 optionsName: [],
+                optionsNames: [],
+                optionsNamess: [],
                 mailboxList: [],
                 total: null,
                 listLoading: true,
@@ -587,7 +604,6 @@
         },
         created() {
             this.getList();
-            this.getAllItemList();
             this.getMailboxList();
         },
         methods: {
@@ -603,16 +619,6 @@
                     }
                 })
             },
-            getAllItemList() {
-                const query = {};
-                getAllByNameOrbasicCode(query).then(response => {
-                    if (response.httpCode === 200) {
-                        this.itemList = response.data;
-                    } else {
-                        this.$message.error('数据加载失败')
-                    }
-                })
-            },
             getMailboxList() {
                 const query = {}
                 getAllMailbox(query).then(response => {
@@ -622,6 +628,54 @@
                         this.$message.error('数据加载失败')
                     }
                 });
+            },
+            searchItem(query) {
+                const listQueryName = {
+                    name: undefined
+                }
+                if (query !== '') {
+                    let valid = validateQueryStr(query);
+                    if (valid) {
+                        this.$message.error(`输入中包含非法字符 ${valid}`)
+                        return
+                    }
+                    if (/.*[\u4e00-\u9fa5]+.*$/.test(query)) {
+                        listQueryName.name = query;
+                    }
+                    getAllByNameOrbasicCode(listQueryName).then(response => {
+                        if (response.httpCode === 200) {
+                            this.optionsNames = response.data;
+                        } else {
+                            this.$message.error(response.msg);
+                        }
+                    })
+                } else {
+                    this.optionsNames = [];
+                }
+            },
+            searchItem1(query) {
+                const listQueryName = {
+                    name: undefined
+                }
+                if (query !== '') {
+                    let valid = validateQueryStr(query);
+                    if (valid) {
+                        this.$message.error(`输入中包含非法字符 ${valid}`)
+                        return
+                    }
+                    if (/.*[\u4e00-\u9fa5]+.*$/.test(query)) {
+                        listQueryName.name = query;
+                    }
+                    getAllByNameOrbasicCode(listQueryName).then(response => {
+                        if (response.httpCode === 200) {
+                            this.optionsNamess = response.data;
+                        } else {
+                            this.$message.error(response.msg);
+                        }
+                    })
+                } else {
+                    this.optionsNamess = [];
+                }
             },
             remoteMethod(query) {
                 if (query !== '') {
@@ -960,5 +1014,8 @@
 
     .el-textarea.is-disabled .el-textarea__inner {
         color: #1f2d3d;
+    }
+    .el-select>.el-input {
+        margin-bottom: -7px;
     }
 </style>
