@@ -77,12 +77,16 @@
                     <el-input v-model="jobAd.name"></el-input>
                 </el-form-item>
                 <el-form-item label="图　　标" prop="img">
-                    <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
-                               :action="uploadAction" :file-list="uploadAvatars"
+                    <el-upload class="avatar-uploader" name="uploadFile"
+                               :accept="acceptTypes"
+                               :action="uploadAction"
                                :on-success="handleAvatarSuccess"
+                               :on-error="handlerAvatarError"
                                :before-upload="beforeAvatarUpload"
+                               :show-file-list="false"
                                :on-remove="handleRemove">
-                        <i class="el-icon-plus"></i>
+                        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="链接地址" prop="linkurl">
@@ -172,13 +176,11 @@
                     ],
                     linkurl: [
                         {required: true, message: '请输入链接地址', trigger: 'blur'}
-                    ],
-                    wz: [
-                        {required: true, message: '请选择广告位置', trigger: 'change', type:'number'}
                     ]
                 },
-                uploadAction: process.env.SYS_API + '/sysUpload/',
-                uploadAvatars: []
+                uploadAction: this.$store.state.app.uploadUrl,
+                acceptTypes: this.$store.state.app.imageAccepts,
+                imageUrl: ''
             }
         },
         created() {
@@ -230,13 +232,21 @@
                 this.currentRow = row;
                 this.resetTemp();
                 this.jobAd = copyProperties(this.jobAd, row);
+                this.imageUrl = this.jobAd.img;
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
-            handleAvatarSuccess(res, file, fileList) {
-                fileList.length = 0;
-                fileList.push(file);
-                this.jobAd.img = res.url;
+            handleAvatarSuccess(res, file) {
+                if (res.state === 'SUCCESS') {
+                    this.imageUrl = URL.createObjectURL(file.raw);
+                    this.jobAd.img = res.url;
+                    this.$message.success('上传成功！');
+                } else {
+                    this.$message.error('上传失败！');
+                }
+            },
+            handlerAvatarError() {
+                this.$message.error('网络不稳定，上传失败');
             },
             beforeAvatarUpload(file) {
                 const isLt2M = file.size / 1024 / 1024 < 2;
@@ -310,6 +320,7 @@
                             if (response.httpCode == 200) {
                                 copyProperties(this.currentRow, response.data);
                                 this.$message.success('更新成功');
+                                this.getList();
                             } else {
                                 this.$message.error(response.msg);
                             }
@@ -332,8 +343,9 @@
                     wz: undefined,
                     remark: undefined,
                     linkurl: undefined,
-                    status: 0,
+                    status: 0
                 };
+                this.imageUrl = '';
             }
         }
     }

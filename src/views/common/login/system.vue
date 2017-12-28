@@ -7,11 +7,11 @@
                 <el-button class="pan-btn light-blue-btn" @click="go(0)">基础信息管理</el-button>
             </div>
             <div class="systemItem" v-if="hasPermission(1)">
-                <wscn-icon-svg icon-class="appSystem"/>
+                <wscn-icon-svg icon-class="hallSystem"/>
                 <el-button class="pan-btn light-blue-btn" @click="go(1)">应用组件管理</el-button>
             </div>
             <div class="systemItem" v-if="hasPermission(2)">
-                <wscn-icon-svg icon-class="jobSystem"/>
+                <wscn-icon-svg icon-class="workSystem"/>
                 <el-button class="pan-btn light-blue-btn" @click="go(2)">招聘信息管理</el-button>
             </div>
         </div>
