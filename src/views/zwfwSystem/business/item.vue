@@ -230,7 +230,7 @@
                 </el-form-item>
                 <el-form-item label="监督电话" prop="supervisePhone">
                     <el-input v-model="zwfwItem.supervisePhone"></el-input>
-                   
+
                 </el-form-item>
                 <el-form-item label="实施机构" prop="implAgency">
                     <el-cascader
@@ -301,13 +301,16 @@
                 </el-form-item>-->
                 <el-form-item label="交件方式" prop="handTypes">
                     <el-checkbox-group v-model="zwfwItem.handTypes" @change="handleHandTypesChange">
-                        <el-checkbox v-for="item in enums['HandType']" :key="item.code" :label="item.code + ''">{{item.value}}</el-checkbox>
+                        <el-checkbox v-for="item in enums['HandType']" :key="item.code" :label="item.code + ''">
+                            {{item.value}}
+                        </el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
                 <el-form-item v-if="zwfwItem.handTypes.includes('2')" label="收件人员" prop="handUserId">
-                    <el-select v-model="zwfwItem.handUserId" remote :remote-method="queryUser" filterable
-                               placeholder="请选择" style="width: 100%">
-                        <el-option v-for="u in allUserList" :key="u.id" :label="u.name + ' (工号：' + u.empNo +')'" :value="u.id">
+                    <el-select v-model="zwfwItem.handUserId" remote :remote-method="queryHandUserId" filterable
+                               placeholder="请选择" style="width: 100%" :multiple="false" clearable>
+                        <el-option v-for="u in userListHand" :key="u.id" :label="u.name + ' (工号：' + u.empNo +')'"
+                                   :value="u.id">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -338,7 +341,9 @@
                 </el-form-item>
                 <el-form-item label="取件方式" prop="takeTypes">
                     <el-checkbox-group v-model="zwfwItem.takeTypes">
-                        <el-checkbox v-for="item in enums['TakeType']" :key="item.code" :label="item.code + ''">{{item.value}}</el-checkbox>
+                        <el-checkbox v-for="item in enums['TakeType']" :key="item.code" :label="item.code + ''">
+                            {{item.value}}
+                        </el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
                 <el-form-item label="版本生效时间" prop="versionAvailableTime">
@@ -424,10 +429,10 @@
                 </el-form-item>
                 <el-form-item label="预审人员">
                     <el-select style="width:100%" v-model="zwfwItem.pretrialUserIds" remote
-                               :remote-method="queryUser"
+                               :remote-method="queryPretrialUserId"
                                multiple filterable placeholder="请选择">
                         <el-option
-                                v-for="u in allUserList"
+                                v-for="u in userListPretrial"
                                 :key="u.id"
                                 :label="u.name + ' (工号：' + u.empNo +')'"
                                 :value="u.id">
@@ -613,7 +618,7 @@
         deleteZwfwItemMaterial
     } from 'api/zwfwSystem/business/itemMaterial';
     import {getAllMaterial, updateZwfwMaterial} from 'api/zwfwSystem/business/material';
-    import {getAllUser} from 'api/baseSystem/org/user';
+    import {getAllUser} from '../../../api/baseSystem/org/user';
     import {getDeptCascader} from 'api/baseSystem/org/dept';
     import {getAllAddressees} from 'api/hallSystem/window/addressee';
     import {quillEditor} from 'vue-quill-editor'
@@ -796,7 +801,8 @@
                         {required: true, message: '请输入材料名称'}
                     ]
                 },
-                allUserList: [],
+                userListPretrial: [],
+                userListHand: [],
                 deptTree: [],
                 quillEditorOption: {
                     modules: {
@@ -1023,6 +1029,7 @@
                 this.dialogItemFormVisible = true;
                 // 查询事项信息中没有返回事项预审人员，需要主动查询
                 this.getPretrialUserList();
+                this.getHandleNameById();
             },
             handleItemDelete() {
                 if (this.selectedRows.length === 0) {
@@ -1101,22 +1108,45 @@
                     this.pageLoading = false;
                 })
             },
-            queryUser(keywords) {
+            queryPretrialUserId(keywords) {
                 // todo 预审人员是否根据所选部门筛选
                 getAllUser({
                     name: keywords
                 }).then(response => {
                     if (response.httpCode === 200) {
-                        this.allUserList = response.data;
+                        this.userListPretrial = response.data;
                     } else {
                         this.$message.error('加载用户列表失败');
                     }
                 });
             },
+            queryHandUserId(keywords) {
+                // todo 预审人员是否根据所选部门筛选
+                getAllUser({
+                    name: keywords
+                }).then(response => {
+                    if (response.httpCode === 200) {
+                        this.userListHand = response.data;
+                    } else {
+                        this.$message.error('加载用户列表失败');
+                    }
+                });
+            },
+            getHandleNameById() {
+                getAllUser({
+                    id: this.zwfwItem.handUserId
+                }).then(response => {
+                    if (response.httpCode === 200) {
+                        this.userListHand = response.data;
+                    } else {
+                        this.$message.error('加载用户列表失败');
+                    }
+                })
+            },
             getPretrialUserList() {
                 getPretrialUserListByItemId(this.zwfwItem.id).then(response => {
                     if (response.httpCode === 200) {
-                        this.allUserList = response.data;
+                        this.userListPretrial = response.data;
                         this.zwfwItem.pretrialUserIds = response.data.map(function (o) {
                             return o.id;
                         });
@@ -1554,6 +1584,7 @@
         display: table;
         content: "";
     }
+
     .clearfix:after {
         clear: both
     }
