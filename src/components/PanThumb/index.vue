@@ -136,7 +136,7 @@
     }
 
     .pan-item:hover .pan-thumb {
-        transform: rotate(-110deg);
+        /*transform: rotate(-110deg);*/
     }
 
     .pan-item:hover .pan-info p a {
