@@ -299,11 +299,23 @@
                             :off-value="false">
                     </el-switch>
                 </el-form-item>-->
+                <el-form-item label="办理形式" prop="handleType">
+                    <el-radio-group v-model="zwfwItem.handleType">
+                        <el-radio v-for="item in dics['blxs']"
+                                  :key="item.code"
+                                  :label="item.code"
+                                  :value="item.code">
+                            <span style="font-weight:normal;">{{item.value}}</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
                 <el-form-item label="交件方式" prop="handTypes">
                     <el-checkbox-group v-model="zwfwItem.handTypes" @change="handleHandTypesChange">
-                        <el-checkbox v-for="item in enums['HandType']" :key="item.code" :label="item.code + ''">
-                            {{item.value}}
-                        </el-checkbox>
+                        <template v-for="item in enums['HandType']">
+                            <el-checkbox :disabled="(zwfwItem.handleType=='blxs_ckbl' && (item.code==2 || item.code==3)) ? true : false" :key="item.code" :label="item.code + ''">
+                                {{item.value}}
+                            </el-checkbox>
+                        </template>
                     </el-checkbox-group>
                 </el-form-item>
                 <el-form-item v-if="zwfwItem.handTypes.includes('2')" label="收件人员" prop="handUserId">
@@ -341,7 +353,7 @@
                 </el-form-item>
                 <el-form-item label="取件方式" prop="takeTypes">
                     <el-checkbox-group v-model="zwfwItem.takeTypes">
-                        <el-checkbox v-for="item in enums['TakeType']" :key="item.code" :label="item.code + ''">
+                        <el-checkbox v-for="item in enums['TakeType']" :disabled="(zwfwItem.handleType=='blxs_ckbl' && (item.code==2 || item.code==3)) ? true : false" :key="item.code" :label="item.code + ''">
                             {{item.value}}
                         </el-checkbox>
                     </el-checkbox-group>
@@ -413,16 +425,6 @@
                 </el-form-item>
                 <el-form-item label="结果名称" prop="resultName">
                     <el-input v-model="zwfwItem.resultName"></el-input>
-                </el-form-item>
-                <el-form-item label="办理形式" prop="handleType">
-                    <el-radio-group v-model="zwfwItem.handleType">
-                        <el-radio v-for="item in dics['blxs']"
-                                  :key="item.code"
-                                  :label="item.code"
-                                  :value="item.code">
-                            <span style="font-weight:normal;">{{item.value}}</span>
-                        </el-radio>
-                    </el-radio-group>
                 </el-form-item>
                 <el-form-item label="预审天数" prop="pretrialDays">
                     <el-input v-model="zwfwItem.pretrialDays"></el-input>
@@ -1007,6 +1009,7 @@
                 this.initCardHeader();
                 this.dialogStatus = 'create';
                 this.dialogItemFormVisible = true;
+
             },
             handleItemUpdate(row) {
                 this.currentRow = row;
