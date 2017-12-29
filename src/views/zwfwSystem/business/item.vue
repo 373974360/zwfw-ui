@@ -888,6 +888,13 @@
             'zwfwItem.addresseeId'() {
                 this.initCardHeader();
                 this.cardItemVisible = false;
+            },
+            'zwfwItem.handleType'(value){
+                console.log(value);
+                if(value=="blxs_ckbl"){
+                    this.zwfwItem.handTypes = ["1"];
+                    this.zwfwItem.takeTypes = ["1"];
+                }
             }
         },
         methods: {
