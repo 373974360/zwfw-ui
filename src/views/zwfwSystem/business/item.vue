@@ -979,12 +979,14 @@
                     for (let item of this.addresseeList) {
                         if (item.id === this.zwfwItem.addresseeId) {
                             addressee = item;
+                            break;
                         }
                     }
                 } else {
                     for (let item of this.addresseeList) {
                         if (item.defaultFlag) {
                             addressee = item;
+                            break;
                         }
                     }
                     if (!addressee) {
