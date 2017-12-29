@@ -3,34 +3,6 @@
         <div class="filter-container">
             <el-input v-model="listQuery.username" style="width: 180px;" class="filter-item"
                       placeholder="真实姓名"></el-input>
-            <!--<el-select v-model="listQuery.qzzt" placeholder="求职状态" class="filter-item" style="width: 180px">-->
-            <!--<el-option-->
-            <!--v-for="item in dicts['qzzt']"-->
-            <!--:key="item.code"-->
-            <!--:label="item.value"-->
-            <!--:value="item.code"/>-->
-            <!--</el-select>-->
-            <!--<el-select v-model="listQuery.hyzk" placeholder="婚姻状况" class="filter-item" style="width: 180px">-->
-            <!--<el-option-->
-            <!--v-for="item in dicts['hyzk']"-->
-            <!--:key="item.code"-->
-            <!--:label="item.value"-->
-            <!--:value="item.code"/>-->
-            <!--</el-select>-->
-            <!--<el-select v-model="listQuery.zzmm" placeholder="政治面貌" class="filter-item" style="width: 180px">-->
-            <!--<el-option-->
-            <!--v-for="item in dicts['zzmm']"-->
-            <!--:key="item.code"-->
-            <!--:label="item.value"-->
-            <!--:value="item.code"/>-->
-            <!--</el-select>-->
-            <!--<el-select v-model="listQuery.zgxl" placeholder="学历" class="filter-item" style="width: 180px">-->
-            <!--<el-option-->
-            <!--v-for="item in dicts['xueli']"-->
-            <!--:key="item.code"-->
-            <!--:label="item.value"-->
-            <!--:value="item.code"/>-->
-            <!--</el-select>-->
             <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="搜索" placement="top-start">
                 <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
                     搜索
@@ -94,22 +66,22 @@
             </el-table-column>
             <el-table-column align="center" label="学历" width="120">
                 <template scope="scope">
-                    <nobr>{{scope.row.zgxl | dicts('xueli')}}</nobr>
+                    <nobr>{{scope.row.zgxl | dics('xueli')}}</nobr>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="婚姻状况" width="100">
                 <template scope="scope">
-                    <nobr>{{scope.row.hyzk | dicts('hyzk') }}</nobr>
+                    <nobr>{{scope.row.hyzk | dics('hyzk') }}</nobr>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="政治面貌" width="150">
                 <template scope="scope">
-                    <nobr>{{scope.row.zzmm | dicts('zzmm') }}</nobr>
+                    <nobr>{{scope.row.zzmm | dics('zzmm') }}</nobr>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="求职状态" width="140">
                 <template scope="scope">
-                    <nobr>{{scope.row.qzzt | dicts('qzzt')}}</nobr>
+                    <nobr>{{scope.row.qzzt | dics('qzzt')}}</nobr>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="刷新时间" width="175">
@@ -148,18 +120,18 @@
                         </tr>
                         <tr>
                             <th>婚姻状况:</th>
-                            <td>{{member.hyzk | dicts('hyzk')}}</td>
+                            <td>{{member.hyzk | dics('hyzk')}}</td>
                             <th>求职状态:</th>
-                            <td>{{member.qzzt | dicts('qzzt')}}</td>
+                            <td>{{member.qzzt | dics('qzzt')}}</td>
                             <th>政治面貌:</th>
-                            <td>{{member.zzmm | dicts('zzmm')}}</td>
+                            <td>{{member.zzmm | dics('zzmm')}}</td>
                         </tr>
                         <tr>
                             <th>证件类型:</th>
-                            <td>{{member.zjlx | dicts('zjlx')}}</td>
+                            <td>{{member.zjlx | dics('zjlx')}}</td>
                             <th>证件号码:</th>
                             <td>{{member.zjhm}}</td>
-                            <th>{{member.qtlxfslx | dicts('lxfs')}}:</th>
+                            <th>{{member.qtlxfslx | dics('lxfs')}}:</th>
                             <td>{{member.qtlxfs }}</td>
                         </tr>
                         <tr>
@@ -168,13 +140,13 @@
                             <th>邮　　编:</th>
                             <td>{{member.yb}}</td>
                             <th>目前收入:</th>
-                            <td>{{member.mqnsr | dicts('xzfw')}}</td>
+                            <td>{{member.mqnsr | dics('xzfw')}}</td>
                         </tr>
                         <tr>
                             <th>个人主页:</th>
                             <td>{{member.grzy}}</td>
                             <th>最高学历:</th>
-                            <td colspan="3">{{member.zgxl | dicts('xueli')}}</td>
+                            <td colspan="3">{{member.zgxl | dics('xueli')}}</td>
                         </tr>
                         <tr>
                             <th>目前住址:</th>
@@ -190,7 +162,7 @@
                     <table v-if="qzyx!=null" class="member_view" width="100%">
                         <tr>
                             <th>期望薪资:</th>
-                            <td>{{qzyx.qwxz | dicts('xzfw')}}</td>
+                            <td>{{qzyx.qwxz | dics('xzfw')}}</td>
                             <th>工作地点:</th>
                             <td>{{qzyx.gzdd}}</td>
                             <th>职　　能:</th>
@@ -202,11 +174,11 @@
                             <th>个人标签:</th>
                             <td>{{qzyx.grbq}}</td>
                             <th>到岗时间:</th>
-                            <td>{{qzyx.dgsj | dicts('dgsj')}}</td>
+                            <td>{{qzyx.dgsj | dics('dgsj')}}</td>
                         </tr>
                         <tr>
                             <th>工作类型:</th>
-                            <td colspan="5">{{qzyx.gzlx | dicts('gzxz')}}</td>
+                            <td colspan="5">{{qzyx.gzlx | dics('gzxz')}}</td>
                         </tr>
                         <tr>
                             <th>自我评价:</th>
@@ -219,7 +191,7 @@
                         <tr>
                             <th>公司名称:</th>
                             <td>
-                                <nobr>{{gzjl.gsmc}}　{{gzjl.ksrq}} 至 {{gzjl.jsrq}}　［{{gzjl.gsgm | dicts('gsgm')}}］</nobr>
+                                <nobr>{{gzjl.gsmc}}　{{gzjl.ksrq}} 至 {{gzjl.jsrq}}　［{{gzjl.gsgm | dics('gsgm')}}］</nobr>
                             </td>
                         </tr>
                         <tr>
@@ -231,7 +203,7 @@
                         <tr>
                             <th>公司性质:</th>
                             <td>
-                                <nobr>{{gzjl.gsxz | dicts('gsxz')}}　｜　{{gzjl.gzlx | dicts('gzxz')}}</nobr>
+                                <nobr>{{gzjl.gsxz | dics('gsxz')}}　｜　{{gzjl.gzlx | dics('gzxz')}}</nobr>
                             </td>
                         </tr>
                         <tr>
@@ -269,7 +241,7 @@
                         <tr>
                             <th>学校名称:</th>
                             <td>
-                                <nobr>{{jyjl.xxmc}}　 | 　{{jyjl.xlxw | dicts('xueli')}}　 | 　{{jyjl.zyName}}</nobr>
+                                <nobr>{{jyjl.xxmc}}　 | 　{{jyjl.xlxw | dics('xueli')}}　 | 　{{jyjl.zyName}}</nobr>
                             </td>
                         </tr>
                         <tr>
@@ -341,7 +313,7 @@
         getPersonalZs,
         tjPersonal,
         qxtjPersonal
-    } from "api/jobSystem/member/personal";
+    } from "api/jobSystem/personal/personal";
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     export default{
@@ -408,7 +380,7 @@
             ...mapGetters([
                 'textMap',
                 'enums',
-                'dicts'
+                'dics'
             ])
         },
         created() {

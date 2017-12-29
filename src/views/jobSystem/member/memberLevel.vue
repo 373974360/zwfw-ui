@@ -79,7 +79,7 @@
         createJobMemberLevel,
         updateJobMemberLevel,
         delJobMemberLevels
-    } from 'api/jobSystem/member/jobMemberLevel';
+    } from 'api/jobSystem/member/memberLevel';
 
     export default {
         name: 'jobMemberLevel_table',

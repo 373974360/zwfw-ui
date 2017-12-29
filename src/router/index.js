@@ -51,10 +51,14 @@ const Zyfl = () => import('../views/appSystem/flxx/zyfl');
 /* index */
 const JobSystem = () => import('../views/jobSystem/index');
 
-/* 会员管理 */
-const MemberPersonal = () => import('../views/jobSystem/member/personal');
-const MemberOrgan = () => import('../views/jobSystem/member/organ');
-const MemberLevel = () => import('../views/jobSystem/member/jobMemberLevel');
+
+/* 账号管理 */
+const MemberAccount = () => import('../views/jobSystem/member/memberAccount');
+const MemberLevel = () => import('../views/jobSystem/member/memberLevel');
+
+/* 会员信息管理 */
+const MemberOrgan = () => import('../views/jobSystem/organ/organ');
+const MemberPersonal = () => import('../views/jobSystem/personal/personal');
 /* 招聘信息 */
 const Zpxx = () => import('../views/jobSystem/zpxx/zpxx');
 
@@ -266,7 +270,29 @@ export const asyncRouterMap = [
     {
         path: '/member',
         redirect: 'noredirect',
-        name: '会员管理',
+        name: '账号管理',
+        meta: {permission: 'jobSystem:memberAccount:admin'},
+        icon: 'zuzhi',
+        component: Layout,
+        children: [
+            {
+                path: 'account',
+                component: MemberAccount,
+                name: '会员账号',
+                meta: {permission: 'jobSystem:member:account:list'}
+            },
+            {
+                path: 'level',
+                component: MemberLevel,
+                name: '会员级别',
+                meta: {permission: 'jobSystem:member:level:list'}
+            }
+        ]
+    },
+    {
+        path: '/member',
+        redirect: 'noredirect',
+        name: '会员信息管理',
         meta: {permission: 'jobSystem:member:admin'},
         icon: 'zuzhi',
         component: Layout,
@@ -282,12 +308,6 @@ export const asyncRouterMap = [
                 component: MemberOrgan,
                 name: '企业会员',
                 meta: {permission: 'jobSystem:member:organ:list'}
-            },
-            {
-                path: 'memberLevel',
-                component: MemberLevel,
-                name: '会员级别',
-                meta: {permission: 'jobSystem:member:level:list'}
             }
         ]
     },

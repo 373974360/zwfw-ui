@@ -237,7 +237,7 @@
         qxtjOrgan,
         authOrgan,
         qxauthOrgan
-    } from "api/jobSystem/member/organ";
+    } from "api/jobSystem/organ/organ";
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     export default{
