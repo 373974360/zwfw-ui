@@ -143,23 +143,22 @@
                                    :value="item.id" :label="item.name"></el-option>
                     </el-select>
                 </el-form-item>
-                <!--<el-form-item label="收件人姓名" prop="postInfo.name" v-show="takeTypeInfo.takeType == 3"
+                <el-form-item label="收件人姓名" prop="postInfo.name" v-if="takeTypeInfo.takeType == 3 && !cardVisible"
                               :rules="takeTypeInfo.takeType === 3 ? takeTypeInfoRules.postName : []">
                     <el-input v-model="takeTypeInfo.postInfo.name"
                               @blur="validateField('takeTypeForm', 'postInfo.name')"></el-input>
                 </el-form-item>
-                <el-form-item label="手机号" prop="postInfo.mobilephone" v-show="takeTypeInfo.takeType == 3"
+                <el-form-item label="手机号" prop="postInfo.mobilephone" v-if="takeTypeInfo.takeType == 3 && !cardVisible"
                               :rules="takeTypeInfo.takeType === 3 ? takeTypeInfoRules.postPhone : []">
                     <el-input v-model="takeTypeInfo.postInfo.mobilephone"
                               @blur="validateField('takeTypeForm', 'postInfo.mobilephone')"></el-input>
                 </el-form-item>
-                <el-form-item label="收件地址" prop="postInfo.address" v-show="takeTypeInfo.takeType == 3"
+                <el-form-item label="收件地址" prop="postInfo.address" v-if="takeTypeInfo.takeType == 3 && !cardVisible"
                               :rules="takeTypeInfo.takeType === 3 ? takeTypeInfoRules.postAddress : []">
                     <el-input v-model="takeTypeInfo.postInfo.address"
                               @blur="validateField('takeTypeForm', 'postInfo.address')"></el-input>
-                </el-form-item>-->
-                <el-form-item label="收件地址" prop="postInfo.addressee" v-show="takeTypeInfo.takeType == 3"
-                              :rules="takeTypeInfo.takeType === 3 ? takeTypeInfoRules.postAddress : []">
+                </el-form-item>
+                <el-form-item label="收件地址" prop="postInfo.addresseeId" v-if="takeTypeInfo.takeType == 3 && cardVisible">
                     <el-card class="box-card">
                         <div slot="header" class="clearfix card-header">
                             <div class="card-item">
@@ -170,6 +169,7 @@
                                 <p>{{cardHeader.address}}</p>
                             </div>
                             <el-button type="primary" @click="showCardItems">选择地址</el-button>
+                            <el-button type="text" @click="showTakeTypeAddresseeForm">添加地址</el-button>
                         </div>
                         <div class="card-body" v-show="cardItemVisible">
                             <div v-for="item in addresseeList" :key="item.id" class="card-item">
@@ -298,24 +298,24 @@
                     <el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.expressNumber" :disabled="offlineReadonly"></el-input>
                 </el-form-item>
                 <el-form-item label="收件人姓名" prop="takeTypeInfo.postInfo.name"
-                              v-show="processOfflineInfo.takeTypeInfo.takeType == 3 && !offlineCardVisible"
+                              v-if="processOfflineInfo.takeTypeInfo.takeType == 3 && !offlineCardVisible"
                               :rules="postRequired ? processOfflineInfoRules.postName : []">
                     <el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.name" :disabled="offlineReadonly"
                               @blur="validateField('processOfflineForm', 'takeTypeInfo.postInfo.name')"></el-input>
                 </el-form-item>
                 <el-form-item label="收件人手机号" prop="takeTypeInfo.postInfo.mobilephone"
-                              v-show="processOfflineInfo.takeTypeInfo.takeType == 3 && !offlineCardVisible"
+                              v-if="processOfflineInfo.takeTypeInfo.takeType == 3 && !offlineCardVisible"
                               :rules="postRequired ? processOfflineInfoRules.postPhone : []">
                     <el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.mobilephone" :disabled="offlineReadonly"
                               @blur="validateField('processOfflineForm', 'takeTypeInfo.postInfo.mobilephone')"></el-input>
                 </el-form-item>
                 <el-form-item label="收件地址" prop="takeTypeInfo.postInfo.address"
-                              v-show="processOfflineInfo.takeTypeInfo.takeType == 3 && !offlineCardVisible"
+                              v-if="processOfflineInfo.takeTypeInfo.takeType == 3 && !offlineCardVisible"
                               :rules="postRequired ? processOfflineInfoRules.postAddress : []">
                     <el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.address" :disabled="offlineReadonly"
                               @blur="validateField('processOfflineForm', 'takeTypeInfo.postInfo.address')"></el-input>
                 </el-form-item>
-                <el-form-item v-show="processOfflineInfo.takeTypeInfo.takeType == 3 && offlineCardVisible"
+                <el-form-item v-if="processOfflineInfo.takeTypeInfo.takeType == 3 && offlineCardVisible"
                               label="收件地址" prop="takeTypeInfo.postInfo.addresseeId">
                     <el-card class="box-card">
                         <div slot="header" class="clearfix card-header">
@@ -628,6 +628,9 @@
                     },
                     postInfo: {
                         id: '',
+                        name: '',
+                        mobilephone: '',
+                        address: '',
                         addresseeId: ''
                     }
                 },
@@ -667,7 +670,8 @@
                     defaultFlag: false
                 },
                 addresseeList: [],
-                cardItemVisible: false
+                cardItemVisible: false,
+                cardVisible: false
             }
         },
         computed: {
@@ -696,8 +700,10 @@
         },
         watch: {
             'takeTypeInfo.postInfo.addresseeId'() {
-                this.initCardHeader();
-                this.cardItemVisible = false;
+                if (this.cardVisible) {
+                    this.initCardHeader();
+                    this.cardItemVisible = false;
+                }
             },
             'processOfflineInfo.takeTypeInfo.postInfo.addresseeId'() {
                 if (this.offlineCardVisible) {
@@ -908,8 +914,8 @@
                     }
                 }
                 this.processOfflineInfo.takeTypeInfo.postInfo.addresseeId = addressee.id;
-                this.offlineCardVisible = true;
                 copyProperties(this.offlineCardHeader, addressee);
+                this.offlineCardVisible = true;
             },
             submitProcessOffline() {
                 this.$refs['processOfflineForm'].validate(valid => {
@@ -938,6 +944,12 @@
             },
             showCardItems() {
                 this.cardItemVisible = !this.cardItemVisible;
+            },
+            showTakeTypeAddresseeForm() {
+                this.cardVisible = false;
+                this.takeTypeInfo.postInfo.addresseeId = undefined;
+                this.resetCardHeader();
+                this.cardItemVisible = false;
             },
             changeTakeType(row) {
                 if (row.takeTypeInfo.flagTakeCert !== 1
@@ -980,6 +992,7 @@
             },
             initCardHeader() {
                 if (!this.addresseeList || this.addresseeList.length <= 0 || this.takeTypeInfo.takeType != 3) {
+                    this.cardVisible = false;
                     this.takeTypeInfo.postInfo.addresseeId = undefined;
                     this.resetCardHeader();
                     this.cardItemVisible = false;
@@ -1006,6 +1019,7 @@
                 }
                 this.takeTypeInfo.postInfo.addresseeId = addressee.id;
                 copyProperties(this.cardHeader, addressee);
+                this.cardVisible = true;
             },
             submitTakeTypeInfo() {
                 this.$refs['takeTypeForm'].validate(valid => {
@@ -1190,6 +1204,9 @@
                     },
                     postInfo: {
                         id: '',
+                        name: '',
+                        mobilephone: '',
+                        address: '',
                         addresseeId: ''
                     }
                 }
