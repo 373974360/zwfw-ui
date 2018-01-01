@@ -88,3 +88,10 @@ export function stringToJson(value){
 export function duration(value) {
     return moment.duration(value).humanize();
 }
+
+export function parseToInt(value) {
+    if (!value && value !== 0 && value !== '0') {
+        return '';
+    }
+    return parseInt(value);
+}
