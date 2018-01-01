@@ -226,15 +226,16 @@
                 <el-form-item label="办件号" v-show="offlineReadonly">
                     <el-input v-model="processOfflineInfo.processNumber" :disabled="offlineReadonly"></el-input>
                 </el-form-item>
-                <el-form-item label="事项名称" v-show="offlineReadonly">
+                <el-form-item label="事项名称" v-if="offlineReadonly">
                     <el-input v-model="processOfflineInfo.itemName" :disabled="offlineReadonly"></el-input>
                 </el-form-item>
-                <el-form-item label="事项" prop="itemId" v-show="!offlineReadonly">
+                <el-form-item label="事项" prop="itemId" v-if="!offlineReadonly">
                     <el-select v-model="processOfflineInfo.itemId" value-key="id"
                                filterable
                                remote
-                               placeholder="请输入事项名称" @change="getItemTakeTypes"
-                               :remote-method="searchItem1":disabled="offlineReadonly">
+                               placeholder="请输入事项名称"
+                               @change="getItemTakeTypes"
+                               :remote-method="searchItem1">
                         <el-option v-for="item in optionsNamess" :key="item.id" :label="item.name" :value="item.id"></el-option>
                     </el-select>
                 </el-form-item>
@@ -248,13 +249,16 @@
                                     :disabled="offlineReadonly" @change="formatDateTime">
                     </el-date-picker>
                 </el-form-item>
-                <el-form-item label="取件方式">
-                    <el-select v-model="processOfflineInfo.takeTypeInfo.takeType" :disabled="offlineReadonly">
+                <el-form-item label="取件方式" v-if="!offlineReadonly">
+                    <el-select v-model="processOfflineInfo.takeTypeInfo.takeType">
                         <el-option v-for="item in takeTypeList" :key="item"
                                    :value="item" :label="item | parseToInt | enums('TakeType')"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="取件状态" v-show="offlineReadonly">
+                <el-form-item label="取件方式" v-if="offlineReadonly">
+                    <span>&nbsp;&nbsp;<b>{{processOfflineInfo.takeTypeInfo.takeType | parseToInt | enums('TakeType')}}</b></span>
+                </el-form-item>
+                <el-form-item label="取件状态" v-if="offlineReadonly">
                     <span>&nbsp;&nbsp;<b>{{processOfflineInfo.takeTypeInfo.flagTakeCert | enums('TakeStatus')}}</b></span>
                 </el-form-item>
                 <el-form-item label="取件时间" v-show="offlineReadonly && [2,5,8].includes(processOfflineInfo.takeTypeInfo.flagTakeCert)">
@@ -322,8 +326,8 @@
                                 </p>
                                 <p>{{offlineCardHeader.address}}</p>
                             </div>
-                            <el-button type="primary" @click="showOfflineCardItems">选择地址</el-button>
-                            <el-button type="text" @click="showAddresseeForm">添加地址</el-button>
+                            <el-button v-if="!offlineReadonly" type="primary" @click="showOfflineCardItems">选择地址</el-button>
+                            <el-button v-if="!offlineReadonly" type="text" @click="showAddresseeForm">添加地址</el-button>
                         </div>
                         <div class="card-body" v-show="offlineCardItemVisible">
                             <div v-for="item in offlineAddresseeList" :key="item.id" class="card-item">
@@ -518,7 +522,7 @@
                     startItemTime: '',
                     finishItemTime: '',
                     takeTypeInfo: {
-                        takeType: 1,
+                        takeType: '',
                         flagTakeCert: undefined,
                         takeCertTime: undefined,
                         mailboxInfo: {
@@ -680,10 +684,10 @@
                 return !this.processOfflineInfo.hasMemberId && this.memberInfo.type === 2;
             },
             mailboxRequired() {
-                return this.processOfflineInfo.takeTypeInfo.takeType === 2;
+                return this.processOfflineInfo.takeTypeInfo.takeType == 2;
             },
             postRequired() {
-                return this.processOfflineInfo.takeTypeInfo.takeType === 3 && !this.offlineCardVisible;
+                return this.processOfflineInfo.takeTypeInfo.takeType == 3 && !this.offlineCardVisible;
             }
         },
         created() {
@@ -843,7 +847,7 @@
                     return;
                 }
                 this.validateField('processOfflineForm', 'memberId');
-                if (!memberId || this.processOfflineInfo.takeTypeInfo.takeType !== 2) {
+                if (!memberId || this.processOfflineInfo.takeTypeInfo.takeType != 2) {
                     return;
                 }
                 getMemberById(memberId).then(response => {
@@ -984,7 +988,7 @@
                 let addressee;
                 if (this.takeTypeInfo.postInfo.addresseeId) {
                     for (let item of this.addresseeList) {
-                        if (item.id === this.takeTypeInfo.postInfo.addresseeId) {
+                        if (item.id == this.takeTypeInfo.postInfo.addresseeId) {
                             addressee = item;
                             break;
                         }
@@ -1000,7 +1004,7 @@
                         addressee = this.addresseeList[0];
                     }
                 }
-                this.takeTypeInfo.postInfo.addressId = addressee.id;
+                this.takeTypeInfo.postInfo.addresseeId = addressee.id;
                 copyProperties(this.cardHeader, addressee);
             },
             submitTakeTypeInfo() {
@@ -1208,7 +1212,7 @@
                     startItemTime: '',
                     finishItemTime: '',
                     takeTypeInfo: {
-                        takeType: 1,
+                        takeType: '',
                         flagTakeCert: undefined,
                         takeCertTime: undefined,
                         mailboxInfo: {
