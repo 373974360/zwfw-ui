@@ -128,8 +128,8 @@
                      style="width: 80%; margin-left:10%;" v-loading="dialogLoading">
                 <el-form-item label="取件方式" prop="takeType">
                     <el-select v-model="takeTypeInfo.takeType" @change="changeTakeTypeInfo">
-                        <el-option v-for="item in enums['TakeType']" :key="item.code"
-                                   :value="item.code" :label="item.value"></el-option>
+                        <el-option v-for="item in takeTypeList" :key="item"
+                                   :value="item" :label="item | parseToInt | enums('TakeType')"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="快件箱" prop="mailboxInfo.mailboxId" v-show="takeTypeInfo.takeType == 2"
@@ -158,7 +158,7 @@
                     <el-input v-model="takeTypeInfo.postInfo.address"
                               @blur="validateField('takeTypeForm', 'postInfo.address')"></el-input>
                 </el-form-item>-->
-                <el-form-item label="收件地址" prop="postInfo.address" v-show="takeTypeInfo.takeType == 3"
+                <el-form-item label="收件地址" prop="postInfo.addressee" v-show="takeTypeInfo.takeType == 3"
                               :rules="takeTypeInfo.takeType === 3 ? takeTypeInfoRules.postAddress : []">
                     <el-card class="box-card">
                         <div slot="header" class="clearfix card-header">
@@ -233,7 +233,7 @@
                     <el-select v-model="processOfflineInfo.itemId" value-key="id"
                                filterable
                                remote
-                               placeholder="请输入事项名称"
+                               placeholder="请输入事项名称" @change="getItemTakeTypes"
                                :remote-method="searchItem1":disabled="offlineReadonly">
                         <el-option v-for="item in optionsNamess" :key="item.id" :label="item.name" :value="item.id"></el-option>
                     </el-select>
@@ -250,8 +250,8 @@
                 </el-form-item>
                 <el-form-item label="取件方式">
                     <el-select v-model="processOfflineInfo.takeTypeInfo.takeType" :disabled="offlineReadonly">
-                        <el-option v-for="item in enums['TakeType']" :key="item.code"
-                                   :value="item.code" :label="item.value"></el-option>
+                        <el-option v-for="item in takeTypeList" :key="item"
+                                   :value="item" :label="item | parseToInt | enums('TakeType')"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="取件状态" v-show="offlineReadonly">
@@ -294,25 +294,25 @@
                     <el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.expressNumber" :disabled="offlineReadonly"></el-input>
                 </el-form-item>
                 <el-form-item label="收件人姓名" prop="takeTypeInfo.postInfo.name"
-                              v-show="processOfflineInfo.takeTypeInfo.takeType == 3 && (!processOfflineInfo.hasMemberId || !offlineAddresseeList || offlineAddresseeList.length <= 0)"
+                              v-show="processOfflineInfo.takeTypeInfo.takeType == 3 && !offlineCardVisible"
                               :rules="postRequired ? processOfflineInfoRules.postName : []">
                     <el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.name" :disabled="offlineReadonly"
                               @blur="validateField('processOfflineForm', 'takeTypeInfo.postInfo.name')"></el-input>
                 </el-form-item>
                 <el-form-item label="收件人手机号" prop="takeTypeInfo.postInfo.mobilephone"
-                              v-show="processOfflineInfo.takeTypeInfo.takeType == 3 && (!processOfflineInfo.hasMemberId || !offlineAddresseeList || offlineAddresseeList.length <= 0)"
+                              v-show="processOfflineInfo.takeTypeInfo.takeType == 3 && !offlineCardVisible"
                               :rules="postRequired ? processOfflineInfoRules.postPhone : []">
                     <el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.mobilephone" :disabled="offlineReadonly"
                               @blur="validateField('processOfflineForm', 'takeTypeInfo.postInfo.mobilephone')"></el-input>
                 </el-form-item>
                 <el-form-item label="收件地址" prop="takeTypeInfo.postInfo.address"
-                              v-show="processOfflineInfo.takeTypeInfo.takeType == 3 && (!processOfflineInfo.hasMemberId || !offlineAddresseeList || offlineAddresseeList.length <= 0)"
+                              v-show="processOfflineInfo.takeTypeInfo.takeType == 3 && !offlineCardVisible"
                               :rules="postRequired ? processOfflineInfoRules.postAddress : []">
                     <el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.address" :disabled="offlineReadonly"
                               @blur="validateField('processOfflineForm', 'takeTypeInfo.postInfo.address')"></el-input>
                 </el-form-item>
-                <el-form-item v-show="processOfflineInfo.takeTypeInfo.takeType == 3 && processOfflineInfo.hasMemberId && offlineAddresseeList && offlineAddresseeList.length > 0"
-                              label="收件地址" prop="postInfo.addresseeId">
+                <el-form-item v-show="processOfflineInfo.takeTypeInfo.takeType == 3 && offlineCardVisible"
+                              label="收件地址" prop="takeTypeInfo.postInfo.addresseeId">
                     <el-card class="box-card">
                         <div slot="header" class="clearfix card-header">
                             <div class="card-item">
@@ -323,6 +323,7 @@
                                 <p>{{offlineCardHeader.address}}</p>
                             </div>
                             <el-button type="primary" @click="showOfflineCardItems">选择地址</el-button>
+                            <el-button type="text" @click="showAddresseeForm">添加地址</el-button>
                         </div>
                         <div class="card-body" v-show="offlineCardItemVisible">
                             <div v-for="item in offlineAddresseeList" :key="item.id" class="card-item">
@@ -424,7 +425,7 @@
     import {mapGetters} from 'vuex';
     import {date} from '../../../../filters';
     import {isIdCardNo, validatMobiles, checkSocialCreditCode} from 'utils/validate'
-    import {getAllByNameOrbasicCode} from 'api/zwfwSystem/business/item';
+    import {getAllByNameOrbasicCode, getDetailById} from '../../../../api/zwfwSystem/business/item';
     import {getAllMailbox} from 'api/hallSystem/window/mailbox'
     import {getByNameOrLoginName, getMemberById} from '../../../../api/hallSystem/member/member'
     import {idCardExist} from '../../../../api/hallSystem/member/naturePerson'
@@ -483,6 +484,7 @@
                 optionsNames: [],
                 optionsNamess: [],
                 mailboxList: [],
+                takeTypeList: [],
                 total: null,
                 listLoading: true,
                 dialogLoading: false,
@@ -498,6 +500,7 @@
                 expressInfoVisible: false,
                 processOfflineVisible: false,
                 offlineReadonly: false,
+                offlineCardVisible: false,
                 offlineCardItemVisible: false,
                 offlineCardHeader: {
                     name: '',
@@ -680,7 +683,7 @@
                 return this.processOfflineInfo.takeTypeInfo.takeType === 2;
             },
             postRequired() {
-                return this.processOfflineInfo.takeTypeInfo.takeType === 3;
+                return this.processOfflineInfo.takeTypeInfo.takeType === 3 && !this.offlineCardVisible;
             }
         },
         created() {
@@ -693,8 +696,24 @@
                 this.cardItemVisible = false;
             },
             'processOfflineInfo.takeTypeInfo.postInfo.addresseeId'() {
+                if (this.offlineCardVisible) {
+                    this.initOfflineCardHeader();
+                    this.offlineCardItemVisible = false;
+                }
+            },
+            'processOfflineInfo.hasMemberId'(value) {
+                if (value) {
+                    this.initOfflineCardHeader();
+                } else {
+                    this.processOfflineInfo.takeTypeInfo.postInfo.addresseeId = undefined;
+                    this.offlineCardVisible = false;
+                    this.resetOfflineCardHeader();
+                    this.offlineCardItemVisible = false;
+                }
+            },
+            'processOfflineInfo.takeTypeInfo.takeType'() {
                 this.initOfflineCardHeader();
-                this.offlineCardItemVisible = false;
+                this.changeConsigneeMobile(this.processOfflineInfo.memberId);
             }
         },
         methods: {
@@ -719,6 +738,22 @@
                         this.$message.error('数据加载失败')
                     }
                 });
+            },
+            getItemTakeTypes(id) {
+                return new Promise((resolve, reject) => {
+                    if (this.offlineReadonly) {
+                        return reject();
+                    }
+                    getDetailById(id).then(response => {
+                        if (response.httpCode == 200 && response.data) {
+                            this.takeTypeList = response.data.takeTypes.split(',');
+                            resolve();
+                        } else {
+                            this.$message.error('事项信息获取失败');
+                            reject(response.msg);
+                        }
+                    })
+                })
             },
             searchItem(query) {
                 const listQueryName = {
@@ -793,6 +828,12 @@
             showOfflineCardItems() {
                 this.offlineCardItemVisible = !this.offlineCardItemVisible;
             },
+            showAddresseeForm() {
+                this.offlineCardVisible = false;
+                this.processOfflineInfo.takeTypeInfo.postInfo.addresseeId = undefined;
+                this.resetOfflineCardHeader();
+                this.offlineCardItemVisible = false;
+            },
             handleChangeMember(memberId) {
                 this.changeConsigneeMobile(memberId);
                 this.changeMemberAddressee(memberId);
@@ -835,11 +876,11 @@
                 })
             },
             initOfflineCardHeader() {
-                if (!this.offlineAddresseeList || this.offlineAddresseeList.length <= 0) {
-                    return;
-                }
-                if (this.processOfflineInfo.takeTypeInfo.takeType != 3) {
+                if (!this.offlineAddresseeList || this.offlineAddresseeList.length <= 0
+                    || this.processOfflineInfo.takeTypeInfo.takeType != 3) {
                     this.processOfflineInfo.takeTypeInfo.postInfo.addresseeId = undefined;
+                    this.offlineCardVisible = false;
+                    this.resetOfflineCardHeader();
                     this.offlineCardItemVisible = false;
                     return;
                 }
@@ -863,6 +904,7 @@
                     }
                 }
                 this.processOfflineInfo.takeTypeInfo.postInfo.addresseeId = addressee.id;
+                this.offlineCardVisible = true;
                 copyProperties(this.offlineCardHeader, addressee);
             },
             submitProcessOffline() {
@@ -910,26 +952,32 @@
                 if (row.takeTypeInfo.postInfo) {
                     this.takeTypeInfo.postInfo = copyProperties(this.takeTypeInfo.postInfo, row.takeTypeInfo.postInfo);
                 }
-                this.takeTypeVisible = true;
-                this.getMemberAddressees();
+                Promise.all([this.getItemTakeTypes(row.itemId), this.getMemberAddressees()]).then(() => {
+                    this.takeTypeVisible = true;
+                });
             },
             getMemberAddressees() {
-                getAllAddresseesByMemberId({
-                    memberId: this.takeTypeInfo.memberId
-                }).then(response => {
-                    this.addresseeList = response.data;
-                    this.initCardHeader();
+                return new Promise((resolve, reject) => {
+                    getAllAddresseesByMemberId({
+                        memberId: this.takeTypeInfo.memberId
+                    }).then(response => {
+                        if (response.httpCode == 200) {
+                            this.addresseeList = response.data;
+                            this.initCardHeader();
+                            resolve()
+                        } else {
+                            reject(response.msg);
+                        }
+                    })
                 })
             },
             changeTakeTypeInfo() {
                 this.initCardHeader();
             },
             initCardHeader() {
-                if (!this.addresseeList || this.addresseeList.length <= 0) {
-                    return;
-                }
-                if (this.takeTypeInfo.takeType != 3) {
+                if (!this.addresseeList || this.addresseeList.length <= 0 || this.takeTypeInfo.takeType != 3) {
                     this.takeTypeInfo.postInfo.addresseeId = undefined;
+                    this.resetCardHeader();
                     this.cardItemVisible = false;
                     return;
                 }
@@ -1085,6 +1133,7 @@
                 this.processOfflineInfo = copyProperties(this.processOfflineInfo, row);
                 this.processOfflineInfo.hasMemberId = true;
                 this.offlineReadonly = true;
+                this.changeMemberAddressee(this.processOfflineInfo.memberId);
                 this.processOfflineVisible = true;
             },
             validateField(form, field) {
@@ -1141,6 +1190,14 @@
                     }
                 }
             },
+            resetCardHeader() {
+                this.cardHeader = {
+                    name: '',
+                    phone: '',
+                    address: '',
+                    defaultFlag: false
+                }
+            },
             resetProcessOfflineTemp() {
                 this.processOfflineInfo = {
                     processNumber: undefined,
@@ -1186,6 +1243,14 @@
                         idcard: '',
                         phone: ''
                     }
+                }
+            },
+            resetOfflineCardHeader() {
+                this.offlineCardHeader = {
+                    name: '',
+                    phone: '',
+                    address: '',
+                    defaultFlag: false
                 }
             }
         }

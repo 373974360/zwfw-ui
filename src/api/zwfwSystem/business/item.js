@@ -85,4 +85,10 @@ export function updatePretrialUserList(itemId, userIds) {
 }
 
 
-
+export function getDetailById(id) {
+    return fetch({
+        url: '/api/zwfwSystem/business/item/get',
+        method: 'get',
+        params: {id: id}
+    })
+}
