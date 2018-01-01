@@ -6,12 +6,12 @@
                     <el-tabs v-model="leftTabName" type="card">
                         <!--<el-tab-pane label="业务受理" name="workPanelItl" v-if="false">-->
                         <!--<el-row :gutter="25">-->
-                        <!--<el-col :span="19">-->
+                        <!--<el-col :span="17">-->
                         <!--<el-button type="primary" @click="queryCurrentNumber">查询当前叫号</el-button>-->
                         <!--</el-col>-->
                         <!--</el-row>-->
                         <!--<el-row :gutter="25">-->
-                        <!--<el-col :span="19">-->
+                        <!--<el-col :span="17">-->
                         <!--<el-input v-model="memberCode" placeholder="输入企业统一信用代码或身份证号">-->
                         <!--<template slot="prepend">用户信息：</template>-->
                         <!--</el-input>-->
@@ -36,7 +36,7 @@
                         <!--</el-col>&ndash;&gt;-->
                         <!--</el-row>-->
                         <!--&lt;!&ndash;<el-row :gutter="25" v-show="doFastReg">-->
-                        <!--<el-col :span="19">-->
+                        <!--<el-col :span="17">-->
                         <!--<el-input v-model="phoneCode" :disabled="!doFastReg" placeholder="输入手机收到的验证码"></el-input>-->
                         <!--</el-col>-->
                         <!--<el-col :span="4">-->
@@ -123,7 +123,7 @@
                                 </el-row>
                             </template>
                             <!--<el-row :gutter="25" v-show="doFastReg">
-                                <el-col :span="19">
+                                <el-col :span="17">
                                     <el-input v-model="phoneCode" :disabled="!doFastReg" placeholder="输入手机收到的验证码"></el-input>
                                 </el-col>
                                 <el-col :span="4">
@@ -187,7 +187,7 @@
                         </el-tab-pane>
                         <el-tab-pane label="虚拟抽号机" name="virtualPanel">
                             <el-row v-show="!windowInfo.id" :gutter="25">
-                                <el-col :span="19">
+                                <el-col :span="17">
                                     <el-input v-model="loginCallerKey" placeholder="模拟叫号器操作，请先输入窗口编号登录">
                                     </el-input>
                                 </el-col>
@@ -197,7 +197,7 @@
                                 </el-col>
                             </el-row>
                             <el-row v-show="windowInfo.id" :gutter="25">
-                                <el-col :span="19">
+                                <el-col :span="17">
                                     <el-input :value="'已经登录到' + windowInfo.callerKey + '窗口'" disabled
                                               placeholder="模拟叫号器操作，请先输入窗口编号登录"></el-input>
                                 </el-col>
@@ -206,7 +206,7 @@
                                 </el-col>
                             </el-row>
                             <el-row :gutter="25">
-                                <el-col :span="19">
+                                <el-col :span="17">
                                     <el-cascader v-model="categoryCascaderModel" @change="handleCategoryChange"
                                                  :options="categoryCascader"
                                                  class="filter-item"
@@ -216,7 +216,7 @@
                                 </el-col>
                             </el-row>
                             <el-row :gutter="25">
-                                <el-col :span="19">
+                                <el-col :span="17">
                                     <el-select
                                             v-model="selectedItem"
                                             filterable
@@ -237,7 +237,7 @@
                                 </el-col>
                             </el-row>
                             <el-row :gutter="25">
-                                <el-col :span="19">
+                                <el-col :span="17">
                                     <el-input v-model="getNumberBy_processNumber" placeholder="如根据预审号抽号，请输入预审号">
                                     </el-input>
                                 </el-col>
@@ -248,7 +248,7 @@
                                 </el-col>
                             </el-row>
                             <el-row :gutter="25">
-                                <el-col :span="19">
+                                <el-col :span="17">
                                     <el-input v-model="getNumberBy_hallNumber" placeholder="请输入呼叫号">
                                     </el-input>
                                 </el-col>
@@ -320,6 +320,20 @@
                             <tr v-if="itemPretrialVo!=null">
                                 <th>预审状态:</th>
                                 <td>{{itemPretrialVo.status | enums('PretrialStatus')}}
+                                </td>
+                            </tr>
+                            <tr >
+                                <th>取件方式:</th>
+                                <td>
+                                    <span v-if="takeTypeVo!=null">{{takeTypeVo.takeType | enums('TakeType')}}</span>
+                                    <span v-else style="color:red">未设置</span>
+                                </td>
+                            </tr>
+                            <tr >
+                                <th>交件方式:</th>
+                                <td>
+                                    <span v-if="handTypeVo!=null">{{handTypeVo.handType | enums('HandType')}}</span>
+                                    <span v-else style="color:red">未设置</span>
                                 </td>
                             </tr>
                             <tr>
@@ -555,12 +569,23 @@
                         </el-input>
                     </div>
                     <div v-if="itemNumber.status!=3" style="margin-top:20px;">
+                        <!--根据事项的交件方式显示，此选择框是为了防止用户选择其他交件方式后，人工直接来大厅办理，收件后数据不一致-->
+                        <el-select v-model="itemHandType" placeholder="确定交件方式" :disabled="!itemVo.id">
+                            <el-option
+                                    v-for="item in enums['HandType']"
+                                    :disabled="!itemVo.handTypes || itemVo.handTypes.split(',').indexOf(item.code+'')==-1"
+                                    :key="item.code" :label="item.value + ''"
+                                    :value="item.code">
+                            </el-option>
+                        </el-select>
+                        <!--抽了号，但是号不是正在处理的不能点击确认收件；或者不关心是否抽号和抽号状态，没有手机号或姓名或身份证号或统一社会信用代码的按钮不可点击（莲湖直接收件）-->
                         <el-button
                                 :disabled="(itemNumber.id &&  itemNumber.status!=6) || !memberPhone || !memberRealname ||!memberCode"
                                 type="primary" @click="pass">
                             确认收件
-
                         </el-button>
+                        <!--抽了号，但是号不是正在处理的不能点击确认收件；此处对于莲湖不在系统抽号直接提交的模式来说，一直会显示为禁用-->
+                        <!--TODO 按理说拒收也应该是要提交并保存一条抽号受理记录-->
                         <el-button :disabled="!itemNumber.id || itemNumber.status!=6" type="primary" @click="reject">
                             不予受理
                         </el-button>
@@ -595,6 +620,7 @@
     } from 'api/hallSystem/window/receive/windowAccept';
     import {getAllByNameOrbasicCode} from 'api/zwfwSystem/business/item';
     import {getCategoryCascader} from 'api/zwfwSystem/business/category';
+    import {mapGetters} from 'vuex';
 
 
     export default {
@@ -660,8 +686,17 @@
                 categoryCascader: [],
                 itemCategory: null,
                 categoryCascaderModel: [],
-                showInputForm: false
+                showInputForm: false,
+                itemHandType: undefined,
+                takeTypeVo: null,
+                handTypeVo:null
             }
+        },
+        computed: {
+            ...mapGetters([
+                'enums',
+                'dics'
+            ])
         },
 //        beforeRouteEnter(to, from, next) {
 //            getZwfwEnums().then(function () {
@@ -862,6 +897,7 @@
 //                    console.log(data.data.callNumber);
                     if (response.httpCode === 200) {
                         _this.$message.success('抽到的号码是：' + response.data.callNumber);
+                        _this.getNumberBy_hallNumber = response.data.callNumber;
                     } else {
                         _this.$message.error(response.msg);
                     }
@@ -915,6 +951,7 @@
              */
             queryNumberByCallNumber() {
                 let _this = this;
+                this.handTypeVo = null;
                 queryNumberByCallNumber({
                     hallNumber: this.getNumberBy_hallNumber
                 }).then(response => {
@@ -935,6 +972,17 @@
                                 _this.memberPhone = data.member.mobilephone;
                                 _this.memberRealname = data.member.name;
                             }
+
+                            //   取件方式
+                            if (data.takeTypeVo) {
+                                _this.takeTypeVo = data.takeTypeVo;
+                            }
+
+                            // 寄件方式
+                            if (data.handTypeVo) {
+                                _this.handTypeVo = data.handTypeVo;
+                                _this.itemHandType = _this.handTypeVo.handType;
+                            }
                         } else {
                             _this.$message({
                                 showClose: true,
@@ -953,6 +1001,7 @@
             queryCurrentNumber() {
                 let _this = this;
                 this.showInputForm = false;
+                this.handTypeVo = null;
                 queryCurrentNumber({}).then(response => {
                     if (response.httpCode === 200) {
                         if (response.data != null) {
@@ -970,6 +1019,18 @@
                                 _this.memberPhone = data.member.mobilephone;
                                 _this.memberRealname = data.member.name;
                                 _this.memberCode = data.member.memberCode;
+                            }
+                            //   取件方式
+
+                            if (data.takeTypeVo) {
+                                _this.takeTypeVo = data.takeTypeVo;
+                            }
+
+                            // 寄件方式
+                            if (data.handTypeVo) {
+                                _this.handTypeVo = data.handTypeVo;
+                                _this.itemHandType = _this.handTypeVo.handType;
+
                             }
                         } else {
                             _this.$message({
@@ -1082,7 +1143,8 @@
                             memberRealname: this.memberRealname,
                             memberPhone: this.memberPhone,
                             received: checked_m.join(','),
-                            remark: this.remark
+                            remark: this.remark,
+                            itemHandType:this.itemHandType
                         }).then(response => {
                             if (response.httpCode === 200) {
                                 this.$message.success('提交成功');
@@ -1106,9 +1168,11 @@
                     } else {
                         submitWork({
                             numberId: _itemNumber.id,
-                            status: 3,
+                            status: 3,  //受理
                             remark: this.remark,
-                            received: checked_m.join(',')
+                            received: checked_m.join(','),
+                            itemHandType:this.itemHandType
+
                         }).then(response => {
                             if (response.httpCode === 200) {
                                 let data = response.data;
@@ -1158,7 +1222,7 @@
                 }).then(() => {
                     submitWork({
                         numberId: _itemNumber.id,
-                        status: 4,
+                        status: 4,  //不予受理
                         remark: this.remark
                     }).then(response => {
                         if (response.httpCode === 200) {
@@ -1200,7 +1264,7 @@
                 }).then(() => {
                     submitWork({
                         numberId: _itemNumber.id,
-                        status: 5,
+                        status: 5, //跳过
                         remark: this.remark
                     }).then(response => {
                         if (response.httpCode === 200) {
