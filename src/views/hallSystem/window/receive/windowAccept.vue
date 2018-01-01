@@ -580,8 +580,9 @@
                         </el-select>
                         <!--抽了号，但是号不是正在处理的不能点击确认收件；或者不关心是否抽号和抽号状态，没有手机号或姓名或身份证号或统一社会信用代码的按钮不可点击（莲湖直接收件）-->
                         <el-button
-                                :disabled="(itemNumber.id &&  itemNumber.status!=6) || !memberPhone || !memberRealname ||!memberCode"
-                                type="primary" @click="pass">
+                                :disabled="(itemNumber.id &&  itemNumber.status!=6) || !memberPhone || !memberRealname ||!memberCode || submiting"
+                                type="primary"
+                                :loading="submiting" @click="pass">
                             确认收件
                         </el-button>
                         <!--抽了号，但是号不是正在处理的不能点击确认收件；此处对于莲湖不在系统抽号直接提交的模式来说，一直会显示为禁用-->
@@ -689,7 +690,8 @@
                 showInputForm: false,
                 itemHandType: undefined,
                 takeTypeVo: null,
-                handTypeVo:null
+                handTypeVo:null,
+                submiting:false
             }
         },
         computed: {
@@ -1137,6 +1139,7 @@
                     type: 'warning'
                 }).then(() => {
                     if (!this.itemNumber.id) {
+                        this.submiting = true;
                         submitNoPretrial({
                             itemId: this.itemVo.id,
                             memberCode: this.memberCode,
@@ -1146,6 +1149,7 @@
                             remark: this.remark,
                             itemHandType:this.itemHandType
                         }).then(response => {
+                            submiting = false;
                             if (response.httpCode === 200) {
                                 this.$message.success('提交成功');
                                 let data = response.data;
@@ -1164,8 +1168,11 @@
                             } else {
                                 this.$message.error('提交出错 ，' + response.msg);
                             }
+                        }).catch(e=>{
+                            this.submiting = false;
                         });
                     } else {
+                        this.submiting = true;
                         submitWork({
                             numberId: _itemNumber.id,
                             status: 3,  //受理
@@ -1174,6 +1181,7 @@
                             itemHandType:this.itemHandType
 
                         }).then(response => {
+                            this.submiting = false;
                             if (response.httpCode === 200) {
                                 let data = response.data;
                                 if (data != null) {
@@ -1194,6 +1202,8 @@
                             } else {
                                 _this.$message.error(response.msg);
                             }
+                        }).catch(e=>{
+                            this.submiting =false;
                         });
                     }
 
