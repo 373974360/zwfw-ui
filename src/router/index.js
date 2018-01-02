@@ -51,7 +51,7 @@ const LegalPerson = () => import('../views/hallSystem/member/legalPerson');
 /* 窗口收件*/
 const WindowAccept = () => import('../views/hallSystem/window/receive/windowAccept');
 /* 寄件待收查询*/
-const SendingMaterial()=> import ('../views/hallSystem/window/receive/sendingMaterial')
+const SendingMaterial = () => import('../views/hallSystem/window/receive/sendingMaterial');
 /* 收件记录*/
 const Record = () => import('../views/hallSystem/window/receive/record');
 /* 办结取件*/
