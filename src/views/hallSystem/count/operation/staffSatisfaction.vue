@@ -71,7 +71,7 @@
                         const e = echarts.init(document.getElementById('staffSatisfaction'));
                         e.setOption({
                             title: {
-                                text: '部门满意度统计'
+                                text: '五星级服务员'
                             },
                             legend: {
                                 data: ['非常满意', '满意', '一般', '不满意', '非常不满意', '未评价']
@@ -110,7 +110,7 @@
                                     max: 100,
                                     interval: 10,
                                     axisLabel: {
-                                        formatter: '{value} %'
+                                        formatter: '{value}.00 %'
                                     }
                                 }
                             ],

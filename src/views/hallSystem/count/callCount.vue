@@ -198,24 +198,38 @@
                                 x: 'center'
                             },
                             tooltip: {trigger: 'item'},
-                            legend: {top: 55, orient: 'horizontal', x: 'center', data: this.categoryName},
+                            legend: {
+                                type: 'scroll',
+                                orient: 'vertical',
+                                right: 10,
+                                top: 20,
+                                bottom: 20,
+                                data: this.categoryName
+                            },
                             calculable: !0,
-                            series: [{
-                                name: '叫号统计',
-                                type: 'pie',
-                                radius: '55%',
-                                center: ['50%', '70%'],
-                                itemStyle: {
-                                    normal: {
-                                        label: {
-                                            show: true,
-                                            formatter: '{b} : {c}个 ({d}%)'
+                            series : [
+                                {
+                                    name: '叫号统计',
+                                    type: 'pie',
+                                    radius : '55%',
+                                    center: ['50%', '60%'],
+                                    data: this.categoryTotal,
+                                    itemStyle: {
+                                        emphasis: {
+                                            shadowBlur: 10,
+                                            shadowOffsetX: 0,
+                                            shadowColor: 'rgba(0, 0, 0, 0.5)'
                                         },
-                                        labelLine: {show: true}
-                                    }
-                                },
-                                data: this.categoryTotal
-                            }]
+                                        normal: {
+                                            label: {
+                                                show: true,
+                                                formatter: '{b} : {c}个 ({d}%)'
+                                            },
+                                            labelLine: {show: true}
+                                        }
+                                    },
+                                }
+                            ]
                         })
                     } else {
                         this.$message.error('数据加载失败')
@@ -386,6 +400,6 @@
 
     .className {
         width: 1614px;
-        height: 240px
+        height: 420px
     }
 </style>

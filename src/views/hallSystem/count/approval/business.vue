@@ -257,7 +257,7 @@
                                     max: 100,
                                     interval: 10,
                                     axisLabel: {
-                                        formatter: '{value} %'
+                                        formatter: '{value}.00 %'
                                     }
                                 }
                             ],

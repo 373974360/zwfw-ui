@@ -394,7 +394,7 @@ export const asyncRouterMap = [
     },
     {redirect: 'noredirect',
         name: '统计分析',
-        path:'analysis',
+        path:'/analysis',
         meta: {permission: 'hallSystem:count:admin'},
         icon: 'count',
         component: Layout,
