@@ -8,7 +8,7 @@
             <el-form autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left"
                      label-width="0px"
                      class="card-box login-form">
-                <h3 class="title">政务服务管理系统</h3>
+                <h3 class="title">人才招聘管理系统</h3>
                 <el-input type="hidden" v-model="loginForm.random"></el-input>
                 <el-row type="flex" justify="center">
                     <el-col :span="24">
