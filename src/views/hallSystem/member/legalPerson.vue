@@ -38,11 +38,11 @@
                     <span>{{scope.row.companyName}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="left" label="机构代码" prop="agencyCode" width="100">
+            <!--<el-table-column align="left" label="机构代码" prop="agencyCode" width="100">
                 <template scope="scope">
                     <span>{{scope.row.agencyCode}}</span>
                 </template>
-            </el-table-column>
+            </el-table-column>-->
             <el-table-column align="center" label="法定代表人" prop="legalPerson">
                 <template scope="scope">
                     <span>{{scope.row.legalPerson}}</span>
@@ -90,9 +90,9 @@
                 <el-form-item label="机构名称" prop="companyName">
                     <el-input v-model="zwfwLegalPerson.companyName"></el-input>
                 </el-form-item>
-                <el-form-item label="机构代码" prop="agencyCode">
+                <!--<el-form-item label="机构代码" prop="agencyCode">
                     <el-input v-model="zwfwLegalPerson.agencyCode"></el-input>
-                </el-form-item>
+                </el-form-item>-->
                 <el-form-item label="法定代表人" prop="legalPerson">
                     <el-input v-model="zwfwLegalPerson.legalPerson"></el-input>
                 </el-form-item>
@@ -248,9 +248,9 @@
                     companyName: [
                         {required: true, message: '请输入机构名称', trigger: 'blur'}
                     ],
-                    agencyCode: [
-                        {required: true, message: '请输入机构代码', trigger: 'blur'}
-                    ],
+//                    agencyCode: [
+//                        {required: true, message: '请输入机构代码', trigger: 'blur'}
+//                    ],
                     legalPerson: [
                         {required: true, message: '请输入法定代表人', trigger: 'blur'}
                     ],
