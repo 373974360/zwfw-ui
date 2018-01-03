@@ -38,11 +38,11 @@
                     <span>{{scope.row.gender | enums('Gender')}}</span>
                 </template>
             </el-table-column>
-            <!--<el-table-column align="center" label="出生日期" prop="birthday" width="150">-->
-                <!--<template scope="scope">-->
-                    <!--<span>{{scope.row.birthday | date('YYYY-MM-DD')}}</span>-->
-                <!--</template>-->
-            <!--</el-table-column>-->
+            <el-table-column align="center" label="出生日期" prop="birthday" width="150">
+                <template scope="scope">
+                    <span>{{scope.row.birthday | date('YYYY-MM-DD')}}</span>
+                </template>
+            </el-table-column>
             <el-table-column align="left" label="住址" prop="address" width="300">
                 <template scope="scope">
                     <span>{{scope.row.address}}</span>
@@ -95,9 +95,9 @@
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <!--<el-form-item label="出生日期" prop="birthday">-->
-                    <!--<el-date-picker v-model="zwfwNaturePerson.birthday" type="date" placeholder="选择日期"></el-date-picker>-->
-                <!--</el-form-item>-->
+                <el-form-item label="出生日期" prop="birthday">
+                    <el-date-picker v-model="zwfwNaturePerson.birthday" type="date" placeholder="选择日期" disabled></el-date-picker>
+                </el-form-item>
                 <el-form-item label="住址" prop="address">
                     <el-input v-model="zwfwNaturePerson.address"></el-input>
                 </el-form-item>
@@ -332,7 +332,7 @@
                 this.resetTemp();
                 this.zwfwNaturePerson = copyProperties(this.zwfwNaturePerson, row);
                 this.readonlyFlag = true;
-                this.zwfwNaturePerson.birthday = new Date(row.birthday).toLocaleDateString().replace(/\//g, '-');
+//                this.zwfwNaturePerson.birthday = new Date(row.birthday).toLocaleDateString().replace(/\//g, '-');
                 this.zwfwNaturePerson.password = '';
                 this.zwfwNaturePersonRules.password[0].required = false;
                 this.zwfwNaturePersonRules.passwordConfirm[0].required = false;
@@ -359,7 +359,7 @@
                     if (valid) {
                         this.btnLoading = true;
                         this.dialogLoading = true;
-                        this.zwfwNaturePerson.birthday = moment(this.zwfwNaturePerson.birthday).format('YYYY-MM-DD');
+//                        this.zwfwNaturePerson.birthday = moment(this.zwfwNaturePerson.birthday).format('YYYY-MM-DD');
                         createZwfwNaturePerson(this.zwfwNaturePerson).then(response => {
                             this.btnLoading = false;
                             this.dialogLoading = false;
@@ -382,7 +382,7 @@
                         this.btnLoading = true;
                         this.dialogLoading = true;
                         // console.log(this.zwfwNaturePerson);
-                        this.zwfwNaturePerson.birthday = moment(this.zwfwNaturePerson.birthday).format('YYYY-MM-DD');
+//                        this.zwfwNaturePerson.birthday = moment(this.zwfwNaturePerson.birthday).format('YYYY-MM-DD');
                         updateZwfwNaturePerson(this.zwfwNaturePerson).then(response => {
                             this.btnLoading = false;
                             this.dialogLoading = false;
