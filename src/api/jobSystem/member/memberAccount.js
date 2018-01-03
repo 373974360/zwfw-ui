@@ -41,5 +41,19 @@ export function resetPassJobMember(ids) {
         data
     })
 }
+export function resetLockJobMember(data) {
+    return fetch({
+        url: '/api/jobSystem/jobMember/resetlock',
+        method: 'post',
+        data
+    })
+}
+export function resetNotLockJobMember(data) {
+    return fetch({
+        url: '/api/jobSystem/jobMember/resetlock',
+        method: 'post',
+        data
+    })
+}
 
 

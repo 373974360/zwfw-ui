@@ -9,6 +9,12 @@
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleResetPass" type="primary" icon="edit">
                 初始化密码
             </el-button>
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleResetLock" type="primary" icon="share">
+                禁用
+            </el-button>
+            <el-button class="filter-item" style="margin-left: 10px;" type="primary" @click="handleResetNotLock" icon="share">
+                启用
+            </el-button>
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleDelete" type="danger" icon="delete">
                 删除
             </el-button>
@@ -47,6 +53,13 @@
             <el-table-column align="center" label="注册时间" prop="registerdate">
                 <template scope="scope">
                     <span>{{scope.row.registerdate}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="账号状态" prop="islock">
+                <template scope="scope">
+                    <el-tag :type="scope.row.islock | enums('MemberLock') | statusFilter">
+                        {{scope.row.islock | enums('MemberLock')}}
+                    </el-tag>
                 </template>
             </el-table-column>
         </el-table>
@@ -100,7 +113,7 @@
     import {copyProperties} from 'utils';
     import {validatMobiles, isWscnEmail} from 'utils/validate';
     import {mapGetters} from 'vuex';
-    import {getMemberList, createJobMember, updateJobMember, delJobMember, resetPassJobMember} from 'api/jobSystem/member/memberAccount';
+    import {getMemberList, createJobMember, updateJobMember, delJobMember, resetPassJobMember, resetLockJobMember} from 'api/jobSystem/member/memberAccount';
     import {getAllJobMemberLevel} from 'api/jobSystem/member/memberLevel';
 
     export default {
@@ -296,6 +309,62 @@
                                 this.getList();
                             } else {
                                 this.$message.error('重置失败！');
+                            }
+                            this.listLoading = false;
+                        })
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
+            handleResetLock() {
+                if (this.selectedRows.length === 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将禁止选中会员登陆, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.listLoading = true;
+                        let ids = [];
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        resetLockJobMember({"ids": ids, "islock": 2}).then(response => {
+                            if (response.httpCode === 200) {
+                                this.$message.success('禁用成功！');
+                                this.getList();
+                            } else {
+                                this.$message.error('禁用失败！');
+                            }
+                            this.listLoading = false;
+                        })
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
+            handleResetNotLock() {
+                if (this.selectedRows.length === 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将启用选中的会员登陆, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.listLoading = true;
+                        let ids = [];
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        resetLockJobMember({"ids": ids, "islock": 1}).then(response => {
+                            if (response.httpCode === 200) {
+                                this.$message.success('禁用成功！');
+                                this.getList();
+                            } else {
+                                this.$message.error('禁用失败！');
                             }
                             this.listLoading = false;
                         })
