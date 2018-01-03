@@ -315,17 +315,9 @@
                     this.sysUser.deptId = 0;
                     this.getList();
                 }
-//                if (value.length > 0) {
-//                    this.sysUser.deptId = parseInt(value[value.length - 1]);
-//                    this.sysUser.treePosition = value.join('&');
-//                } else {
-//                    this.sysUser.deptId = 0;
-//                    this.sysUser.treePosition = [];
-//                }
             },
             handleCreate(row) {
                 this.currentRow = row;
-                // this.sysUser.deptId = row.id;
                 this.sysUserRules1.password[0].required = true;
                 this.sysUserRules1.passwordConfirm[0].required = true;
                 this.dialogStatus = 'create';
