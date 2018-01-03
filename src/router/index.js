@@ -292,7 +292,7 @@ export const asyncRouterMap = [
     {
         path: '/member',
         redirect: 'noredirect',
-        name: '会员信息管理',
+        name: '会员管理',
         meta: {permission: 'jobSystem:member:admin'},
         icon: 'zuzhi',
         component: Layout,

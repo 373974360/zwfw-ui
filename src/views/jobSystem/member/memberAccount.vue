@@ -6,7 +6,10 @@
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">
                 添加
             </el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="delete">
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleResetPass" type="primary" icon="edit">
+                初始化密码
+            </el-button>
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleDelete" type="danger" icon="delete">
                 删除
             </el-button>
         </div>
@@ -19,14 +22,7 @@
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="会员类型" prop="type">
-                <template scope="scope">
-                    <span v-if="scope.row.type==1">个人</span>
-                    <span v-else-if="scope.row.type==2">企业</span>
-                    <span v-else>未知</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="电子邮箱" prop="email">
+            <el-table-column align="left" label="电子邮箱" prop="email">
                 <template scope="scope">
                     <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.email}}</span>
@@ -36,6 +32,16 @@
             <el-table-column align="center" label="手机号码" prop="phone">
                 <template scope="scope">
                     <span>{{scope.row.phone}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="会员类型" prop="type">
+                <template scope="scope">
+                    {{scope.row.type | enums('MemberType')}}
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="会员级别" prop="levelsName">
+                <template scope="scope">
+                    <span>{{scope.row.levelsName}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="注册时间" prop="registerdate">
@@ -57,21 +63,29 @@
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading":rules="jobMemberRules">
                 <el-form-item label="会员类型" prop="type">
                     <el-radio-group v-model="jobMember.type">
-                        <el-radio :label="1">企业</el-radio>
-                        <el-radio :label="2">个人</el-radio>
+                        <el-radio v-for="item in enums['MemberType']"
+                                  :key="item.code"
+                                  :label="item.code"
+                                  :value="item.code">
+                            <span style="font-weight:normal;">{{item.value}}</span>
+                        </el-radio>
                     </el-radio-group>
+                </el-form-item>
+                <el-form-item label="会员级别" prop="levels">
+                    <el-select v-model="jobMember.levels" placeholder="请选择会员级别">
+                        <el-option
+                                v-for="item in levelsOpteions"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="电子邮箱" prop="email">
                     <el-input v-model="jobMember.email"></el-input>
                 </el-form-item>
                 <el-form-item label="手机号码" prop="phone">
                     <el-input v-model="jobMember.phone"></el-input>
-                </el-form-item>
-                <el-form-item label="登录密码" prop="password">
-                    <el-input v-model="jobMember.password"></el-input>
-                </el-form-item>
-                <el-form-item label="重复密码" prop="passwords">
-                    <el-input v-model="jobMember.passwords"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -86,7 +100,8 @@
     import {copyProperties} from 'utils';
     import {validatMobiles, isWscnEmail} from 'utils/validate';
     import {mapGetters} from 'vuex';
-    import {getMemberList, createJobMember, updateJobMember} from 'api/jobSystem/member/memberAccount';
+    import {getMemberList, createJobMember, updateJobMember, delJobMember, resetPassJobMember} from 'api/jobSystem/member/memberAccount';
+    import {getAllJobMemberLevel} from 'api/jobSystem/member/memberLevel';
 
     export default {
         name: 'jobMember_table',
@@ -105,13 +120,6 @@
                     callback();
                 }
             };
-            const validatePass2 = (rule, value, callback) => {
-                if (this.jobMember.password && this.jobMember.passwords
-                    && this.jobMember.password != this.jobMember.passwords) {
-                    callback(new Error('两次输入密码不一致'))
-                }
-                callback()
-            };
             return {
                 jobMemberList: [],
                 total: null,
@@ -124,10 +132,9 @@
                 jobMember: {
                     id: undefined,
                     type: 1,
+                    levels: '',
                     email: '',
-                    phone: '',
-                    password: '',
-                    passwords: ''
+                    phone: ''
                 },
                 currentRow: null,
                 selectedRows: [],
@@ -135,6 +142,9 @@
                 dialogStatus: '',
                 dialogLoading: false,
                 jobMemberRules: {
+                    levels: [
+                        {required: true, message: '请选择会员级别', trigger: 'blur'}
+                    ],
                     email: [
                         {required: true, message: '请输入电子邮箱'},
                         {validator: validateEmail, trigger: 'blur'}
@@ -142,15 +152,9 @@
                     phone: [
                         {required: true, message: '请输入手机号码'},
                         {validator: validateMobiles, trigger: 'blur'}
-                    ],
-                    password: [
-                        {required: true, message: '请输入登录密码', trigger: 'blur'}
-                    ],
-                    passwords: [
-                        {required: true, message: '请输入重复输入密码'},
-                        {validator: validatePass2, trigger: 'blur'}
                     ]
-                }
+                },
+                levelsOpteions: null
             }
         },
         computed: {
@@ -161,8 +165,14 @@
         },
         created() {
             this.getList();
+            this.getLevelsOpteions();
         },
         methods: {
+            getLevelsOpteions() {
+                getAllJobMemberLevel().then(response => {
+                    this.levelsOpteions = response.data;
+                })
+            },
             getList() {
                 this.listLoading = true;
                 getMemberList(this.listQuery).then(response => {
@@ -238,14 +248,69 @@
                     }
                 });
             },
+            handleDelete() {
+                if (this.selectedRows.length === 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.listLoading = true;
+                        let ids = [];
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        delJobMember(ids).then(response => {
+                            if (response.httpCode === 200) {
+                                this.$message.success('删除成功！');
+                                this.getList();
+                            } else {
+                                this.$message.error('删除失败！');
+                            }
+                            this.listLoading = false;
+                        })
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
+            handleResetPass() {
+                if (this.selectedRows.length === 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将重置登陆密码为123456, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.listLoading = true;
+                        let ids = [];
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        resetPassJobMember(ids).then(response => {
+                            if (response.httpCode === 200) {
+                                this.$message.success('重置成功！');
+                                this.getList();
+                            } else {
+                                this.$message.error('重置失败！');
+                            }
+                            this.listLoading = false;
+                        })
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
             resetTemp() {
                 this.jobMember = {
                     id: undefined,
                     type: 1,
                     email: '',
                     phone: '',
-                    password: '',
-                    passwords: ''
+                    levels: ''
                 };
             }
         }

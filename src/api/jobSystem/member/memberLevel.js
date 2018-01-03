@@ -7,6 +7,12 @@ export function getJobMemberLevelList(query) {
         params: query
     });
 }
+export function getAllJobMemberLevel() {
+    return fetch({
+        url: '/api/jobSystem/jobMemberLevel/getAll',
+        method: 'get'
+    });
+}
 
 export function createJobMemberLevel(jobMemberLevelVo){
     const data = jobMemberLevelVo;

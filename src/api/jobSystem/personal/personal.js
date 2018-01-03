@@ -7,82 +7,49 @@ export function getPersonalList(query) {
         params: query
     });
 }
-
-export function delPersonal(ids) {
-    const data = {ids};
-    return fetch({
-        url: '/api/jobSystem/jobPersonal/dels',
-        method: 'post',
-        data
-    })
-}
-
-export function getPersonal(query) {
+export function getPersional(memberId) {
     return fetch({
         url: '/api/jobSystem/jobPersonal/get',
         method: 'get',
-        params: query
+        params: {memberId}
     });
 }
-
-export function getPersonalQzyx(query) {
+export function getPersionalQzyx(memberId) {
     return fetch({
         url: '/api/jobSystem/jobPersonalQzyx/get',
         method: 'get',
-        params: query
+        params: {memberId}
     });
 }
-
-export function getPersonalGzjl(query) {
+export function getPersionalGzjl(memberId) {
     return fetch({
         url: '/api/jobSystem/jobPersonalGzjl/getAll',
         method: 'get',
-        params: query
+        params: {memberId}
     });
 }
-
-export function getPersonalItem(query) {
+export function getPersionalItem(memberId) {
     return fetch({
         url: '/api/jobSystem/jobPersonalItem/getAll',
         method: 'get',
-        params: query
+        params: {memberId}
     });
 }
-
-export function getPersonalJyjl(query) {
+export function getPersionalJyjl(memberId) {
     return fetch({
         url: '/api/jobSystem/jobPersonalJyjl/getAll',
         method: 'get',
-        params: query
+        params: {memberId}
     });
 }
-
-export function getPersonalZs(query) {
+export function getPersionalZs(memberId) {
     return fetch({
         url: '/api/jobSystem/jobPersonalZs/getAll',
         method: 'get',
-        params: query
+        params: {memberId}
     });
 }
 
-
-export function tjPersonal(ids) {
-    const data = {ids};
-    return fetch({
-        url: '/api/jobSystem/jobPersonal/tj',
-        method: 'post',
-        data
-    });
-}
-
-export function qxtjPersonal(ids) {
-    const data = {ids};
-    return fetch({
-        url: '/api/jobSystem/jobPersonal/qxtj',
-        method: 'post',
-        data
-    });
-}
 
 
 

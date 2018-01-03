@@ -33,5 +33,13 @@ export function delJobMember(ids) {
         data
     })
 }
+export function resetPassJobMember(ids) {
+    const data = {ids};
+    return fetch({
+        url: '/api/jobSystem/jobMember/resetpass',
+        method: 'post',
+        data
+    })
+}
 
 
