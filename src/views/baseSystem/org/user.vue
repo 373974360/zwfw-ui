@@ -196,8 +196,12 @@
                 sysUser: {
                     id: undefined,
                     deptId: '',
+                    deptVo: {
+                        id: '',
+                        name: '',
+                        treePosition: '',
+                    },
                     name: '',
-                    deptVo: {},
                     sex: 1,
                     phone: '',
                     avatar: '',
@@ -311,6 +315,13 @@
                     this.sysUser.deptId = 0;
                     this.getList();
                 }
+//                if (value.length > 0) {
+//                    this.sysUser.deptId = parseInt(value[value.length - 1]);
+//                    this.sysUser.treePosition = value.join('&');
+//                } else {
+//                    this.sysUser.deptId = 0;
+//                    this.sysUser.treePosition = [];
+//                }
             },
             handleCreate(row) {
                 this.currentRow = row;
@@ -433,8 +444,12 @@
                 this.sysUser = {
                     id: undefined,
                     deptId: '',
+                    deptVo: {
+                        id: '',
+                        name: '',
+                        treePosition: '',
+                    },
                     name: '',
-                    deptVo: {},
                     sex: 1,
                     phone: '',
                     avatar: '',
