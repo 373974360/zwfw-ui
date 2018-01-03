@@ -534,7 +534,7 @@
             },
             print_ycxgzd(processNumber) {
                 if (processNumber != null) {
-                    window.open('/api/workSystem/itemPretrial/downloadYcxgzd?processNumber=' + processNumber);
+                    window.open('/api/hallSystem/hallCompositeWindow/downloadYcxgzd?processNumber=' + processNumber);
                 }
             },
             handlePictureCardPreview(file) {

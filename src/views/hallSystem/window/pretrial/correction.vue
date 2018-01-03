@@ -250,7 +250,7 @@
             },
             print_ycxgzd() {
                 if (this.ItemPretrial != null) {
-                    window.open('/api/workSystem/itemPretrial/downloadYcxgzd?processNumber=' + this.ItemPretrial.processNumber);
+                    window.open('/api/hallSystem/hallCompositeWindow/downloadYcxgzd?processNumber=' + this.ItemPretrial.processNumber);
                 }
             },
             resetTemp() {
