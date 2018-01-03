@@ -66,11 +66,11 @@
                     <p style="text-indent: 2em"> 贵单位（个人）办理的事项《{{itemName}}》在审批过程中因以下几点不符合相关规定/要求，现通知{{msgType}}：
                     </p>
 
-                    <ol style="min-height:200px;padding:2em;">
+                    <ul style="padding:2em;">
                         <li v-for="p in reason">
                             {{p}}
                         </li>
-                    </ol>
+                    </ul>
                 </div>
 
                 <div style="min-height: 8em;">
@@ -103,7 +103,7 @@
     }
 
     var numberId = getParam("numberId");
-    console.log(numberId);
+    var processNumber = getParam("processNumber");
 
     var d = new Date();
     var printTable = new Vue({
@@ -127,7 +127,8 @@
                 return;
             }
             $.post(interfaceUrl + '/hallCompositeWindow/ycxgzdData', {
-                numberId: numberId
+                numberId: numberId,
+                processNumber:processNumber
             }, function (response) {
                 if (response.httpCode === 200) {
                     _this.date = response.data.date;
