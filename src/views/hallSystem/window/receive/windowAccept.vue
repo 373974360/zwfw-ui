@@ -489,11 +489,11 @@
                                         <td>{{itemVo.processType | dics('bjlx')}}
                                         </td>
                                     </tr>
-                                    <tr>
+                                    <tr v-if="itemVo.promiseEndTime!=0">
                                         <th>承诺时限</th>
                                         <td>{{itemVo.promiseEndTime}} 个工作日</td>
                                     </tr>
-                                    <tr>
+                                    <tr v-if="itemVo.legalEndTime!=0">
                                         <th>法定时限</th>
                                         <td>{{itemVo.legalEndTime}} 个工作日</td>
                                     </tr>
@@ -953,7 +953,20 @@
              */
             queryNumberByCallNumber() {
                 let _this = this;
-                this.handTypeVo = null;
+                _this.itemNumber = null;
+                _this.itemVo = null;
+                _this.member = null;
+                _this.company = null;
+                _this.itemPretrialVo = null;
+                _this.itemMaterialVoList = null;
+                _this.window = null;
+                _this.itemWindowUserName = null;
+                _this.memberPhone = null;
+                _this.memberRealname = null;
+                _this.memberCode = null;
+                _this.takeTypeVo = null;
+                _this.handTypeVo = null;
+                _this.itemHandType = null;
                 queryNumberByCallNumber({
                     hallNumber: this.getNumberBy_hallNumber
                 }).then(response => {
@@ -1003,7 +1016,20 @@
             queryCurrentNumber() {
                 let _this = this;
                 this.showInputForm = false;
-                this.handTypeVo = null;
+                _this.itemNumber = null;
+                _this.itemVo = null;
+                _this.member = null;
+                _this.company = null;
+                _this.itemPretrialVo = null;
+                _this.itemMaterialVoList = null;
+                _this.window = null;
+                _this.itemWindowUserName = null;
+                _this.memberPhone = null;
+                _this.memberRealname = null;
+                _this.memberCode = null;
+                _this.takeTypeVo = null;
+                _this.handTypeVo = null;
+                _this.itemHandType = null;
                 queryCurrentNumber({}).then(response => {
                     if (response.httpCode === 200) {
                         if (response.data != null) {

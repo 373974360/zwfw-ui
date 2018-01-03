@@ -75,7 +75,7 @@
         </div>
 
         <el-dialog size="large" :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible"
-                   :close-on-click-modal="closeOnClickModal">
+                   :close-on-click-modal="closeOnClickModal" v-loading="dialogLoading" element-loading-text="拼命加载中">
             <el-row :gutter="20">
                 <el-col :span="8">
                     <table class="table table-bordered table-responsive">
@@ -167,7 +167,6 @@
                                     style="width: 100%"
                             >
                                 <el-table-column
-                                        fixed
                                         type="index"
                                         width="50">
                                 </el-table-column>
@@ -175,10 +174,23 @@
                                         prop="name"
                                         label="材料"
                                         width="300">
+                                    <template scope="scope">
+                                        {{scope.row.name}}
+                                        <div v-if="scope.row.multipleFile" style="color:blue">
+                                            预审资料：
+                                            <span v-for="(file,index) in scope.row.multipleFile">
+                                            <span v-if="file.url!=null && file.url!=''">
+                                            <a :href="file.url" :download="file.fileName"
+                                               target="_blank">[{{index + 1}}]</a>
+                                            </span>
+                                            <span v-else>未上传</span>
+                                         </span>
+                                        </div>
+                                    </template>
                                 </el-table-column>
                                 <el-table-column
                                         prop="received"
-                                        label="已收">
+                                        label="已收件">
                                     <template scope="scope">
                                         <i v-if="scope.row.received==1" style="color:green" class="el-icon-circle-check"></i>
                                         <i v-else class="el-icon-circle-cross" style="color:red"></i>
@@ -206,10 +218,10 @@
                                         {{scope.row.source | dics('sxsqclly')}}
                                     </template>
                                 </el-table-column>
-                                <!--<el-table-column-->
-                                        <!--prop="paperDescription"-->
-                                        <!--label="纸质说明">-->
-                                <!--</el-table-column>-->
+                                <el-table-column
+                                        prop="paperDescription"
+                                        label="纸质说明">
+                                </el-table-column>
                                 <!--<el-table-column-->
                                         <!--prop="notice"-->
                                         <!--label="填报须知">-->
@@ -222,25 +234,12 @@
                                         prop="electronicMaterial"
                                         label="需要预审">
                                     <template scope="scope">
-                                        {{scope.row.electronicMaterial ? '是 ' : '否'}}
+                                        <i v-if="scope.row.electronicMaterial" style="color:green" class="el-icon-circle-check"></i>
+                                        <i v-else class="el-icon-circle-cross" style="color:red"></i>
                                     </template>
                                 </el-table-column>
-                                <el-table-column
-                                        prop="multipleFile"
-                                        label="预审资料">
-                                    <template scope="scope">
-                                        <span v-for="(file,index) in scope.row.multipleFile">
-                                            <span v-if="file.url!=null && file.url!=''">
-                                            <a target="_blank"
-                                               v-if="file.fileType == 'doc' || file.fileType == 'docx' || file.fileType == 'xls' || file.fileType == 'xlsx' || file.fileType == 'ppt'"
-                                               :href="'https://view.officeapps.live.com/op/view.aspx?src=' + file.url ">[{{index + 1}}]</a>
-                                            <a v-else :href="file.url"
-                                               target="_blank">[{{index + 1}}]</a>
-                                            </span>
-                                            <span v-else>未上传</span>
-                                        </span>
-                                    </template>
-                                </el-table-column>
+
+
                             </el-table>
 
                         </el-tab-pane>
@@ -264,11 +263,11 @@
                                         <td>{{itemVo.processType | dics('bjlx')}}
                                         </td>
                                     </tr>
-                                    <tr>
+                                    <tr v-if="itemVo.promiseEndTime!=0">
                                         <th>承诺时限</th>
                                         <td>{{itemVo.promiseEndTime}} 个工作日</td>
                                     </tr>
-                                    <tr>
+                                    <tr v-if="itemVo.legalEndTime!=0">
                                         <th>法定时限</th>
                                         <td>{{itemVo.legalEndTime}} 个工作日</td>
                                     </tr>
@@ -429,7 +428,10 @@
                 }
             },
             getDatilList() {
+                this.dialogLoading = true;
+
                 getDatilByItemNumberId(this.itemNumberId).then(response => {
+                    this.dialogLoading = false;
                     if (response.httpCode === 200) {
                         if (response.data) {
                             this.itemNumber = response.data.itemNumber;
@@ -446,6 +448,8 @@
                     } else {
                         this.$message.error('数据加载失败')
                     }
+                }).catch(e=>{
+                    this.dialogLoading = false;
                 });
             },
             resetTemp() {
