@@ -16,3 +16,18 @@ export function getOrgan(memberId) {
         params: {memberId}
     });
 }
+export function getOrganAuth(memberId) {
+    return fetch({
+        url: '/api/jobSystem/jobOrganAuth/get',
+        method: 'get',
+        params: {memberId}
+    });
+}
+
+export function resetRecJobOrgan(data) {
+    return fetch({
+        url: '/api/jobSystem/jobOrgan/resetrec',
+        method: 'post',
+        data
+    })
+}

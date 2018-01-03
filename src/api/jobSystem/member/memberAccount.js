@@ -48,12 +48,5 @@ export function resetLockJobMember(data) {
         data
     })
 }
-export function resetNotLockJobMember(data) {
-    return fetch({
-        url: '/api/jobSystem/jobMember/resetlock',
-        method: 'post',
-        data
-    })
-}
 
 

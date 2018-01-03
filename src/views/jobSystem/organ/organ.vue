@@ -2,12 +2,18 @@
     <div class="app-container calendar-list-container">
         <div class="filter-container">
             <el-input v-model="listQuery.search" style="width: 180px;" class="filter-item"
-                      placeholder="公司名称"></el-input>
+                      placeholder="搜索关键字"></el-input>
             <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="搜索" placement="top-start">
                 <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
                     搜索
                 </el-button>
             </el-tooltip>
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleResetRec" type="primary" icon="share">
+                推荐
+            </el-button>
+            <el-button class="filter-item" style="margin-left: 10px;" type="primary" @click="handleResetNotRec" icon="share">
+                取消推荐
+            </el-button>
             <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
                 <el-button class="filter-item" style="margin-left: 10px;" type="danger"
                            icon="delete">
@@ -26,6 +32,8 @@
             <el-table-column align="left" label="电子邮箱" min-width="260">
                 <template scope="scope">
                     <nobr class="link-type" @click="handleView(scope.row)">
+                        <el-tag v-if="scope.row.islock == 2" type="danger">禁用</el-tag>
+                        <el-tag v-if="scope.row.isrec==2" type="danger">推荐</el-tag>
                         {{scope.row.email}}
                     </nobr>
                 </template>
@@ -160,7 +168,7 @@
     }
 </style>
 <script>
-    import {getOrganList, getOrgan} from "api/jobSystem/organ/organ";
+    import {getOrganList, getOrgan, getOrganAuth, resetRecJobOrgan} from "api/jobSystem/organ/organ";
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     export default{
@@ -240,6 +248,71 @@
                         this.$message.error(response.msg);
                     }
                 })
+            },
+            jobOrganAuthView() {
+                getOrganAuth(this.memberId).then(response => {
+                    if (response.httpCode == 200) {
+                        this.jobOrganAuth = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                })
+            },
+            handleResetRec() {
+                if (this.selectedRows.length === 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将推荐会员到指定位置, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.listLoading = true;
+                        let ids = [];
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id_);
+                        }
+                        resetRecJobOrgan({"ids": ids, "isrec": 2}).then(response => {
+                            if (response.httpCode === 200) {
+                                this.$message.success('推荐成功！');
+                                this.getList();
+                            } else {
+                                this.$message.error('推荐失败！');
+                            }
+                            this.listLoading = false;
+                        })
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
+            handleResetNotRec() {
+                if (this.selectedRows.length === 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将取消会员推荐设置, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.listLoading = true;
+                        let ids = [];
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id_);
+                        }
+                        resetRecJobOrgan({"ids": ids, "isrec": 1}).then(response => {
+                            if (response.httpCode === 200) {
+                                this.$message.success('取消成功！');
+                                this.getList();
+                            } else {
+                                this.$message.error('取消失败！');
+                            }
+                            this.listLoading = false;
+                        })
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
             },
             resetTemp() {
                 this.memberId = null,
