@@ -14,11 +14,6 @@
             <el-button class="filter-item" style="margin-left: 10px;" type="primary" @click="handleResetNotRec" icon="share">
                 取消推荐
             </el-button>
-            <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
-                <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="delete">
-                    删除
-                </el-button>
-            </el-tooltip>
         </div>
         <el-table ref="table_demo" :data="list" v-loading.body="listLoading" border fit style="width: 100%"
                   @selection-change="handleSelectionChange">
