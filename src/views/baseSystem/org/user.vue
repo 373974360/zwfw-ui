@@ -224,7 +224,7 @@
                         {validator: validateMobiles, trigger: 'blur'}
                     ],
                     avatar: [
-                        {type: 'url', required: true, message: '头像地址不正确'}
+                        {required: true, message: '头像地址不正确'}
                     ],
                     account: [
                         {required: true, message: '请输入邮箱'},
