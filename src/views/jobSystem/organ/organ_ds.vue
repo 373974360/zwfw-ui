@@ -8,14 +8,8 @@
                     搜索
                 </el-button>
             </el-tooltip>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleIsRec" type="primary" icon="circle-check">
-                推荐
-            </el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" type="primary" @click="handleNotRec" icon="circle-cross">
-                取消推荐
-            </el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleUnaudit" type="danger" icon="delete">
-                撤销审核
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleAudit" type="primary" icon="circle-check">
+                审核
             </el-button>
         </div>
         <el-table ref="table_demo" :data="list" v-loading.body="listLoading" border fit style="width: 100%"
@@ -179,7 +173,7 @@
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     search: '',
-                    audit: 2
+                    audit: 1
                 },
                 selectedRows: [],
                 dialogVisible: false,
@@ -256,11 +250,11 @@
                     }
                 })
             },
-            handleIsRec() {
+            handleAudit() {
                 if (this.selectedRows.length === 0) {
                     this.$message.warning('请选择需要操作的记录');
                 } else {
-                    this.$confirm('此操作将推荐会员到指定位置, 是否继续?', '提示', {
+                    this.$confirm('此操作将通过企业信息审核, 是否继续?', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning'
@@ -270,68 +264,12 @@
                         for (const deleteRow of this.selectedRows) {
                             ids.push(deleteRow.id_);
                         }
-                        resetJobOrgan({"ids": ids, "isrec": 2}).then(response => {
+                        resetJobOrgan({"ids": ids, "status": 2}).then(response => {
                             if (response.httpCode === 200) {
-                                this.$message.success('推荐成功！');
+                                this.$message.success('审核成功！');
                                 this.getList();
                             } else {
-                                this.$message.error('推荐失败！');
-                            }
-                            this.listLoading = false;
-                        })
-                    }).catch(() => {
-                        console.dir('取消');
-                    });
-                }
-            },
-            handleNotRec() {
-                if (this.selectedRows.length === 0) {
-                    this.$message.warning('请选择需要操作的记录');
-                } else {
-                    this.$confirm('此操作将取消会员推荐设置, 是否继续?', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-                        this.listLoading = true;
-                        let ids = [];
-                        for (const deleteRow of this.selectedRows) {
-                            ids.push(deleteRow.id_);
-                        }
-                        resetJobOrgan({"ids": ids, "isrec": 1}).then(response => {
-                            if (response.httpCode === 200) {
-                                this.$message.success('取消成功！');
-                                this.getList();
-                            } else {
-                                this.$message.error('取消失败！');
-                            }
-                            this.listLoading = false;
-                        })
-                    }).catch(() => {
-                        console.dir('取消');
-                    });
-                }
-            },
-            handleUnaudit() {
-                if (this.selectedRows.length === 0) {
-                    this.$message.warning('请选择需要操作的记录');
-                } else {
-                    this.$confirm('此操作将撤销企业信息审核, 是否继续?', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-                        this.listLoading = true;
-                        let ids = [];
-                        for (const deleteRow of this.selectedRows) {
-                            ids.push(deleteRow.id_);
-                        }
-                        resetJobOrgan({"ids": ids, "status": 1}).then(response => {
-                            if (response.httpCode === 200) {
-                                this.$message.success('撤销成功！');
-                                this.getList();
-                            } else {
-                                this.$message.error('撤销失败！');
+                                this.$message.error('审核失败！');
                             }
                             this.listLoading = false;
                         })

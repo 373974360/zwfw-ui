@@ -55,11 +55,14 @@ const JobSystem = () => import('../views/jobSystem/index');
 /* 账号管理 */
 const MemberAccount = () => import('../views/jobSystem/member/memberAccount');
 const MemberLevel = () => import('../views/jobSystem/member/memberLevel');
-
-/* 会员信息管理 */
-const MemberOrgan = () => import('../views/jobSystem/organ/organ');
+/* 人才信息库 */
 const MemberPersonal = () => import('../views/jobSystem/personal/personal');
+
+/* 企业信息库 */
+const MemberOrganDs = () => import('../views/jobSystem/organ/organ_ds');
+const MemberOrgan = () => import('../views/jobSystem/organ/organ');
 /* 招聘信息 */
+const ZpxxDs = () => import('../views/jobSystem/zpxx/zpxx_ds');
 const Zpxx = () => import('../views/jobSystem/zpxx/zpxx');
 
 
@@ -290,23 +293,39 @@ export const asyncRouterMap = [
         ]
     },
     {
-        path: '/member',
+        path: '/personal',
         redirect: 'noredirect',
-        name: '会员管理',
-        meta: {permission: 'jobSystem:member:admin'},
+        name: '人才信息库',
+        meta: {permission: 'jobSystem:personal:admin'},
         icon: 'zuzhi',
         component: Layout,
         children: [
             {
                 path: 'personal',
                 component: MemberPersonal,
-                name: '个人会员',
+                name: '人才信息管理',
                 meta: {permission: 'jobSystem:member:personal:list'}
+            }
+        ]
+    },
+    {
+        path: '/organ',
+        redirect: 'noredirect',
+        name: '企业信息库',
+        meta: {permission: 'jobSystem:organ:admin'},
+        icon: 'zuzhi',
+        component: Layout,
+        children: [
+            {
+                path: 'organ_ds',
+                component: MemberOrganDs,
+                name: '待审企业',
+                meta: {permission: 'jobSystem:member:organ:statuslist'}
             },
             {
                 path: 'organ',
                 component: MemberOrgan,
-                name: '企业会员',
+                name: '企业信息管理',
                 meta: {permission: 'jobSystem:member:organ:list'}
             }
         ]
@@ -320,10 +339,16 @@ export const asyncRouterMap = [
         component: Layout,
         children: [
             {
+                path: 'zpxx_ds',
+                component: ZpxxDs,
+                name: '待审信息',
+                meta: {permission: 'jobSystem:zpxx:notstatus:list'}
+            },
+            {
                 path: 'zpxx',
                 component: Zpxx,
                 name: '招聘信息',
-                meta: {permission: 'jobSystem:zpxx:zpxx:list'}
+                meta: {permission: 'jobSystem:zpxx:isstatus:list'}
             }
         ]
     },

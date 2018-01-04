@@ -8,10 +8,10 @@
                     搜索
                 </el-button>
             </el-tooltip>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleResetRec" type="primary" icon="share">
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleIsRec" type="primary" icon="circle-check">
                 推荐
             </el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" type="primary" @click="handleResetNotRec" icon="share">
+            <el-button class="filter-item" style="margin-left: 10px;" type="primary" @click="handleNotRec" icon="circle-cross">
                 取消推荐
             </el-button>
         </div>
@@ -346,7 +346,7 @@
     }
 </style>
 <script>
-    import {getPersonalList, getPersional, getPersionalQzyx, getPersionalGzjl, getPersionalItem, getPersionalJyjl, getPersionalZs, resetRecJobPersonal, resetNotRecJobPersonal} from "api/jobSystem/personal/personal";
+    import {getPersonalList, getPersional, getPersionalQzyx, getPersionalGzjl, getPersionalItem, getPersionalJyjl, getPersionalZs, resetJobPersonal} from "api/jobSystem/personal/personal";
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import SplitPane from "../../../components/SplitPane/index";
@@ -493,7 +493,7 @@
                     }
                 })
             },
-            handleResetRec() {
+            handleIsRec() {
                 if (this.selectedRows.length === 0) {
                     this.$message.warning('请选择需要操作的记录');
                 } else {
@@ -507,7 +507,7 @@
                         for (const deleteRow of this.selectedRows) {
                             ids.push(deleteRow.id_);
                         }
-                        resetRecJobPersonal({"ids": ids, "isrec": 2}).then(response => {
+                        resetJobPersonal({"ids": ids, "isrec": 2}).then(response => {
                             if (response.httpCode === 200) {
                                 this.$message.success('推荐成功！');
                                 this.getList();
@@ -521,7 +521,7 @@
                     });
                 }
             },
-            handleResetNotRec() {
+            handleNotRec() {
                 if (this.selectedRows.length === 0) {
                     this.$message.warning('请选择需要操作的记录');
                 } else {
@@ -535,7 +535,7 @@
                         for (const deleteRow of this.selectedRows) {
                             ids.push(deleteRow.id_);
                         }
-                        resetRecJobPersonal({"ids": ids, "isrec": 1}).then(response => {
+                        resetJobPersonal({"ids": ids, "isrec": 1}).then(response => {
                             if (response.httpCode === 200) {
                                 this.$message.success('取消成功！');
                                 this.getList();

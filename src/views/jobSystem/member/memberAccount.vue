@@ -9,10 +9,10 @@
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleResetPass" type="primary" icon="edit">
                 初始化密码
             </el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleResetLock" type="primary" icon="share">
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleResetLock" type="primary" icon="circle-cross">
                 禁用
             </el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" type="primary" @click="handleResetNotLock" icon="share">
+            <el-button class="filter-item" style="margin-left: 10px;" type="primary" @click="handleResetNotLock" icon="circle-check">
                 启用
             </el-button>
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleDelete" type="danger" icon="delete">
@@ -113,7 +113,7 @@
     import {copyProperties} from 'utils';
     import {validatMobiles, isWscnEmail} from 'utils/validate';
     import {mapGetters} from 'vuex';
-    import {getMemberList, createJobMember, updateJobMember, delJobMember, resetPassJobMember, resetLockJobMember} from 'api/jobSystem/member/memberAccount';
+    import {getMemberList, createJobMember, updateJobMember, delJobMember, resetPassJobMember, resetJobMember} from 'api/jobSystem/member/memberAccount';
     import {getAllJobMemberLevel} from 'api/jobSystem/member/memberLevel';
 
     export default {
@@ -331,7 +331,7 @@
                         for (const deleteRow of this.selectedRows) {
                             ids.push(deleteRow.id);
                         }
-                        resetLockJobMember({"ids": ids, "islock": 2}).then(response => {
+                        resetJobMember({"ids": ids, "islock": 2}).then(response => {
                             if (response.httpCode === 200) {
                                 this.$message.success('禁用成功！');
                                 this.getList();
@@ -359,7 +359,7 @@
                         for (const deleteRow of this.selectedRows) {
                             ids.push(deleteRow.id);
                         }
-                        resetLockJobMember({"ids": ids, "islock": 1}).then(response => {
+                        resetJobMember({"ids": ids, "islock": 1}).then(response => {
                             if (response.httpCode === 200) {
                                 this.$message.success('禁用成功！');
                                 this.getList();

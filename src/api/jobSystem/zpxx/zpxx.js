@@ -17,37 +17,9 @@ export function delOrganZpxx(ids) {
     });
 }
 
-export function shOrganZpxx(ids) {
-    const data = {ids};
+export function resetOrganZpxx(data) {
     return fetch({
-        url: '/api/jobSystem/jobOrganZpxx/sh',
-        method: 'post',
-        data
-    });
-}
-
-export function cxOrganZpxx(ids) {
-    const data = {ids};
-    return fetch({
-        url: '/api/jobSystem/jobOrganZpxx/cx',
-        method: 'post',
-        data
-    });
-}
-
-export function tjOrganZpxx(ids) {
-    const data = {ids};
-    return fetch({
-        url: '/api/jobSystem/jobOrganZpxx/tj',
-        method: 'post',
-        data
-    });
-}
-
-export function qxtjOrganZpxx(ids) {
-    const data = {ids};
-    return fetch({
-        url: '/api/jobSystem/jobOrganZpxx/qxtj',
+        url: '/api/jobSystem/jobOrganZpxx/reset',
         method: 'post',
         data
     });

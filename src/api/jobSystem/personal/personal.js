@@ -50,9 +50,9 @@ export function getPersionalZs(memberId) {
     });
 }
 
-export function resetRecJobPersonal(data) {
+export function resetJobPersonal(data) {
     return fetch({
-        url: '/api/jobSystem/jobPersonal/resetrec',
+        url: '/api/jobSystem/jobPersonal/reset',
         method: 'post',
         data
     })

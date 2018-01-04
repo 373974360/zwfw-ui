@@ -24,9 +24,9 @@ export function getOrganAuth(memberId) {
     });
 }
 
-export function resetRecJobOrgan(data) {
+export function resetJobOrgan(data) {
     return fetch({
-        url: '/api/jobSystem/jobOrgan/resetrec',
+        url: '/api/jobSystem/jobOrgan/reset',
         method: 'post',
         data
     })
