@@ -30,12 +30,20 @@ export function takeNumberByItemCode(query) {
  * 根据快递号抽号
  * @param query
  */
-export function takeNumberByExpressNumber(query) {
+export function handlingNumberByExpressNumber(query) {
     return fetch({
-        url: '/api/hallSystem/hallCompositeWindow/mockGetNumber',
+        url: '/api/hallSystem/hallCompositeWindow/handlingGetNumber',
         method: 'post',
         params: query
     })
+}
+
+export function handlingNumberByProcessNumber(query) {
+    return fetch({
+        url: '/api/hallSystem/hallCompositeWindow/handlingGetNumber',
+        method: 'post',
+        params: query
+    });
 }
 
 /**

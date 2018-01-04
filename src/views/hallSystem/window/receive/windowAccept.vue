@@ -46,26 +46,45 @@
                         <!--</el-col>-->
                         <!--</el-row>&ndash;&gt;-->
                         <!--</el-tab-pane>-->
-                        <el-tab-pane label="业务受理" name="virtualPanelLianhu">
+                        <el-tab-pane :label="showInputForm?'直接收件受理':'已预审交件受理'" name="virtualPanelLianhu">
                             <el-row :gutter="25">
-
                                 <el-col :span="23">
-                                    <el-button type="primary" @click="queryCurrentNumber">查询当前叫号</el-button>
-                                    <el-button type="primary" @click="resetForm">新增办件</el-button>
-
-
+                                    <el-tooltip content="查询当前登录用户正在受理事项的状态，通常与窗口叫号器同步" placement="bottom"
+                                                effect="light">
+                                        <el-button type="primary" @click="queryCurrentNumber">查询当前窗口受理的状态</el-button>
+                                    </el-tooltip>
+                                    <el-tooltip content="直接收件表示跳过网上预审流程，窗口直接收件的方式受理；已预审收件表示预审通过后使用预审号或寄件快递号查询并收件受理"
+                                                placement="bottom" effect="light">
+                                        <el-button type="primary" @click="startNew">
+                                            {{!showInputForm?'切换为直接收件模式':'切换为预审收件模式'}}
+                                        </el-button>
+                                    </el-tooltip>
                                 </el-col>
 
                             </el-row>
-                            <el-row :gutter="25">
+                            <el-row :gutter="25" v-if="!showInputForm">
                                 <el-col :span="17">
-                                    <el-input v-model="getNumberBy_expressNumber" placeholder="请输入快递单号">
+                                    <el-input v-model="getNumberBy_expressNumber" placeholder="请输入交件的快递单号">
                                     </el-input>
                                 </el-col>
                                 <el-col :span="4">
-                                    <el-button type="primary" @click="takeNumberByExpressNumber"
-                                               :disabled="!getNumberBy_expressNumber">快递寄件受理
+                                    <el-button type="primary" @click="handlingNumberByExpressNumber"
+                                               :disabled="!getNumberBy_expressNumber">快递交件受理
                                     </el-button>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="25" v-if="!showInputForm">
+                                <el-col :span="17">
+                                    <el-input v-model="getNumberBy_processNumber" placeholder="请输入预审号">
+                                    </el-input>
+                                </el-col>
+                                <el-col :span="4">
+                                    <el-tooltip content="使用预审号直接收件，适用于速递易中取出根据" placement="bottom"
+                                                effect="light">
+                                        <el-button type="primary" @click="handlingNumberByProcessNumber"
+                                                   :disabled="!getNumberBy_processNumber">用预审号受理
+                                        </el-button>
+                                    </el-tooltip>
                                 </el-col>
                             </el-row>
                             <template v-if="showInputForm">
@@ -102,7 +121,8 @@
                                         </el-input>
                                     </el-col>
                                     <el-col :span="4">
-                                        <el-button type="primary" @click="checkMemberExist() & queryCompanyInfo()">查找用户
+                                        <el-button type="primary" @click="checkMemberExist() & queryCompanyInfo()"
+                                                   :disabled="!memberCode">查找用户
                                         </el-button>
                                     </el-col>
                                 </el-row>
@@ -322,14 +342,14 @@
                                 <td>{{itemPretrialVo.status | enums('PretrialStatus')}}
                                 </td>
                             </tr>
-                            <tr >
+                            <tr>
                                 <th>取件方式:</th>
                                 <td>
                                     <span v-if="takeTypeVo!=null">{{takeTypeVo.takeType | enums('TakeType')}}</span>
                                     <span v-else style="color:red">未设置</span>
                                 </td>
                             </tr>
-                            <tr >
+                            <tr>
                                 <th>交件方式:</th>
                                 <td>
                                     <span v-if="handTypeVo!=null">{{handTypeVo.handType | enums('HandType')}}</span>
@@ -603,8 +623,9 @@
 <script>
     import {
         takeNumberByProcessNumber,
+        handlingNumberByProcessNumber,
         takeNumberByItemCode,
-        takeNumberByExpressNumber,
+        handlingNumberByExpressNumber,
         queryNumberByCallNumber,
         queryCurrentNumber,
         loginToWindow,
@@ -690,8 +711,8 @@
                 showInputForm: false,
                 itemHandType: undefined,
                 takeTypeVo: null,
-                handTypeVo:null,
-                submiting:false
+                handTypeVo: null,
+                submiting: false
             }
         },
         computed: {
@@ -847,11 +868,17 @@
                     }
                 })
             },
+
+            startNew() {
+                this.showInputForm = !this.showInputForm;
+                this.resetForm();
+            },
+
             /**
              * 清除
              * */
             resetForm() {
-                this.showInputForm = true;
+                // this.showInputForm = true;
                 this.itemNumber = {};
                 this.companyInfo = {};
                 this.memberPhone = '';
@@ -927,11 +954,11 @@
             },
 
             /**
-             * 抽号 - 根据寄件快递单号
+             * 抽号并开始受理 - 根据寄件快递单号
              */
-            takeNumberByExpressNumber() {
+            handlingNumberByExpressNumber() {
                 let _this = this;
-                takeNumberByExpressNumber({
+                handlingNumberByExpressNumber({
                     expressCompany: null,
                     expressNumber: this.getNumberBy_expressNumber
                 }).then(response => {
@@ -941,7 +968,26 @@
                             _this.getNumberBy_hallNumber = response.data.callNumber;
                             _this.queryNumberByCallNumber();
                         }
-                        // _this.$message.success('：' + response.data.callNumber);
+                    } else {
+                        _this.$message.error(response.msg);
+                    }
+                });
+            },
+
+            /**
+             * 抽号并开始受理 - 根据寄件快递单号
+             */
+            handlingNumberByProcessNumber() {
+                let _this = this;
+                handlingNumberByProcessNumber({
+                    processNumber: this.getNumberBy_processNumber
+                }).then(response => {
+                    if (response.httpCode === 200) {
+                        if (response.data != null) {
+                            //执行查询
+                            _this.getNumberBy_hallNumber = response.data.callNumber;
+                            _this.queryNumberByCallNumber();
+                        }
                     } else {
                         _this.$message.error(response.msg);
                     }
@@ -1173,7 +1219,7 @@
                             memberPhone: this.memberPhone,
                             received: checked_m.join(','),
                             remark: this.remark,
-                            itemHandType:this.itemHandType
+                            itemHandType: this.itemHandType
                         }).then(response => {
                             submiting = false;
                             if (response.httpCode === 200) {
@@ -1194,7 +1240,7 @@
                             } else {
                                 this.$message.error('提交出错 ，' + response.msg);
                             }
-                        }).catch(e=>{
+                        }).catch(e => {
                             this.submiting = false;
                         });
                     } else {
@@ -1204,7 +1250,7 @@
                             status: 3,  //受理
                             remark: this.remark,
                             received: checked_m.join(','),
-                            itemHandType:this.itemHandType
+                            itemHandType: this.itemHandType
 
                         }).then(response => {
                             this.submiting = false;
@@ -1228,8 +1274,8 @@
                             } else {
                                 _this.$message.error(response.msg);
                             }
-                        }).catch(e=>{
-                            this.submiting =false;
+                        }).catch(e => {
+                            this.submiting = false;
                         });
                     }
 
