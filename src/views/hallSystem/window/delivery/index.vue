@@ -1,19 +1,17 @@
 <template xmlns="http://www.w3.org/1999/html">
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <!--<el-select class="filter-item" v-model="listQuery.flagTakeCert" placeholder="请选择状态">
-                <el-option
-                        v-for="item in options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                </el-option>
-            </el-select>-->
+            <el-select class="filter-item" v-model="listQuery.takeType" clearable placeholder="请选择取件方式">
+                <el-option v-for="item in enums['TakeType']" :key="item.code" :value="item.code" :label="item.value"></el-option>
+            </el-select>
+            <el-select class="filter-item" v-model="listQuery.flagTakeCert" clearable placeholder="请选择取件状态">
+                <el-option v-for="item in enums['TakeStatus']" :key="item.code" :value="item.code" :label="item.value"
+                           v-if="[1,2].includes(item.code)?listQuery.takeType=='1':([3,4,5].includes(item.code)?listQuery.takeType=='2':([6,7,8].includes(item.code)?listQuery.takeType=='3':false))"></el-option>
+            </el-select>
             <el-select
                     v-model="listQuery.itemId"
                     value-key="id"
-                    filterable
-                    remote
+                    clearable filterable remote
                     placeholder="请输入事项名称"
                     :remote-method="searchItem"
                     style="width: 320px;">
@@ -137,7 +135,7 @@
                     <!--<el-radio-group v-model="takeTypeInfo.mailboxId">
                         <el-radio-button v-for="item in mailboxList" :key="item.id" :label="item.id">{{item.name}}</el-radio-button>
                     </el-radio-group>-->
-                    <el-select v-model="takeTypeInfo.mailboxInfo.mailboxId"
+                    <el-select v-model="takeTypeInfo.mailboxInfo.mailboxId" style="width:100%"
                                @change="validateField('takeTypeForm', 'mailboxInfo.mailboxId')">
                         <el-option v-for="item in mailboxList" :key="item.id"
                                    :value="item.id" :label="item.name"></el-option>
@@ -233,7 +231,7 @@
                     <el-select v-model="processOfflineInfo.itemId" value-key="id"
                                filterable
                                remote
-                               placeholder="请输入事项名称"
+                               placeholder="请输入事项名称" style="width: 100%"
                                @change="getItemTakeTypes"
                                :remote-method="searchItem1">
                         <el-option v-for="item in optionsNamess" :key="item.id" :label="item.name" :value="item.id"></el-option>
@@ -268,6 +266,7 @@
                               v-show="processOfflineInfo.takeTypeInfo.takeType == 2"
                               :rules="mailboxRequired ? processOfflineInfoRules.mailboxId : []">
                     <el-select v-model="processOfflineInfo.takeTypeInfo.mailboxInfo.mailboxId" :disabled="offlineReadonly"
+                               style="width:100%"
                                @change="validateField('processOfflineForm', 'takeTypeInfo.mailboxInfo.mailboxId')">
                         <el-option v-for="item in mailboxList" :key="item.id"
                                    :value="item.id" :label="item.name"></el-option>
@@ -352,7 +351,7 @@
                               :rules="processOfflineInfo.hasMemberId ? processOfflineInfoRules.memberId : []">
                     <el-select v-model="processOfflineInfo.memberId"
                                clearable filterable remote
-                               placeholder="请输入会员名称或证件号"
+                               placeholder="请输入会员名称或证件号" style="width: 100%"
                                :remote-method="remoteMethod"
                                @change="handleChangeMember">
                         <el-option
@@ -497,7 +496,9 @@
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     itemId: undefined,
-                    memberId: undefined
+                    memberId: undefined,
+                    takeType: undefined,
+                    flagTakeCert: undefined
                 },
                 takeTypeVisible: false,
                 takeCodeVisible: false,
