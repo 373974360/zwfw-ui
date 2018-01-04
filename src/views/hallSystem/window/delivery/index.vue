@@ -8,6 +8,7 @@
                 <el-option v-for="item in enums['TakeStatus']" :key="item.code" :value="item.code" :label="item.value"
                            v-if="[1,2].includes(item.code)?listQuery.takeType=='1':([3,4,5].includes(item.code)?listQuery.takeType=='2':([6,7,8].includes(item.code)?listQuery.takeType=='3':false))"></el-option>
             </el-select>
+            <el-input class="filter-item" style="width: 240px; height: 30px" v-model="listQuery.processNumber" placeholder="请输入办件号"></el-input>
             <el-select
                     v-model="listQuery.itemId"
                     value-key="id"
@@ -497,6 +498,7 @@
                     rows: this.$store.state.app.rows,
                     itemId: undefined,
                     memberId: undefined,
+                    processNumber: undefined,
                     takeType: undefined,
                     flagTakeCert: undefined
                 },
