@@ -1,26 +1,26 @@
 <template>
     <el-row :gutter="20">
         <el-col :span="10">
-            <div class="grid-content ">
+            <div class="grid-content " v-loading.body="queryLoading">
                 <div style="padding:10px">
                     <el-tabs v-model="leftTabName" type="card">
                         <!--<el-tab-pane label="业务受理" name="workPanelItl" v-if="false">-->
-                        <!--<el-row :gutter="25">-->
+                        <!--<el-row :gutter="10">-->
                         <!--<el-col :span="17">-->
                         <!--<el-button type="primary" @click="queryCurrentNumber">查询当前叫号</el-button>-->
                         <!--</el-col>-->
                         <!--</el-row>-->
-                        <!--<el-row :gutter="25">-->
+                        <!--<el-row :gutter="10">-->
                         <!--<el-col :span="17">-->
                         <!--<el-input v-model="memberCode" placeholder="输入企业统一信用代码或身份证号">-->
                         <!--<template slot="prepend">用户信息：</template>-->
                         <!--</el-input>-->
                         <!--</el-col>-->
                         <!--<el-col :span="4">-->
-                        <!--<el-button type="primary" @click="checkMemberExist()">查找用户</el-button>-->
+                        <!--<el-button type="primary" @click="checkNatureMemberExist()">查找用户</el-button>-->
                         <!--</el-col>-->
                         <!--</el-row>-->
-                        <!--<el-row :gutter="25">-->
+                        <!--<el-row :gutter="10">-->
                         <!--<el-col :span="11">-->
                         <!--<el-input v-model="memberRealname" placeholder="申请人姓名或企业名称">-->
                         <!--</el-input>-->
@@ -35,7 +35,7 @@
                         <!--</el-button>-->
                         <!--</el-col>&ndash;&gt;-->
                         <!--</el-row>-->
-                        <!--&lt;!&ndash;<el-row :gutter="25" v-show="doFastReg">-->
+                        <!--&lt;!&ndash;<el-row :gutter="10" v-show="doFastReg">-->
                         <!--<el-col :span="17">-->
                         <!--<el-input v-model="phoneCode" :disabled="!doFastReg" placeholder="输入手机收到的验证码"></el-input>-->
                         <!--</el-col>-->
@@ -46,112 +46,447 @@
                         <!--</el-col>-->
                         <!--</el-row>&ndash;&gt;-->
                         <!--</el-tab-pane>-->
-                        <el-tab-pane :label="showInputForm?'直接收件受理':'已预审交件受理'" name="virtualPanelLianhu">
-                            <el-row :gutter="25">
-                                <el-col :span="23">
-                                    <el-tooltip content="查询当前登录用户正在受理事项的状态，通常与窗口叫号器同步" placement="bottom"
+                        <el-tab-pane label="当前窗口业务受理" name="virtualPanelLianhu">
+                            <el-row :gutter="10">
+                                <el-col :span="25">
+                                    <el-tooltip content="查询当前登录用户正在受理事项的状态，通常与窗口叫号器同步" placement="right"
                                                 effect="light">
-                                        <el-button type="primary" @click="queryCurrentNumber">查询当前窗口受理的状态</el-button>
-                                    </el-tooltip>
-                                    <el-tooltip content="直接收件表示跳过网上预审流程，窗口直接收件的方式受理；已预审收件表示预审通过后使用预审号或寄件快递号查询并收件受理"
-                                                placement="bottom" effect="light">
-                                        <el-button type="primary" @click="startNew">
-                                            {{!showInputForm?'切换为直接收件模式':'切换为预审收件模式'}}
+                                        <el-button type="primary" @click="queryCurrentNumber" :disabled="queryLoading">
+                                            查询当前窗口正在呼叫的业务
                                         </el-button>
                                     </el-tooltip>
-                                </el-col>
+                                    <el-collapse v-model="showInputForm" style="margin-top:10px;">
+                                        <el-collapse-item :title="'无预审直接收件表单，点击展开/收起'" name="1">
+                                            <el-tabs v-model="inputFormType" @tab-click="queryItem()">
+                                                <el-tab-pane label="自然人" name="natruePerson" >
 
+                                                    <el-row :gutter="10">
+                                                        <el-col :span="12">
+                                                            <el-cascader v-model="categoryCascaderModel"
+                                                                         @change="handleCategoryChange"
+                                                                         :options="categoryCascader"
+                                                                         class="filter-item"
+                                                                         :show-all-levels="true" clearable filterable
+                                                                         expand-trigger="hover"
+                                                                         :change-on-select="true" placeholder="选择事项分类">
+                                                            </el-cascader>
+                                                        </el-col>
+                                                        <el-col :span="12">
+                                                            <el-select
+                                                                    v-model="selectedItem"
+                                                                    placeholder="选择部门下的事项"
+                                                                    filterable
+                                                                    @change="changeItem" style="width:100%">
+                                                                <el-option
+                                                                        v-for="item in optionsName"
+                                                                        :key="item.id"
+                                                                        :label="item.name+' ' + item.basicCode"
+                                                                        :value="item.id">
+                                                                </el-option>
+                                                            </el-select>
+                                                        </el-col>
+                                                    </el-row>
+
+                                                    <el-row :gutter="10">
+                                                        <el-col :span="19">
+                                                            <el-input v-model="memberCode" placeholder="自然人身份证号码">
+                                                            </el-input>
+                                                        </el-col>
+                                                        <el-col :span="5">
+                                                            <el-tooltip content="查询注册状态，如果未注册，成功受理后会自动注册" placement="bottom"
+                                                                        effect="light">
+                                                                <el-button type="primary"
+                                                                           @click="checkNatureMemberExist()"
+                                                                           :disabled="!memberCode">注册查询
+                                                                </el-button>
+                                                            </el-tooltip>
+                                                        </el-col>
+                                                    </el-row>
+                                                    <el-row :gutter="10">
+                                                        <el-col :span="11">
+                                                            <el-tooltip content="如果已注册点击查找用户会自动填入，如果未注册请人工填写自然人姓名"
+                                                                        placement="bottom"
+                                                                        effect="light">
+                                                                <el-input v-model="memberRealname"
+                                                                          placeholder="自然人姓名">
+                                                                </el-input>
+                                                            </el-tooltip>
+                                                        </el-col>
+                                                        <el-col :span="13">
+                                                            <el-input v-model="memberPhone" placeholder="手机号">
+                                                            </el-input>
+                                                        </el-col>
+                                                    </el-row>
+                                                </el-tab-pane>
+                                                <el-tab-pane label="法人" name="legalPerson">
+
+
+                                                    <el-row :gutter="10">
+                                                        <el-col :span="12">
+                                                            <el-cascader v-model="categoryCascaderModel"
+                                                                         @change="handleCategoryChange"
+                                                                         :options="categoryCascader"
+                                                                         class="filter-item"
+                                                                         :show-all-levels="true" clearable filterable
+                                                                         expand-trigger="hover"
+                                                                         :change-on-select="true" placeholder="选择事项分类">
+                                                            </el-cascader>
+                                                        </el-col>
+                                                        <el-col :span="12">
+                                                            <el-select
+                                                                    v-model="selectedItem"
+                                                                    placeholder="选择部门下的事项"
+                                                                    filterable
+                                                                    @change="changeItem" style="width:100%">
+                                                                <el-option
+                                                                        v-for="item in optionsName"
+                                                                        :key="item.id"
+                                                                        :label="item.name+' ' + item.basicCode"
+                                                                        :value="item.id">
+                                                                </el-option>
+                                                            </el-select>
+                                                        </el-col>
+                                                    </el-row>
+                                                    <el-row :gutter="10">
+                                                        <el-col :span="14">
+                                                            <el-input v-model="companyCode" placeholder="社会统一信用代码">
+                                                            </el-input>
+                                                        </el-col>
+                                                        <el-col :span="5">
+                                                            <el-tooltip content="从工商数据中查询，如果能查到自动填充到输入框" placement="bottom"
+                                                                        effect="light">
+                                                                <el-button type="primary"
+                                                                           @click="queryCompanyInfo"
+                                                                           :disabled="!companyCode">工商库查询
+                                                                </el-button>
+                                                            </el-tooltip>
+                                                        </el-col>
+                                                        <el-col :span="5">
+                                                            <el-tooltip content="查询注册状态，如果能查到自动填充到输入框，如果未注册，成功受理后会自动注册用户" placement="bottom"
+                                                                        effect="light">
+                                                                <el-button type="primary"
+                                                                           @click="checkLegalMemberExist()"
+                                                                           :disabled="!companyCode">注册查询
+                                                                </el-button>
+                                                            </el-tooltip>
+                                                        </el-col>
+                                                    </el-row>
+                                                    <el-row>
+                                                        <el-col :span="25">
+                                                            <el-input v-model="companyName" placeholder="企业名称">
+                                                            </el-input>
+                                                        </el-col>
+                                                        <!--<el-col :span="5">
+                                                            <el-button type="primary" @click="sendFastRegPhoneCode"
+                                                                       :disabled="!doFastReg">发送验证码
+                                                            </el-button>
+                                                        </el-col>-->
+                                                    </el-row>
+                                                    <el-row :gutter="10">
+                                                        <el-col :span="8">
+                                                            <el-input v-model="memberRealname"
+                                                                      placeholder="法人姓名">
+                                                            </el-input>
+                                                        </el-col>
+                                                        <el-col :span="8">
+                                                            <el-input v-model="memberCode" placeholder="法人身份证号">
+                                                            </el-input>
+                                                        </el-col>
+                                                        <el-col :span="8">
+                                                            <el-input v-model="memberPhone" placeholder="手机号">
+                                                            </el-input>
+                                                        </el-col>
+                                                    </el-row>
+
+
+
+                                                    <!--<el-row :gutter="10" v-show="doFastReg">
+                                                                                    <el-col :span="17">
+                                                                                        <el-input v-model="phoneCode" :disabled="!doFastReg" placeholder="输入手机收到的验证码"></el-input>
+                                                                                    </el-col>
+                                                                                    <el-col :span="4">
+                                                                                        <el-button type="primary" @click="fastRegMember"
+                                                                                                   :disabled="!doFastReg">快速注册
+                                                                                        </el-button>
+                                                                                    </el-col>
+                                                                                </el-row>-->
+                                                </el-tab-pane>
+                                            </el-tabs>
+                                        </el-collapse-item>
+                                    </el-collapse>
+                                </el-col>
                             </el-row>
-                            <el-row :gutter="25" v-if="!showInputForm">
+                        </el-tab-pane>
+                        <el-tab-pane label="快递/快件箱收件">
+                            <el-row :gutter="10">
                                 <el-col :span="17">
-                                    <el-input v-model="getNumberBy_expressNumber" placeholder="请输入交件的快递单号">
-                                    </el-input>
+                                    <el-tooltip content="已知预审号时直接进行收件操作，可用于快件箱交件时使用预审号直接收件，" placement="top"
+                                                effect="light">
+                                        <el-input v-model="getNumberBy_processNumber" placeholder="输入预审号">
+                                        </el-input>
+                                    </el-tooltip>
+                                </el-col>
+                                <el-col :span="4">
+
+                                    <el-button type="primary" @click="handlingNumberByProcessNumber"
+                                               :disabled="!getNumberBy_processNumber">已预审收件办理
+                                    </el-button>
+
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="10">
+                                <el-col :span="17">
+                                    <el-tooltip content="邮寄交件时，通过快递单号进行收件操作" placement="bottom"
+                                                effect="light">
+                                        <el-input v-model="getNumberBy_expressNumber" placeholder="输入快递单号">
+                                        </el-input>
+                                    </el-tooltip>
                                 </el-col>
                                 <el-col :span="4">
                                     <el-button type="primary" @click="handlingNumberByExpressNumber"
-                                               :disabled="!getNumberBy_expressNumber">快递交件受理
+                                               :disabled="!getNumberBy_expressNumber">快递收件办理
                                     </el-button>
                                 </el-col>
                             </el-row>
-                            <el-row :gutter="25" v-if="!showInputForm">
+                        </el-tab-pane>
+                        <el-tab-pane label="虚拟抽号机" name="virtualPanel">
+                            <el-row v-show="!windowInfo || !windowInfo.id" :gutter="10">
                                 <el-col :span="17">
-                                    <el-input v-model="getNumberBy_processNumber" placeholder="请输入预审号">
+                                    <el-select v-model="loginCallerKey" placeholder="未登录到窗口">
+                                        <el-option
+                                                v-for="item in windowList"
+                                                :key="item.id"
+                                                :label="item.name"
+                                                :value="item.callerKey">
+                                        </el-option>
+                                    </el-select>
+                                </el-col>
+                                <el-col :span="4">
+
+                                    <el-button type="primary" @click="loginToWindow" :disabled="!loginCallerKey">登录窗口
+                                    </el-button>
+                                </el-col>
+                            </el-row>
+                            <el-row v-show="windowInfo.id" :gutter="10">
+                                <el-col :span="17">
+                                    <el-input :value="'已经登录到' + windowInfo.callerKey + '窗口'" disabled
+                                              placeholder="模拟叫号器操作，请先输入窗口编号登录"></el-input>
+                                </el-col>
+                                <el-col :span="4">
+                                    <el-button type="primary" @click="windowInfo= {}">重新登录</el-button>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="10">
+                                <el-col :span="17">
+                                    <el-cascader v-model="categoryCascaderModel" @change="handleCategoryChange"
+                                                 :options="categoryCascader"
+                                                 class="filter-item"
+                                                 :show-all-levels="true" clearable filterable expand-trigger="hover"
+                                                 :change-on-select="true" style="width: 180px" placeholder="选择事项分类">
+                                    </el-cascader>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="10">
+                                <el-col :span="17">
+                                    <el-input v-model="memberCode" placeholder="输入企业统一信用代码或身份证号">
+                                        <template slot="prepend">用户信息：</template>
                                     </el-input>
                                 </el-col>
                                 <el-col :span="4">
-                                    <el-tooltip content="使用预审号直接收件，适用于速递易中取出根据" placement="bottom"
-                                                effect="light">
-                                        <el-button type="primary" @click="handlingNumberByProcessNumber"
-                                                   :disabled="!getNumberBy_processNumber">用预审号受理
-                                        </el-button>
-                                    </el-tooltip>
-                                </el-col>
-                            </el-row>
-                            <template v-if="showInputForm">
-                                <el-row :gutter="25">
-                                    <el-col :span="12">
-                                        <el-cascader v-model="categoryCascaderModel" @change="handleCategoryChange"
-                                                     :options="categoryCascader"
-                                                     class="filter-item"
-                                                     :show-all-levels="true" clearable filterable expand-trigger="hover"
-                                                     :change-on-select="true" placeholder="选择事项分类">
-                                        </el-cascader>
-                                    </el-col>
-                                </el-row>
-                                <el-row :gutter="25">
-                                    <el-col :span="17">
-                                        <el-select
-                                                v-model="selectedItem"
-                                                placeholder="请输入事项名称或基本编码后选择事项"
-                                                filterable
-                                                @change="changeItem" style="width:100%">
-                                            <el-option
-                                                    v-for="item in optionsName"
-                                                    :key="item.id"
-                                                    :label="item.name+' ' + item.basicCode"
-                                                    :value="item.id">
-                                            </el-option>
-                                        </el-select>
-                                    </el-col>
-                                </el-row>
-                                <el-row :gutter="25">
-                                    <el-col :span="17">
-                                        <el-input v-model="memberCode" placeholder="输入企业统一信用代码或身份证号">
-                                            <template slot="prepend">用户信息：</template>
-                                        </el-input>
-                                    </el-col>
-                                    <el-col :span="4">
-                                        <el-button type="primary" @click="checkMemberExist() & queryCompanyInfo()"
-                                                   :disabled="!memberCode">查找用户
-                                        </el-button>
-                                    </el-col>
-                                </el-row>
-                                <el-row :gutter="25">
-                                    <el-col :span="11">
-                                        <el-input v-model="memberRealname" placeholder="申请人姓名或企业名称">
-                                        </el-input>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-input v-model="memberPhone" placeholder="申请人当前可用手机号">
-                                        </el-input>
-                                    </el-col>
-                                    <!--<el-col :span="5">
-                                        <el-button type="primary" @click="sendFastRegPhoneCode"
-                                                   :disabled="!doFastReg">发送验证码
-                                        </el-button>
-                                    </el-col>-->
-                                </el-row>
-                            </template>
-                            <!--<el-row :gutter="25" v-show="doFastReg">
-                                <el-col :span="17">
-                                    <el-input v-model="phoneCode" :disabled="!doFastReg" placeholder="输入手机收到的验证码"></el-input>
-                                </el-col>
-                                <el-col :span="4">
-                                    <el-button type="primary" @click="fastRegMember"
-                                               :disabled="!doFastReg">快速注册
+                                    <el-button type="primary" @click="checkNatureMemberExist()"
+                                               :disabled="!memberCode">查找用户
                                     </el-button>
                                 </el-col>
-                            </el-row>-->
+                            </el-row>
+                            <el-row :gutter="10">
+                                <el-col :span="11">
+                                    <el-input v-model="memberRealname" placeholder="申请人姓名或企业名称">
+                                    </el-input>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-input v-model="memberPhone" placeholder="申请人当前可用手机号">
+                                    </el-input>
+                                </el-col>
+                                <!--<el-col :span="5">
+                                    <el-button type="primary" @click="sendFastRegPhoneCode"
+                                               :disabled="!doFastReg">发送验证码
+                                    </el-button>
+                                </el-col>-->
+                            </el-row>
+                            <el-row :gutter="10">
+                                <el-col :span="17">
+                                    <el-select
+                                            v-model="selectedItem"
+                                            filterable
+                                            placeholder="请输入事项名称或基本编码后选择事项"
+                                            @change="changeItem" style="width:100%">
+                                        <el-option
+                                                v-for="item in optionsName"
+                                                :key="item.id"
+                                                :label="item.name+' ' + item.basicCode"
+                                                :value="item.id">
+                                        </el-option>
+                                    </el-select>
+                                </el-col>
+                                <el-col :span="4">
+                                    <el-button type="primary" @click="takeNumberByItemCode"
+                                               :disabled="!itemVo || !itemVo.id || !member ||  !member.id">事项抽号
+                                    </el-button>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="10">
+                                <el-col :span="17">
+                                    <el-input v-model="getNumberBy_processNumber" placeholder="如根据预审号抽号，请输入预审号">
+                                    </el-input>
+                                </el-col>
+                                <el-col :span="4">
+                                    <el-button type="primary" @click="takeNumberByProcessNumber"
+                                               :disabled="!getNumberBy_processNumber">预审抽号
+                                    </el-button>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="10">
+                                <el-col :span="17">
+                                    <el-input v-model="getNumberBy_hallNumber" placeholder="请输入呼叫号">
+                                    </el-input>
+                                </el-col>
+                                <el-col :span="4">
+                                    <el-button type="primary" :disabled="!getNumberBy_hallNumber"
+                                               @click="queryNumberByCallNumber">查询
+                                    </el-button>
+                                </el-col>
+                            </el-row>
+                            <el-row type="flex" justify="center" style="margin-top:20px;">
+                                <el-button :disabled="!itemNumber.id || itemNumber.status!=1" type="primary"
+                                           @click="callNumber" title="设置当前号码为窗口已呼叫状态时点击">
+                                    叫号
+                                </el-button>
+                                <el-button :disabled="!itemNumber.id || itemNumber.status!=2" type="primary"
+                                           @click="welcomeNumber" title="申请人到达窗口时点击">
+                                    欢迎
+                                </el-button>
+                                <el-button :disabled="!itemNumber.id || itemNumber.status!=2" type="danger"
+                                           @click="skip" title="申请人未到达窗口，跳过此号码时点击">
+                                    跳过号码
+                                </el-button>
+                            </el-row>
+                        </el-tab-pane>
+                    </el-tabs>
+
+
+
+                    <el-tabs v-model="numberTab" type="card" style="margin-top:10px;">
+                        <el-tab-pane label="受理信息" name="number">
+                            <div id="numberInfo" v-show="itemNumber.id" class="tableDiv">
+                                <table>
+                                    <tr>
+                                        <th width="140">呼叫号:</th>
+                                        <td><strong class="font-size:5rem">{{itemNumber.orderNo}}</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <th>办理事项:</th>
+                                        <td style="color:red">{{itemVo.name}}</td>
+                                    </tr>
+                                    <!--<tr>-->
+                                    <!--<th width="140">所需服务:</th>-->
+                                    <!--<td style="color:red"><strong class="font-size:5rem">{{itemNumber.type | enum-->
+                                    <!--'ItemWindowSupport'}}</strong></td>-->
+                                    <!--</tr>-->
+                                    <tr v-if="member!=null && member.naturePerson!=null">
+                                        <th>姓名:</th>
+                                        <td>{{member.naturePerson.name}}</td>
+                                    </tr>
+                                    <tr v-if="member!=null && member.naturePerson!=null">
+                                        <th>联系电话:</th>
+                                        <td>{{member.naturePerson.phone}}</td>
+                                    </tr>
+                                    <tr v-if="member!=null && member.legalPerson!=null">
+                                        <th>企业法人:</th>
+                                        <td>{{member.legalPerson.legalPerson}}</td>
+                                    </tr>
+                                    <tr v-if="member!=null && member.legalPerson!=null">
+                                        <th>联系电话:</th>
+                                        <td>{{member.legalPerson.phone}}</td>
+                                    </tr>
+                                    <tr v-if="member!=null && member.legalPerson!=null">
+                                        <th>企业名称:</th>
+                                        <td>{{member.legalPerson.companyName}}</td>
+                                    </tr>
+                                    <tr v-if="member!=null && member.legalPerson!=null">
+                                        <th>社会统一信用代码:</th>
+                                        <td>{{member.legalPerson.companyCode}}</td>
+                                    </tr>
+                                    <tr v-if="itemPretrialVo!=null">
+                                        <th>预审号码:</th>
+                                        <td>{{itemPretrialVo.processNumber}}</td>
+                                    </tr>
+                                    <tr v-else>
+                                        <th>预审状态:</th>
+                                        <td>无预审</td>
+                                    </tr>
+                                    <tr v-if="itemPretrialVo!=null">
+                                        <th>预审状态:</th>
+                                        <td>{{itemPretrialVo.status | enums('PretrialStatus')}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>取件方式:</th>
+                                        <td>
+                                            <span v-if="takeTypeVo!=null">{{takeTypeVo.takeType | enums('TakeType')}}</span>
+                                            <span v-else style="color:red">未设置</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>交件方式:</th>
+                                        <td>
+                                            <span v-if="handTypeVo!=null">{{handTypeVo.handType | enums('HandType')}}</span>
+                                            <span v-else style="color:red">未设置</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>排号状态:</th>
+                                        <td style="color:red">{{itemNumber.status | enums('ItemNumberStatus')}}
+                                        </td>
+                                    </tr>
+                                    <tr v-if="itemNumber.status!=6">
+                                        <th>备注:</th>
+                                        <td>{{itemNumber.remark}}</td>
+                                    </tr>
+                                    <tr width="140">
+                                        <th>受理窗口:</th>
+                                        <td style="color:red">
+                                            <strong v-if="window!=null" class="font-size:5rem">{{window.name}}</strong>
+                                            <strong v-if="window==null" class="font-size:5rem">非窗口</strong>
+                                        </td>
+                                    </tr>
+                                    <tr v-show="itemWindowUserName">
+                                        <th>工作人员:</th>
+                                        <td>{{itemWindowUserName}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th width="140">领号时间:</th>
+                                        <td>{{itemNumber.takeTime | date('YYYY-MM-DD HH:mm') }}
+                                        </td>
+                                    </tr>
+                                    <tr v-show="itemNumber.callTime">
+                                        <th width="140">呼叫时间:</th>
+                                        <td>{{itemNumber.callTime | date('YYYY-MM-DD HH:mm') }}
+                                        </td>
+                                    </tr>
+                                    <tr v-show="itemNumber.welcomeTime">
+                                        <th>欢迎时间:</th>
+                                        <td>{{itemNumber.welcomeTime | date('YYYY-MM-DD HH:mm') }}
+                                        </td>
+                                    </tr>
+                                    <tr v-show="itemNumber.applyFinishTime">
+                                        <th>窗口完成处理时间:</th>
+                                        <td>{{itemNumber.applyFinishTime | date('YYYY-MM-DD HH:mm') }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </el-tab-pane>
+                        <el-tab-pane label="工商信息" name="company" >
                             <div id="companyInfo" v-if="companyInfo.id" class="tableDiv">
                                 <table>
                                     <tr>
@@ -204,205 +539,20 @@
                                     </tr>
                                 </table>
                             </div>
-                        </el-tab-pane>
-                        <el-tab-pane label="虚拟抽号机" name="virtualPanel">
-                            <el-row v-show="!windowInfo.id" :gutter="25">
-                                <el-col :span="17">
-                                    <el-input v-model="loginCallerKey" placeholder="模拟叫号器操作，请先输入窗口编号登录">
-                                    </el-input>
-                                </el-col>
-                                <el-col :span="4">
-                                    <el-button type="primary" @click="loginToWindow" :disabled="!loginCallerKey">登录窗口
-                                    </el-button>
-                                </el-col>
-                            </el-row>
-                            <el-row v-show="windowInfo.id" :gutter="25">
-                                <el-col :span="17">
-                                    <el-input :value="'已经登录到' + windowInfo.callerKey + '窗口'" disabled
-                                              placeholder="模拟叫号器操作，请先输入窗口编号登录"></el-input>
-                                </el-col>
-                                <el-col :span="4">
-                                    <el-button type="primary" @click="windowInfo= {}">重新登录</el-button>
-                                </el-col>
-                            </el-row>
-                            <el-row :gutter="25">
-                                <el-col :span="17">
-                                    <el-cascader v-model="categoryCascaderModel" @change="handleCategoryChange"
-                                                 :options="categoryCascader"
-                                                 class="filter-item"
-                                                 :show-all-levels="true" clearable filterable expand-trigger="hover"
-                                                 :change-on-select="true" style="width: 180px" placeholder="选择事项分类">
-                                    </el-cascader>
-                                </el-col>
-                            </el-row>
-                            <el-row :gutter="25">
-                                <el-col :span="17">
-                                    <el-select
-                                            v-model="selectedItem"
-                                            filterable
-                                            placeholder="请输入事项名称或基本编码后选择事项"
-                                            @change="changeItem" style="width:100%">
-                                        <el-option
-                                                v-for="item in optionsName"
-                                                :key="item.id"
-                                                :label="item.name+' ' + item.basicCode"
-                                                :value="item.id">
-                                        </el-option>
-                                    </el-select>
-                                </el-col>
-                                <el-col :span="4">
-                                    <el-button type="primary" @click="takeNumberByItemCode"
-                                               :disabled="!itemVo.id || !member.id">事项抽号
-                                    </el-button>
-                                </el-col>
-                            </el-row>
-                            <el-row :gutter="25">
-                                <el-col :span="17">
-                                    <el-input v-model="getNumberBy_processNumber" placeholder="如根据预审号抽号，请输入预审号">
-                                    </el-input>
-                                </el-col>
-                                <el-col :span="4">
-                                    <el-button type="primary" @click="takeNumberByProcessNumber"
-                                               :disabled="!getNumberBy_processNumber">预审抽号
-                                    </el-button>
-                                </el-col>
-                            </el-row>
-                            <el-row :gutter="25">
-                                <el-col :span="17">
-                                    <el-input v-model="getNumberBy_hallNumber" placeholder="请输入呼叫号">
-                                    </el-input>
-                                </el-col>
-                                <el-col :span="4">
-                                    <el-button type="primary" :disabled="!getNumberBy_hallNumber"
-                                               @click="queryNumberByCallNumber">查询
-                                    </el-button>
-                                </el-col>
-                            </el-row>
-                            <el-row type="flex" justify="center" style="margin-top:20px;">
-                                <el-button :disabled="!itemNumber.id || itemNumber.status!=1" type="primary"
-                                           @click="callNumber" title="设置当前号码为窗口已呼叫状态时点击">
-                                    叫号
-                                </el-button>
-                                <el-button :disabled="!itemNumber.id || itemNumber.status!=2" type="primary"
-                                           @click="welcomeNumber" title="申请人到达窗口时点击">
-                                    欢迎
-                                </el-button>
-                                <el-button :disabled="!itemNumber.id || itemNumber.status!=2" type="danger"
-                                           @click="skip" title="申请人未到达窗口，跳过此号码时点击">
-                                    跳过号码
-                                </el-button>
-                            </el-row>
+                            <div v-else>
+                                <div style="text-align:center">未从工商信息库查询到信息</div>
+                            </div>
                         </el-tab-pane>
                     </el-tabs>
-                    <div id="numberInfo" v-show="itemNumber.id" class="tableDiv">
-                        <table>
-                            <tr>
-                                <th width="140">呼叫号:</th>
-                                <td><strong class="font-size:5rem">{{itemNumber.orderNo}}</strong></td>
-                            </tr>
-                            <tr>
-                                <th>办理事项:</th>
-                                <td style="color:red">{{itemVo.name}}</td>
-                            </tr>
-                            <!--<tr>-->
-                            <!--<th width="140">所需服务:</th>-->
-                            <!--<td style="color:red"><strong class="font-size:5rem">{{itemNumber.type | enum-->
-                            <!--'ItemWindowSupport'}}</strong></td>-->
-                            <!--</tr>-->
-                            <tr v-if="member!=null && member.naturePerson!=null">
-                                <th>姓名:</th>
-                                <td>{{member.naturePerson.name}}</td>
-                            </tr>
-                            <tr v-if="member!=null && member.naturePerson!=null">
-                                <th>联系电话:</th>
-                                <td>{{member.naturePerson.phone}}</td>
-                            </tr>
-                            <tr v-if="member!=null && member.legalPerson!=null">
-                                <th>企业法人:</th>
-                                <td>{{member.legalPerson.legalPerson}}</td>
-                            </tr>
-                            <tr v-if="member!=null && member.legalPerson!=null">
-                                <th>联系电话:</th>
-                                <td>{{member.legalPerson.phone}}</td>
-                            </tr>
-                            <tr v-if="member!=null && member.legalPerson!=null">
-                                <th>企业名称:</th>
-                                <td>{{member.legalPerson.companyName}}</td>
-                            </tr>
-                            <tr v-if="itemPretrialVo!=null">
-                                <th>预审号码:</th>
-                                <td>{{itemPretrialVo.processNumber}}</td>
-                            </tr>
-                            <tr v-else>
-                                <th>预审状态:</th>
-                                <td>无预审</td>
-                            </tr>
-                            <tr v-if="itemPretrialVo!=null">
-                                <th>预审状态:</th>
-                                <td>{{itemPretrialVo.status | enums('PretrialStatus')}}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>取件方式:</th>
-                                <td>
-                                    <span v-if="takeTypeVo!=null">{{takeTypeVo.takeType | enums('TakeType')}}</span>
-                                    <span v-else style="color:red">未设置</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>交件方式:</th>
-                                <td>
-                                    <span v-if="handTypeVo!=null">{{handTypeVo.handType | enums('HandType')}}</span>
-                                    <span v-else style="color:red">未设置</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>排号状态:</th>
-                                <td style="color:red">{{itemNumber.status | enums('ItemNumberStatus')}}
-                                </td>
-                            </tr>
-                            <tr v-if="itemNumber.status!=6">
-                                <th>备注:</th>
-                                <td>{{itemNumber.remark}}</td>
-                            </tr>
-                            <tr width="140">
-                                <th>受理窗口:</th>
-                                <td style="color:red">
-                                    <strong v-if="window!=null" class="font-size:5rem">{{window.name}}</strong>
-                                    <strong v-if="window==null" class="font-size:5rem">无</strong>
-                                </td>
-                            </tr>
-                            <tr v-show="itemWindowUserName">
-                                <th>工作人员:</th>
-                                <td>{{itemWindowUserName}}</td>
-                            </tr>
-                            <tr>
-                                <th width="140">领号时间:</th>
-                                <td>{{itemNumber.takeTime | date('YYYY-MM-DD HH:mm') }}
-                                </td>
-                            </tr>
-                            <tr v-show="itemNumber.callTime">
-                                <th width="140">呼叫时间:</th>
-                                <td>{{itemNumber.callTime | date('YYYY-MM-DD HH:mm') }}
-                                </td>
-                            </tr>
-                            <tr v-show="itemNumber.welcomeTime">
-                                <th>欢迎时间:</th>
-                                <td>{{itemNumber.welcomeTime | date('YYYY-MM-DD HH:mm') }}
-                                </td>
-                            </tr>
-                            <tr v-show="itemNumber.applyFinishTime">
-                                <th>窗口完成处理时间:</th>
-                                <td>{{itemNumber.applyFinishTime | date('YYYY-MM-DD HH:mm') }}
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
+
+
+
+
                 </div>
             </div>
         </el-col>
         <el-col :span="14">
-            <div class="grid-content ">
+            <div class="grid-content " v-loading.body="queryLoading">
                 <div style="padding:10px">
                     <el-tabs v-model="rightTabName" type="card" @tab-click="handleRightTabClick">
                         <el-tab-pane label="所需资料" name="materialListPanel">
@@ -637,7 +787,8 @@
         submitNoPretrial,
         getCurrentUserLoginedWindow,
         sendFastRegPhoneCode,
-        checkMemberExist,
+        checkLegalMemberExist,
+        checkNatureMemberExist,
         fastRegMember
     } from 'api/hallSystem/window/receive/windowAccept';
     import {getAllByNameOrbasicCode} from 'api/zwfwSystem/business/item';
@@ -664,6 +815,7 @@
                 itemPretrialVo: {},
                 rightTabName: 'materialListPanel',
                 leftTabName: 'virtualPanelLianhu',
+                numberTab:'number',
                 itemMaterialVoList: [],
                 window: {},
                 itemWindowUserName: '',
@@ -671,6 +823,8 @@
                 memberCode: '',
                 memberRealname: '',
                 memberPhone: '',
+                companyName:'',
+                companyCode:'',
                 phoneCode: '',
                 companyInfo: {
                     id: '',
@@ -708,11 +862,14 @@
                 categoryCascader: [],
                 itemCategory: null,
                 categoryCascaderModel: [],
-                showInputForm: false,
+                showInputForm: '1',
+                inputFormType:'legalPerson',
                 itemHandType: undefined,
                 takeTypeVo: null,
                 handTypeVo: null,
-                submiting: false
+                submiting: false,
+                queryLoading: false,
+                windowList:[]
             }
         },
         computed: {
@@ -741,21 +898,27 @@
              */
             queryCompanyInfo() {
                 this.companyInfo = {};
-                if (this.memberCode == '' || this.memberCode.length != 18) {
+                if (this.companyCode == '' || this.companyCode.length != 18) {
                     this.companyInfo = {};
+                    this.$message.warning("社会统一信用代码不正确，跳过查询工商企业信息库");
                     return;
                 }
                 queryCompanyInfo({
-                    memberCode: this.memberCode
+                    companyCode: this.companyCode
                 }).then(response => {
                     if (response.httpCode === 200) {
                         let c = response.data;
                         if (c) {
+                            this.numberTab = 'company';
                             this.companyInfo = c;
                             this.memberPhone = c.lxdh;
-                            this.memberRealname = c.qymc;
+                            this.memberRealname = c.fr;
+                            this.companyName = c.qymc;
+                            this.companyCode = c.ty_code;
+                            this.memberCode = c.fr_id?c.fr_id:'';
                         }
                     } else {
+                        this.$message.error("企业信息中没有搜索到【"+this.companyCode+"】企业信息");
                         this.companyInfo = {};
                     }
                 })
@@ -765,11 +928,17 @@
              * 查询事项列表
              * */
             queryItem(query) {
+                if(!this.itemCategory){
+                    return;
+                }
+                this.selectedItem = null;
                 const listQueryName = {
                     name: undefined,
                     basicCode: undefined,
-                    itemCategories: this.itemCategory
-                }
+                    itemCategories: this.itemCategory,
+                    serviceObject: this.inputFormType == 'naturalPerson' ?
+                        'fwdx_ziranren,fwdx_common' : 'fwdx_faren,fwdx_common'
+                };
                 // this.selectedItem= null;
                 if (query !== '') {
                     if (/.*[\u4e00-\u9fa5]+.*$/.test(query)) {
@@ -801,8 +970,6 @@
                 if (!itemId) {
                     return;
                 }
-                // this.itemVo = null;
-                // this.itemMaterialVoList= null;
                 getItemInfo({
                     id: itemId
                 }).then(response => {
@@ -820,7 +987,6 @@
                 if (value.length > 0) {
                     this.itemCategory = value[value.length - 1];
                     this.queryItem(); // 重新根据新的分类查询事项列表
-                    this.selectedItem = null;
                 }
             },
             /**
@@ -838,11 +1004,12 @@
                     }
                 });
             },
+
             /**
-             * 检测用户是否注册，如果注册，返回用户信息，如果没有注册显示出快速注册界面
+             * 检测自然人用户是否注册，如果注册，返回用户信息，如果没有注册显示出快速注册界面
              * */
-            checkMemberExist() {
-                checkMemberExist({
+            checkNatureMemberExist() {
+                checkNatureMemberExist({
                     memberCode: this.memberCode
                 }).then(response => {
                     if (response.httpCode === 200) {
@@ -868,51 +1035,87 @@
                     }
                 })
             },
-
-            startNew() {
-                this.showInputForm = !this.showInputForm;
-                this.resetForm();
-            },
-
             /**
-             * 清除
+             * 检测法人用户是否注册，如果注册，返回用户信息，如果没有注册显示出快速注册界面
              * */
-            resetForm() {
-                // this.showInputForm = true;
-                this.itemNumber = {};
-                this.companyInfo = {};
-                this.memberPhone = '';
-                this.memberRealname = '';
-                this.memberCode = '';
-                this.itemVo = {};
-                this.itemMaterialVoList = [];
-                this.selectedItem = null;
-            },
-
-            sendFastRegPhoneCode() {
-                sendFastRegPhoneCode({
-                    phone: this.memberPhone
+            checkLegalMemberExist() {
+                checkLegalMemberExist({
+                    companyCode: this.companyCode
                 }).then(response => {
                     if (response.httpCode === 200) {
-                        this.$message.success("验证发送成功");
+                        if (response.data == null) {
+                            //不存在
+                            this.$message.warning("未注册");
+                            this.doFastReg = true;
+                            this.memberRealname = '';
+                            this.memberPhone = '';
+                        } else {
+                            this.member = response.data;
+                            this.$message.success("已注册");
+                            this.doFastReg = false;
+                            if (!this.memberRealname) {
+                                this.memberRealname = this.member.name;
+                            }
+                            if (!this.memberPhone) {
+                                this.memberPhone = this.member.mobilephone;
+                            }
+                        }
                     } else {
                         this.$message.error(response.msg);
                     }
                 })
             },
+            /**
+             * 清除
+             * */
+            resetForm() {
+                this.itemVo = {};
+                this.itemNumber = {};
+                this.companyInfo = {};
+                this.memberPhone = '';
+                this.memberRealname = '';
+                this.memberCode = '';
+                this.itemMaterialVoList = [];
+                this.selectedItem = null;
+                this.getNumberBy_processNumber = '';
+                // this.getNumberBy_hallNumber = '';
+                this.getNumberBy_expressNumber = '';
+            },
+
+            sendFastRegPhoneCode() {
+                this.queryLoading = true;
+                sendFastRegPhoneCode({
+                    phone: this.memberPhone
+                }).then(response => {
+                    this.queryLoading = false;
+                    if (response.httpCode === 200) {
+                        this.$message.success("验证发送成功");
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                }).catch(e => {
+                    console.log(e);
+                    this.queryLoading = false;
+                })
+            },
             fastRegMember() {
+                this.queryLoading = true;
                 fastRegMember({
                     memberCode: this.memberCode,
                     memberPhone: this.memberPhone,
                     phoneCode: this.phoneCode,
                     memberRealname: this.memberRealname
                 }).then(response => {
+                    this.queryLoading = false;
                     if (response.httpCode === 200) {
                         this.$message.success("用户注册成功");
                         this.doFastReg = false;
                     } else {
                         this.$message.error(response.msg);
                     }
+                }).catch(e => {
+                    console.log(e);
+                    this.queryLoading = false;
                 })
             },
             /**
@@ -920,10 +1123,11 @@
              */
             takeNumberByProcessNumber() {
                 let _this = this;
+                this.queryLoading = true;
                 takeNumberByProcessNumber({
                     processNumber: this.getNumberBy_processNumber
                 }).then(response => {
-//                    console.log(data.data.callNumber);
+                    this.queryLoading = false;
                     if (response.httpCode === 200) {
                         _this.$message.success('抽到的号码是：' + response.data.callNumber);
                         _this.getNumberBy_hallNumber = response.data.callNumber;
@@ -932,6 +1136,7 @@
                     }
                 }).catch(e => {
                     console.log(e);
+                    this.queryLoading = false;
                 });
             },
             /**
@@ -946,11 +1151,16 @@
                     iDNum: this.member.memberCode
                 }).then(response => {
                     if (response.httpCode === 200) {
+                        _this.showInputForm = 1;
+                        _this.getNumberBy_hallNumber = response.data.callNumber;
                         _this.$message.success('抽到的号码是：' + response.data.callNumber);
                     } else {
                         _this.$message.error(response.msg);
                     }
+                }).catch(e => {
+                    this.queryLoading = false;
                 });
+                ;
             },
 
             /**
@@ -958,10 +1168,12 @@
              */
             handlingNumberByExpressNumber() {
                 let _this = this;
+                this.queryLoading = true;
                 handlingNumberByExpressNumber({
                     expressCompany: null,
                     expressNumber: this.getNumberBy_expressNumber
                 }).then(response => {
+                    this.queryLoading = false;
                     if (response.httpCode === 200) {
                         if (response.data != null) {
                             //执行查询
@@ -971,6 +1183,8 @@
                     } else {
                         _this.$message.error(response.msg);
                     }
+                }).catch(e => {
+                    this.queryLoading = false;
                 });
             },
 
@@ -979,9 +1193,11 @@
              */
             handlingNumberByProcessNumber() {
                 let _this = this;
+                this.queryLoading = true;
                 handlingNumberByProcessNumber({
                     processNumber: this.getNumberBy_processNumber
                 }).then(response => {
+                    this.queryLoading = false;
                     if (response.httpCode === 200) {
                         if (response.data != null) {
                             //执行查询
@@ -991,7 +1207,9 @@
                     } else {
                         _this.$message.error(response.msg);
                     }
-                });
+                }).catch(e => {
+                    this.queryLoading = false;
+                })
             },
 
             /**
@@ -999,30 +1217,19 @@
              */
             queryNumberByCallNumber() {
                 let _this = this;
-                _this.itemNumber = null;
-                _this.itemVo = null;
-                _this.member = null;
-                _this.company = null;
-                _this.itemPretrialVo = null;
-                _this.itemMaterialVoList = null;
-                _this.window = null;
-                _this.itemWindowUserName = null;
-                _this.memberPhone = null;
-                _this.memberRealname = null;
-                _this.memberCode = null;
-                _this.takeTypeVo = null;
-                _this.handTypeVo = null;
-                _this.itemHandType = null;
+                this.resetForm();
+                this.queryLoading = true;
                 queryNumberByCallNumber({
                     hallNumber: this.getNumberBy_hallNumber
                 }).then(response => {
+                    this.queryLoading = false;
                     if (response.httpCode === 200) {
                         if (response.data != null) {
                             let data = response.data;
                             _this.itemNumber = data.itemNumber;
                             _this.itemVo = data.itemVo;
                             _this.member = data.member;
-                            _this.company = data.company;
+                            // _this.company = data.company;
                             _this.itemPretrialVo = data.itemPretrialVo;
                             _this.itemMaterialVoList = data.itemMaterialVoList;
                             _this.window = data.window;
@@ -1053,6 +1260,8 @@
                     } else {
                         _this.$message.error(response.msg);
                     }
+                }).catch(e => {
+                    this.queryLoading = false;
                 });
             },
             /**
@@ -1061,38 +1270,36 @@
              */
             queryCurrentNumber() {
                 let _this = this;
-                this.showInputForm = false;
-                _this.itemNumber = null;
-                _this.itemVo = null;
-                _this.member = null;
-                _this.company = null;
-                _this.itemPretrialVo = null;
-                _this.itemMaterialVoList = null;
-                _this.window = null;
-                _this.itemWindowUserName = null;
-                _this.memberPhone = null;
-                _this.memberRealname = null;
-                _this.memberCode = null;
-                _this.takeTypeVo = null;
-                _this.handTypeVo = null;
-                _this.itemHandType = null;
+                this.showInputForm = 1;
+                this.resetForm();
+                this.queryLoading = true;
                 queryCurrentNumber({}).then(response => {
+                    this.queryLoading = false;
                     if (response.httpCode === 200) {
                         if (response.data != null) {
                             let data = response.data;
+                            _this.numberTab = 'number';
                             _this.itemNumber = data.itemNumber;
                             _this.itemVo = data.itemVo;
                             _this.member = data.member;
-                            _this.company = data.company;
+                            // _this.company = data.company;
                             _this.itemPretrialVo = data.itemPretrialVo;
                             _this.itemMaterialVoList = data.itemMaterialVoList;
                             _this.window = data.window;
                             _this.itemWindowUserName = data.itemWindowUserName;
+                            if (data.itemNumber) {
+                                _this.showInputForm = data.itemNumber.flagPretrial?0:1;
+                            }
 
                             if (data.member) {
                                 _this.memberPhone = data.member.mobilephone;
                                 _this.memberRealname = data.member.name;
                                 _this.memberCode = data.member.memberCode;
+
+                                if(data.member.legalPerson) {
+                                    _this.companyCode = data.member.legalPerson.companyCode;
+                                    _this.queryCompanyInfo();
+                                }
                             }
                             //   取件方式
 
@@ -1115,6 +1322,8 @@
                     } else {
                         _this.$message.error(response.msg);
                     }
+                }).catch(e => {
+                    this.queryLoading = false;
                 })
             },
             /**
@@ -1123,18 +1332,19 @@
              */
             callNumber() {
                 let _this = this;
-
                 if (_this.itemNumber != null) {
+                    this.submiting = true;
                     callNumber({
                         numberId: _this.itemNumber.id
                     }).then(response => {
+                        this.submiting = false;
                         if (response.httpCode === 200) {
                             let data = response.data;
                             if (data != null) {
                                 _this.itemNumber = data.itemNumber;
                                 _this.itemVo = data.itemVo;
                                 _this.member = data.member;
-                                _this.company = data.company;
+                                // _this.company = data.company;
                                 _this.itemPretrialVo = data.itemPretrialVo;
                                 _this.itemMaterialVoList = data.itemMaterialVoList;
                                 _this.window = data.window;
@@ -1143,16 +1353,20 @@
                         } else {
                             _this.$message.error(response.msg);
                         }
+                    }).catch(e => {
+                        this.submiting = false;
                     });
                 } else {
+                    this.submiting = true;
                     callNumber({}).then(response => {
+                        this.submiting = false;
                         if (response.httpCode === 200) {
                             let data = response.data;
                             if (data != null) {
                                 _this.itemNumber = data.itemNumber;
                                 _this.itemVo = data.itemVo;
                                 _this.member = data.member;
-                                _this.company = data.company;
+                                // _this.company = data.company;
                                 _this.itemPretrialVo = data.itemPretrialVo;
                                 _this.itemMaterialVoList = data.itemMaterialVoList;
                                 _this.window = data.window;
@@ -1166,6 +1380,8 @@
                         } else {
                             _this.$message.error(response.msg);
                         }
+                    }).catch(e => {
+                        this.submiting = false;
                     });
                 }
             },
@@ -1217,6 +1433,7 @@
                             memberCode: this.memberCode,
                             memberRealname: this.memberRealname,
                             memberPhone: this.memberPhone,
+                            companyCode:this.companyCode,
                             received: checked_m.join(','),
                             remark: this.remark,
                             itemHandType: this.itemHandType
@@ -1229,7 +1446,7 @@
                                     _this.itemNumber = data.itemNumber;
                                     _this.itemVo = data.itemVo;
                                     _this.member = data.member;
-                                    _this.company = data.company;
+                                    // _this.company = data.company;
                                     _this.itemPretrialVo = data.itemPretrialVo;
                                     _this.itemMaterialVoList = data.itemMaterialVoList;
                                     _this.window = data.window;
@@ -1260,7 +1477,7 @@
                                     _this.itemNumber = data.itemNumber;
                                     _this.itemVo = data.itemVo;
                                     _this.member = data.member;
-                                    _this.company = data.company;
+                                    // _this.company = data.company;
                                     _this.itemPretrialVo = data.itemPretrialVo;
                                     _this.itemMaterialVoList = data.itemMaterialVoList;
                                     _this.window = data.window;
@@ -1302,18 +1519,20 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
+                    this.submiting = true;
                     submitWork({
                         numberId: _itemNumber.id,
                         status: 4,  //不予受理
                         remark: this.remark
                     }).then(response => {
+                        this.submiting = false;
                         if (response.httpCode === 200) {
                             let data = response.data;
                             if (data != null) {
                                 _this.itemNumber = data.itemNumber;
                                 _this.itemVo = data.itemVo;
                                 _this.member = data.member;
-                                _this.company = data.company;
+                                // _this.company = data.company;
                                 _this.itemPretrialVo = data.itemPretrialVo;
                                 _this.itemMaterialVoList = data.itemMaterialVoList;
                                 _this.window = data.window;
@@ -1322,6 +1541,8 @@
                         } else {
                             _this.$message.error(response.msg);
                         }
+                    }).catch(e => {
+                        this.submiting = false;
                     });
                 }).catch(() => {
                     this.$message({
@@ -1344,18 +1565,20 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
+                    this.submiting = true;
                     submitWork({
                         numberId: _itemNumber.id,
                         status: 5, //跳过
                         remark: this.remark
                     }).then(response => {
+                        this.submiting = false;
                         if (response.httpCode === 200) {
                             let data = response.data;
                             if (data != null) {
                                 _this.itemNumber = data.itemNumber;
                                 _this.itemVo = data.itemVo;
                                 _this.member = data.member;
-                                _this.company = data.company;
+                                // _this.company = data.company;
                                 _this.itemPretrialVo = data.itemPretrialVo;
                                 _this.itemMaterialVoList = data.itemMaterialVoList;
                                 _this.window = data.window;
@@ -1364,6 +1587,8 @@
                         } else {
                             _this.$message.error(response.msg);
                         }
+                    }).catch(e => {
+                        this.submiting = false;
                     });
                 }).catch(() => {
                     this.$message({
@@ -1407,7 +1632,8 @@
                 if (response.httpCode == 200) {
                     if (response.data != null) {
                         console.log(response.data);
-                        this.windowInfo = response.data;
+                        this.windowList = response.data.windowList;
+                        this.windowInfo = response.data.current;
                     } else {
                         //表示当前登录的ｗｅｂ用户没有登录到窗口
                     }
@@ -1423,7 +1649,6 @@
 <style>
     .tableDiv table {
         width: 100%;
-        margin-top: 20px;
     }
 
     .tableDiv table th, .tableDiv table td {
