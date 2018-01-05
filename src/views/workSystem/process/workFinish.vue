@@ -277,7 +277,7 @@
                                             <a v-if="!/\.(gif|jpg|jpeg|png|GIF|JPG|PNG)$/.test(file.url)"
                                                :href="file.url" :download="file.fileName"
                                                target="_blank">[{{index + 1}}]</a>
-                                            <a v-else :href="file.url" target="_blank">[{{index + 1}}]</a>
+                                            <a v-else :href="file.url" target="_blank" :title="file.fileName">[{{index + 1}}]</a>
                                             </span>
                                             <span v-else>未上传</span>
                                          </span>
