@@ -1400,6 +1400,24 @@
                 this.$message.error('网络不稳定，上传失败');
             },
             encodeEditorHtml() {
+                // if(this.acceptConditionHtml) {
+                //     this.acceptConditionHtml = this.acceptConditionHtml.replace(/%/g, '％');
+                // }
+                // if(this.workflowDescriptionHtml) {
+                //     this.workflowDescriptionHtml = this.workflowDescriptionHtml.replace(/%/g, '％');
+                // }
+                // if(this.chargeStandardHtml) {
+                //     this.chargeStandardHtml = this.chargeStandardHtml.replace(/%/g, '％');
+                // }
+                // if(this.chargeBasisHtml) {
+                //     this.chargeBasisHtml = this.chargeBasisHtml.replace(/%/g, '％');
+                // }
+                // if(this.setBasisHtml) {
+                //     this.setBasisHtml = this.setBasisHtml.replace(/%/g, '％');
+                // }
+                // if(this.noticeTextHtml) {
+                //     this.noticeTextHtml = this.noticeTextHtml.replace(/%/g, '％');
+                // }
                 this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(this.acceptConditionHtml));
                 this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(this.workflowDescriptionHtml));
                 this.zwfwItem.chargeStandard = encodeURIComponent(encodeURIComponent(this.chargeStandardHtml));
@@ -1408,12 +1426,19 @@
                 this.zwfwItem.remark = encodeURIComponent(encodeURIComponent(this.noticeTextHtml));
             },
             decodeEditorHtml() {
-                this.acceptConditionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.acceptCondition));
-                this.workflowDescriptionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.workflowDescription));
-                this.chargeStandardHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeStandard));
-                this.chargeBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeBasis));
-                this.setBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.setBasis));
-                this.noticeTextHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.remark));
+                // 返回来的数据是不用 decode 的，而且在内容包含%字符时，decode 会报错
+                // this.acceptConditionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.acceptCondition));
+                this.acceptConditionHtml = this.zwfwItem.acceptCondition;
+                // this.workflowDescriptionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.workflowDescription));
+                this.workflowDescriptionHtml = this.zwfwItem.workflowDescription;
+                // this.chargeStandardHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeStandard));
+                this.chargeStandardHtml = this.zwfwItem.chargeStandard;
+                // this.chargeBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeBasis));
+                this.chargeBasisHtml = this.zwfwItem.chargeBasis;
+                // this.setBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.setBasis));
+                this.setBasisHtml = this.zwfwItem.setBasis;
+                // this.noticeTextHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.remark));
+                this.noticeTextHtml = this.zwfwItem.remark;
             },
             closeZwfwItemForm() {
                 this.dialogItemFormVisible = false;
