@@ -154,3 +154,14 @@ export function dataPlotTopWaitItem(query) {
         params: query
     });
 }
+
+/**
+ * 当天抽号信息
+ * @param query
+ */
+export function getDataNumberCount() {
+    return fetch({
+        url: '/api/hallSystem/count/statistics/dataNumberCount',
+        method: 'get'
+    });
+}

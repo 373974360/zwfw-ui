@@ -291,7 +291,7 @@
                 <el-form-item label="快递公司" v-show="offlineReadonly && processOfflineInfo.takeTypeInfo.postInfo.expressCompany">
                     <!--<el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.expressCompany" :disabled="offlineReadonly"></el-input>-->
                     <el-select v-model="processOfflineInfo.takeTypeInfo.postInfo.expressCompany" :disabled="offlineReadonly">
-                        <el-option v-for="item in dics['kdgs']" :key="item.code" :value="item.code">{{item.value}}</el-option>
+                        <el-option v-for="item in dics['kdgs']" :key="item.code" :label="item.value" :value="item.code">{{item.value}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="快递单号" v-show="offlineReadonly && processOfflineInfo.takeTypeInfo.postInfo.expressNumber">
@@ -964,7 +964,7 @@
                 this.takeTypeInfo.id = row.takeTypeInfo.id;
                 this.takeTypeInfo.processNumber = row.processNumber;
                 this.takeTypeInfo.memberId = row.memberId;
-                this.takeTypeInfo.takeType = row.takeTypeInfo.takeType;
+                this.takeTypeInfo.takeType = row.takeTypeInfo.takeType+"";
                 if (row.takeTypeInfo.mailboxInfo) {
                     this.takeTypeInfo.mailboxInfo = copyProperties(this.takeTypeInfo.mailboxInfo, row.takeTypeInfo.mailboxInfo);
                 }
