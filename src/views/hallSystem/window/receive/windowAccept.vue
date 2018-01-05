@@ -1,64 +1,23 @@
 <template>
     <div>
-        <el-row :gutter="20">
+        <el-row :gutter="0">
             <el-col :span="10">
                 <div class="grid-content " v-loading.body="queryLoading">
                     <div style="padding:10px">
                         <el-tabs v-model="leftTabName" type="card">
-                            <!--<el-tab-pane label="业务受理" name="workPanelItl" v-if="false">-->
-                            <!--<el-row :gutter="10">-->
-                            <!--<el-col :span="17">-->
-                            <!--<el-button type="primary" @click="queryCurrentNumber">查询当前叫号</el-button>-->
-                            <!--</el-col>-->
-                            <!--</el-row>-->
-                            <!--<el-row :gutter="10">-->
-                            <!--<el-col :span="17">-->
-                            <!--<el-input v-model="memberCode" placeholder="输入企业统一信用代码或身份证号">-->
-                            <!--<template slot="prepend">用户信息：</template>-->
-                            <!--</el-input>-->
-                            <!--</el-col>-->
-                            <!--<el-col :span="4">-->
-                            <!--<el-button type="primary" @click="checkNatureMemberExist()">查找用户</el-button>-->
-                            <!--</el-col>-->
-                            <!--</el-row>-->
-                            <!--<el-row :gutter="10">-->
-                            <!--<el-col :span="11">-->
-                            <!--<el-input v-model="memberRealname" placeholder="申请人姓名或企业名称">-->
-                            <!--</el-input>-->
-                            <!--</el-col>-->
-                            <!--<el-col :span="8">-->
-                            <!--<el-input v-model="memberPhone" placeholder="申请人当前可用手机号">-->
-                            <!--</el-input>-->
-                            <!--</el-col>-->
-                            <!--&lt;!&ndash;<el-col :span="5">-->
-                            <!--<el-button type="primary" @click="sendFastRegPhoneCode"-->
-                            <!--:disabled="!doFastReg">发送验证码-->
-                            <!--</el-button>-->
-                            <!--</el-col>&ndash;&gt;-->
-                            <!--</el-row>-->
-                            <!--&lt;!&ndash;<el-row :gutter="10" v-show="doFastReg">-->
-                            <!--<el-col :span="17">-->
-                            <!--<el-input v-model="phoneCode" :disabled="!doFastReg" placeholder="输入手机收到的验证码"></el-input>-->
-                            <!--</el-col>-->
-                            <!--<el-col :span="4">-->
-                            <!--<el-button type="primary" @click="fastRegMember"-->
-                            <!--:disabled="!doFastReg">快速注册-->
-                            <!--</el-button>-->
-                            <!--</el-col>-->
-                            <!--</el-row>&ndash;&gt;-->
-                            <!--</el-tab-pane>-->
                             <el-tab-pane label="当前窗口业务受理" name="virtualPanelLianhu">
                                 <el-row :gutter="10">
                                     <el-col :span="10">
                                         <el-tooltip content="查询当前登录用户正在受理事项的状态，通常与窗口叫号器同步" placement="right"
                                                     effect="light">
-                                            <el-button type="primary" @click="queryCurrentNumber" :disabled="queryLoading">
+                                            <el-button type="primary" @click="queryCurrentNumber"
+                                                       :disabled="queryLoading">
                                                 查询当前窗口正在呼叫的业务
                                             </el-button>
                                         </el-tooltip>
                                     </el-col>
-                                    <el-col :span="7">
-                                        <el-input v-model="getNumberBy_hallNumber" placeholder="请输入呼叫号">
+                                    <el-col :span="7" :offset="3">
+                                        <el-input v-model="getNumberBy_hallNumber" placeholder="输入排队号查询">
                                         </el-input>
                                     </el-col>
                                     <el-col :span="4">
@@ -70,7 +29,7 @@
                                 <el-row :gutter="10">
                                     <el-col :span="25">
                                         <el-collapse v-model="showInputForm" style="margin-top:10px;">
-                                            <el-collapse-item :title="'无预审直接收件表单，点击此处展开/收起表单，注意：事项选择会根据自然人、法人进行筛选'" name="1">
+                                            <el-collapse-item :title="'无预审直接收件表单，点击此处展开/收起表单'" name="1">
                                                 <el-tabs v-model="memberType" @tab-click="queryItem()">
                                                     <el-tab-pane label="自然人" name="1">
 
@@ -80,9 +39,11 @@
                                                                              @change="handleCategoryChange"
                                                                              :options="categoryCascader"
                                                                              class="filter-item"
-                                                                             :show-all-levels="true" clearable filterable
+                                                                             :show-all-levels="true" clearable
+                                                                             filterable
                                                                              expand-trigger="hover"
-                                                                             :change-on-select="true" placeholder="选择事项分类">
+                                                                             :change-on-select="true"
+                                                                             placeholder="选择事项分类" style="width:100%">
                                                                 </el-cascader>
                                                             </el-col>
                                                             <el-col :span="12">
@@ -104,6 +65,7 @@
                                                         <el-row :gutter="10">
                                                             <el-col :span="19">
                                                                 <el-input v-model="memberCode" placeholder="自然人身份证号码">
+                                                                    <template slot="prepend">身份证号：</template>
                                                                 </el-input>
                                                             </el-col>
                                                             <el-col :span="5">
@@ -124,50 +86,56 @@
                                                                             effect="light">
                                                                     <el-input v-model="memberRealname"
                                                                               placeholder="自然人姓名">
+                                                                        <template slot="prepend">姓名：</template>
                                                                     </el-input>
                                                                 </el-tooltip>
                                                             </el-col>
                                                             <el-col :span="13">
                                                                 <el-input v-model="memberPhone" placeholder="手机号">
+                                                                    <template slot="prepend">手机号：</template>
                                                                 </el-input>
                                                             </el-col>
                                                         </el-row>
                                                     </el-tab-pane>
                                                     <el-tab-pane label="法人" name="2">
-
-
                                                         <el-row :gutter="10">
                                                             <el-col :span="12">
                                                                 <el-cascader v-model="categoryCascaderModel"
                                                                              @change="handleCategoryChange"
                                                                              :options="categoryCascader"
                                                                              class="filter-item"
-                                                                             :show-all-levels="true" clearable filterable
+                                                                             :show-all-levels="true" clearable
+                                                                             filterable
                                                                              expand-trigger="hover"
-                                                                             :change-on-select="true" placeholder="选择事项分类">
+                                                                             :change-on-select="true"
+                                                                             placeholder="选择事项分类" style="width:100%">
                                                                 </el-cascader>
                                                             </el-col>
                                                             <el-col :span="12">
-                                                                <el-select
-                                                                        v-model="selectedItem"
-                                                                        placeholder="选择分类下的事项"
-                                                                        filterable
-                                                                        @change="changeItem" style="width:100%">
-                                                                    <el-option
-                                                                            v-for="item in optionsName"
-                                                                            :key="item.id"
-                                                                            :label="item.name+' ' + item.basicCode"
-                                                                            :value="item.id">
-                                                                    </el-option>
-                                                                </el-select>
+                                                                <el-tooltip class="item" effect="light"
+                                                                            content="注意：事项选择会根据自然人、法人进行筛选"
+                                                                            placement="top-start">
+                                                                    <el-select
+                                                                            v-model="selectedItem"
+                                                                            placeholder="选择分类下的事项"
+                                                                            filterable
+                                                                            @change="changeItem" style="width:100%">
+                                                                        <el-option
+                                                                                v-for="item in optionsName"
+                                                                                :key="item.id"
+                                                                                :label="item.name+' ' + item.basicCode"
+                                                                                :value="item.id">
+                                                                        </el-option>
+                                                                    </el-select>
+                                                                </el-tooltip>
                                                             </el-col>
                                                         </el-row>
                                                         <el-row :gutter="10">
-                                                            <el-col :span="14">
+                                                            <el-col :span="12">
                                                                 <el-input v-model="companyCode" placeholder="社会统一信用代码">
                                                                 </el-input>
                                                             </el-col>
-                                                            <el-col :span="5">
+                                                            <el-col :span="6">
                                                                 <el-tooltip content="从工商数据中查询，如果能查到自动填充到输入框"
                                                                             placement="bottom"
                                                                             effect="light">
@@ -177,7 +145,7 @@
                                                                     </el-button>
                                                                 </el-tooltip>
                                                             </el-col>
-                                                            <el-col :span="5">
+                                                            <el-col :span="6">
                                                                 <el-tooltip
                                                                         content="查询注册状态，如果能查到自动填充到输入框，如果未注册，成功受理后会自动注册用户"
                                                                         placement="bottom"
@@ -204,14 +172,17 @@
                                                             <el-col :span="8">
                                                                 <el-input v-model="memberRealname"
                                                                           placeholder="法人姓名">
+                                                                    <!--<template slot="prepend">法人姓名：</template>-->
                                                                 </el-input>
                                                             </el-col>
                                                             <el-col :span="8">
                                                                 <el-input v-model="memberCode" placeholder="法人身份证号">
+                                                                    <!--<template slot="prepend">身份证号：</template>-->
                                                                 </el-input>
                                                             </el-col>
                                                             <el-col :span="8">
                                                                 <el-input v-model="memberPhone" placeholder="手机号">
+                                                                    <!--<template slot="prepend">手机号：</template>-->
                                                                 </el-input>
                                                             </el-col>
                                                         </el-row>
@@ -281,23 +252,24 @@
                                     <el-col :span="4">
                                         <el-tooltip class="item" effect="dark" content="请勿登录到其他人员正在使用的窗口"
                                                     placement="top-start">
-                                            <el-button type="primary" @click="loginToWindow" :disabled="!loginCallerKey">
+                                            <el-button type="primary" @click="loginToWindow"
+                                                       :disabled="!loginCallerKey">
                                                 登录窗口
                                             </el-button>
                                         </el-tooltip>
                                     </el-col>
                                 </el-row>
                                 <el-row v-if="windowInfo!=null && windowInfo.id!=null" :gutter="10">
-                                    <el-col :span="20">
+                                    <el-col :span="19">
                                         <el-input :value="'已经登录到' + windowInfo.callerKey + '窗口'" disabled
                                                   placeholder="模拟叫号器操作，请先输入窗口编号登录"></el-input>
                                     </el-col>
-                                    <el-col :span="2">
+                                    <el-col :span="3">
                                         <el-button type="primary" @click="windowInfo= {}">重新登录</el-button>
                                     </el-col>
                                 </el-row>
                                 <el-row :gutter="10">
-                                    <el-col :span="6">
+                                    <el-col :span="7">
                                         <el-radio-group v-model="memberType" @change="queryItem()">
                                             <el-radio-button label="1">自然人</el-radio-button>
                                             <el-radio-button label="2">法人</el-radio-button>
@@ -307,11 +279,11 @@
                                         <el-input v-model="memberCode" placeholder="身份证号码">
                                         </el-input>
                                     </el-col>
-                                    <el-col :span="6">
-                                        <el-input v-model="memberName" placeholder="姓名">
+                                    <el-col :span="5">
+                                        <el-input v-model="memberRealname" placeholder="姓名">
                                         </el-input>
                                     </el-col>
-                                    <el-col :span="6">
+                                    <el-col :span="5">
                                         <el-input v-model="memberPhone" placeholder="手机号">
                                         </el-input>
                                     </el-col>
@@ -324,35 +296,38 @@
                                                      class="filter-item"
                                                      :show-all-levels="true" clearable filterable
                                                      expand-trigger="hover"
-                                                     :change-on-select="true" placeholder="选择事项分类" >
+                                                     :change-on-select="true" placeholder="选择事项分类">
                                         </el-cascader>
                                     </el-col>
-                                    <el-col :span='12'>
-                                        <el-select
-                                                v-model="selectedItem"
-                                                placeholder="选择分类下的事项"
-                                                filterable
-                                                @change="changeItem" style="width:100%">
-                                            <el-option
-                                                    v-for="item in optionsName"
-                                                    :key="item.id"
-                                                    :label="item.name+' ' + item.basicCode"
-                                                    :value="item.id">
-                                            </el-option>
-                                        </el-select>
+                                    <el-col :span='11'>
+                                        <el-tooltip class="item" effect="light" content=" 注意：事项选择会根据自然人、法人进行筛选"
+                                                    placement="top-start">
+                                            <el-select
+                                                    v-model="selectedItem"
+                                                    placeholder="选择分类下的事项"
+                                                    filterable
+                                                    @change="changeItem" style="width:100%">
+                                                <el-option
+                                                        v-for="item in optionsName"
+                                                        :key="item.id"
+                                                        :label="item.name+' ' + item.basicCode"
+                                                        :value="item.id">
+                                                </el-option>
+                                            </el-select>
+                                        </el-tooltip>
                                     </el-col>
-                                    <el-col :span="2">
+                                    <el-col :span="3">
                                         <el-button type="primary" @click="takeNumberByItemCode"
                                                    :disabled="!itemVo || !itemVo.id || !member ||  !member.id">事项抽号
                                         </el-button>
                                     </el-col>
                                 </el-row>
                                 <el-row :gutter="10">
-                                    <el-col :span="20">
+                                    <el-col :span="19">
                                         <el-input v-model="getNumberBy_processNumber" placeholder="如根据预审号抽号，请输入预审号">
                                         </el-input>
                                     </el-col>
-                                    <el-col :span="2">
+                                    <el-col :span="3">
                                         <el-button type="primary" @click="takeNumberByProcessNumber"
                                                    :disabled="!getNumberBy_processNumber">预审抽号
                                         </el-button>
@@ -456,7 +431,8 @@
                                         <tr width="140">
                                             <th>受理窗口:</th>
                                             <td style="color:red">
-                                                <strong v-if="window!=null" class="font-size:5rem">{{window.name}}</strong>
+                                                <strong v-if="window!=null"
+                                                        class="font-size:5rem">{{window.name}}</strong>
                                                 <strong v-if="window==null" class="font-size:5rem">非窗口</strong>
                                             </td>
                                         </tr>
@@ -563,7 +539,9 @@
                                           height="400"
                                           border
                                           style="width: 100%"
-                                          @selection-change="handleMaterialSelectionChange">
+
+                                          @selection-change="handleMaterialSelectionChange"
+                                >
                                     <el-table-column
                                             type="index"
                                             width="50">
@@ -745,16 +723,19 @@
                                            :label="item | parseToInt | enums('HandType')">
                                 </el-option>
                             </el-select>-->
-                            <el-input v-model="handTypeText" placeholder="请选择交件方式" :disabled="!itemVo.id"
-                                      readonly style="width: 180px" icon="edit" @focus="handleChangeHandType"></el-input>
+                            <el-input v-model="itemHandTypeVo.handType" placeholder="请选择交件方式" :disabled="!itemVo.id"
+                                      readonly style="width: 180px" icon="edit"
+                                      @focus="handleChangeHandType"></el-input>
                             <!--<el-select v-model="itemTakeTypeVo.takeType" placeholder="请选择取件方式" v-if="!takeTypeVo"
                                        @change="handleChangeTakeType">
                                 <el-option v-for="item in itemTakeTypeList" :key="item" :value="item"
                                            :label="item | parseToInt | enums('TakeType')">
                                 </el-option>
                             </el-select>-->
-                            <el-input v-model="takeTypeText" placeholder="请选择取件方式" v-if="itemVo.id && !takeTypeVo"
-                                      readonly style="width: 180px" icon="edit" @focus="handleChangeTakeType"></el-input>
+                            <el-input v-model="itemTakeTypeVo.takeType" placeholder="请选择取件方式"
+                                      v-if="itemVo.id && !takeTypeVo"
+                                      readonly style="width: 180px" icon="edit"
+                                      @focus="handleChangeTakeType"></el-input>
                             <!--抽了号，但是号不是正在处理的不能点击确认收件；或者不关心是否抽号和抽号状态，没有手机号或姓名或身份证号或统一社会信用代码的按钮不可点击（莲湖直接收件）-->
                             <el-button
                                     :disabled="(itemNumber.id &&  itemNumber.status!=6) || !memberPhone || !memberRealname ||!memberCode || submiting"
@@ -764,7 +745,8 @@
                             </el-button>
                             <!--抽了号，但是号不是正在处理的不能点击确认收件；此处对于莲湖不在系统抽号直接提交的模式来说，一直会显示为禁用-->
                             <!--TODO 按理说拒收也应该是要提交并保存一条抽号受理记录-->
-                            <el-button :disabled="!itemNumber.id || itemNumber.status!=6" type="primary" @click="reject">
+                            <el-button :disabled="!itemNumber.id || itemNumber.status!=6" type="primary"
+                                       @click="reject">
                                 不予受理
                             </el-button>
 
@@ -834,7 +816,8 @@
                     <el-input v-model="itemTakeTypeVo.postInfo.name"
                               @blur="validateField('takeTypeForm', 'postInfo.name')"></el-input>
                 </el-form-item>
-                <el-form-item label="手机号" prop="postInfo.mobilephone" v-if="itemTakeTypeVo.takeType == 3 && !cardVisible"
+                <el-form-item label="手机号" prop="postInfo.mobilephone"
+                              v-if="itemTakeTypeVo.takeType == 3 && !cardVisible"
                               :rules="itemTakeTypeVo.takeType === 3 ? takeTypeInfoRules.postPhone : []">
                     <el-input v-model="itemTakeTypeVo.postInfo.mobilephone"
                               @blur="validateField('takeTypeForm', 'postInfo.mobilephone')"></el-input>
@@ -844,7 +827,8 @@
                     <el-input v-model="itemTakeTypeVo.postInfo.address"
                               @blur="validateField('takeTypeForm', 'postInfo.address')"></el-input>
                 </el-form-item>
-                <el-form-item label="收件地址" prop="postInfo.addresseeId" v-if="itemTakeTypeVo.takeType == 3 && cardVisible">
+                <el-form-item label="收件地址" prop="postInfo.addresseeId"
+                              v-if="itemTakeTypeVo.takeType == 3 && cardVisible">
                     <el-card class="box-card">
                         <div slot="header" class="clearfix card-header">
                             <div class="card-item">
@@ -1400,7 +1384,9 @@
                     this.queryLoading = false;
                     if (response.httpCode === 200) {
                         _this.$message.success('抽到的号码是：' + response.data.callNumber);
+                        //执行查询
                         _this.getNumberBy_hallNumber = response.data.callNumber;
+                        _this.queryNumberByCallNumber();
                     } else {
                         _this.$message.error(response.msg);
                     }
@@ -1422,8 +1408,10 @@
                 }).then(response => {
                     if (response.httpCode === 200) {
                         _this.showInputForm = 1;
-                        _this.getNumberBy_hallNumber = response.data.callNumber;
                         _this.$message.success('抽到的号码是：' + response.data.callNumber);
+                        //执行查询
+                        _this.getNumberBy_hallNumber = response.data.callNumber;
+                        _this.queryNumberByCallNumber();
                     } else {
                         _this.$message.error(response.msg);
                     }
@@ -1554,7 +1542,7 @@
              */
             queryCurrentNumber() {
                 let _this = this;
-                this.showInputForm = false;
+                this.showInputForm = 1;
                 this.resetForm();
                 this.queryLoading = true;
                 queryCurrentNumber({}).then(response => {
@@ -1778,7 +1766,7 @@
                 let _itemNumber = _this.itemNumber;
 
                 let msg = '确定跳过吗？';
-                let _this  = this;
+                let _this = this;
 
                 this.$confirm(msg, '提示', {
                     confirmButtonText: '确定',
