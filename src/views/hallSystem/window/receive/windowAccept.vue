@@ -789,11 +789,12 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button icon="circle-cross" type="danger" @click="resetItemHandTypeVo">重 置</el-button>
-                <el-button type="primary" icon="circle-check" @click="handTypeVisible = false;">确 定</el-button>
+                <el-button icon="circle-cross" type="danger">重 置</el-button>
+                <el-button type="primary" icon="circle-check" @click="">确 定</el-button>
             </div>
         </el-dialog>
-        <el-dialog title="修改取件信息" :visible.sync="takeTypeVisible" :close-on-click-modal="closeOnClickModal">
+        <el-dialog title="修改取件信息" :visible.sync="takeTypeVisible" :close-on-click-modal="closeOnClickModal"
+                   :before-close="resetTakeTypeForm">
             <el-form ref="takeTypeForm" :model="itemTakeTypeVo" :rules="takeTypeInfoRules"
                      label-width="100px" class="small-space" label-position="right"
                      style="width: 80%; margin-left:10%;" v-loading="dialogLoading">
@@ -891,7 +892,6 @@
     import {getAllAddresseesByMemberId} from 'api/hallSystem/member/memberAddressee';
     import {validatMobiles} from 'utils/validate'
     import {mapGetters} from 'vuex';
-    import {enums, parseToInt} from '../../../../filters';
     import {copyProperties} from 'utils';
 
 
@@ -916,7 +916,6 @@
                     legalPerson: {},
                     naturePerson: {}
                 },
-
                 itemPretrialVo: {},
                 rightTabName: 'materialListPanel',
                 leftTabName: 'virtualPanelLianhu',
