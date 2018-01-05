@@ -31,14 +31,14 @@
                 </template>
             </el-table-column>
             <!--<el-table-column align="center" label="联系电话">-->
-                <!--<template scope="scope">-->
-                    <!--<span>{{scope.row.mobilephone}}</span>-->
-                <!--</template>-->
+            <!--<template scope="scope">-->
+            <!--<span>{{scope.row.mobilephone}}</span>-->
+            <!--</template>-->
             <!--</el-table-column>-->
             <!--<el-table-column align="center" label="公司" width="250">-->
-                <!--<template scope="scope">-->
-                    <!--<span>{{scope.row.companyName}}</span>-->
-                <!--</template>-->
+            <!--<template scope="scope">-->
+            <!--<span>{{scope.row.companyName}}</span>-->
+            <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column align="center" label="办件号">
                 <template scope="scope">
@@ -51,9 +51,9 @@
                 </template>
             </el-table-column>
             <!--<el-table-column align="center" label="完成时间" width="200">-->
-                <!--<template scope="scope">-->
-                    <!--<span>{{scope.row.applyFinishTime | date('YYYY-MM-DD HH:mm:ss')}}</span>-->
-                <!--</template>-->
+            <!--<template scope="scope">-->
+            <!--<span>{{scope.row.applyFinishTime | date('YYYY-MM-DD HH:mm:ss')}}</span>-->
+            <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column align="center" label="状态">
                 <template scope="scope">
@@ -180,8 +180,10 @@
                                             预审资料：
                                             <span v-for="(file,index) in scope.row.multipleFile">
                                             <span v-if="file.url!=null && file.url!=''">
-                                            <a :href="file.url" :download="file.fileName"
+                                            <a v-if="!/\.(gif|jpg|jpeg|png|GIF|JPG|PNG)$/.test(file.url)"
+                                               :href="file.url" :download="file.fileName"
                                                target="_blank">[{{index + 1}}]</a>
+                                            <a v-else :href="file.url" target="_blank">[{{index + 1}}]</a>
                                             </span>
                                             <span v-else>未上传</span>
                                          </span>
@@ -192,7 +194,8 @@
                                         prop="received"
                                         label="已收件">
                                     <template scope="scope">
-                                        <i v-if="scope.row.received==1" style="color:green" class="el-icon-circle-check"></i>
+                                        <i v-if="scope.row.received==1" style="color:green"
+                                           class="el-icon-circle-check"></i>
                                         <i v-else class="el-icon-circle-cross" style="color:red"></i>
                                     </template>
                                 </el-table-column>
@@ -204,12 +207,12 @@
                                     </template>
                                 </el-table-column>
                                 <!--<el-table-column-->
-                                        <!--prop="example"-->
-                                        <!--label="样本">-->
-                                    <!--<template scope="scope">-->
-                                        <!--<a v-if="scope.row.example" :href="scope.row.example" target="_blank">点击下载</a>-->
-                                        <!--<span v-else>无</span>-->
-                                    <!--</template>-->
+                                <!--prop="example"-->
+                                <!--label="样本">-->
+                                <!--<template scope="scope">-->
+                                <!--<a v-if="scope.row.example" :href="scope.row.example" target="_blank">点击下载</a>-->
+                                <!--<span v-else>无</span>-->
+                                <!--</template>-->
                                 <!--</el-table-column>-->
                                 <el-table-column
                                         prop="source"
@@ -223,18 +226,19 @@
                                         label="纸质说明">
                                 </el-table-column>
                                 <!--<el-table-column-->
-                                        <!--prop="notice"-->
-                                        <!--label="填报须知">-->
+                                <!--prop="notice"-->
+                                <!--label="填报须知">-->
                                 <!--</el-table-column>-->
                                 <!--<el-table-column-->
-                                        <!--prop="acceptStandard"-->
-                                        <!--label="受理标准">-->
+                                <!--prop="acceptStandard"-->
+                                <!--label="受理标准">-->
                                 <!--</el-table-column>-->
                                 <el-table-column
                                         prop="electronicMaterial"
                                         label="需要预审">
                                     <template scope="scope">
-                                        <i v-if="scope.row.electronicMaterial" style="color:green" class="el-icon-circle-check"></i>
+                                        <i v-if="scope.row.electronicMaterial" style="color:green"
+                                           class="el-icon-circle-check"></i>
                                         <i v-else class="el-icon-circle-cross" style="color:red"></i>
                                     </template>
                                 </el-table-column>
@@ -310,7 +314,8 @@
                             </div>
                         </el-tab-pane>
                         <el-tab-pane label="内部办理流程描述" name="itemStep">
-                            <div id="itemStepInfo" style="white-space:pre-wrap" v-html="itemVo.workflowDescription"></div>
+                            <div id="itemStepInfo" style="white-space:pre-wrap"
+                                 v-html="itemVo.workflowDescription"></div>
                         </el-tab-pane>
                     </el-tabs>
 
@@ -321,7 +326,7 @@
                         <el-button type="primary" @click="print_wlzyd">打印物料转移单</el-button>
                     </div>
                     <div v-if="itemNumber.status==4" style="margin-top:20px;">
-                            <el-button type="primary" @click="print_ycxgzd">打印一次性告知单</el-button>
+                        <el-button type="primary" @click="print_ycxgzd">打印一次性告知单</el-button>
                     </div>
                 </el-col>
             </el-row>
@@ -348,9 +353,9 @@
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     selectDateTime: undefined,
-                    inStatus:[3,4].join(",")
+                    inStatus: [3, 4].join(",")
                 },
-                tabName:'materialListPanel',
+                tabName: 'materialListPanel',
                 itemNumber: [],
                 itemWindowUserName: '',
                 windowVo: [],
@@ -448,7 +453,7 @@
                     } else {
                         this.$message.error('数据加载失败')
                     }
-                }).catch(e=>{
+                }).catch(e => {
                     this.dialogLoading = false;
                 });
             },
