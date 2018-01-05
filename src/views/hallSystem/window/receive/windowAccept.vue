@@ -1360,7 +1360,9 @@
                     this.queryLoading = false;
                     if (response.httpCode === 200) {
                         _this.$message.success('抽到的号码是：' + response.data.callNumber);
+                        //执行查询
                         _this.getNumberBy_hallNumber = response.data.callNumber;
+                        _this.queryNumberByCallNumber();
                     } else {
                         _this.$message.error(response.msg);
                     }
@@ -1382,8 +1384,10 @@
                 }).then(response => {
                     if (response.httpCode === 200) {
                         _this.showInputForm = 1;
-                        _this.getNumberBy_hallNumber = response.data.callNumber;
                         _this.$message.success('抽到的号码是：' + response.data.callNumber);
+                        //执行查询
+                        _this.getNumberBy_hallNumber = response.data.callNumber;
+                        _this.queryNumberByCallNumber();
                     } else {
                         _this.$message.error(response.msg);
                     }
