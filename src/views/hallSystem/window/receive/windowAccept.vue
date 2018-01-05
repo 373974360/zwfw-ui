@@ -69,7 +69,7 @@
                             <el-row :gutter="10">
                                 <el-col :span="25">
                                     <el-collapse v-model="showInputForm" style="margin-top:10px;">
-                                        <el-collapse-item :title="'无预审直接收件表单，点击展开/收起'" name="1">
+                                        <el-collapse-item :title="'无预审直接收件表单，点击此处展开/收起表单，注意：事项选择会根据自然人、法人进行筛选'" name="1">
                                             <el-tabs v-model="memberType" @tab-click="queryItem()">
                                                 <el-tab-pane label="自然人" name="1">
 
