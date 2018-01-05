@@ -131,12 +131,11 @@
                                                             </el-col>
                                                         </el-row>
                                                         <el-row :gutter="10">
-                                                            <el-col :span="16">
+                                                            <el-col :span="12">
                                                                 <el-input v-model="companyCode" placeholder="社会统一信用代码">
-                                                                    <template slot="prepend">社会统一信用代码：</template>
                                                                 </el-input>
                                                             </el-col>
-                                                            <el-col :span="4">
+                                                            <el-col :span="6">
                                                                 <el-tooltip content="从工商数据中查询，如果能查到自动填充到输入框"
                                                                             placement="bottom"
                                                                             effect="light">
@@ -146,7 +145,7 @@
                                                                     </el-button>
                                                                 </el-tooltip>
                                                             </el-col>
-                                                            <el-col :span="4">
+                                                            <el-col :span="6">
                                                                 <el-tooltip
                                                                         content="查询注册状态，如果能查到自动填充到输入框，如果未注册，成功受理后会自动注册用户"
                                                                         placement="bottom"
@@ -161,7 +160,6 @@
                                                         <el-row>
                                                             <el-col :span="25">
                                                                 <el-input v-model="companyName" placeholder="企业名称">
-                                                                    <template slot="prepend">企业名称：</template>
                                                                 </el-input>
                                                             </el-col>
                                                             <!--<el-col :span="5">
@@ -174,17 +172,17 @@
                                                             <el-col :span="8">
                                                                 <el-input v-model="memberRealname"
                                                                           placeholder="法人姓名">
-                                                                    <template slot="prepend">法人姓名：</template>
+                                                                    <!--<template slot="prepend">法人姓名：</template>-->
                                                                 </el-input>
                                                             </el-col>
                                                             <el-col :span="8">
                                                                 <el-input v-model="memberCode" placeholder="法人身份证号">
-                                                                    <template slot="prepend">身份证号：</template>
+                                                                    <!--<template slot="prepend">身份证号：</template>-->
                                                                 </el-input>
                                                             </el-col>
                                                             <el-col :span="8">
                                                                 <el-input v-model="memberPhone" placeholder="手机号">
-                                                                    <template slot="prepend">手机号：</template>
+                                                                    <!--<template slot="prepend">手机号：</template>-->
                                                                 </el-input>
                                                             </el-col>
                                                         </el-row>
@@ -282,7 +280,7 @@
                                         </el-input>
                                     </el-col>
                                     <el-col :span="5">
-                                        <el-input v-model="memberName" placeholder="姓名">
+                                        <el-input v-model="memberRealname" placeholder="姓名">
                                         </el-input>
                                     </el-col>
                                     <el-col :span="5">
@@ -918,7 +916,7 @@
                     legalPerson: {},
                     naturePerson: {}
                 },
-
+                dialogLoading:true,
                 itemPretrialVo: {},
                 rightTabName: 'materialListPanel',
                 leftTabName: 'virtualPanelLianhu',
@@ -1776,6 +1774,9 @@
             },
             validateField(form, field) {
                 this.$refs[form].validateField(field)
+            },
+            resetTakeTypeForm(){
+
             },
             print_ywsld() {
                 if (this.itemNumber != null) {
