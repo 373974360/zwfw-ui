@@ -216,6 +216,9 @@ export function getTime(type) {
 }
 
 export function copyProperties(target, source) {
+    if (source === undefined || source === null) {
+        return;
+    }
     for (const item in target) {
         if (source[item] != undefined) {
             if ((target[item] instanceof Object) && !(target[item] instanceof Array)) {

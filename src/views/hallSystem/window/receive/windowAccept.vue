@@ -723,7 +723,7 @@
                                            :label="item | parseToInt | enums('HandType')">
                                 </el-option>
                             </el-select>-->
-                            <el-input v-model="itemHandTypeVo.handType" placeholder="请选择交件方式" :disabled="!itemVo.id"
+                            <el-input v-model="handTypeText" placeholder="请选择交件方式" :disabled="!itemVo.id"
                                       readonly style="width: 180px" icon="edit"
                                       @focus="handleChangeHandType"></el-input>
                             <!--<el-select v-model="itemTakeTypeVo.takeType" placeholder="请选择取件方式" v-if="!takeTypeVo"
@@ -732,7 +732,7 @@
                                            :label="item | parseToInt | enums('TakeType')">
                                 </el-option>
                             </el-select>-->
-                            <el-input v-model="itemTakeTypeVo.takeType" placeholder="请选择取件方式"
+                            <el-input v-model="takeTypeText" placeholder="请选择取件方式"
                                       v-if="itemVo.id && !takeTypeVo"
                                       readonly style="width: 180px" icon="edit"
                                       @focus="handleChangeTakeType"></el-input>
@@ -756,18 +756,19 @@
                 </div>
             </el-col>
         </el-row>
-        <el-dialog title="修改交件信息" :visible.sync="handTypeVisible" :close-on-click-modal="closeOnClickModal">
+        <el-dialog title="修改交件信息" :visible.sync="handTypeVisible" :close-on-click-modal="closeOnClickModal"
+                   :show-close="false">
             <el-form ref="handTypeForm" :model="itemHandTypeVo" :rules="handTypeInfoRules"
                      label-width="100px" class="small-space" label-position="right"
                      style="width: 80%; margin-left:10%;" v-loading="dialogLoading">
                 <el-form-item label="交件方式" prop="handType">
-                    <el-select v-model="itemHandTypeVo.handType" @change="">
+                    <el-select v-model="itemHandTypeVo.handType">
                         <el-option v-for="item in itemHandTypeList" :key="item"
                                    :value="item" :label="item | parseToInt | enums('HandType')"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="快件箱" prop="mailboxInfo.mailboxId" v-show="itemHandTypeVo.handType == 2"
-                              :rules="itemHandTypeVo.handType === 2 ? handTypeInfoRules.mailboxId : []">
+                              :rules="itemHandTypeVo.handType == 2 ? handTypeInfoRules.mailboxId : []">
                     <el-select v-model="itemHandTypeVo.mailboxInfo.mailboxId" style="width:100%"
                                @change="validateField('handTypeForm', 'mailboxInfo.mailboxId')">
                         <el-option v-for="item in mailboxList" :key="item.id"
@@ -790,21 +791,22 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="resetItemHandTypeVo">重 置</el-button>
-                <el-button type="primary" icon="circle-check" @click="handTypeVisible = false;">确 定</el-button>
+                <el-button type="primary" icon="circle-check" @click="saveHandType">确 定</el-button>
             </div>
         </el-dialog>
-        <el-dialog title="修改取件信息" :visible.sync="takeTypeVisible" :close-on-click-modal="closeOnClickModal">
+        <el-dialog title="修改取件信息" :visible.sync="takeTypeVisible" :close-on-click-modal="closeOnClickModal"
+                   :show-close="false">
             <el-form ref="takeTypeForm" :model="itemTakeTypeVo" :rules="takeTypeInfoRules"
                      label-width="100px" class="small-space" label-position="right"
                      style="width: 80%; margin-left:10%;" v-loading="dialogLoading">
                 <el-form-item label="取件方式" prop="takeType">
-                    <el-select v-model="itemTakeTypeVo.takeType" @change="">
+                    <el-select v-model="itemTakeTypeVo.takeType" @change="initCardHeader">
                         <el-option v-for="item in itemTakeTypeList" :key="item"
                                    :value="item" :label="item | parseToInt | enums('TakeType')"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="快件箱" prop="mailboxInfo.mailboxId" v-show="itemTakeTypeVo.takeType == 2"
-                              :rules="itemTakeTypeVo.takeType === 2 ? takeTypeInfoRules.mailboxId : []">
+                              :rules="itemTakeTypeVo.takeType == 2 ? takeTypeInfoRules.mailboxId : []">
                     <el-select v-model="itemTakeTypeVo.mailboxInfo.mailboxId" style="width:100%"
                                @change="validateField('takeTypeForm', 'mailboxInfo.mailboxId')">
                         <el-option v-for="item in mailboxList" :key="item.id"
@@ -812,18 +814,18 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="收件人姓名" prop="postInfo.name" v-if="itemTakeTypeVo.takeType == 3 && !cardVisible"
-                              :rules="itemTakeTypeVo.takeType === 3 ? takeTypeInfoRules.postName : []">
+                              :rules="itemTakeTypeVo.takeType == 3 ? takeTypeInfoRules.postName : []">
                     <el-input v-model="itemTakeTypeVo.postInfo.name"
                               @blur="validateField('takeTypeForm', 'postInfo.name')"></el-input>
                 </el-form-item>
                 <el-form-item label="手机号" prop="postInfo.mobilephone"
                               v-if="itemTakeTypeVo.takeType == 3 && !cardVisible"
-                              :rules="itemTakeTypeVo.takeType === 3 ? takeTypeInfoRules.postPhone : []">
+                              :rules="itemTakeTypeVo.takeType == 3 ? takeTypeInfoRules.postPhone : []">
                     <el-input v-model="itemTakeTypeVo.postInfo.mobilephone"
                               @blur="validateField('takeTypeForm', 'postInfo.mobilephone')"></el-input>
                 </el-form-item>
                 <el-form-item label="收件地址" prop="postInfo.address" v-if="itemTakeTypeVo.takeType == 3 && !cardVisible"
-                              :rules="itemTakeTypeVo.takeType === 3 ? takeTypeInfoRules.postAddress : []">
+                              :rules="itemTakeTypeVo.takeType == 3 ? takeTypeInfoRules.postAddress : []">
                     <el-input v-model="itemTakeTypeVo.postInfo.address"
                               @blur="validateField('takeTypeForm', 'postInfo.address')"></el-input>
                 </el-form-item>
@@ -858,7 +860,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="resetItemTakeTypeVo">重 置</el-button>
-                <el-button type="primary" icon="circle-check" @click="takeTypeVisible = false;">确 定</el-button>
+                <el-button type="primary" icon="circle-check" @click="saveTakeType">确 定</el-button>
             </div>
         </el-dialog>
     </div>
@@ -1014,6 +1016,9 @@
                     }
                 },
                 handTypeInfoRules: {
+                    handType: [
+                        {required: true, message: '请选择交件方式', trigger: 'change'}
+                    ],
                     mailboxId: [
                         {required: true, message: '请选择快件箱', trigger: 'change'}
                     ],
@@ -1025,6 +1030,9 @@
                     ]
                 },
                 takeTypeInfoRules: {
+                    takeType: [
+                        {required: true, message: '请选择取件方式', trigger: 'change'}
+                    ],
                     mailboxId: [
                         {required: true, message: '请选择快件箱', trigger: 'change'}
                     ],
@@ -1144,6 +1152,20 @@
                 this.cardVisible = false;
                 this.cardItemVisible = false;
                 this.itemTakeTypeVo.postInfo.addresseeId = undefined;
+            },
+            saveHandType() {
+                this.$refs['handTypeForm'].validate(valid => {
+                    if (valid) {
+                        this.handTypeVisible = false;
+                    }
+                })
+            },
+            saveTakeType() {
+                this.$refs['takeTypeForm'].validate(valid => {
+                    if (valid) {
+                        this.takeTypeVisible = false;
+                    }
+                })
             },
             /**
              * 查询企业信息
@@ -1502,6 +1524,9 @@
                 _this.numberTab = 'number';
                 _this.itemNumber = data.itemNumber;
                 _this.itemVo = data.itemVo;
+                this.itemHandTypeList = data.itemVo.handTypes.split(',');
+                this.itemTakeTypeList = data.itemVo.takeTypes.split(',');
+                this.itemHandTypeVo.postInfo.addresseeId = data.itemVo.addresseeId;
                 _this.member = data.member;
                 // _this.company = data.company;
                 _this.itemPretrialVo = data.itemPretrialVo;
@@ -1632,6 +1657,14 @@
              * 通过
              */
             pass() {
+                if (!this.itemHandTypeVo.handType) {
+                    this.$message.warning('请选择交件方式');
+                    return;
+                }
+                if (!this.itemTakeTypeVo.takeType) {
+                    this.$message.warning('请选择取件方式');
+                    return;
+                }
                 let _this = this;
                 let checked_m = this.materialSelection.map(function (m) {
                     return m.id;
@@ -1664,7 +1697,8 @@
                             companyName: this.companyName,
                             received: checked_m.join(','),
                             remark: this.remark,
-                            itemHandType: this.itemHandType
+                            itemHandTypeVo: this.itemHandTypeVo,
+                            itemTakeTypeVo: this.itemTakeTypeVo
                         }).then(response => {
                             submiting = false;
                             if (response.httpCode === 200) {
@@ -1688,8 +1722,9 @@
                             status: 3,  //受理
                             remark: this.remark,
                             received: checked_m.join(','),
-                            itemHandType: this.itemHandType
-
+                            itemHandType: this.itemHandType,
+                            itemHandTypeVo: this.itemHandTypeVo,
+                            itemTakeTypeVo: this.takeTypeVo && this.takeTypeVo.takeType ? {} : this.itemTakeTypeVo
                         }).then(response => {
                             this.submiting = false;
                             if (response.httpCode === 200) {
@@ -1802,10 +1837,46 @@
                 this.materialSelection = val;
             },
             resetItemHandTypeVo() {
+                this.itemHandTypeVo = {
+                    id: undefined,
+                    handType: undefined,
+                    mailboxInfo: {
+                        id: undefined,
+                        mailboxId: undefined
+                    },
+                    postInfo: {
+                        id: undefined,
+                        addresseeId: undefined,
+                        expressCompany: undefined,
+                        expressNumber: undefined
+                    }
+                };
+                this.itemHandTypeVo.postInfo.addresseeId = this.itemVo.addresseeId;
                 copyProperties(this.itemHandTypeVo, this.handTypeVo);
+                if (this.itemHandTypeVo.handType) {
+                    this.itemHandTypeVo.handType += '';
+                }
             },
             resetItemTakeTypeVo() {
+                this.itemTakeTypeVo = {
+                    id: undefined,
+                    takeType: undefined,
+                    mailboxInfo: {
+                        id: undefined,
+                        mailboxId: undefined
+                    },
+                    postInfo: {
+                        id: undefined,
+                        addresseeId: undefined,
+                        name: undefined,
+                        mobilephone: undefined,
+                        address: undefined
+                    }
+                };
                 copyProperties(this.itemTakeTypeVo, this.takeTypeVo);
+                if (this.itemTakeTypeVo.takeType) {
+                    this.itemTakeTypeVo.takeType += '';
+                }
             },
             validateField(form, field) {
                 this.$refs[form].validateField(field)
@@ -1857,7 +1928,7 @@
     }
 </script>
 
-<style>
+<style rel="stylesheet/scss" lang="scss">
     .tableDiv table {
         width: 100%;
     }
@@ -1924,5 +1995,68 @@
 
     }
 
+    .card-header {
+        .card-item {
+            border: none;
+            margin: 0;
+            width: 80%;
+            float: left;
+        }
+        .el-button {
+            float: right;
+        }
+    }
 
+    .card-item {
+        padding: 8px;
+        margin: 8px 0;
+        font-size: 14px;
+        border: 1px solid #d0d0d0;
+        height: 80px;
+        .el-radio {
+            height: 64px;
+            line-height: 64px;
+            text-align: center;
+            width: 10%;
+            float: left;
+        }
+        p {
+            margin: 0;
+            height: 32px;
+            line-height: 32px;
+            width: 88%;
+            float: left;
+        }
+        .p1 {
+            font-size: 16px;
+            font-weight: bold;
+            span {
+                padding: 3px 6px;
+                color: #dd1100;
+                font-size: 14px;
+                font-weight: normal;
+                border: 1px solid #dd1100;
+                border-radius: 3px;
+            }
+        }
+    }
+
+    .clearfix:before, .clearfix:after {
+        display: table;
+        content: "";
+    }
+
+    .clearfix:after {
+        clear: both
+    }
+
+    .box-card {
+        width: 100%;
+        .el-card__body {
+            padding: 0;
+        }
+        .card-body {
+            padding: 12px;
+        }
+    }
 </style>

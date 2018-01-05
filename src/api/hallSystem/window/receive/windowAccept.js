@@ -115,10 +115,11 @@ export function welcomeNumber(query) {
  * 综合窗口提交收件
  * */
 export function submitWork(query) {
+    const data = query;
     return fetch({
         url: '/api/hallSystem/hallCompositeWindow/submitWork',
         method: 'post',
-        params: query
+        data
     });
 }
 
@@ -161,10 +162,11 @@ export function getItemInfo(query) {
  * 综合窗口提交非预审的收件
  * */
 export function submitNoPretrial(query) {
+    const data = query;
     return fetch({
         url: '/api/hallSystem/hallCompositeWindow/submitNoPretrial',
         method: 'post',
-        params: query
+        data
     });
 }
 
