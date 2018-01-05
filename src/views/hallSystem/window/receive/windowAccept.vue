@@ -87,7 +87,7 @@
                                                         <el-col :span="12">
                                                             <el-select
                                                                     v-model="selectedItem"
-                                                                    placeholder="选择部门下的事项"
+                                                                    placeholder="选择分类下的事项"
                                                                     filterable
                                                                     @change="changeItem" style="width:100%">
                                                                 <el-option
@@ -149,7 +149,7 @@
                                                         <el-col :span="12">
                                                             <el-select
                                                                     v-model="selectedItem"
-                                                                    placeholder="选择部门下的事项"
+                                                                    placeholder="选择分类下的事项"
                                                                     filterable
                                                                     @change="changeItem" style="width:100%">
                                                                 <el-option
@@ -296,6 +296,26 @@
                                 </el-col>
                             </el-row>
                             <el-row :gutter="10">
+                                <el-col :span="6">
+                                    <el-radio-group v-model="memberType" @change="queryItem()">
+                                        <el-radio-button label="1">自然人</el-radio-button>
+                                        <el-radio-button label="2">法人</el-radio-button>
+                                    </el-radio-group>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-input v-model="memberCode" placeholder="身份证号码">
+                                    </el-input>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-input v-model="memberName" placeholder="姓名">
+                                    </el-input>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-input v-model="memberPhone" placeholder="手机号">
+                                    </el-input>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="10">
                                 <el-col :span="8">
                                     <el-cascader v-model="categoryCascaderModel"
                                                  @change="handleCategoryChange"
@@ -303,13 +323,13 @@
                                                  class="filter-item"
                                                  :show-all-levels="true" clearable filterable
                                                  expand-trigger="hover"
-                                                 :change-on-select="true" placeholder="选择事项分类">
+                                                 :change-on-select="true" placeholder="选择事项分类" >
                                     </el-cascader>
                                 </el-col>
-                                <el-col :span="12">
+                                <el-col :span='12'>
                                     <el-select
                                             v-model="selectedItem"
-                                            placeholder="选择部门下的事项"
+                                            placeholder="选择分类下的事项"
                                             filterable
                                             @change="changeItem" style="width:100%">
                                         <el-option
