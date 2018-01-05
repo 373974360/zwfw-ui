@@ -180,12 +180,24 @@ export function getCurrentUserLoginedWindow() {
 }
 
 /**
- * 检测用户是否有账号
+ * 检测自然人用户是否有账号
  * @param query
  */
-export function checkMemberExist(query) {
+export function checkNatureMemberExist(query) {
     return fetch({
-        url: '/api/hallSystem/hallCompositeWindow/checkMemberExist',
+        url: '/api/hallSystem/hallCompositeWindow/checkNatureMemberExist',
+        method: 'post',
+        params: query
+    });
+}
+
+/**
+ * 检测法人用户是否有账号
+ * @param query
+ */
+export function checkLegalMemberExist(query) {
+    return fetch({
+        url: '/api/hallSystem/hallCompositeWindow/checkLegalMemberExist',
         method: 'post',
         params: query
     });

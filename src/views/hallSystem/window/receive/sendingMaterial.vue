@@ -101,7 +101,7 @@
         <el-dialog title="交件信息" :visible.sync="handTypeVisible" :close-on-click-modal="closeOnClickModal">
             <el-form ref="handTypeInfoForm" :model="currentRow"
                      label-width="100px" class="small-space" label-position="right"
-                     style="width: 80%; margin-left:10%;" v-loading="dialogLoading">
+                     style="width: 80%; margin-left:10%;">
                 <el-form-item label="预审号">
                     <el-input v-model="currentRow.processNumber" disabled></el-input>
                 </el-form-item>
