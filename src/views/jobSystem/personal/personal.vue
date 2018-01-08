@@ -103,7 +103,7 @@
                             <td>{{jobPersonal.username}}</td>
                             <th>电子邮箱:</th>
                             <td>{{jobPersonalEmail}}</td>
-                            <th>电子邮箱:</th>
+                            <th>注册手机:</th>
                             <td>{{jobPersonalPhone}}</td>
                         </tr>
                         <tr>

@@ -61,7 +61,7 @@
             </el-table-column>
             <el-table-column align="center" label="最低学历" width="100">
                 <template scope="scope">
-                    <nobr>{{scope.row.zdxl | dicts('xueli')}}</nobr>
+                    <nobr>{{scope.row.zdxl | dics('xueli')}}</nobr>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="年龄" width="100">
@@ -76,12 +76,12 @@
             </el-table-column>
             <el-table-column align="center" label="工作性质" width="100">
                 <template scope="scope">
-                    <nobr>{{scope.row.gzxz | dicts('gzxz')}}</nobr>
+                    <nobr>{{scope.row.gzxz | dics('gzxz')}}</nobr>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="薪资标准" width="150">
                 <template scope="scope">
-                    <nobr>{{scope.row.xzlx | dicts('xzfw')}}</nobr>
+                    <nobr>{{scope.row.xzlx | dics('xzfw')}}</nobr>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="关键字" width="170">
@@ -118,7 +118,7 @@
                             <th>招聘人数:</th>
                             <td>{{zpxx.zprs}}</td>
                             <th>最低学历:</th>
-                            <td>{{zpxx.zdxl | dicts('xueli')}}</td>
+                            <td>{{zpxx.zdxl | dics('xueli')}}</td>
                             <th>年龄要求:</th>
                             <td>{{zpxx.nlmin}} 至 {{zpxx.nlmax}}</td>
                         </tr>
@@ -128,7 +128,7 @@
                             <th>工作年限:</th>
                             <td>{{zpxx.gznx}}</td>
                             <th>工作性质:</th>
-                            <td>{{zpxx.gzxz | dicts('gzxz')}}</td>
+                            <td>{{zpxx.gzxz | dics('gzxz')}}</td>
                         </tr>
                         <tr>
                             <th>关 键 字:</th>
@@ -136,7 +136,7 @@
                             <th>刷新日期:</th>
                             <td>{{zpxx.reloadtime | date("YYYY-MM-DD HH:mm:ss")}}</td>
                             <th>薪资标准:</th>
-                            <td>{{zpxx.xzlx | dicts('xzfw')}}</td>
+                            <td>{{zpxx.xzlx | dics('xzfw')}}</td>
                         </tr>
                         <tr>
                             <th>工作地点:</th>
@@ -220,7 +220,7 @@
             ...mapGetters([
                 'textMap',
                 'enums',
-                'dicts'
+                'dics'
             ])
         },
         created() {
