@@ -147,7 +147,7 @@
                                                             </el-col>
                                                             <el-col :span="6">
                                                                 <el-tooltip
-                                                                        content="查询注册状态，如果能查到自动填充到输入框，如果未注册，成功受理后会自动注册用户"
+                                                                        content="查询注册状态，如果能查到自动填充到输入框，如果未注册，成功受理后会自动注册用户，登录名为法人身份证号码"
                                                                         placement="bottom"
                                                                         effect="light">
                                                                     <el-button type="primary"
@@ -175,12 +175,12 @@
                                                                     <!--<template slot="prepend">法人姓名：</template>-->
                                                                 </el-input>
                                                             </el-col>
-                                                            <el-col :span="8">
+                                                            <el-col :span="10">
                                                                 <el-input v-model="memberCode" placeholder="法人身份证号">
                                                                     <!--<template slot="prepend">身份证号：</template>-->
                                                                 </el-input>
                                                             </el-col>
-                                                            <el-col :span="8">
+                                                            <el-col :span="6">
                                                                 <el-input v-model="memberPhone" placeholder="手机号">
                                                                     <!--<template slot="prepend">手机号：</template>-->
                                                                 </el-input>
@@ -738,7 +738,7 @@
                                       @focus="handleChangeTakeType"></el-input>
                             <!--抽了号，但是号不是正在处理的不能点击确认收件；或者不关心是否抽号和抽号状态，没有手机号或姓名或身份证号或统一社会信用代码的按钮不可点击（莲湖直接收件）-->
                             <el-button
-                                    :disabled="(itemNumber.id &&  itemNumber.status!=6) || !memberPhone || !memberRealname ||!memberCode || submiting"
+                                    :disabled="(itemNumber.id &&  itemNumber.status!=6) || !memberPhone || !memberRealname ||!memberCode || submiting || !itemVo || !itemVo.id"
                                     type="primary"
                                     :loading="submiting" @click="pass">
                                 确认收件
@@ -1190,9 +1190,11 @@
                             this.companyName = c.qymc;
                             this.companyCode = c.ty_code;
                             this.memberCode = c.fr_id ? c.fr_id : '';
+                        }else{
+                            this.$message.warning("企业信息中没有搜索到【" + this.companyCode + "】企业信息");
                         }
                     } else {
-                        this.$message.error("企业信息中没有搜索到【" + this.companyCode + "】企业信息");
+                        this.$message.error("企业信息查询失败");
                         this.companyInfo = {};
                     }
                 })
@@ -1236,17 +1238,19 @@
              *  选中事项变化时
              * */
             changeItem(itemId) {
+                if (!itemId || itemId==this.itemVo.id || this.loading) {
+                    return;
+                }
                 //清空事项信息
                 this.itemVo = {};
                 //清空所需材料列表信息
                 this.itemMaterialVoList = [];
                 // alert(itemId)
-                if (!itemId) {
-                    return;
-                }
+                this.loading  = true;
                 getItemInfo({
                     id: itemId
                 }).then(response => {
+                    this.loading  = false;
                     if (response.httpCode === 200) {
                         let data = response.data;
                         this.itemVo = data.itemVo;
@@ -1256,6 +1260,8 @@
                     } else {
                         this.$message.error('网络超时');
                     }
+                }).catch(e=>{
+                    this.loading = false;
                 });
             },
             //事项分类变化时触发
@@ -1352,7 +1358,7 @@
                 this.memberRealname = '';
                 this.memberCode = '';
                 this.itemMaterialVoList = [];
-                this.selectedItem = null;
+                // this.selectedItem = null;
                 this.getNumberBy_processNumber = '';
                 // this.getNumberBy_hallNumber = '';
                 this.getNumberBy_expressNumber = '';
@@ -1657,6 +1663,7 @@
              * 通过
              */
             pass() {
+                let _this = this;
                 if (!this.itemHandTypeVo.handType) {
                     this.$message.warning('请选择交件方式');
                     return;
@@ -1665,12 +1672,48 @@
                     this.$message.warning('请选择取件方式');
                     return;
                 }
-                let _this = this;
+                //判断如果是无预审收件，则验证无预审表单各项目是否填写完整
+                if(this.memberType==1) { //自然人
+                    //判断姓名，手机号，身份证号是否填写
+                    if(this.memberRealname =='') {
+                        this.$message.warning('姓名没有填写，不能提交');
+                        return;
+                    }
+                    if(this.memberCode =='') {
+                        this.$message.warning('身份证没有填写，不能提交');
+                        return;
+                    }
+                    if(this.memberPhone =='') {
+                        this.$message.warning('手机号没有填写，不能提交');
+                        return;
+                    }
+                }else{  //法人
+                    //判断法人姓名，法人身份证号，手机号，统一社会信用代码是否填写
+                    if(this.memberRealname =='') {
+                        this.$message.warning('姓名没有填写，不能提交');
+                        return;
+                    }
+                    if(this.memberCode =='') {
+                        this.$message.warning('身份证没有填写，不能提交');
+                        return;
+                    }
+                    if(this.memberPhone =='') {
+                        this.$message.warning('手机号没有填写，不能提交');
+                        return;
+                    }
+                    if(this.companyCode =='') {
+                        this.$message.warning('社会统一信用代码没有填写，不能提交');
+                        return;
+                    }
+                    if(this.companyName =='') {
+                        this.$message.warning('企业名称没有填写，不能提交');
+                        return;
+                    }
+                }
                 let checked_m = this.materialSelection.map(function (m) {
                     return m.id;
                 });
                 let _itemNumber = _this.itemNumber;
-
                 let msg = '';
                 if (checked_m.length > 0) {
                     msg = '确认已经收件（' + checked_m.length + '项），是否确认并交由部门处理？'
