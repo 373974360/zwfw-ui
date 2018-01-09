@@ -16,6 +16,19 @@
                 <el-dropdown-item>
                     当前所叫号：{{ inItem.itemId }}
                 </el-dropdown-item>
+
+                <br>
+                <el-select v-model="windowId" placeholder="请选择叫号窗口">
+                    <el-option
+                            v-for="item in windows"
+                            :key="item.windowId"
+                            :label="item.windowId"
+                            :value="item.windowId">
+                    </el-option>
+                </el-select>
+                <el-button style="margin-left: 40%;" :loading="loading" type="primary" @click="jiaohao">叫号</el-button>
+
+
             </el-dropdown-menu>
         </el-dropdown>
 
@@ -47,7 +60,7 @@
     import Hamburger from 'components/Hamburger';
     import ErrLog from 'components/ErrLog';
     import errLogStore from 'store/errLog';
-    import { getDataNumberCount } from '../../../api/hallSystem/count/count'
+    import { getDataNumberCount, jiaohao } from '../../../api/hallSystem/count/count'
 
     export default {
       components: {
@@ -58,12 +71,15 @@
       data() {
         return {
           log: errLogStore.state.errLog,
+          loading: false,
           waitItem: {
             total: 0
           },
           inItem: {
             itemId: ''
-          }
+          },
+          windows: [],
+          windowId: ''
         }
       },
       computed: {
@@ -89,6 +105,25 @@
                 }
                 if(response.data.inItem!=null && response.data.inItem.length>0){
                     this.inItem.itemId = response.data.inItem[0].itemId;
+                }
+                if(response.data.windows!=null && response.data.windows.length>0){
+                    this.windows = response.data.windows;
+                }
+            });
+        },
+        jiaohao() {
+            this.loading = true;
+            if(this.windowId==null || this.windowId==''){
+                this.$message.warning('请选择叫号窗口');
+                return false;
+            }
+            jiaohao(this.windowId).then(response=>{
+                this.loading = false
+                if(response.data=="叫号成功"){
+                    this.$message.success('叫号成功');
+                    this.dataNumberCount();
+                }else{
+                    this.$message.error(response.data);
                 }
             });
         }

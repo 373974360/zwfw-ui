@@ -165,3 +165,15 @@ export function getDataNumberCount() {
         method: 'get'
     });
 }
+
+/**
+ * 叫号
+ */
+export function jiaohao(windowId) {
+    const data = {windowId}
+    return fetch({
+        url: '/api/hallSystem/count/statistics/jiaohao',
+        method: 'post',
+        data
+    });
+}
