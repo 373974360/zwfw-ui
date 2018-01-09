@@ -87,13 +87,13 @@
         <el-dialog :title="dialogDictListTitle" :visible.sync="dialogDictListVisible"
                    :close-on-click-modal="closeOnClickModal">
             <div class="filter-container">
-                <el-tooltip class="item" effect="dark" content="添加用户" placement="top-start">
+                <el-tooltip class="item" effect="dark" content="添加子项" placement="top-start">
                     <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="plus"
                                @click="handleDictCreate">
                         添加
                     </el-button>
                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" content="删除用户" placement="top-start">
+                <el-tooltip class="item" effect="dark" content="删除子项" placement="top-start">
                     <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="delete"
                                @click="handleDictDelete">
                         删除
@@ -147,7 +147,7 @@
                     <el-input-number v-model="dic.sortNo" :min="1" :max="100"/>
                 </el-form-item>
                 <el-form-item label="备　　注">
-                    <el-input type="textarea" v-model="dicIndex.remark" :rows="3"/>
+                    <el-input type="textarea" v-model="dic.remark" :rows="3"/>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
