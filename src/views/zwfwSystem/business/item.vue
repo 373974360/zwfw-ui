@@ -561,6 +561,9 @@
                     <!--<span>{{zwfwItemMaterial.paperDescription}}</span>-->
                     <el-input v-model="zwfwItemMaterial.paperDescription" placeholder="数量和规格"></el-input>
                 </el-form-item>
+                <el-form-item label="排序"  v-show="changeMaterialInfo">
+                    <el-input-number v-model="zwfwItemMaterial.sortNo" :min="1" :max="100"/>
+                </el-form-item>
                 <table>
                     <tr>
                         <td>
@@ -732,6 +735,7 @@
                     electronicMaterial: true,
                     eform: '',
                     name: '',
+                    sortNo: '',
                     paperDescription: '',
                     acceptStandard: '',
                     remark: '',
@@ -1325,7 +1329,8 @@
                 const query = {
                     itemId: this.itemId,
                     materialId: this.zwfwItemMaterial.id,
-                    paperDescription: this.zwfwItemMaterial.paperDescription
+                    paperDescription: this.zwfwItemMaterial.paperDescription,
+                    sortNo: this.zwfwItemMaterial.sortNo
                 }
                 this.dialogFormLoading = true;
                 createZwfwItemMaterial(query).then(response => {
@@ -1346,6 +1351,7 @@
                     electronicMaterial: this.zwfwItemMaterial.electronicMaterial,
                     eform: this.zwfwItemMaterial.eform,
                     name: this.zwfwItemMaterial.name,
+                    sortNo: this.zwfwItemMaterial.sortNo,
                     paperDescription: this.zwfwItemMaterial.paperDescription,
                     acceptStandard: this.zwfwItemMaterial.acceptStandard,
                     remark: this.zwfwItemMaterial.remark,
@@ -1400,6 +1406,24 @@
                 this.$message.error('网络不稳定，上传失败');
             },
             encodeEditorHtml() {
+                // if(this.acceptConditionHtml) {
+                //     this.acceptConditionHtml = this.acceptConditionHtml.replace(/%/g, '％');
+                // }
+                // if(this.workflowDescriptionHtml) {
+                //     this.workflowDescriptionHtml = this.workflowDescriptionHtml.replace(/%/g, '％');
+                // }
+                // if(this.chargeStandardHtml) {
+                //     this.chargeStandardHtml = this.chargeStandardHtml.replace(/%/g, '％');
+                // }
+                // if(this.chargeBasisHtml) {
+                //     this.chargeBasisHtml = this.chargeBasisHtml.replace(/%/g, '％');
+                // }
+                // if(this.setBasisHtml) {
+                //     this.setBasisHtml = this.setBasisHtml.replace(/%/g, '％');
+                // }
+                // if(this.noticeTextHtml) {
+                //     this.noticeTextHtml = this.noticeTextHtml.replace(/%/g, '％');
+                // }
                 this.zwfwItem.acceptCondition = encodeURIComponent(encodeURIComponent(this.acceptConditionHtml));
                 this.zwfwItem.workflowDescription = encodeURIComponent(encodeURIComponent(this.workflowDescriptionHtml));
                 this.zwfwItem.chargeStandard = encodeURIComponent(encodeURIComponent(this.chargeStandardHtml));
@@ -1408,12 +1432,19 @@
                 this.zwfwItem.remark = encodeURIComponent(encodeURIComponent(this.noticeTextHtml));
             },
             decodeEditorHtml() {
-                this.acceptConditionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.acceptCondition));
-                this.workflowDescriptionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.workflowDescription));
-                this.chargeStandardHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeStandard));
-                this.chargeBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeBasis));
-                this.setBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.setBasis));
-                this.noticeTextHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.remark));
+                // 返回来的数据是不用 decode 的，而且在内容包含%字符时，decode 会报错
+                // this.acceptConditionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.acceptCondition));
+                this.acceptConditionHtml = this.zwfwItem.acceptCondition;
+                // this.workflowDescriptionHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.workflowDescription));
+                this.workflowDescriptionHtml = this.zwfwItem.workflowDescription;
+                // this.chargeStandardHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeStandard));
+                this.chargeStandardHtml = this.zwfwItem.chargeStandard;
+                // this.chargeBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.chargeBasis));
+                this.chargeBasisHtml = this.zwfwItem.chargeBasis;
+                // this.setBasisHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.setBasis));
+                this.setBasisHtml = this.zwfwItem.setBasis;
+                // this.noticeTextHtml = decodeURIComponent(decodeURIComponent(this.zwfwItem.remark));
+                this.noticeTextHtml = this.zwfwItem.remark;
             },
             closeZwfwItemForm() {
                 this.dialogItemFormVisible = false;
@@ -1502,6 +1533,7 @@
                     electronicMaterial: true,
                     eform: '',
                     name: '',
+                    sortNo: '',
                     paperDescription: '',
                     acceptStandard: '',
                     remark: '',
