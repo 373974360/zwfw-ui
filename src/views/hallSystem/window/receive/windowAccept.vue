@@ -1190,7 +1190,7 @@
                             this.companyName = c.qymc;
                             this.companyCode = c.ty_code;
                             this.memberCode = c.fr_id ? c.fr_id : '';
-                        }else{
+                        } else {
                             this.$message.warning("企业信息中没有搜索到【" + this.companyCode + "】企业信息");
                         }
                     } else {
@@ -1238,7 +1238,7 @@
              *  选中事项变化时
              * */
             changeItem(itemId) {
-                if (!itemId || itemId==this.itemVo.id || this.loading) {
+                if (!itemId || itemId == this.itemVo.id || this.loading) {
                     return;
                 }
                 //清空事项信息
@@ -1246,11 +1246,11 @@
                 //清空所需材料列表信息
                 this.itemMaterialVoList = [];
                 // alert(itemId)
-                this.loading  = true;
+                this.loading = true;
                 getItemInfo({
                     id: itemId
                 }).then(response => {
-                    this.loading  = false;
+                    this.loading = false;
                     if (response.httpCode === 200) {
                         let data = response.data;
                         this.itemVo = data.itemVo;
@@ -1260,7 +1260,7 @@
                     } else {
                         this.$message.error('网络超时');
                     }
-                }).catch(e=>{
+                }).catch(e => {
                     this.loading = false;
                 });
             },
@@ -1673,39 +1673,39 @@
                     return;
                 }
                 //判断如果是无预审收件，则验证无预审表单各项目是否填写完整
-                if(this.memberType==1) { //自然人
+                if (this.memberType == 1) { //自然人
                     //判断姓名，手机号，身份证号是否填写
-                    if(this.memberRealname =='') {
+                    if (this.memberRealname == '') {
                         this.$message.warning('姓名没有填写，不能提交');
                         return;
                     }
-                    if(this.memberCode =='') {
+                    if (this.memberCode == '') {
                         this.$message.warning('身份证没有填写，不能提交');
                         return;
                     }
-                    if(this.memberPhone =='') {
+                    if (this.memberPhone == '') {
                         this.$message.warning('手机号没有填写，不能提交');
                         return;
                     }
-                }else{  //法人
+                } else {  //法人
                     //判断法人姓名，法人身份证号，手机号，统一社会信用代码是否填写
-                    if(this.memberRealname =='') {
+                    if (this.memberRealname == '') {
                         this.$message.warning('姓名没有填写，不能提交');
                         return;
                     }
-                    if(this.memberCode =='') {
+                    if (this.memberCode == '') {
                         this.$message.warning('身份证没有填写，不能提交');
                         return;
                     }
-                    if(this.memberPhone =='') {
+                    if (this.memberPhone == '') {
                         this.$message.warning('手机号没有填写，不能提交');
                         return;
                     }
-                    if(this.companyCode =='') {
+                    if (this.companyCode == '') {
                         this.$message.warning('社会统一信用代码没有填写，不能提交');
                         return;
                     }
-                    if(this.companyName =='') {
+                    if (this.companyName == '') {
                         this.$message.warning('企业名称没有填写，不能提交');
                         return;
                     }
@@ -2018,6 +2018,10 @@
 
     #materiaTable th div {
         text-align: center;
+    }
+
+    #itemStepInfo img {
+        max-width: 100%;
     }
 
     #itemStepInfo table {
