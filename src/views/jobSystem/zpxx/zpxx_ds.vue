@@ -135,9 +135,9 @@
                         </tr>
                     </table>
                 </el-tab-pane>
-                <el-tab-pane label="投递记录" name="tdjl">
+                <!--<el-tab-pane label="投递记录" name="tdjl">-->
 
-                </el-tab-pane>
+                <!--</el-tab-pane>-->
             </el-tabs>
         </el-dialog>
         <!-- 招聘信息查看弹出框  结束 -->

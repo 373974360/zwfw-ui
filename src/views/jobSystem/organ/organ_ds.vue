@@ -119,27 +119,27 @@
                         </tr>
                     </table>
                 </el-tab-pane>
-                <el-tab-pane label="认证信息" name="second">
-                    <table v-if="this.jobOrganAuth.length>0" class="member_view" width="100%">
-                        <tr>
-                            <th>资料1:</th>
-                            <td>{{jobOrganAuth.img1}}</td>
-                        </tr>
-                        <tr>
-                            <th>资料2:</th>
-                            <td>{{jobOrganAuth.img2}}</td>
-                        </tr>
-                        <tr>
-                            <th>资料3:</th>
-                            <td>{{jobOrganAuth.img3}}</td>
-                        </tr>
-                    </table>
-                    <table v-else class="member_view" width="100%">
-                        <tr>
-                            <td>该会员暂未完善相关信息！</td>
-                        </tr>
-                    </table>
-                </el-tab-pane>
+                <!--<el-tab-pane label="认证信息" name="second">-->
+                    <!--<table v-if="this.jobOrganAuth.length>0" class="member_view" width="100%">-->
+                        <!--<tr>-->
+                            <!--<th>资料1:</th>-->
+                            <!--<td>{{jobOrganAuth.img1}}</td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<th>资料2:</th>-->
+                            <!--<td>{{jobOrganAuth.img2}}</td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<th>资料3:</th>-->
+                            <!--<td>{{jobOrganAuth.img3}}</td>-->
+                        <!--</tr>-->
+                    <!--</table>-->
+                    <!--<table v-else class="member_view" width="100%">-->
+                        <!--<tr>-->
+                            <!--<td>该会员暂未完善相关信息！</td>-->
+                        <!--</tr>-->
+                    <!--</table>-->
+                <!--</el-tab-pane>-->
             </el-tabs>
         </el-dialog>
     </div>
