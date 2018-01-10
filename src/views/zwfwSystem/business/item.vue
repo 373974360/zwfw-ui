@@ -4,6 +4,26 @@
             <el-input @keyup.enter.native="getItemList" style="width: 230px;" class="filter-item"
                       placeholder="输入事项名称/基本编码"
                       v-model="listQuery.name"></el-input>
+            <el-cascader :options="cascader" class="filter-item" @change="handleChange"
+                         :show-all-levels="true" clearable filterable expand-trigger="hover"
+                         :change-on-select="true" style="width: 180px" placeholder="所属部门">
+            </el-cascader>
+            <el-select class="filter-item" v-model="listQuery.processType" clearable placeholder="请选择办件类型">
+                <el-option v-for="item in dics['bjlx']" :key="item.code" :value="item.code"
+                           :label="item.value"></el-option>
+            </el-select>
+            <el-select class="filter-item" v-model="listQuery.handleType" clearable placeholder="请选择办理形式">
+                <el-option v-for="item in dics['blxs']" :key="item.code" :value="item.code"
+                           :label="item.value"></el-option>
+            </el-select>
+            <el-select class="filter-item" v-model="listQuery.enable" clearable placeholder="事项状态">
+                <el-option
+                        v-for="item in options"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
+            </el-select>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getItemList">搜索</el-button>
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleItemCreate" type="primary"
                        icon="plus">
@@ -312,7 +332,9 @@
                 <el-form-item label="交件方式" prop="handTypes">
                     <el-checkbox-group v-model="zwfwItem.handTypes" @change="handleHandTypesChange">
                         <template v-for="item in enums['HandType']">
-                            <el-checkbox :disabled="(zwfwItem.handleType=='blxs_ckbl' && (item.code==2 || item.code==3)) ? true : false" :key="item.code" :label="item.code + ''">
+                            <el-checkbox
+                                    :disabled="(zwfwItem.handleType=='blxs_ckbl' && (item.code==2 || item.code==3)) ? true : false"
+                                    :key="item.code" :label="item.code + ''">
                                 {{item.value}}
                             </el-checkbox>
                         </template>
@@ -353,7 +375,9 @@
                 </el-form-item>
                 <el-form-item label="取件方式" prop="takeTypes">
                     <el-checkbox-group v-model="zwfwItem.takeTypes">
-                        <el-checkbox v-for="item in enums['TakeType']" :disabled="(zwfwItem.handleType=='blxs_ckbl' && (item.code==2 || item.code==3)) ? true : false" :key="item.code" :label="item.code + ''">
+                        <el-checkbox v-for="item in enums['TakeType']"
+                                     :disabled="(zwfwItem.handleType=='blxs_ckbl' && (item.code==2 || item.code==3)) ? true : false"
+                                     :key="item.code" :label="item.code + ''">
                             {{item.value}}
                         </el-checkbox>
                     </el-checkbox-group>
@@ -561,7 +585,7 @@
                     <!--<span>{{zwfwItemMaterial.paperDescription}}</span>-->
                     <el-input v-model="zwfwItemMaterial.paperDescription" placeholder="数量和规格"></el-input>
                 </el-form-item>
-                <el-form-item label="排序"  v-show="changeMaterialInfo">
+                <el-form-item label="排序" v-show="changeMaterialInfo">
                     <el-input-number v-model="zwfwItemMaterial.sortNo" :min="1" :max="100"/>
                 </el-form-item>
                 <table>
@@ -653,6 +677,13 @@
                 callback();
             };
             return {
+                options: [{
+                    value: '1',
+                    label: '启用'
+                }, {
+                    value: '0',
+                    label: '禁用'
+                }],
                 changeMaterialName: false,
                 changeMaterialInfo: false,
                 zwfwItemList: [],
@@ -669,7 +700,11 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
-                    name: undefined
+                    name: undefined,
+                    departmentId: undefined,
+                    processType:undefined,
+                    handleType: undefined,
+                    enable: '1'
                 },
                 activeName: 'first',
                 zwfwItem: {
@@ -836,7 +871,8 @@
                     address: '',
                     defaultFlag: false
                 },
-                cardItemVisible: false
+                cardItemVisible: false,
+                cascader: []
             }
         },
         computed: {
@@ -895,7 +931,7 @@
             },
             'zwfwItem.handleType'(value){
                 console.log(value);
-                if(value=="blxs_ckbl"){
+                if (value == "blxs_ckbl") {
                     this.zwfwItem.handTypes = ["1"];
                     this.zwfwItem.takeTypes = ["1"];
                 }
@@ -964,10 +1000,19 @@
                 getDeptCascader().then(response => {
                     if (response.httpCode === 200) {
                         this.deptTree = response.data;
+                        this.cascader = response.data;
                     } else {
                         this.$message.error('加载部门信息失败');
                     }
                 });
+            },
+            handleChange(value) {
+                this.listQuery.departmentId = null;
+                if (value.length > 0) {
+                    this.listQuery.departmentId = value[value.length - 1];
+                } else {
+                    this.getItemList();
+                }
             },
             getAddresseeList() {
                 getAllAddressees().then(response => {
