@@ -25,6 +25,19 @@
                 <el-form-item label="事项分类名称" prop="name">
                     <el-input v-model="category.name"></el-input>
                 </el-form-item>
+                <el-form-item label="图标" prop="icon">
+                    <el-upload class="avatar-uploader" name="uploadFile"
+                               :accept="acceptTypes"
+                               :action="uploadAction"
+                               :on-success="handleAvatarSuccess"
+                               :on-error="handlerAvatarError"
+                               :before-upload="beforeAvatarUpload"
+                               :show-file-list="false"
+                               :on-remove="handleRemove">
+                        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
+                </el-form-item>
                 <el-form-item label="排序">
                     <el-input-number v-model="category.sortNo" :min="1" :max="100"/>
                 </el-form-item>
@@ -147,6 +160,7 @@
         name: 'category_table',
         data() {
             return {
+                imageUrl: '',
                 categoryList: [],
                 itemList: [],
                 categoryItem: [],
@@ -184,7 +198,8 @@
                     sortNo: 1,
                     treePosition: '',
                     enable: '',
-                    remark: ''
+                    remark: '',
+                    icon: ''
                 },
                 zwfwItem: {
                     id: undefined,
@@ -208,7 +223,9 @@
                     name: [
                         {required: true, message: '请输入事项名称或基本编码'}
                     ]
-                }
+                },
+                uploadAction: this.$store.state.app.uploadUrl,
+                acceptTypes: this.$store.state.app.imageAccepts
             }
         },
         components: {
@@ -216,7 +233,6 @@
         },
         created() {
             this.getCategoryList();
-            // this.getItemList();
         },
         computed: {
             cascaderModel() {
@@ -290,6 +306,7 @@
                     this.category.treePosition = undefined;
                 }
                 this.getOptions(this.category.id);
+                this.imageUrl = this.category.icon;
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
             },
@@ -364,6 +381,35 @@
                     this.category.parentId = 0;
                     this.category.treePosition = undefined;
                 }
+            },
+
+            handleAvatarSuccess(res, file, fileList) {
+                if (res.state === 'SUCCESS') {
+                    this.imageUrl = URL.createObjectURL(file.raw);
+                    this.category.icon = res.url;
+                    this.$message.success('上传成功！');
+                } else {
+                    this.$message.error('上传失败！');
+                }
+            },
+            handlerAvatarError(err, file, fileList) {
+                console.log(err);
+                this.$message.error("网络不稳定，上传失败");
+            },
+            beforeAvatarUpload(file) {
+                const isJPG = this.acceptTypes.includes(file.type);
+                const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isJPG) {
+                    this.$message.error('上传头像图片格式不正确!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isJPG && isLt2M;
+            },
+            handleRemove() {
+                this.category.icon = '';
             },
             handleToggle(row) {
                 row._expanded = !row._expanded;
@@ -491,6 +537,7 @@
             closeCategoryForm() {
                 this.dialogFormVisible = false;
                 this.resetCategoryTemp();
+                this.imageUrl = '';
                 resetForm(this, 'categoryForm');
             },
             closeZwfwItemForm() {
@@ -509,7 +556,8 @@
                     sortNo: 1,
                     treePosition: '',
                     remark: '',
-                    enable: ''
+                    enable: '',
+                    icon: ''
                 };
             },
             resetItemTemp() {
@@ -522,3 +570,31 @@
         }
     }
 </script>
+<style>
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 178px;
+        height: 178px;
+        line-height: 178px;
+        text-align: center;
+    }
+
+    .avatar {
+        width: 178px;
+        height: 178px;
+        display: block;
+    }
+</style>
