@@ -1,5 +1,3 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue';
 import App from './App';
 import router from './router';
@@ -21,9 +19,6 @@ import vueWaves from './directive/waves'; // 水波纹指令
 import errLog from 'store/errLog'; // error log组件
 import moment from 'moment';
 import {getToken} from 'utils/auth';
-import Cookies from 'js-cookie';
-
-// import './mock/dept.js';  // 该项目所有请求使用mockjs模拟
 
 // register globally
 Vue.component('multiselect', Multiselect);
@@ -37,13 +32,6 @@ moment.locale('zh-cn');
 Object.keys(filters).forEach(key => {
     Vue.filter(key, filters[key])
 });
-
-
-// permissiom judge
-function hasPermission(permissions, permissionRoles) {
-    if (!permissionRoles) return true;
-    return permissions.some(permission => permissionRoles.indexOf(permission) >= 0)
-}
 
 // register global progress.
 const whiteList = ['/login', '/authredirect', '/reset', '/sendpwd'];// 不重定向白名单
@@ -68,37 +56,10 @@ router.beforeEach((to, from, next) => {
                         router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
                         next(to.path); // hack方法 确保addRoutes已完成
                     })
-                    if(permissions.length > 0){
-                        let systemCount = 0;
-                        for(let permission of permissions){
-                            if(permission.indexOf('System:admin') >= 0){
-                                systemCount++;
-                            }
-                        }
-                        if(systemCount == 1 && to.path == "/"){
-                            const currentSystem = permissions[0].substr(0,permissions[0].indexOf(':'));
-                            Cookies.set('CurrentSystem',currentSystem);
-                            Cookies.set('SystemCount',1);
-                            next(currentSystem + '/index');
-                        }
-                    }
                 }).catch(err => {
                     console.log(err);
                 });
             } else {
-                //设置当前系统，用来动态输出路由
-                if(to.path.indexOf("System") >= 0){
-                    const currentSystem = to.path.substr(1,to.path.indexOf("/index") - 1);
-                    Cookies.set('CurrentSystem',currentSystem);
-                    if(store.getters.addRouters.length <= 0){
-                        const permissions = store.getters.permissions;
-                        store.dispatch('GenerateRoutes', {permissions}).then(() => { // 生成可访问的路由表
-                            router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
-                            next(to.path); // hack方法 确保addRoutes已完成
-                        })
-                    }
-                    next();
-                }
                 if(to.path == "/" && store.getters.addRouters.length > 0){
                     store.dispatch('GenerateRoutes').then(() => { // 生成可访问的路由表
                         next(to.path); // hack方法 确保addRoutes已完成
@@ -116,16 +77,9 @@ router.beforeEach((to, from, next) => {
         }
     }
 });
-
-
 router.afterEach(() => {
     NProgress.done(); // 结束Progress
 });
-
-// window.onunhandledrejection = e => {
-//     console.log('unhandled', e.reason, e.promise);
-//     e.preventDefault()
-// };
 
 // 生产环境错误日志
 if (process.env === 'production') {
@@ -138,20 +92,6 @@ if (process.env === 'production') {
         })
     };
 }
-
-// window.onerror = function (msg, url, lineNo, columnNo, error) {
-//     console.log('window')
-// };
-//
-// console.error = (function (origin) {
-//     return function (errorlog) {
-//         // handler();//基于业务的日志记录及数据报错
-//         console.log('console'+errorlog)
-//         origin.call(console, errorlog);
-//     }
-// })(console.error);
-
-
 new Vue({
     router,
     store,

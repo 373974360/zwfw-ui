@@ -1,5 +1,5 @@
 <template>
-    <div :style="{height:stickyHeight+'px',zIndex:zIndex,overflow:'scroll',top:stickyTop+'px',zIndex:zIndex,position:position}">
+    <div :style="{height:stickyHeight+'px',zIndex:zIndex,overflow:'auto',top:stickyTop+'px',zIndex:zIndex,position:position}">
         <slot>
             <div>sticky</div>
         </slot>

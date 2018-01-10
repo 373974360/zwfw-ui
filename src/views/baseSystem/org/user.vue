@@ -81,7 +81,7 @@
                 <el-form-item label="部门" prop="deptId">
                     <el-cascader :options="cascader" class="filter-item" @change="handleChanges" v-model="updateModel"
                                  :show-all-levels="true"
-                                 :change-on-select="true" expand-trigger="hover" :clearable="true" style="width: 180px"
+                                 :change-on-select="true" expand-trigger="hover" :clearable="true" style="width: 300px"
                                  placeholder="选择部门"
                     ></el-cascader>
                 </el-form-item>
@@ -197,7 +197,11 @@
                     id: undefined,
                     deptId: '',
                     name: '',
-                    deptVo: {},
+                    deptVo: {
+                        id: '',
+                        name: '',
+                        treePosition: '',
+                    },
                     sex: 1,
                     phone: '',
                     avatar: '',
@@ -219,12 +223,8 @@
                         {required: true, message: '请输入手机号码'},
                         {validator: validateMobiles, trigger: 'blur'}
                     ],
-                    avatar: [
-                        {type: 'url', required: true, message: '头像地址不正确'}
-                    ],
                     account: [
-                        {required: true, message: '请输入邮箱'},
-                        {type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur'}
+                        {required: true, message: '请输入帐号'}
                     ],
                     password: [
                         {required: true, message: '请输入密码'},
@@ -234,9 +234,6 @@
                     passwordConfirm: [
                         {required: true, message: '请再次输入密码'},
                         {validator: validatePass2, trigger: 'blur'}
-                    ],
-                    empNo: [
-                        {required: true, message: '请输入工号'}
                     ]
                 },
                 selectedRows: [],
@@ -314,7 +311,6 @@
             },
             handleCreate(row) {
                 this.currentRow = row;
-                // this.sysUser.deptId = row.id;
                 this.sysUserRules1.password[0].required = true;
                 this.sysUserRules1.passwordConfirm[0].required = true;
                 this.dialogStatus = 'create';
@@ -434,7 +430,11 @@
                     id: undefined,
                     deptId: '',
                     name: '',
-                    deptVo: {},
+                    deptVo: {
+                        id: '',
+                        name: '',
+                        treePosition: '',
+                    },
                     sex: 1,
                     phone: '',
                     avatar: '',

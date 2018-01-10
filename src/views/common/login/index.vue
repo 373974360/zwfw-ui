@@ -64,8 +64,6 @@
 <script>
     import {mapGetters} from 'vuex';
     import {isWscnEmail} from 'utils/validate';
-    import doCanvas from 'utils/canvas';
-    import Cookies from 'js-cookie';
 
     export default {
         name: 'login',
@@ -117,7 +115,6 @@
                             this.$message.success("登陆成功");
                             this.loading = false;
                             this.canvas = false;
-                            Cookies.remove('CurrentSystem');
                             this.$router.push({path: '/'});
 
                         }).catch(err => {
@@ -139,14 +136,7 @@
             }
         },
         mounted() {
-            // doCanvas();
             this.changeCaptcha();
-            const _this = this;
-            window.onresize = function () {
-                if (_this.canvas) {
-                    // doCanvas();
-                }
-            }
         }
     }
 </script>

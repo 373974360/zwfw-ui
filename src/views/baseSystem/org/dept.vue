@@ -119,10 +119,6 @@
                 deptRules: {
                     name: [
                         {required: true, message: '请输入部门名称'}
-                    ],
-                    phone: [
-                        {required: true, message: '请输入手机号码'},
-                        {validator: validateMobiles, trigger: 'blur'}
                     ]
                 }
             }

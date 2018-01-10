@@ -78,21 +78,21 @@ var EXPANDED_SUBPROCESS_CORNER_ROUND = 10;
 // icons
 var ICON_SIZE = 16;
 var ICON_PADDING = 4;
-var USERTASK_IMAGE = 		"/admin/diagram-viewer/images/deployer/user.png";
-var SCRIPTTASK_IMAGE = 		"/admin/diagram-viewer/images/deployer/script.png";
-var SERVICETASK_IMAGE = 	"/admin/diagram-viewer/images/deployer/service.png";
-var RECEIVETASK_IMAGE = 	"/admin/diagram-viewer/images/deployer/receive.png";
-var SENDTASK_IMAGE = 		"/admin/diagram-viewer/images/deployer/send.png";
-var MANUALTASK_IMAGE = 		"/admin/diagram-viewer/images/deployer/manual.png";
-var BUSINESS_RULE_TASK_IMAGE = "/admin/diagram-viewer/images/deployer/business_rule.png";
-var TIMER_IMAGE = 			"/admin/diagram-viewer/images/deployer/timer.png";
-var MESSAGE_CATCH_IMAGE = 	"/admin/diagram-viewer/images/deployer/message_catch.png";
-var MESSAGE_THROW_IMAGE = 	"/admin/diagram-viewer/images/deployer/message_throw.png";
-var ERROR_THROW_IMAGE = 	"/admin/diagram-viewer/images/deployer/error_throw.png";
-var ERROR_CATCH_IMAGE = 	"/admin/diagram-viewer/images/deployer/error_catch.png";
-var SIGNAL_CATCH_IMAGE = 	"/admin/diagram-viewer/images/deployer/signal_catch.png";
-var SIGNAL_THROW_IMAGE = 	"/admin/diagram-viewer/images/deployer/signal_throw.png";
-var MULTIPLE_CATCH_IMAGE = 	"/admin/diagram-viewer/images/deployer/multiple_catch.png";
+var USERTASK_IMAGE = 		"/static/diagram-viewer/images/deployer/user.png";
+var SCRIPTTASK_IMAGE = 		"/static/diagram-viewer/images/deployer/script.png";
+var SERVICETASK_IMAGE = 	"/static/diagram-viewer/images/deployer/service.png";
+var RECEIVETASK_IMAGE = 	"/static/diagram-viewer/images/deployer/receive.png";
+var SENDTASK_IMAGE = 		"/static/diagram-viewer/images/deployer/send.png";
+var MANUALTASK_IMAGE = 		"/static/diagram-viewer/images/deployer/manual.png";
+var BUSINESS_RULE_TASK_IMAGE = "/static/diagram-viewer/images/deployer/business_rule.png";
+var TIMER_IMAGE = 			"/static/diagram-viewer/images/deployer/timer.png";
+var MESSAGE_CATCH_IMAGE = 	"/static/diagram-viewer/images/deployer/message_catch.png";
+var MESSAGE_THROW_IMAGE = 	"/static/diagram-viewer/images/deployer/message_throw.png";
+var ERROR_THROW_IMAGE = 	"/static/diagram-viewer/images/deployer/error_throw.png";
+var ERROR_CATCH_IMAGE = 	"/static/diagram-viewer/images/deployer/error_catch.png";
+var SIGNAL_CATCH_IMAGE = 	"/static/diagram-viewer/images/deployer/signal_catch.png";
+var SIGNAL_THROW_IMAGE = 	"/static/diagram-viewer/images/deployer/signal_throw.png";
+var MULTIPLE_CATCH_IMAGE = 	"/static/diagram-viewer/images/deployer/multiple_catch.png";
 
 
 var ObjectType = {

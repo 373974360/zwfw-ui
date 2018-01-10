@@ -33,7 +33,6 @@
 <script>
     import {isWscnEmail} from 'utils/validate';
     import {sendPWD2Email} from 'api/common/login/login';
-    import doCanvas from 'utils/canvas';
 
     export default {
         name: 'reset',
@@ -73,10 +72,7 @@
             }
         },
         mounted() {
-            doCanvas();
-            window.onresize = function () {
-                doCanvas();
-            }
+
         }
     }
 </script>

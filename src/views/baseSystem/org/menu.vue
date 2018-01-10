@@ -223,7 +223,6 @@
                     if (valid) {
                         this.dialogLoading = true;
                         createMenu(this.sysMenu).then(response => {
-                            this.dialogLoading = false;
                             if (response.httpCode === 200) {
                                 this.resetMenuForm();
                                 this.$message.success('创建成功！');
@@ -233,6 +232,7 @@
                                 this.$message.error('创建失败！');
                             }
                         })
+                        this.dialogLoading = false;
                     } else {
                         return false;
                     }
@@ -243,7 +243,6 @@
                     if (valid) {
                         this.dialogLoading = true;
                         updateMenu(this.sysMenu).then(response => {
-                            this.dialogLoading = false;
                             if (response.httpCode === 200) {
                                 this.resetMenuForm();
                                 this.$message.success('更新成功！');
@@ -253,6 +252,7 @@
                                 this.$message.error('更新失败！');
                             }
                         })
+                        this.dialogLoading = false;
                     } else {
                         return false;
                     }
@@ -267,8 +267,8 @@
                     } else {
                         this.$message.error('删除失败！');
                     }
-                    this.listLoading = false;
                 })
+                this.listLoading = false;
             },
             resetTemp() {
                 this.sysMenu = {

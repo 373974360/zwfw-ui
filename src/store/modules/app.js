@@ -24,11 +24,10 @@ const app = {
         livenewsChannels: Cookies.get('livenewsChannels') || '[]',
         closeOnClickModal: false,
         loadedEnums: [],
-        currentSystem: Cookies.get('CurrentSystem'),
         routeComplete: false,
-        uploadUrl: '/api/common/upload',
+        uploadUrl: '/zuul/api/common/upload',
         imageAccepts: 'image/jpg, image/jpeg, image/png, image/bmp, image/gif',
-        fileAccepts: 'image/jpg,image/jpeg,image/png,image/bmp,image/gif,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/pdf,text/plain,application/zip,application/rar',
+        fileAccepts: 'image/jpg,image/jpeg,image/png,image/bmp,image/gif,application/msword,application/vnd.ms-excel,application/x-rar-compressed,application/x-zip-compressed,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,audio/mpeg',
         invalidStr: ['script', 'mid', 'master', 'truncate', 'insert', 'select', 'delete', 'update', 'declare', 'iframe', '\'', 'onreadystatechange', 'alert', 'atestu', 'xss', ';', '"', '<', '>', '\\', 'svg', 'confirm', 'prompt', 'onload', 'onmouseover', 'onfocus', 'onerror'],
         invalidReg: /script|mid|master|truncate|insert|select|delete|update|declare|iframe|'|onreadystatechange|alert|atestu|xss|;|"|<|>|\\|svg|confirm|prompt|onload|onmouseover|onfocus|onerror/g
     },
@@ -49,9 +48,6 @@ const app = {
         },
         SET_DICTS: (state, dics) => {
             state.dics = dics;
-        },
-        SET_SYSTEM: (state, currentSystem) => {
-            state.currentSystem = currentSystem;
         }
     },
     actions: {
@@ -95,12 +91,6 @@ const app = {
                     reject(error);
                 });
             });
-        },
-        SetSystem({commit}, data) {
-            return new Promise(resolve => {
-                commit('SET_SYSTEM', data);
-                resolve();
-            })
         }
     }
 };
