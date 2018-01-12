@@ -1505,25 +1505,27 @@
                 let _this = this;
                 this.resetForm();
                 this.queryLoading = true;
-                queryNumberByCallNumber({
-                    hallNumber: this.getNumberBy_hallNumber
-                }).then(response => {
-                    this.queryLoading = false;
-                    if (response.httpCode === 200) {
-                        if (response.data != null) {
-                            _this.refreshNumber(response.data);
+                setTimeout(function () {
+                    queryNumberByCallNumber({
+                        hallNumber: this.getNumberBy_hallNumber
+                    }).then(response => {
+                        _this.queryLoading = false;
+                        if (response.httpCode === 200) {
+                            if (response.data != null) {
+                                _this.refreshNumber(response.data);
+                            } else {
+                                _this.$message({
+                                    showClose: true,
+                                    message: '当前窗口没有正在办理的业务'
+                                });
+                            }
                         } else {
-                            _this.$message({
-                                showClose: true,
-                                message: '当前窗口没有正在办理的业务'
-                            });
+                            _this.$message.error(response.msg);
                         }
-                    } else {
-                        _this.$message.error(response.msg);
-                    }
-                }).catch(e => {
-                    this.queryLoading = false;
-                });
+                    }).catch(e => {
+                        _this.queryLoading = false;
+                    });
+                }, 1000);
             },
             refreshNumber(data) {
                 let _this = this;
@@ -1562,6 +1564,7 @@
                     _this.memberType = data.member.type + '';
                     if (data.member.legalPerson) {
                         _this.companyCode = data.member.legalPerson.companyCode;
+                        _this.companyName = data.member.legalPerson.companyName;
                         _this.queryCompanyInfo();
                     }
                     _this.getMemberAddressees();
