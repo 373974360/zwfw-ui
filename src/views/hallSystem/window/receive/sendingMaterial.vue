@@ -84,7 +84,7 @@
                                @click="showOpenCode(scope.row.handTypeInfo)">查看取件码</el-button>
                     <el-button-group v-else-if="scope.row.handTypeInfo && scope.row.handTypeInfo.handStatus==7">
                         <el-button type="primary" @click="showExpressInfo(scope.row.handTypeInfo)">查看快递单号</el-button>
-                        <!--<el-button type="primary" @click="checkTakePost(scope.row)">确认收件</el-button>-->
+                        <el-button type="primary" @click="showLogistics(scope.row.handTypeInfo)">查看物流</el-button>
                     </el-button-group>
                     <el-button v-else type="primary" @click="showHandInfo(scope.row)">查看</el-button>
                 </template>
@@ -129,6 +129,9 @@
                     </el-form-item>
                     <el-form-item label="交件状态">
                         <span>&nbsp;&nbsp;<b>{{currentRow.handTypeInfo.handStatus | enums('HandStatus')}}</b></span>
+                        &nbsp;&nbsp;
+                        <el-button v-if="[7,8].includes(currentRow.handTypeInfo.handStatus)" type="text"
+                                   @click="showLogistics(currentRow.handTypeInfo)">查看物流</el-button>
                     </el-form-item>
                     <el-form-item label="交件时间" v-if="currentRow.handTypeInfo.handTime">
                         <el-date-picker v-model="currentRow.handTypeInfo.handTime" type="datetime" disabled></el-date-picker>
@@ -139,19 +142,19 @@
                                        :value="item.id" :label="item.name"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="箱格序号" v-if="currentRow.handTypeInfo.handStatus==4 && currentRow.handTypeInfo.mailboxInfo.boxNo">
+                    <el-form-item label="箱格序号" v-if="[4,5].includes(currentRow.handTypeInfo.handStatus) && currentRow.handTypeInfo.mailboxInfo.boxNo">
                         <el-input v-model="currentRow.handTypeInfo.mailboxInfo.boxNo" disabled></el-input>
                     </el-form-item>
-                    <el-form-item label="取件码" v-if="currentRow.handTypeInfo.handStatus==4">
+                    <el-form-item label="取件码" v-if="[4,5].includes(currentRow.handTypeInfo.handStatus)">
                         <el-input v-model="currentRow.handTypeInfo.mailboxInfo.openCode" disabled></el-input>
                     </el-form-item>
                     <el-form-item label="收件手机号" v-if="currentRow.handTypeInfo.handType==2">
                         <el-input v-model="currentRow.handTypeInfo.mailboxInfo.consigneeMobile" disabled></el-input>
                     </el-form-item>
-                    <el-form-item label="快递公司" v-if="currentRow.handTypeInfo.handStatus==7">
+                    <el-form-item label="快递公司" v-if="[7,8].includes(currentRow.handTypeInfo.handStatus)">
                         <span>&nbsp;&nbsp;<b>{{currentRow.handTypeInfo.postInfo.expressCompany | dics('kdgs')}}</b></span>
                     </el-form-item>
-                    <el-form-item label="快递单号" v-if="currentRow.handTypeInfo.handStatus==7">
+                    <el-form-item label="快递单号" v-if="[7,8].includes(currentRow.handTypeInfo.handStatus)">
                         <el-input v-model="currentRow.handTypeInfo.postInfo.expressNumber" disabled></el-input>
                     </el-form-item>
                     <el-form-item label="收件地址" v-if="currentRow.handTypeInfo.handType==3">
@@ -174,6 +177,31 @@
                 <el-button icon="circle-cross" type="danger" @click="handTypeVisible = false">关 闭</el-button>
             </div>
         </el-dialog>
+
+        <el-dialog title="物流信息" :visible.sync="logisticsVisible" :close-on-click-modal="closeOnClickModal">
+            <el-card class="box-card">
+                <div slot="header" class="clearfix card-header">
+                    <p><b>物流状态&nbsp;&nbsp;&nbsp;&nbsp;{{logistics.deliverystatus | deliveryStatusFilter}}</b></p>
+                    <p>承运来源：{{logistics.type | expressTypeFilter}}</p>
+                    <p>运单编号：{{logistics.number}}</p>
+                </div>
+            </el-card>
+            <div class="track-list">
+                <ul>
+                    <li v-for="(item, index) in logistics.list"
+                        :class="(index == 0 ? 'first' : '') + ' ' + (index == logistics.list.length - 1 ? 'last' : '')">
+                        <div class="node-container">
+                            <div class="node"></div>
+                        </div>
+                        <div class="content">
+                            <p class="txt">{{item.status | removeNote(' ')}}</p>
+                            <p class="time">{{item.time | date('YYYY-MM-DD HH:mm:ss')}}</p>
+                        </div>
+                    </li>
+                    <div style="clear: both"></div>
+                </ul>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -187,6 +215,7 @@
     import {getAllAddressees} from 'api/hallSystem/window/addressee';
     import {getByNameOrLoginName} from '../../../../api/hallSystem/member/member'
     import {getToReceiveList} from '../../../../api/hallSystem/window/receive/windowCert'
+    import {queryLogistics} from '../../../../api/hallSystem/window/express'
 
     export default {
         name: 'table_demo',
@@ -210,11 +239,13 @@
                     handStatus: undefined
                 },
                 handTypeVisible: false,
+                logisticsVisible: false,
                 addresseeCard: {
                     name: '',
                     phone: '',
                     address: ''
-                }
+                },
+                logistics: {}
             }
         },
         computed: {
@@ -244,7 +275,7 @@
                 })
             },
             getMailboxList() {
-                const query = {}
+                const query = {};
                 getAllMailbox(query).then(response => {
                     if (response.httpCode === 200) {
                         this.mailboxList = response.data
@@ -346,6 +377,18 @@
                     confirmButtonText: '关闭'
                 })
             },
+            showLogistics(handTypeInfo) {
+                let company = handTypeInfo.postInfo.expressCompany;
+                let number = handTypeInfo.postInfo.expressNumber;
+                queryLogistics(company, number).then(response => {
+                    if (response.httpCode != 200) {
+                        this.$message.error('获取物流信息失败');
+                        return;
+                    }
+                    this.logistics = response.data;
+                    this.logisticsVisible = true;
+                })
+            },
             handlePageChange(val) {
                 this.listQuery.page = val;
                 this.getList();
@@ -357,6 +400,7 @@
         }
     }
 </script>
+
 <style rel="stylesheet/scss" lang="scss">
     .item {
         margin-top: 10px;
@@ -425,6 +469,66 @@
         }
         .card-body {
             padding: 12px;
+        }
+    }
+
+    .track-list{
+        padding: 20px;
+        position: relative;
+        ul {
+            list-style: none;
+            overflow: visible;
+            margin-top: 12px;
+            li{
+                position: relative;
+                width: 100%;
+                float: left;
+                padding: 0px 25px;
+                line-height: 18px;
+                border-left: 1px solid #d0d0d0;
+                color: #666;
+                .node {
+                    position: absolute;
+                    left: -5px;
+                    top: 0;
+                    width: 10px;
+                    height: 10px;
+                    background-color: #d0d0d0;
+                    border-radius: 10px;
+                }
+                .content {
+                    width: 100%;
+                    border-bottom: 1px solid #d0d0d0;
+                    top: -18px;
+                    position: relative;
+                }
+            }
+            li.first {
+                color: #dd1100;
+                .node-container {
+                    position: absolute;
+                    top: -5px;
+                    left: -10px;
+                    width: 20px;
+                    height: 20px;
+                    background-color: #fbc0c2;
+                    border-radius: 20px;
+                    .node {
+                        top: 4px;
+                        left: 4px;
+                        width: 12px;
+                        height: 12px;
+                        background-color: #dd1100;
+                        border-radius: 12px;
+                    }
+                }
+            }
+            li.last {
+                border: none;
+                .content {
+                    border: none;
+                }
+            }
         }
     }
 </style>

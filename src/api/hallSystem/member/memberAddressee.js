@@ -7,3 +7,11 @@ export function getAllAddresseesByMemberId(query) {
         params: query
     });
 }
+
+export function getMemberAddresseeById(id) {
+    return fetch({
+        url: '/api/hallSystem/memberAddressee/get',
+        method: 'get',
+        params: {id}
+    });
+}

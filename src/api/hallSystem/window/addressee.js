@@ -16,6 +16,14 @@ export function getAllAddressees(query) {
     });
 }
 
+export function getAddresseeById(id) {
+    return fetch({
+        url: '/api/hallSystem/addressee/get',
+        method: 'get',
+        params: {id}
+    })
+}
+
 export function addAddressee(addresseeVo) {
     const data = addresseeVo;
     return fetch({

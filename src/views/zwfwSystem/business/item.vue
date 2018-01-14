@@ -649,7 +649,7 @@
     import {getAllMaterial, updateZwfwMaterial} from 'api/zwfwSystem/business/material';
     import {getAllUser} from '../../../api/baseSystem/org/user';
     import {getDeptCascader} from 'api/baseSystem/org/dept';
-    import {getAllAddressees} from 'api/hallSystem/window/addressee';
+    import {getAllAddressees, getAddresseeById} from 'api/hallSystem/window/addressee';
     import {quillEditor} from 'vue-quill-editor'
 
     export default {
@@ -926,14 +926,15 @@
         },
         watch: {
             'zwfwItem.addresseeId'() {
-                this.initCardHeader();
-                this.cardItemVisible = false;
+                if (this.cardItemVisible) {
+                    this.initCardHeader();
+                    this.cardItemVisible = false;
+                }
             },
-            'zwfwItem.handleType'(value){
-                console.log(value);
-                if (value == "blxs_ckbl") {
-                    this.zwfwItem.handTypes = ["1"];
-                    this.zwfwItem.takeTypes = ["1"];
+            'zwfwItem.handleType'(value) {
+                if (value == 'blxs_ckbl') {
+                    this.zwfwItem.handTypes = ['1'];
+                    this.zwfwItem.takeTypes = ['1'];
                 }
             }
         },
@@ -1060,12 +1061,20 @@
                 this.zwfwItem.addresseeId = addressee.id;
                 copyProperties(this.cardHeader, addressee);
             },
+            getSetdAddressee() {
+                if (this.zwfwItem.handTypes.indexOf('3') && this.zwfwItem.addresseeId) {
+                    getAddresseeById(this.zwfwItem.addresseeId).then(response => {
+                        if (response.httpCode == 200) {
+                            copyProperties(this.cardHeader, response.data);
+                        }
+                    });
+                }
+            },
             handleItemCreate() {
                 this.resetItemTemp();
                 this.initCardHeader();
                 this.dialogStatus = 'create';
                 this.dialogItemFormVisible = true;
-
             },
             handleItemUpdate(row) {
                 this.currentRow = row;
@@ -1084,7 +1093,7 @@
                 } else {
                     this.zwfwItem.takeTypes = []
                 }
-                this.initCardHeader();
+                this.getSetdAddressee();
                 this.decodeEditorHtml();
                 this.dialogStatus = 'update';
                 this.dialogItemFormVisible = true;

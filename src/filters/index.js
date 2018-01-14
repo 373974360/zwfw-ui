@@ -40,6 +40,34 @@ export function smsStatusFilter(status) {
     return smsStatusMap[status]
 }
 
+export function deliveryStatusFilter(status) {
+    const deliveryStatusMap = {
+        1: '在途中',
+        2: '派件中',
+        3: '已签收',
+        4: '派送失败（拒签等）'
+    };
+    return deliveryStatusMap[status];
+}
+
+export function expressTypeFilter(type) {
+    const expressTypeMap = {
+        'ems': '邮政EMS',
+        'htky': '百世快递',
+        'deppon': '德邦物流',
+        'gto': '国通快递',
+        'kyexpress': '跨越速运',
+        'sto': '申通快递',
+        'sfexpress': '顺丰速运',
+        'ttkdex': '天天快递',
+        'yto': '圆通速递',
+        'yunda': '韵达快递',
+        'zjs': '宅急送',
+        'zto': '中通快递'
+    };
+    return expressTypeMap[type];
+}
+
 export function enums(value, type) {
     var array = app.state.enums[type];
     if(!array) {
@@ -94,4 +122,11 @@ export function parseToInt(value) {
         return '';
     }
     return parseInt(value);
+}
+
+export function removeNote(value, str) {
+    if (!str) {
+        str = '';
+    }
+    return value.replace(/\(.*?\)/g, str);
 }

@@ -259,6 +259,9 @@
                 </el-form-item>
                 <el-form-item label="取件状态" v-if="offlineReadonly">
                     <span>&nbsp;&nbsp;<b>{{processOfflineInfo.takeTypeInfo.flagTakeCert | enums('TakeStatus')}}</b></span>
+                    &nbsp;&nbsp;
+                    <el-button v-if="[7,8].includes(processOfflineInfo.takeTypeInfo.flagTakeCert)" type="text"
+                               @click="showLogistics(processOfflineInfo.takeTypeInfo)">查看物流</el-button>
                 </el-form-item>
                 <el-form-item label="取件时间" v-show="offlineReadonly && [2,5,8].includes(processOfflineInfo.takeTypeInfo.flagTakeCert)">
                     <el-date-picker v-model="processOfflineInfo.takeTypeInfo.takeCertTime" type="datetime" :disabled="offlineReadonly"></el-date-picker>
@@ -420,6 +423,30 @@
                            :loading="btnLoading">确 定</el-button>
             </div>
         </el-dialog>
+        <el-dialog title="物流信息" :visible.sync="logisticsVisible" :close-on-click-modal="closeOnClickModal">
+            <el-card class="box-card">
+                <div slot="header" class="clearfix card-header">
+                    <p><b>物流状态&nbsp;&nbsp;&nbsp;&nbsp;{{logistics.deliverystatus | deliveryStatusFilter}}</b></p>
+                    <p>承运来源：{{logistics.type | expressTypeFilter}}</p>
+                    <p>运单编号：{{logistics.number}}</p>
+                </div>
+            </el-card>
+            <div class="track-list">
+                <ul>
+                    <li v-for="(item, index) in logistics.list"
+                        :class="(index == 0 ? 'first' : '') + ' ' + (index == logistics.list.length - 1 ? 'last' : '')">
+                        <div class="node-container">
+                            <div class="node"></div>
+                        </div>
+                        <div class="content">
+                            <p class="txt">{{item.status | removeNote(' ')}}</p>
+                            <p class="time">{{item.time | date('YYYY-MM-DD HH:mm:ss')}}</p>
+                        </div>
+                    </li>
+                    <div style="clear: both"></div>
+                </ul>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -436,7 +463,8 @@
     import {creditCodeExist} from '../../../../api/hallSystem/member/legalPerson'
     import {getFinishList, addProcessOffline, saveExpressInfo, saveTakeType, complete, reserve, cancelReserve,
         getOrderStatus, getOrderDetail} from '../../../../api/hallSystem/window/delivery'
-    import {getAllAddresseesByMemberId} from '../../../../api/hallSystem/member/memberAddressee';
+    import {getAllAddresseesByMemberId, getMemberAddresseeById} from '../../../../api/hallSystem/member/memberAddressee';
+    import {queryLogistics} from '../../../../api/hallSystem/window/express'
 
     export default {
         name: 'table_demo',
@@ -509,6 +537,7 @@
                 offlineReadonly: false,
                 offlineCardVisible: false,
                 offlineCardItemVisible: false,
+                logisticsVisible: false,
                 offlineCardHeader: {
                     name: '',
                     phone: '',
@@ -525,6 +554,7 @@
                     startItemTime: '',
                     finishItemTime: '',
                     takeTypeInfo: {
+                        id: undefined,
                         takeType: '',
                         flagTakeCert: undefined,
                         takeCertTime: undefined,
@@ -674,7 +704,8 @@
                 },
                 addresseeList: [],
                 cardItemVisible: false,
-                cardVisible: false
+                cardVisible: false,
+                logistics: {}
             }
         },
         computed: {
@@ -964,13 +995,14 @@
                 this.takeTypeInfo.id = row.takeTypeInfo.id;
                 this.takeTypeInfo.processNumber = row.processNumber;
                 this.takeTypeInfo.memberId = row.memberId;
-                this.takeTypeInfo.takeType = row.takeTypeInfo.takeType+"";
+                this.takeTypeInfo.takeType = row.takeTypeInfo.takeType + '';
                 if (row.takeTypeInfo.mailboxInfo) {
-                    this.takeTypeInfo.mailboxInfo = copyProperties(this.takeTypeInfo.mailboxInfo, row.takeTypeInfo.mailboxInfo);
+                    copyProperties(this.takeTypeInfo.mailboxInfo, row.takeTypeInfo.mailboxInfo);
                 }
                 if (row.takeTypeInfo.postInfo) {
-                    this.takeTypeInfo.postInfo = copyProperties(this.takeTypeInfo.postInfo, row.takeTypeInfo.postInfo);
+                    copyProperties(this.takeTypeInfo.postInfo, row.takeTypeInfo.postInfo);
                 }
+                this.getSelectedAddressee();
                 Promise.all([this.getItemTakeTypes(row.itemId), this.getMemberAddressees()]).then(() => {
                     this.takeTypeVisible = true;
                 });
@@ -982,7 +1014,6 @@
                     }).then(response => {
                         if (response.httpCode == 200) {
                             this.addresseeList = response.data;
-                            this.initCardHeader();
                             resolve()
                         } else {
                             reject(response.msg);
@@ -1023,6 +1054,17 @@
                 this.takeTypeInfo.postInfo.addresseeId = addressee.id;
                 copyProperties(this.cardHeader, addressee);
                 this.cardVisible = true;
+            },
+            getSelectedAddressee() {
+                if (this.takeTypeInfo.takeType == 3 && this.takeTypeInfo.postInfo
+                    && this.takeTypeInfo.postInfo.addresseeId) {
+                    getMemberAddresseeById(this.takeTypeInfo.postInfo.addresseeId).then(response => {
+                        if (response.httpCode == 200) {
+                            copyProperties(this.cardHeader, response.data);
+                            this.cardVisible = true;
+                        }
+                    })
+                }
             },
             submitTakeTypeInfo() {
                 this.$refs['takeTypeForm'].validate(valid => {
@@ -1157,6 +1199,39 @@
                 this.changeMemberAddressee(this.processOfflineInfo.memberId);
                 this.processOfflineVisible = true;
             },
+            showLogistics(takeTypeInfo) {
+                let company = takeTypeInfo.postInfo.expressCompany;
+                let number = takeTypeInfo.postInfo.expressNumber;
+                queryLogistics(company, number).then(response => {
+                    if (response.httpCode != 200) {
+                        this.$message.error('获取物流信息失败');
+                        return;
+                    }
+                    this.logistics = response.data;
+                    this.logisticsVisible = true;
+                    if (this.logistics && this.logistics.deliverystatus == 3 && takeTypeInfo.flagTakeCert != 8) {
+                        this.$confirm('查询到快递已签收，是否标记客户已取件？', '提示', {
+                            confirmButtonText: '确定',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                        }).then(() => {
+                            this.listLoading = true;
+                            complete(takeTypeInfo.id).then(response => {
+                                if (response.httpCode === 200) {
+                                    this.processOfflineInfo.takeTypeInfo.flagTakeCert = 8;
+                                    this.processOfflineInfo.takeTypeInfo.takeCertTime = date(new Date(), 'YYYY-MM-DD HH:mm:ss');
+                                    this.getList();
+                                } else {
+                                    this.$message.error('操作失败')
+                                }
+                                this.listLoading = false;
+                            })
+                        }).catch(() => {
+                            console.dir('取消');
+                        });
+                    }
+                })
+            },
             validateField(form, field) {
                 this.$refs[form].validateField(field)
             },
@@ -1232,6 +1307,7 @@
                     startItemTime: '',
                     finishItemTime: '',
                     takeTypeInfo: {
+                        id: undefined,
                         takeType: '',
                         flagTakeCert: undefined,
                         takeCertTime: undefined,
@@ -1348,6 +1424,66 @@
         }
         .card-body {
             padding: 12px;
+        }
+    }
+
+    .track-list{
+        padding: 20px;
+        position: relative;
+        ul {
+            list-style: none;
+            overflow: visible;
+            margin-top: 12px;
+            li{
+                position: relative;
+                width: 100%;
+                float: left;
+                padding: 0px 25px;
+                line-height: 18px;
+                border-left: 1px solid #d0d0d0;
+                color: #666;
+                .node {
+                    position: absolute;
+                    left: -5px;
+                    top: 0;
+                    width: 10px;
+                    height: 10px;
+                    background-color: #d0d0d0;
+                    border-radius: 10px;
+                }
+                .content {
+                    width: 100%;
+                    border-bottom: 1px solid #d0d0d0;
+                    top: -18px;
+                    position: relative;
+                }
+            }
+            li.first {
+                color: #dd1100;
+                .node-container {
+                    position: absolute;
+                    top: -5px;
+                    left: -10px;
+                    width: 20px;
+                    height: 20px;
+                    background-color: #fbc0c2;
+                    border-radius: 20px;
+                    .node {
+                        top: 4px;
+                        left: 4px;
+                        width: 12px;
+                        height: 12px;
+                        background-color: #dd1100;
+                        border-radius: 12px;
+                    }
+                }
+            }
+            li.last {
+                border: none;
+                .content {
+                    border: none;
+                }
+            }
         }
     }
 </style>
