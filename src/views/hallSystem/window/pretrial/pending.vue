@@ -124,31 +124,31 @@
                     </div>
                     <div class="table-inline" style="padding-left: 30px;">
                         <h2 class="h2-style-show">审核结果:</h2>
-                        <el-form ref="zwfwItemPretrial" label-width="140px" :model="ItemPretrial"
-                                 :rules="ItemPretrialRules">
+                        <el-form ref="zwfwItemPretrial" label-width="140px" :model="itemPretrial"
+                                 :rules="itemPretrialRules">
                             <el-form-item label="预审编号">
-                                <el-input v-model="ItemPretrial.processNumber" disabled></el-input>
+                                <el-input v-model="itemPretrial.processNumber" disabled></el-input>
                             </el-form-item>
                             <el-form-item label="办理事项">
-                                <el-input v-model="ItemPretrial.itemName" disabled></el-input>
+                                <el-input v-model="itemPretrial.itemName" disabled></el-input>
                             </el-form-item>
                             <el-form-item label="提交资料时间">
-                                <el-input v-model="ItemPretrial.applyTime" disabled></el-input>
+                                <el-input v-model="itemPretrial.applyTime" disabled></el-input>
                             </el-form-item>
                             <el-form-item label="审核结果" prop="status">
-                                <el-select v-model="ItemPretrial.status">
+                                <el-select v-model="itemPretrial.status">
                                     <el-option label="通过" value="4"></el-option>
                                     <el-option label="整改" value="3"></el-option>
                                     <el-option label="不予受理" value="5"></el-option>
                                 </el-select>
                             </el-form-item>
-                            <el-form-item v-if="ItemPretrial.status==3" label="整改原因">
+                            <el-form-item v-if="itemPretrial.status==3" label="整改原因">
                                 <el-input v-model="changeRemark" type="textarea"></el-input>
                             </el-form-item>
-                            <el-form-item v-if="ItemPretrial.status==4" label="通过备注">
+                            <el-form-item v-if="itemPretrial.status==4" label="通过备注">
                                 <el-input v-model="passRemark" type="textarea"></el-input>
                             </el-form-item>
-                            <el-form-item v-if="ItemPretrial.status==5" label="不予受理原因">
+                            <el-form-item v-if="itemPretrial.status==5" label="不予受理原因">
                                 <el-input v-model="changeRemark" type="textarea"></el-input>
                             </el-form-item>
                         </el-form>
@@ -195,7 +195,7 @@
                 dialogFormVisible: false,
                 changeRemark: '1、\n2、\n3、\n',
                 passRemark: '确认通过',
-                ItemPretrial: {
+                itemPretrial: {
                     id: undefined,
                     processNumber: '',
                     companyName: '',
@@ -206,7 +206,7 @@
                     status: '',
                     remark: ''
                 },
-                ItemPretrialRules: {
+                itemPretrialRules: {
                     status: [
                         {required: true, message: '请选择审核结果', trigger: 'change'}
                     ]
@@ -254,7 +254,7 @@
             editAudit(row) {
                 this.currentItemPretrial = row;
                 this.resetTemp();
-                this.ItemPretrial = copyProperties(this.ItemPretrial, row);
+                this.itemPretrial = copyProperties(this.itemPretrial, row);
                 this.processNumber = row.id;
                 this.titleName = '办件预审' + " | 办件号：" + row.processNumber;
                 this.dialogFormVisible = true;
@@ -265,28 +265,28 @@
                     if (response.httpCode === 200) {
                         this.member = response.data.member;
                         this.pretrialMaterialList = response.data.pretrialMaterialList;
-                        this.ItemPretrial = this.currentItemPretrial;
-                        this.ItemPretrial.status = '';
-                        this.ItemPretrialRules.status[0].required = false;
+                        this.itemPretrial = this.currentItemPretrial;
+                        this.itemPretrial.status = '';
+                        this.itemPretrialRules.status[0].required = false;
                     } else {
                         this.$message.error('数据加载失败')
                     }
                 })
             },
             submitReview() {
-                this.ItemPretrialRules.status[0].required = true;
+                this.itemPretrialRules.status[0].required = true;
                 this.$refs['zwfwItemPretrial'].validate((valid) => {
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
                         const querry = {
-                            id: this.ItemPretrial.id,
-                            status: this.ItemPretrial.status,
+                            id: this.itemPretrial.id,
+                            status: this.itemPretrial.status,
                             remark: null
                         }
-                        if (this.ItemPretrial.status == 3 || this.ItemPretrial.status == 5) {
+                        if (this.itemPretrial.status == 3 || this.itemPretrial.status == 5) {
                             querry.remark = this.changeRemark;
-                        } else if (this.ItemPretrial.status == 4) {
+                        } else if (this.itemPretrial.status == 4) {
                             querry.remark = this.passRemark;
                         }
                         submitReview(querry).then(response => {
@@ -303,7 +303,7 @@
                 });
             },
             resetTemp() {
-                this.ItemPretrial = {
+                this.itemPretrial = {
                     id: undefined,
                     processNumber: '',
                     companyName: '',

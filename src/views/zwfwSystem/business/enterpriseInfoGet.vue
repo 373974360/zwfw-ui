@@ -27,9 +27,9 @@
                 </template>
             </el-table-column>
             <!--<el-table-column align="center" label="编号" width="140">-->
-                <!--<template scope="scope">-->
-                    <!--{{scope.row.id}}-->
-                <!--</template>-->
+            <!--<template scope="scope">-->
+            <!--{{scope.row.id}}-->
+            <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column align="left" label="企业名称" width="300">
                 <template scope="scope">
@@ -58,9 +58,9 @@
                     <span>{{scope.row.qllx}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="所属街道">
+            <el-table-column align="center" label="注册地址">
                 <template scope="scope">
-                    <span>{{scope.row.ssjd}}</span>
+                    <span>{{scope.row.jgzs}}</span>
                 </template>
             </el-table-column>
         </el-table>
@@ -108,14 +108,62 @@
                 <el-form-item label="经营范围">
                     <el-input  type="textarea" v-model="enterpriseList.jyfw" disabled></el-input>
                 </el-form-item>
-                <el-form-item label="登记机关">
-                    <el-input v-model="enterpriseList.djjg" disabled></el-input>
-                </el-form-item>
                 <el-form-item label="核准日期">
                     <el-input v-model="enterpriseList.hzrq" disabled></el-input>
                 </el-form-item>
-                <el-form-item label="所属街道">
-                    <el-input v-model="enterpriseList.ssjd" disabled></el-input>
+                <el-form-item label="管辖单位">
+                    <el-input v-model="enterpriseList.gxdw" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="注册资金折美元">
+                    <el-input v-model="enterpriseList.zczbzmy" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="档案号">
+                    <el-input v-model="enterpriseList.dah" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="行业">
+                    <el-input v-model="enterpriseList.hy" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="行业门类">
+                    <el-input v-model="enterpriseList.hyml" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="吊销时间">
+                    <el-input v-model="enterpriseList.dxsj" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="国别地区">
+                    <el-input v-model="enterpriseList.gbdq" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="企业类别">
+                    <el-input v-model="enterpriseList.qylb" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="从业人数">
+                    <el-input v-model="enterpriseList.cyrs" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="企业类别">
+                    <el-input v-model="enterpriseList.qylb" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="投资者人数">
+                    <el-input v-model="enterpriseList.tzzrs" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="投资总额">
+                    <el-input v-model="enterpriseList.tzze" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="投资总额折美元">
+                    <el-input v-model="enterpriseList.tzzezmy" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="实际出资额">
+                    <el-input v-model="enterpriseList.sjcze" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="实际出资额折美元">
+                    <el-input v-model="enterpriseList.sjczwzmy" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="外方认缴出资额">
+                    <el-input v-model="enterpriseList.wfrjczezmy" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="外方实缴出资额折美元">
+                    <el-input v-model="enterpriseList.wfsjczezmy" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="经营截止日期">
+                    <el-input v-model="enterpriseList.jyjzrq" disabled></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -149,7 +197,8 @@
                     rows: this.$store.state.app.rows,
                     qymc: undefined,
                     tyCode: undefined,
-                    fr: undefined
+                    fr: undefined,
+                    diff: 'gwq'
                 },
                 dialogFormVisible: false,
                 dialogLoading: false,
@@ -179,8 +228,27 @@
                     up_time: '',
                     up_user: '',
                     ssjd: '',
-                    vtype: ''
-
+                    vtype: '',
+                    frid: '',
+                    dah: '',
+                    hy: '',
+                    hyml: '',
+                    dxsj: '',
+                    gbdq: '',
+                    qylb: '',
+                    cyrs: '',
+                    tzzrs: '',
+                    tzze: '',
+                    tzzezmy: '',
+                    sjcze: '',
+                    sjczwzmy: '',
+                    wfrjczezmy: '',
+                    wfrjcze: '',
+                    wfsjczezmy: '',
+                    jyjzrq: '',
+                    remark: '',
+                    gxdw: '',
+                    zczbzmy: ''
                 }
             }
         },

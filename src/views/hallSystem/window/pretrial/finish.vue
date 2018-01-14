@@ -126,31 +126,31 @@
                         <table class="table table-responsive table-bordered">
                             <tr>
                                 <th width="140">预审编号</th>
-                                <td>{{ItemPretrial.processNumber}}</td>
+                                <td>{{itemPretrial.processNumber}}</td>
                             </tr>
                             <tr>
                                 <th width="140">办理事项</th>
-                                <td>{{ItemPretrial.itemName}}</td>
+                                <td>{{itemPretrial.itemName}}</td>
                             </tr>
                             <tr>
                                 <th width="140">提交资料时间</th>
-                                <td>{{ItemPretrial.applyTime}}</td>
+                                <td>{{itemPretrial.applyTime}}</td>
                             </tr>
                             <tr>
                                 <th width="140">审核人</th>
-                                <td>{{ItemPretrial.auditName}}</td>
+                                <td>{{itemPretrial.auditName}}</td>
                             </tr>
                             <tr>
                                 <th width="140">审核时间</th>
-                                <td>{{ItemPretrial.auditTime | date('YYYY-MM-DD HH:mm:ss')}}</td>
+                                <td>{{itemPretrial.auditTime | date('YYYY-MM-DD HH:mm:ss')}}</td>
                             </tr>
                             <tr>
                                 <th width="140">状态</th>
-                                <td>{{ItemPretrial.status | enums('PretrialStatus')}}</td>
+                                <td>{{itemPretrial.status | enums('PretrialStatus')}}</td>
                             </tr>
                             <tr>
                                 <th width="140">备注</th>
-                                <td>{{ItemPretrial.remark}}</td>
+                                <td>{{itemPretrial.remark}}</td>
                             </tr>
                         </table>
                     </div>
@@ -180,7 +180,7 @@
                 legalPerson: [],
                 member: [],
                 materialList: [],
-                ItemPretrial: [],
+                itemPretrial: [],
                 titleName: '',
                 currentItemPretrial: [],
                 dialogStatus: '',
@@ -227,7 +227,7 @@
             editAudit(row) {
                 this.currentItemPretrial = row;
                 this.resetTemp();
-                this.ItemPretrial = copyProperties(this.ItemPretrial, row);
+                this.itemPretrial = copyProperties(this.itemPretrial, row);
                 this.processNumber = row.id;
                 this.titleName = '办件预审' + " | 办件号：" + row.processNumber;
                 this.dialogFormVisible = true;
@@ -238,14 +238,14 @@
                     if (response.httpCode === 200) {
                         this.member = response.data.member;
                         this.materialList = response.data.pretrialMaterialList;
-                        this.ItemPretrial = this.currentItemPretrial;
+                        this.itemPretrial = this.currentItemPretrial;
                     } else {
                         this.$message.error('数据加载失败')
                     }
                 })
             },
             resetTemp() {
-                this.ItemPretrial = {
+                this.itemPretrial = {
                     id: undefined,
                     processNumber: '',
                     companyName: '',

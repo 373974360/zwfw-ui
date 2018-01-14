@@ -416,20 +416,20 @@
             },
             print_ywsld() {
                 if (this.itemNumber != null) {
-                    // window.open('/admin/print/ywsld.html?numberId=' + this.itemNumber.id);
-                    window.open('/api/hallSystem/hallCompositeWindow/downloadYwsld?numberId=' + this.itemNumber.id);
+                    window.open('/admin/print/ywsld.html?numberId=' + this.itemNumber.id);
+                    // window.open('/api/hallSystem/hallCompositeWindow/downloadYwsld?numberId=' + this.itemNumber.id);
                 }
             },
             print_wlzyd() {
                 if (this.itemNumber != null) {
-                    // window.open('/admin/print/wlzyd.html?numberId=' + this.itemNumber.id);
-                    window.open('/api/hallSystem/hallCompositeWindow/downloadWlzyd?numberId=' + this.itemNumber.id);
+                    window.open('/admin/print/wlzyd.html?numberId=' + this.itemNumber.id);
+                    // window.open('/api/hallSystem/hallCompositeWindow/downloadWlzyd?numberId=' + this.itemNumber.id);
                 }
             },
             print_ycxgzd() {
                 if (this.itemNumber != null) {
-                    // window.open('/admin/print/ycxgzd.html?numberId=' + this.itemNumber.id);
-                    window.open('/api/hallSystem/hallCompositeWindow/downloadYcxgzd?numberId=' + this.itemNumber.id);
+                    window.open('/admin/print/ycxgzd.html?numberId=' + this.itemNumber.id);
+                    // window.open('/api/hallSystem/hallCompositeWindow/downloadYcxgzd?numberId=' + this.itemNumber.id);
                 }
             },
             getDatilList() {
