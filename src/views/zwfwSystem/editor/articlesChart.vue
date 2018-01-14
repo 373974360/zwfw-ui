@@ -21,7 +21,7 @@
       }
     }
 </script>
-<style>
+<style scoped>
     .articlesChart-container {
         width: 100%;
     }

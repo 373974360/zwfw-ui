@@ -196,7 +196,7 @@
         }
     }
 </script>
-<style>
+<style scoped>
     .filter-item-show {
         margin-top: 10px;
     }
