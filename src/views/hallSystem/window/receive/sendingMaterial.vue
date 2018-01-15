@@ -1,6 +1,19 @@
 <template xmlns="http://www.w3.org/1999/html">
     <div class="app-container calendar-list-container">
         <div class="filter-container">
+            <el-input class="filter-item" style="width: 240px; height: 30px" v-model="listQuery.processNumber" placeholder="按办件号搜索"></el-input>
+            <el-select v-model="listQuery.memberId" class="filter-item"
+                       clearable filterable remote
+                       placeholder="按申请人名称或证件号搜索"
+                       :remote-method="remoteMethod">
+                <el-option
+                        v-for="item in optionsName"
+                        :key="item.id"
+                        :label="item.name + ' | ' + item.loginName"
+                        :value="item.id">
+                </el-option>
+            </el-select>
+            <el-input class="filter-item" style="width: 240px; height: 30px" v-model="listQuery.memberPhone" placeholder="按联系电话搜索"></el-input>
             <el-select class="filter-item" v-model="listQuery.handType" clearable placeholder="请选择交件方式">
                 <el-option v-for="item in enums['HandType']" :key="item.code" :value="item.code" :label="item.value"></el-option>
             </el-select>
@@ -8,8 +21,7 @@
                 <el-option v-for="item in enums['HandStatus']" :key="item.code" :value="item.code" :label="item.value"
                            v-if="[1,2].includes(item.code)?listQuery.handType=='1':([3,4,5].includes(item.code)?listQuery.handType=='2':([6,7,8].includes(item.code)?listQuery.handType=='3':false))"></el-option>
             </el-select>
-            <el-input class="filter-item" style="width: 240px; height: 30px" v-model="listQuery.processNumber" placeholder="请输入办件号"></el-input>
-            <el-select
+            <!--<el-select
                     v-model="listQuery.itemId"
                     value-key="id"
                     clearable filterable remote
@@ -22,18 +34,7 @@
                         :label="item.name"
                         :value="item.id">
                 </el-option>
-            </el-select>
-            <el-select v-model="listQuery.memberId" class="filter-item"
-                       clearable filterable remote
-                       placeholder="请输入会员名称或证件号"
-                       :remote-method="remoteMethod">
-                <el-option
-                        v-for="item in optionsName"
-                        :key="item.id"
-                        :label="item.name + ' | ' + item.loginName"
-                        :value="item.id">
-                </el-option>
-            </el-select>
+            </el-select>-->
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
                 搜索
             </el-button>
@@ -235,6 +236,7 @@
                     itemId: undefined,
                     memberId: undefined,
                     processNumber: undefined,
+                    memberPhone: undefined,
                     handType: undefined,
                     handStatus: undefined
                 },
