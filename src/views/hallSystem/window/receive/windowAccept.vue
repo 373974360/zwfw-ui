@@ -872,8 +872,9 @@
         </el-dialog>
 
 
-        <el-dialog title="收件箱办件受理" :visible.sync="displayPendingFromBoxDialog">
+        <el-dialog title="收件箱办件受理" :visible.sync="displayPendingFromBoxDialog" size="large">
             <el-table :data="pendingFromBoxList" v-loading="pendingFromBoxListLoading"
+
                       element-loading-text="拼命加载中" highlight-current-row
                       @current-change="handlePendingFromBoxCurrentChange" style="width: 100%">
                 <!--<el-table-column property="memberId" label="注册用户"></el-table-column>-->
