@@ -1631,7 +1631,8 @@
             height: 180px;
         }
     }
-
+</style>
+<style rel="stylesheet/scss" lang="scss">
     .card-header {
         .card-item {
             border: none;

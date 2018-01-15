@@ -409,6 +409,67 @@
         text-align: center;
     }
 
+    .track-list{
+        padding: 20px;
+        position: relative;
+        ul {
+            list-style: none;
+            overflow: visible;
+            margin-top: 12px;
+            li{
+                position: relative;
+                width: 100%;
+                float: left;
+                padding: 0px 25px;
+                line-height: 18px;
+                border-left: 1px solid #d0d0d0;
+                color: #666;
+                .node {
+                    position: absolute;
+                    left: -5px;
+                    top: 0;
+                    width: 10px;
+                    height: 10px;
+                    background-color: #d0d0d0;
+                    border-radius: 10px;
+                }
+                .content {
+                    width: 100%;
+                    border-bottom: 1px solid #d0d0d0;
+                    top: -18px;
+                    position: relative;
+                }
+            }
+            li.first {
+                color: #dd1100;
+                .node-container {
+                    position: absolute;
+                    top: -5px;
+                    left: -10px;
+                    width: 20px;
+                    height: 20px;
+                    background-color: #fbc0c2;
+                    border-radius: 20px;
+                    .node {
+                        top: 4px;
+                        left: 4px;
+                        width: 12px;
+                        height: 12px;
+                        background-color: #dd1100;
+                        border-radius: 12px;
+                    }
+                }
+            }
+            li.last {
+                border: none;
+                .content {
+                    border: none;
+                }
+            }
+        }
+    }
+</style>
+<style rel="stylesheet/scss" lang="scss">
     .card-header {
         .card-item {
             border: none;
@@ -471,66 +532,6 @@
         }
         .card-body {
             padding: 12px;
-        }
-    }
-
-    .track-list{
-        padding: 20px;
-        position: relative;
-        ul {
-            list-style: none;
-            overflow: visible;
-            margin-top: 12px;
-            li{
-                position: relative;
-                width: 100%;
-                float: left;
-                padding: 0px 25px;
-                line-height: 18px;
-                border-left: 1px solid #d0d0d0;
-                color: #666;
-                .node {
-                    position: absolute;
-                    left: -5px;
-                    top: 0;
-                    width: 10px;
-                    height: 10px;
-                    background-color: #d0d0d0;
-                    border-radius: 10px;
-                }
-                .content {
-                    width: 100%;
-                    border-bottom: 1px solid #d0d0d0;
-                    top: -18px;
-                    position: relative;
-                }
-            }
-            li.first {
-                color: #dd1100;
-                .node-container {
-                    position: absolute;
-                    top: -5px;
-                    left: -10px;
-                    width: 20px;
-                    height: 20px;
-                    background-color: #fbc0c2;
-                    border-radius: 20px;
-                    .node {
-                        top: 4px;
-                        left: 4px;
-                        width: 12px;
-                        height: 12px;
-                        background-color: #dd1100;
-                        border-radius: 12px;
-                    }
-                }
-            }
-            li.last {
-                border: none;
-                .content {
-                    border: none;
-                }
-            }
         }
     }
 </style>
