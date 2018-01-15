@@ -134,6 +134,7 @@ export function queryCompanyInfo(query) {
         params: query
     });
 }
+
 /**
  * 分页查询企业信息
  * @param query
@@ -228,3 +229,15 @@ export function fastRegMember(query) {
         params: query
     });
 }
+
+/**
+ * 查询在快件箱中取出未受理的办件
+ */
+export function queryPendingFromBoxList(query) {
+    return fetch({
+        url: '/api/hallSystem/hallCompositeWindow/queryPendingFromBoxList',
+        method: 'post',
+        params: query
+    });
+}
+

@@ -29,7 +29,7 @@
                                 <el-row :gutter="10">
                                     <el-col :span="25">
                                         <el-collapse v-model="showInputForm" style="margin-top:10px;">
-                                            <el-collapse-item :title="'无预审直接收件表单，点击此处展开/收起表单'" name="1">
+                                            <el-collapse-item :title="'窗口办理事项受理'" name="1">
                                                 <el-tabs v-model="memberType" @tab-click="queryItem()">
                                                     <el-tab-pane label="自然人" name="1">
 
@@ -207,21 +207,28 @@
                             </el-tab-pane>
                             <el-tab-pane label="快递/快件箱收件">
                                 <el-row :gutter="10">
-                                    <el-col :span="17">
-                                        <el-tooltip content="已知预审号时直接进行收件操作，可用于快件箱交件时使用预审号直接收件，" placement="top"
+                                    <el-col :span="10">
+                                        <el-tooltip content="已知预审号时直接进行收件操作" placement="top"
                                                     effect="light">
                                             <el-input v-model="getNumberBy_processNumber" placeholder="输入预审号">
                                             </el-input>
                                         </el-tooltip>
                                     </el-col>
-                                    <el-col :span="4">
+                                    <el-col :span="7">
 
                                         <el-button type="primary" @click="handlingNumberByProcessNumber"
                                                    :disabled="!getNumberBy_processNumber">已预审收件办理
                                         </el-button>
 
                                     </el-col>
+                                    <el-col :span="7">
+
+                                        <el-button type="primary" @click="showPendingHandBoxSelectionDialog">快件箱事项受理
+                                        </el-button>
+
+                                    </el-col>
                                 </el-row>
+
                                 <el-row :gutter="10">
                                     <el-col :span="17">
                                         <el-tooltip content="邮寄交件时，通过快递单号进行收件操作" placement="bottom"
@@ -863,6 +870,30 @@
                 <el-button type="primary" icon="circle-check" @click="saveTakeType">确 定</el-button>
             </div>
         </el-dialog>
+
+
+        <el-dialog title="收件箱办件受理" :visible.sync="displayPendingFromBoxDialog">
+            <el-table :data="pendingFromBoxList" v-loading="pendingFromBoxListLoading"
+                      element-loading-text="拼命加载中" highlight-current-row
+                      @current-change="handlePendingFromBoxCurrentChange" style="width: 100%">
+                <!--<el-table-column property="memberId" label="注册用户"></el-table-column>-->
+                <el-table-column property="pretrialNumber" label="办件号"></el-table-column>
+                <!--<el-table-column property="handType" label="交件方式">-->
+                    <!---->
+                <!--</el-table-column>-->
+                <el-table-column property="handTime" label="取出时间"></el-table-column>
+                <el-table-column property="memberType" label="用户类型">
+                    <template scope="scope">
+                        {{scope.row.memberType | enums('MemberType')}}
+                    </template>
+                </el-table-column>
+                <el-table-column property="companyName" label="企业名称"></el-table-column>
+                <el-table-column property="companyCode" label="社会统一信用代码"></el-table-column>
+                <el-table-column property="personIdCard" label="办理对象身份证号"></el-table-column>
+                <el-table-column property="memberName" label="姓名/法人姓名"></el-table-column>
+                <el-table-column property="phone" label="手机号码"></el-table-column>
+            </el-table>
+        </el-dialog>
     </div>
 </template>
 
@@ -885,7 +916,8 @@
         sendFastRegPhoneCode,
         checkLegalMemberExist,
         checkNatureMemberExist,
-        fastRegMember
+        fastRegMember,
+        queryPendingFromBoxList
     } from 'api/hallSystem/window/receive/windowAccept';
     import {getAllByNameOrbasicCode} from 'api/zwfwSystem/business/item';
     import {getCategoryCascader} from 'api/zwfwSystem/business/category';
@@ -1051,7 +1083,11 @@
                 handTypeVo: null,
                 submiting: false,
                 queryLoading: false,
-                windowList: []
+                windowList: [],
+                /*弹出从快件箱交件中选择*/
+                displayPendingFromBoxDialog: false,
+                pendingFromBoxList: [],
+                pendingFromBoxListLoading: false
             }
         },
         watch: {
@@ -1081,6 +1117,27 @@
 //            })
 //        },
         methods: {
+            queryPendingFromBoxList() {
+                this.pendingFromBoxList = [];
+                this.pendingFromBoxListLoading = true;
+                queryPendingFromBoxList({}).then(response => {
+                    this.pendingFromBoxListLoading = false;
+                    if (response.httpCode === 200) {
+                        this.pendingFromBoxList = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                }).catch(e => {
+                    this.pendingFromBoxListLoading = false;
+                    this.$message.error("加载超时");
+                });
+            },
+            handlePendingFromBoxCurrentChange(currentRow){
+                if(currentRow) {
+                    this.getNumberBy_processNumber = currentRow.pretrialNumber;
+                    this.handlingNumberByProcessNumber();
+                }
+            },
             getCategoryCascader() {
                 getCategoryCascader().then(response => {
                     if (response.httpCode === 200) {
@@ -1166,6 +1223,14 @@
                         this.takeTypeVisible = false;
                     }
                 })
+            },
+
+            /**
+             * 显示选择快件箱已取未办的列表
+             */
+            showPendingHandBoxSelectionDialog() {
+                this.displayPendingFromBoxDialog = true;
+                this.queryPendingFromBoxList();
             },
             /**
              * 查询企业信息
