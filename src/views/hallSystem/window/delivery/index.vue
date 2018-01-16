@@ -419,6 +419,7 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
+                <el-button v-if="offlineReadonly && processOfflineInfo.offlineFlag" icon="edit" type="primary">编辑</el-button>
                 <el-button icon="circle-cross" type="danger" @click="resetProcessOfflineForm">取 消</el-button>
                 <el-button v-if="!offlineReadonly" type="primary" icon="circle-check" @click="submitProcessOffline"
                            :loading="btnLoading">确 定</el-button>
@@ -576,7 +577,8 @@
                             expressCompany: undefined,
                             expressNumber: undefined
                         }
-                    }
+                    },
+                    offlineFlag: false
                 },
                 memberInfo: {
                     type: 1,
@@ -1098,18 +1100,26 @@
             submitTakeTypeExpress() {
                 this.$refs['expressInfoForm'].validate(valid => {
                     if (valid) {
-                        this.btnLoading = true;
-                        this.dialogLoading = true;
-                        saveExpressInfo(this.expressInfo).then(response => {
-                            this.dialogLoading = false;
-                            this.btnLoading = false;
-                            if (response.httpCode === 200) {
-                                this.resetExpressInfoForm();
-                                this.$message.success('信息保存成功');
-                                this.getList();
-                            } else {
-                                this.$message.error('操作失败')
-                            }
+                        this.$confirm('邮寄信息保存后将不可修改，请确认信息是否填写正确', '提示', {
+                            confirmButtonText: '填写正确',
+                            cancelButtonText: '返回确认',
+                            type: 'warning'
+                        }).then(() => {
+                            this.btnLoading = true;
+                            this.dialogLoading = true;
+                            saveExpressInfo(this.expressInfo).then(response => {
+                                this.dialogLoading = false;
+                                this.btnLoading = false;
+                                if (response.httpCode === 200) {
+                                    this.resetExpressInfoForm();
+                                    this.$message.success('信息保存成功');
+                                    this.getList();
+                                } else {
+                                    this.$message.error('操作失败')
+                                }
+                            });
+                        }).catch(() => {
+                            console.dir('取消');
                         });
                     } else {
                         return false;
@@ -1330,7 +1340,8 @@
                             expressCompany: undefined,
                             expressNumber: undefined
                         }
-                    }
+                    },
+                    offlineFlag: false
                 };
                 this.memberInfo = {
                     type: 1,
