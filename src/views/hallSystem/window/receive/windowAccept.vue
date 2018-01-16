@@ -132,7 +132,7 @@
                                                         </el-row>
                                                         <el-row :gutter="10">
                                                             <el-col :span="12">
-                                                                <el-input v-model="companyCode" placeholder="社会统一信用代码">
+                                                                <el-input v-model="companyCode" placeholder="社会统一信用代码" @keyup.native="toUpperCase">
                                                                 </el-input>
                                                             </el-col>
                                                             <el-col :span="6">
@@ -1233,6 +1233,9 @@
                 this.displayPendingFromBoxDialog = true;
                 this.queryPendingFromBoxList();
             },
+            toUpperCase(){
+                this.companyCode = this.companyCode.toUpperCase();
+            },
             /**
              * 查询企业信息
              */
@@ -1270,6 +1273,7 @@
              * 查询事项列表
              * */
             queryItem(query) {
+                this.resetForm();
                 if (!this.itemCategory) {
                     return;
                 }
@@ -1365,8 +1369,8 @@
                             //不存在
                             this.$message.warning("未注册");
                             this.doFastReg = true;
-                            this.memberRealname = '';
-                            this.memberPhone = '';
+                            // this.memberRealname = '';
+                            // this.memberPhone = '';
                         } else {
                             this.member = response.data;
                             this.$message.success("已注册");
@@ -1395,8 +1399,8 @@
                             //不存在
                             this.$message.warning("未注册");
                             this.doFastReg = true;
-                            this.memberRealname = '';
-                            this.memberPhone = '';
+                            // this.memberRealname = '';
+                            // this.memberPhone = '';
                         } else {
                             this.member = response.data;
                             this.$message.success("已注册");
@@ -1417,6 +1421,8 @@
              * 清除
              * */
             resetForm() {
+                this.companyCode = '';
+                this.companyName = '';
                 this.itemVo = {};
                 this.itemNumber = {};
                 this.companyInfo = {};
