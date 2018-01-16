@@ -1273,6 +1273,7 @@
              * 查询事项列表
              * */
             queryItem(query) {
+                this.resetForm();
                 if (!this.itemCategory) {
                     return;
                 }
@@ -1368,8 +1369,8 @@
                             //不存在
                             this.$message.warning("未注册");
                             this.doFastReg = true;
-                            this.memberRealname = '';
-                            this.memberPhone = '';
+                            // this.memberRealname = '';
+                            // this.memberPhone = '';
                         } else {
                             this.member = response.data;
                             this.$message.success("已注册");
@@ -1398,8 +1399,8 @@
                             //不存在
                             this.$message.warning("未注册");
                             this.doFastReg = true;
-                            this.memberRealname = '';
-                            this.memberPhone = '';
+                            // this.memberRealname = '';
+                            // this.memberPhone = '';
                         } else {
                             this.member = response.data;
                             this.$message.success("已注册");
@@ -1420,6 +1421,8 @@
              * 清除
              * */
             resetForm() {
+                this.companyCode = '';
+                this.companyName = '';
                 this.itemVo = {};
                 this.itemNumber = {};
                 this.companyInfo = {};
