@@ -52,18 +52,18 @@ export function deliveryStatusFilter(status) {
 
 export function expressTypeFilter(type) {
     const expressTypeMap = {
-        'ems': '邮政EMS',
-        'htky': '百世快递',
-        'deppon': '德邦物流',
-        'gto': '国通快递',
-        'kyexpress': '跨越速运',
-        'sto': '申通快递',
-        'sfexpress': '顺丰速运',
-        'ttkdex': '天天快递',
-        'yto': '圆通速递',
-        'yunda': '韵达快递',
-        'zjs': '宅急送',
-        'zto': '中通快递'
+        'EMS': '邮政EMS',
+        'HTKY': '百世快递',
+        'DEPPON': '德邦物流',
+        'GTO': '国通快递',
+        'KYEXPRESS': '跨越速运',
+        'STO': '申通快递',
+        'SFEXPRESS': '顺丰速运',
+        'TTKDEX': '天天快递',
+        'YTO': '圆通速递',
+        'YUNDA': '韵达快递',
+        'ZJS': '宅急送',
+        'ZTO': '中通快递'
     };
     return expressTypeMap[type];
 }
