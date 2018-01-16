@@ -467,7 +467,7 @@
                 })
             },
             jobPersonalItemView() {
-                getPersionalGzjl(this.memberId).then(response => {
+                getPersionalItem(this.memberId).then(response => {
                     if (response.httpCode == 200) {
                         this.jobPersonalItem = response.data;
                     } else {
