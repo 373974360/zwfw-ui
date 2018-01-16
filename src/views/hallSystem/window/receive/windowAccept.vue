@@ -132,7 +132,8 @@
                                                         </el-row>
                                                         <el-row :gutter="10">
                                                             <el-col :span="12">
-                                                                <el-input v-model="companyCode" placeholder="社会统一信用代码">
+                                                                <el-input v-model="companyCode" placeholder="社会统一信用代码"
+                                                                          @keydown.native="scanInput">
                                                                 </el-input>
                                                             </el-col>
                                                             <el-col :span="6">
@@ -880,7 +881,7 @@
                 <!--<el-table-column property="memberId" label="注册用户"></el-table-column>-->
                 <el-table-column property="pretrialNumber" label="办件号"></el-table-column>
                 <!--<el-table-column property="handType" label="交件方式">-->
-                    <!---->
+                <!---->
                 <!--</el-table-column>-->
                 <el-table-column property="handTime" label="取出时间"></el-table-column>
                 <el-table-column property="memberType" label="用户类型">
@@ -911,6 +912,7 @@
         welcomeNumber,
         submitWork,
         queryCompanyInfo,
+        addCompanyInfo,
         getItemInfo,
         submitNoPretrial,
         getCurrentUserLoginedWindow,
@@ -983,6 +985,7 @@
                     yyqx: '',
                     jyfw: '',
                     djjg: '',
+                    djsj: '',
                     hzrq: '',
                     djzt: '',
                     bak: '',
@@ -1088,7 +1091,8 @@
                 /*弹出从快件箱交件中选择*/
                 displayPendingFromBoxDialog: false,
                 pendingFromBoxList: [],
-                pendingFromBoxListLoading: false
+                pendingFromBoxListLoading: false,
+                isScanInput: false,
             }
         },
         watch: {
@@ -1133,8 +1137,8 @@
                     this.$message.error("加载超时");
                 });
             },
-            handlePendingFromBoxCurrentChange(currentRow){
-                if(currentRow) {
+            handlePendingFromBoxCurrentChange(currentRow) {
+                if (currentRow) {
                     this.getNumberBy_processNumber = currentRow.pretrialNumber;
                     this.handlingNumberByProcessNumber();
                 }
@@ -1234,10 +1238,36 @@
                 this.queryPendingFromBoxList();
             },
             /**
+             * 扫码枪输入
+             */
+            scanInput(event) {
+                this.isScanInput = false;
+                if (event.keyCode == 13 && this.companyCode.indexOf('：') > 0) {
+                    this.isScanInput = true;
+                    const companyInfo = this.companyCode.replace('：', ':').split(';');
+                    //社会统一信用代码
+                    this.companyInfo.ty_code = companyInfo[0].split(':')[1];
+                    //注册号
+                    this.companyInfo.gs_code = companyInfo[1].split(':')[1];
+                    //企业名称
+                    this.companyInfo.qymc = companyInfo[2].split(':')[1];
+                    //登记机关
+                    this.companyInfo.djjg = companyInfo[3].split(':')[1];
+                    //登记时间
+                    this.companyInfo.djsj = companyInfo[4].split(':')[1];
+                    for (const attr of companyInfo) {
+                        const arry = attr.split(':');
+                        console.dir(arry[0] + '--------' + arry[1]);
+                    }
+                    this.companyCode = companyInfo[0].split(':')[1];
+                    this.companyName = companyInfo[2].split(':')[1];
+                    this.queryCompanyInfo();
+                }
+            },
+            /**
              * 查询企业信息
              */
             queryCompanyInfo() {
-                this.companyInfo = {};
                 if (this.companyCode == '' || this.companyCode.length != 18) {
                     this.companyInfo = {};
                     this.$message.warning("社会统一信用代码不正确，跳过查询工商企业信息库");
@@ -1249,6 +1279,7 @@
                     if (response.httpCode === 200) {
                         let c = response.data;
                         if (c) {
+                            this.companyInfo = {};
                             this.numberTab = 'company';
                             this.companyInfo = c;
                             this.memberPhone = c.lxdh;
@@ -1258,6 +1289,16 @@
                             this.memberCode = c.fr_id ? c.fr_id : '';
                         } else {
                             this.$message.warning("企业信息中没有搜索到【" + this.companyCode + "】企业信息");
+                            if (this.isScanInput) {
+                                addCompanyInfo(this.companyInfo).then(response => {
+                                    this.isScanInput = false;
+                                    if (response.httpCode === 200) {
+                                        console.dir('插入远程工商信息库数据成功');
+                                    } else {
+                                        this.$message.error("插入远程工商信息库数据失败");
+                                    }
+                                })
+                            }
                         }
                     } else {
                         this.$message.error("企业信息查询失败");
@@ -1270,6 +1311,7 @@
              * 查询事项列表
              * */
             queryItem(query) {
+                this.resetForm();
                 if (!this.itemCategory) {
                     return;
                 }
@@ -1417,6 +1459,8 @@
              * 清除
              * */
             resetForm() {
+                this.companyCode = '';
+                this.companyName = '';
                 this.itemVo = {};
                 this.itemNumber = {};
                 this.companyInfo = {};
@@ -2112,15 +2156,18 @@
     }
 
     .card-header {
-        .card-item {
-            border: none;
-            margin: 0;
-            width: 80%;
-            float: left;
-        }
-        .el-button {
-            float: right;
-        }
+
+    .card-item {
+        border: none;
+        margin: 0;
+        width: 80%;
+        float: left;
+    }
+
+    .el-button {
+        float: right;
+    }
+
     }
 
     .card-item {
@@ -2129,32 +2176,37 @@
         font-size: 14px;
         border: 1px solid #d0d0d0;
         height: 80px;
-        .el-radio {
-            height: 64px;
-            line-height: 64px;
-            text-align: center;
-            width: 10%;
-            float: left;
-        }
-        p {
-            margin: 0;
-            height: 32px;
-            line-height: 32px;
-            width: 88%;
-            float: left;
-        }
-        .p1 {
-            font-size: 16px;
-            font-weight: bold;
-            span {
-                padding: 3px 6px;
-                color: #dd1100;
-                font-size: 14px;
-                font-weight: normal;
-                border: 1px solid #dd1100;
-                border-radius: 3px;
-            }
-        }
+
+    .el-radio {
+        height: 64px;
+        line-height: 64px;
+        text-align: center;
+        width: 10%;
+        float: left;
+    }
+
+    p {
+        margin: 0;
+        height: 32px;
+        line-height: 32px;
+        width: 88%;
+        float: left;
+    }
+
+    .p1 {
+        font-size: 16px;
+        font-weight: bold;
+
+    span {
+        padding: 3px 6px;
+        color: #dd1100;
+        font-size: 14px;
+        font-weight: normal;
+        border: 1px solid #dd1100;
+        border-radius: 3px;
+    }
+
+    }
     }
 
     .clearfix:before, .clearfix:after {
@@ -2168,11 +2220,14 @@
 
     .box-card {
         width: 100%;
-        .el-card__body {
-            padding: 0;
-        }
-        .card-body {
-            padding: 12px;
-        }
+
+    .el-card__body {
+        padding: 0;
+    }
+
+    .card-body {
+        padding: 12px;
+    }
+
     }
 </style>
