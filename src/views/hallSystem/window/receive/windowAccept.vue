@@ -132,7 +132,7 @@
                                                         </el-row>
                                                         <el-row :gutter="10">
                                                             <el-col :span="12">
-                                                                <el-input v-model="companyCode" placeholder="社会统一信用代码">
+                                                                <el-input v-model="companyCode" placeholder="社会统一信用代码" @keyup.native="toUpperCase">
                                                                 </el-input>
                                                             </el-col>
                                                             <el-col :span="6">
@@ -1232,6 +1232,9 @@
             showPendingHandBoxSelectionDialog() {
                 this.displayPendingFromBoxDialog = true;
                 this.queryPendingFromBoxList();
+            },
+            toUpperCase(){
+                this.companyCode = this.companyCode.toUpperCase();
             },
             /**
              * 查询企业信息
