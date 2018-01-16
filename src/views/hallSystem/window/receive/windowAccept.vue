@@ -30,7 +30,7 @@
                                     <el-col :span="25">
                                         <el-collapse v-model="showInputForm" style="margin-top:10px;">
                                             <el-collapse-item :title="'窗口办理事项受理'" name="1">
-                                                <el-tabs v-model="memberType" @tab-click="queryItem()">
+                                                <el-tabs v-model="memberType" @tab-click="memberTypeChange">
                                                     <el-tab-pane label="自然人" name="1">
 
                                                         <el-row :gutter="10">
@@ -64,7 +64,7 @@
 
                                                         <el-row :gutter="10">
                                                             <el-col :span="19">
-                                                                <el-input v-model="memberCode" placeholder="自然人身份证号码">
+                                                                <el-input v-model="memberCode" placeholder="自然人身份证号码" @keyup.native="toUpperCase">
                                                                     <template slot="prepend">身份证号：</template>
                                                                 </el-input>
                                                             </el-col>
@@ -132,7 +132,7 @@
                                                         </el-row>
                                                         <el-row :gutter="10">
                                                             <el-col :span="12">
-                                                                <el-input v-model="companyCode" placeholder="社会统一信用代码">
+                                                                <el-input v-model="companyCode" placeholder="社会统一信用代码" @keyup.native="toUpperCase">
                                                                 </el-input>
                                                             </el-col>
                                                             <el-col :span="6">
@@ -176,7 +176,7 @@
                                                                 </el-input>
                                                             </el-col>
                                                             <el-col :span="10">
-                                                                <el-input v-model="memberCode" placeholder="法人身份证号">
+                                                                <el-input v-model="memberCode" placeholder="法人身份证号" @keyup.native="toUpperCase">
                                                                     <!--<template slot="prepend">身份证号：</template>-->
                                                                 </el-input>
                                                             </el-col>
@@ -283,7 +283,7 @@
                                         </el-radio-group>
                                     </el-col>
                                     <el-col :span="6">
-                                        <el-input v-model="memberCode" placeholder="身份证号码">
+                                        <el-input v-model="memberCode" placeholder="身份证号码" @keyup.native="toUpperCase">
                                         </el-input>
                                     </el-col>
                                     <el-col :span="5">
@@ -325,7 +325,7 @@
                                     </el-col>
                                     <el-col :span="3">
                                         <el-button type="primary" @click="takeNumberByItemCode"
-                                                   :disabled="!itemVo || !itemVo.id || !member ||  !member.id">事项抽号
+                                                   :disabled="!itemVo || !itemVo.id || !memberCode ||  !memberRealname || !memberPhone">事项抽号
                                         </el-button>
                                     </el-col>
                                 </el-row>
@@ -1233,6 +1233,10 @@
                 this.displayPendingFromBoxDialog = true;
                 this.queryPendingFromBoxList();
             },
+            toUpperCase(){
+                this.companyCode = this.companyCode.toUpperCase();
+                this.memberCode = this.memberCode.toUpperCase();
+            },
             /**
              * 查询企业信息
              */
@@ -1365,8 +1369,8 @@
                             //不存在
                             this.$message.warning("未注册");
                             this.doFastReg = true;
-                            this.memberRealname = '';
-                            this.memberPhone = '';
+                            // this.memberRealname = '';
+                            // this.memberPhone = '';
                         } else {
                             this.member = response.data;
                             this.$message.success("已注册");
@@ -1395,8 +1399,8 @@
                             //不存在
                             this.$message.warning("未注册");
                             this.doFastReg = true;
-                            this.memberRealname = '';
-                            this.memberPhone = '';
+                            // this.memberRealname = '';
+                            // this.memberPhone = '';
                         } else {
                             this.member = response.data;
                             this.$message.success("已注册");
@@ -1417,6 +1421,8 @@
              * 清除
              * */
             resetForm() {
+                this.companyCode = '';
+                this.companyName = '';
                 this.itemVo = {};
                 this.itemNumber = {};
                 this.companyInfo = {};
@@ -1563,7 +1569,10 @@
                     this.queryLoading = false;
                 })
             },
-
+            memberTypeChange(){
+                this.queryItem();
+                this.resetForm();
+            },
             /**
              * 查询 - 根据呼叫号查询今日此号码信息
              */
