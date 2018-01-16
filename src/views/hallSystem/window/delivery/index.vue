@@ -827,7 +827,8 @@
             },
             searchItem1(query) {
                 const listQueryName = {
-                    name: undefined
+                    name: undefined,
+                    showStatus: 1
                 }
                 if (query !== '') {
                     let valid = validateQueryStr(query);
