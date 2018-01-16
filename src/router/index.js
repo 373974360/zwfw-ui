@@ -37,10 +37,13 @@ const ProcessDefinition = () => import('../views/baseSystem/business/processDefi
 const TaskSetting = () => import('../views/baseSystem/business/taskSetting');
 /* 办件管理 */
 const WorkCreate = () => import('../views/baseSystem/process/workCreate');
-const WorkPending = () => import('../views/baseSystem/process/workPending');
 /* 待办事项 */
-const WorkQuery = () => import('../views/baseSystem/process/workQuery');
+const WorkPending = () => import('../views/baseSystem/process/workPending');
 /* 办件查询 */
+const WorkQuery = () => import('../views/baseSystem/process/workQuery');
+const MyWorkQuery = () => import('../views/baseSystem/process/myWorkQuery');
+/* 延期审核管理 */
+const WorkExtendTime = () => import('../views/baseSystem/process/workExtendTime');
 /* 统计分析 */
 const Business = () => import('../views/baseSystem/count/business');
 
@@ -235,11 +238,24 @@ export const asyncRouterMap = [
                 meta: {permission: 'yl12345:process:workPending:list'}
             },
             {
+                path: 'myWorkQuery',
+                component: MyWorkQuery,
+                name: '我的办件 ',
+                meta: {permission: 'yl12345:process:myWorkQuery:list'}
+            },
+            {
                 path: 'workQuery',
                 component: WorkQuery,
                 name: '办件查询',
                 meta: {permission: 'yl12345:process:workQuery:list'}
+            },
+            {
+                path: 'workExtendTime',
+                component: WorkExtendTime,
+                name: '延期审核',
+                meta: {permission: 'yl12345:process:workExtendTime:list'}
             }
+
         ]
     },
     {

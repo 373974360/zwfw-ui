@@ -63,10 +63,9 @@
         </div>
         <!--查看-->
         <el-dialog class="s-dialog-title" :title="textMapTitle" :visible.sync="dialogFormVisible"
-                   :close-on-click-modal="closeOnClickModal" :before-close="resetWorkPendingForm"
-                   v-loading="dialogLoading"
-                   element-loading-text="拼命加载中">
-            <el-form label-position="right" label-width="200px" label-suffix="：">
+                   :close-on-click-modal="closeOnClickModal" :before-close="resetWorkPendingForm">
+            <el-form label-position="right" label-width="200px" label-suffix="：" v-loading="dialogLoading"
+                     element-loading-text="拼命加载中">
                 <el-form-item label="办件名称">
                     <el-col :span="15">
                         <el-input v-model="itemProcessVo.name" auto-complete="off" :disabled="true"></el-input>
@@ -122,7 +121,7 @@
 <script>
     import {mapGetters} from 'vuex';
     import {
-        getZwfwDeptWorkQueryList,
+        getMyDeptWorkList,
         getZwfwDeptWorkDetail,
     } from 'api/baseSystem/process/work';
 
@@ -200,7 +199,7 @@
              **/
             getList() {
                 this.listLoading = true;
-                getZwfwDeptWorkQueryList(this.listQuery).then(response => {
+                getMyDeptWorkList(this.listQuery).then(response => {
                     this.zwfwDeptWorkQueryList = response.data.list;
                     this.total = response.data.total;
                     this.listLoading = false;

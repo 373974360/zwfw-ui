@@ -219,10 +219,10 @@
                     name: [
                         {required: true, message: '请输入姓名'}
                     ],
-                    phone: [
+                    /*phone: [
                         {required: true, message: '请输入手机号码'},
                         {validator: validateMobiles, trigger: 'blur'}
-                    ],
+                    ],*/
                     account: [
                         {required: true, message: '请输入帐号'}
                     ],

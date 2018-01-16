@@ -71,7 +71,7 @@ var webpackConfig = merge(baseWebpackConfig, {
              path:config.build.staticPath,
             // necessary to consistently work with multiple chunks via CommonsChunkPlugin
             chunksSortMode: 'dependency',
-            title:"西安国际港务区"
+            title:"阎良区人民政府"
         }),
         // split vendor js into its own file
         new webpack.optimize.CommonsChunkPlugin({

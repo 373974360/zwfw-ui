@@ -100,7 +100,7 @@ export function workCancelExtendTime(query) {
 export function workuploadImg(itemProcessAttachmentVo) {
     const data = itemProcessAttachmentVo;
     return fetch({
-        url: '/api/yl12345/itemProcessAttachment/uploadImg',
+        url: '/api/yl12345/processAttachment/uploadImg',
         method: 'post',
         data
     })
@@ -109,7 +109,7 @@ export function workuploadImg(itemProcessAttachmentVo) {
 export function workUploadImgRemove(itemProcessAttachmentVo) {
     const data = itemProcessAttachmentVo;
     return fetch({
-        url: '/api/yl12345/itemProcessAttachment/uploadImgRemove',
+        url: '/api/yl12345/processAttachment/uploadImgRemove',
         method: 'post',
         data
     })
@@ -125,6 +125,18 @@ export function getZwfwDeptWorkQueryList(q) {
         params: q
     });
 }
+
+/**
+ * 我的办件
+ */
+export function getMyDeptWorkList(q) {
+    return fetch({
+        url: '/api/yl12345/processWork/getMyDeptWorkList',
+        method: 'get',
+        params: q
+    });
+}
+
 /**
  * 办结查询
  * @param q

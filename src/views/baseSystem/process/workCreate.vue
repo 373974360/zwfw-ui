@@ -15,11 +15,11 @@
         <el-table ref="zwfwDeptWorkPendingTable" :data="zwfwDeptWorkPendingList" v-loading.body="listLoading" border fit
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange">
-            <el-table-column align="center" label="办件号">
+            <!--<el-table-column align="center" label="办件号">
                 <template scope="scope">
                     <span>{{scope.row.processNumber}}</span>
                 </template>
-            </el-table-column>
+            </el-table-column>-->
             <!--<el-table-column align="center" label="办理事项" prop="itemName">
                 <template scope="scope">
                     {{scope.row.itemName}}
@@ -74,7 +74,7 @@
         <el-dialog title="创建新的待办任务" :visible.sync="dialogFormVisible"
                    :close-on-click-modal="closeOnClickModal" :before-close="resetProcessModelForm">
             <el-form ref="activitiModelForm" :model="processVo" label-position="right" label-width="200px"
-                     :rules="rules" label-suffix="：" >
+                     :rules="rules" label-suffix="：" v-loading="formLoading" >
                 <el-form-item label="选择事项" prop="itemId">
                     <el-col :span="15">
                         <el-select v-model="processVo.itemId" filterable placeholder="选择事项" clearable>
@@ -120,7 +120,7 @@
                 <a ref="downloadFile" v-show="false" target="_blank"></a>
             </el-form>
             <div slot="footer" class="dialog-footer" v-if="!editDsiable">
-                <el-button type="primary" @click="doCreate">确定</el-button>
+                <el-button type="primary" @click="doCreate" :loading="submitLoading">确定</el-button>
                 <el-button @click="resetProcessModelForm">取消</el-button>
             </div>
         </el-dialog>
@@ -184,7 +184,8 @@
                 selectedRows: [],
                 dialogFormVisible: false,
                 dialogStatus: '',
-                dialogLoading: false,
+                formLoading: false,
+                submitLoading: false,
                 editDsiable: false,
                 itemVo: {},
                 processVo: {
@@ -230,10 +231,11 @@
              * 加载事项列表
              */
             loadItemList() {
+                this.formLoading = true;
                 const _this = this;
                 getAllByNameOrbasicCode().then((response) => {
                     _this.itemList = response.data;
-                    this.dialogLoading = false;
+                    this.formLoading = false;
                 })
             },
             /**
@@ -241,9 +243,11 @@
              * 加载部门列表
              */
             loadDeptCascader() {
+                this.formLoading = true;
                 getDeptCascader().then(response => {
                     if (response.httpCode === 200) {
                         this.deptCascader = response.data;
+                        this.formLoading = false;
                     } else {
                         this.$message.error(response.msg);
                     }
@@ -281,7 +285,9 @@
                 })
             },
             showDetail(row){
+                this.dialogFormVisible = true;
                 this.editDsiable = true;
+                this.formLoading = true;
                 this.resetProcessModelForm();
                 if(!this.deptCascader.length){
                     this.loadDeptCascader();
@@ -289,12 +295,10 @@
                 if(!this.itemList.length){
                     this.loadItemList();
                 }
-                this.dialogFormVisible = true;
-                this.dialogLoading = true;
                 this.processVo = copyProperties(this.processVo, row);
                 getWorkAttchements({processNumber:row.processNumber}).then(response => {
                     if (response.httpCode === 200) {
-                        this.dialogLoading = false;
+                        this.formLoading = false;
                         for(const attchment of response.data){
                             let file = {};
                             file.name = attchment.fileName;
@@ -303,7 +307,7 @@
                         }
                     }
                 }).catch(e => {
-                    this.dialogLoading = false;
+                    this.formLoading = false;
                     this.$message.error(response.msg || '加载超时');
                 });
             },
@@ -311,21 +315,20 @@
              * 新建办件
              * */
             createProcess() {
-                this.editDsiable = false;
                 this.resetProcessModelForm();
-                this.dialogLoading = true;
+                this.dialogFormVisible = true;
+                this.editDsiable = false;
                 if(!this.deptCascader.length){
                     this.loadDeptCascader();
                 }
                 if(!this.itemList.length){
                     this.loadItemList();
                 }
-                this.dialogFormVisible = true;
             },
             doCreate(){
                 this.$refs.activitiModelForm.validate(valid => {
                     if (valid) {
-                        this.dialogLoading = true;
+                        this.submitLoading = true;
                         for(const file of this.fileList){
                             this.processVo.fileNames.push(file.raw.name);
                             this.processVo.fileUrls.push(file.response.url)
@@ -333,13 +336,14 @@
                         workCreate(this.processVo).then(response => {
                             if (response.httpCode === 200) {
                                 this.dialogFormVisible = false;
+                                this.submitLoading = false;
                                 this.$message.success("创建成功！");
                                 this.getList();
                             } else {
                                 this.$message.error(response.msg);
                             }
                         }).catch(e => {
-                            this.listLoading = false;
+                            this.submitLoading = false;
                             this.$message.error(e.msg || '加载超时');
                         });
                     }

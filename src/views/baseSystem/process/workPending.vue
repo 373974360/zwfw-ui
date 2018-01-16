@@ -3,11 +3,11 @@
         <el-table ref="zwfwDeptWorkPendingTable" :data="zwfwDeptWorkPendingList" v-loading.body="listLoading" border fit
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange">
-            <el-table-column align="center" label="办件号">
+            <!--<el-table-column align="center" label="办件号">
                 <template scope="scope">
                     <span>{{scope.row.processNumber}}</span>
                 </template>
-            </el-table-column>
+            </el-table-column>-->
             <!--<el-table-column align="center" label="办理事项" prop="itemName">
                 <template scope="scope">
                     {{scope.row.itemName}}
@@ -73,22 +73,14 @@
                                   :disabled="true"></el-input>
                     </el-col>
                 </el-form-item>
-                <el-form-item label="上传附件" prop="description">
+                <el-form-item label="办件附件" prop="description">
                     <el-col :span="15">
-                        <el-upload name="uploadFile" :accept="fileAccepts"
-                                   :action="uploadAction" :file-list="uploadAvatars"
-                                   :on-success="handleAvatarSuccess"
-                                   :on-error="handlerAvatarError"
-                                   :show-file-list="true"
-                                   multiple
-                                   :limit="3"
-                                   :on-preview="handlePictureCardPreview"
-                                   :on-remove="handleRemove">
-                            <el-button size="small" type="primary">点击上传</el-button>
-                        </el-upload>
+                        <template v-for="att in itemProcessAttachmentList">
+                            <a class="el-upload-list__item-name" :href="att.fileUrl" :download="att.fileName" target="_blank">
+                                <i class="el-icon-document"></i>{{att.fileName}}</a>
+                        </template>
                     </el-col>
                 </el-form-item>
-                <a ref="downloadFile" v-show="false" target="_blank"></a>
                 <el-form-item label="处理方式">
                     <el-col :span="15">
                         <el-button class="filter-item" type="primary" @click="action='pass'">提交办理</el-button>
@@ -109,20 +101,23 @@
             </el-form>
             <el-form ref="deptWorkPendingForm" :model="itemProcessVo" label-suffix="：" label-position="right"
                      label-width="200px">
-                <el-form-item v-show="action=='pass'" v-for="field in taskForm" :label="field.name"
-                              :key="field.id">
-                    <template v-if="field.type=='enum'">
-                        <select v-bind:name="'form_'+field.id"
-                                v-bind:id="'form_field_'+field.id" placeholder="请选择"
-                                v-model="formData['form_'+field.id]">
-                            <option v-for="(v,k) in field.values" :value="k">{{v}}</option>
-                        </select>
-                    </template>
-                    <template v-else>
-                        <el-input v-bind:name="'form_'+field.id"
-                                  v-bind:id="'form_field_'+field.id"
-                                  v-model="formData['form_'+field.id]"></el-input>
-                    </template>
+                <el-form-item label="答复附件" v-show="action=='pass'" >
+                    <el-row>
+                        <el-col :span="15">
+                            <el-upload name="uploadFile" :accept="fileAccepts"
+                                       :action="uploadAction" :file-list="uploadAvatars"
+                                       :on-success="handleAvatarSuccess"
+                                       :on-error="handlerAvatarError"
+                                       :show-file-list="true"
+                                       multiple
+                                       :limit="3"
+                                       :on-preview="handlePictureCardPreview"
+                                       :on-remove="handleRemove">
+                                <el-button size="small" type="primary">点击上传</el-button>
+                            </el-upload>
+                            <a ref="downloadFile" v-show="false" target="_blank"></a>
+                        </el-col>
+                    </el-row>
                 </el-form-item>
                 <el-form-item v-show="action=='pass'" label="办理意见">
                     <el-row>
@@ -133,7 +128,7 @@
                     <el-row>
                         <el-col :span="15" align="center">
                             <el-button type="primary" @click="submitComplete"
-                                       :disabled="dialogLoading">
+                                       :disabled="dialogLoading" >
                                 确定提交
                             </el-button>
                         </el-col>
@@ -342,6 +337,7 @@
                 action: '',
                 correctionList: [],
                 extendTimeVoList: [],
+                itemProcessAttachmentList: [],
                 uploadAction: this.$store.state.app.uploadUrl,
                 fileAccepts: this.$store.state.app.fileAccepts,
                 uploadImgs: [],
@@ -419,17 +415,7 @@
                         this.action = '';
                         this.correctionList = response.data.correctionList;
                         this.extendTimeVoList = response.data.extendTimeVoList;
-                        const itemProcessAttachmentList = response.data.itemProcessAttachmentList;
-                        for (var o in itemProcessAttachmentList) {
-                            this.uploadAvatars.push(
-                                {
-                                    name: itemProcessAttachmentList[o].fileName,
-                                    url: itemProcessAttachmentList[o].fileUrl,
-                                    id: itemProcessAttachmentList[o].id,
-                                    taskId: itemProcessAttachmentList[o].taskId
-                                }
-                            );
-                        }
+                        this.itemProcessAttachmentList = response.data.itemProcessAttachmentList;
                     }
                 }).catch(e => {
                     this.dialogLoading = false;
@@ -458,7 +444,6 @@
              * 提交到下一步
              * */
             submitComplete() {
-                this.dialogLoading = true;
                 var form = this.$refs.deptWorkPendingForm;
                 console.log(this.formData);
                 const query = Object.assign({
@@ -575,15 +560,18 @@
              *
              */
             handleAvatarSuccess(res, file, fileList) {
+                console.dir(res);
+                console.dir(file);
                 if (res.state === 'SUCCESS') {
                     const query = {
                         processNumber: this.processNumber,
                         taskId: this.taskId,
-                        fileUrl: res.url
+                        fileUrl: res.url,
+                        fileName: file.name,
+                        remark: 'apply'
                     }
                     workuploadImg(query).then(response => {
                         if (response.httpCode === 200) {
-                            this.$message.success("保存成功");
                             console.log(response);
                         } else {
                             this.$message.error(response.msg);
@@ -608,7 +596,6 @@
             },
             handleRemove(file) {
                 this.dialogLoading = true;
-
                 console.log(file);
                 const data = {
                     id: file.id,
@@ -617,7 +604,7 @@
                 workUploadImgRemove(data).then(response => {
                     this.dialogLoading = false;
                     if (response.httpCode === 200) {
-                        this.$message.success("删除成功");
+                        console.log(response);
                     } else {
                         this.$message.error("删除失败");
                     }
@@ -662,4 +649,5 @@
         font-weight: 500;
     }
     .el-input.is-disabled .el-input__inner{color:#383535}
+    .el-upload-list__item-name:hover{color: red}
 </style>

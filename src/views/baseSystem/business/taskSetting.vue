@@ -119,9 +119,9 @@
                                 <el-form-item label="前台名称：">
                                     <el-input v-model="task.frontName" placeholder="请输入内容"></el-input>
                                 </el-form-item>
-                                <el-form-item label="默认时限天数：">
+                                <el-form-item label="默认时限：">
                                     <el-input-number v-model="task.defaultTimeLimit" :min="0"
-                                                     :max="999"></el-input-number>
+                                                     :max="999"></el-input-number>（小时）
                                 </el-form-item>
                                 <!--<el-form-item label="任务开始通知：">-->
                                 <!--<el-select v-model="task.beginNotifyTarget" placeholder="请选择">-->
