@@ -656,16 +656,17 @@
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
+                <div v-if="zwfwItemConfig.ispreorder==1">
+                    <el-form-item label="预约时间" prop="preorderTimeArray">
+                        <el-checkbox-group v-model="zwfwItemConfig.preorderTimeArray" @change="preorderChange">
+                                <el-checkbox v-for="item in zwfwItemConfig.opentime" :key="item" :label="item" ></el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
 
-                <el-form-item label="预约时间" prop="preorderTimeArray">
-                    <el-checkbox-group v-model="zwfwItemConfig.preorderTimeArray" @change="preorderChange">
-                            <el-checkbox v-for="item in zwfwItemConfig.opentime" :key="item" :label="item" ></el-checkbox>
-                    </el-checkbox-group>
-                </el-form-item>
-
-                <el-form-item label="预约人数" prop="preordernum">
-                    <el-input-number v-model="zwfwItemConfig.preordernum" :min="1" label="预约人数"></el-input-number>
-                </el-form-item>
+                    <el-form-item label="预约人数" prop="preordernum">
+                        <el-input-number v-model="zwfwItemConfig.preordernum" :min="1" label="预约人数"></el-input-number>
+                    </el-form-item>
+                </div>
             </el-form>
             <div style="text-align: center" slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="closeZwfwItemConfigForm">取 消</el-button>
@@ -1387,25 +1388,27 @@
                 })
             },
             submitItemConfig() {
-                this.$refs['zwfwItemConfigForm'].validate(valid => {
-                    if (valid) {
-                        this.zwfwItemConfig.preorderTime = this.zwfwItemConfig.preorderTimeArray.join(",");
-                        this.zwfwItemConfig.preorderTimeArray1 = this.zwfwItemConfig.preorderTimeArray;
-                        this.zwfwItemConfig.opentime1 = this.zwfwItemConfig.opentime;
-                        this.zwfwItemConfig.preorderTimeArray = "";
-                        this.zwfwItemConfig.opentime = "";
-                        this.zwfwItemConfig.itemVo = "";
-                        setItemConfig(this.zwfwItemConfig).then(response => {
-                            if (response.httpCode === 200) {
-                                this.closeZwfwItemConfigForm();
-                            } else {
-                                this.zwfwItemConfig.preorderTimeArray = this.zwfwItemConfig.preorderTimeArray1;
-                                this.zwfwItemConfig.opentime = this.zwfwItemConfig.opentime1;
-                                this.$message.error(response.msg || '事项预约配置失败');
-                            }
-                        })
+                if(this.zwfwItemConfig.ispreorder==1){
+                    if(this.zwfwItemConfig.preorderTimeArray==null || this.zwfwItemConfig.preorderTimeArray.length==0){
+                        this.$message.warn("请勾选预约时间");
+                        return false;
                     }
-                });
+                }
+                this.zwfwItemConfig.preorderTime = this.zwfwItemConfig.preorderTimeArray.join(",");
+                this.zwfwItemConfig.preorderTimeArray1 = this.zwfwItemConfig.preorderTimeArray;
+                this.zwfwItemConfig.opentime1 = this.zwfwItemConfig.opentime;
+                this.zwfwItemConfig.preorderTimeArray = "";
+                this.zwfwItemConfig.opentime = "";
+                this.zwfwItemConfig.itemVo = "";
+                setItemConfig(this.zwfwItemConfig).then(response => {
+                    if (response.httpCode === 200) {
+                        this.closeZwfwItemConfigForm();
+                    } else {
+                        this.zwfwItemConfig.preorderTimeArray = this.zwfwItemConfig.preorderTimeArray1;
+                        this.zwfwItemConfig.opentime = this.zwfwItemConfig.opentime1;
+                        this.$message.error(response.msg || '事项预约配置失败');
+                    }
+                })
             },
             searchMaterial(query) {
                 if (query !== '') {
