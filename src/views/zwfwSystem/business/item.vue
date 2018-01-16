@@ -17,6 +17,9 @@
                            :label="item.value"></el-option>
             </el-select>
             <el-select class="filter-item" v-model="listQuery.enable" clearable placeholder="事项状态">
+                <el-option label="全部" value="">
+
+                </el-option>
                 <el-option
                         v-for="item in options"
                         :key="item.value"

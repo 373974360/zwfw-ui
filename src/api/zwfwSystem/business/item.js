@@ -44,7 +44,16 @@ export function deleteZwfwItem(id) {
     });
 }
 
+/**
+ * 查询所有事项列表
+ * @param query
+ */
 export function getAllByNameOrbasicCode(query) {
+    if (query == null) {
+        query = {};
+    }
+    /* 设置为只返回启用的*/
+    query.enable = 1;
     return fetch({
         url: '/api/zwfwSystem/business/item/getAll',
         method: 'get',
@@ -58,7 +67,7 @@ export function getAllByNameOrbasicCode(query) {
  */
 export function getPretrialUserListByItemId(itemId) {
     const data = {
-        itemId: itemId
+        itemId
     };
     return fetch({
         url: '/api/zwfwSystem/business/item/getPretrialUser',
@@ -74,8 +83,8 @@ export function getPretrialUserListByItemId(itemId) {
  */
 export function updatePretrialUserList(itemId, userIds) {
     const data = {
-        itemId: itemId,
-        userIds: userIds
+        itemId,
+        userIds
     };
     return fetch({
         url: '/api/zwfwSystem/business/item/updatePretrialUser',
@@ -89,6 +98,6 @@ export function getDetailById(id) {
     return fetch({
         url: '/api/zwfwSystem/business/item/get',
         method: 'get',
-        params: {id: id}
+        params: {id}
     })
 }
