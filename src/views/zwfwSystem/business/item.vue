@@ -98,6 +98,12 @@
                                    type="primary" size="small">
                             办件材料
                         </el-button>
+                        <br />
+                        <br />
+                        <el-button class="filter-item" style="" @click="handleItemConfig(scope.row)"
+                                   type="primary" size="small">
+                            预约配置
+                        </el-button>
                     </el-badge>
                 </template>
             </el-table-column>
@@ -631,6 +637,45 @@
                 </el-button>
             </div>
         </el-dialog>
+
+        <!--事项预约配置-->
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogItemConfigFormVisible" size="large"
+                   :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemConfigForm">
+            <el-form ref="zwfwItemConfigForm" class="small-space" :model="zwfwItemConfig"
+                     label-position="right" v-loading="dialogFormLoading"
+                     label-width="134px"
+                     style="width: 80%; margin-left:10%; margin-top: 5%;"
+                     :rules="zwfwItemConfigFormRules">
+                <el-form-item label="是否支持预约" prop="ispreorder">
+                    <el-radio-group v-model="zwfwItemConfig.ispreorder">
+                        <el-radio :label="1">
+                            <span style="font-weight:normal;">是</span>
+                        </el-radio>
+                        <el-radio :label="0">
+                            <span style="font-weight:normal;">否</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <div v-if="zwfwItemConfig.ispreorder==1">
+                    <el-form-item label="预约时间" prop="preorderTimeArray">
+                        <el-checkbox-group v-model="zwfwItemConfig.preorderTimeArray" @change="preorderChange">
+                                <el-checkbox v-for="item in zwfwItemConfig.opentime" :key="item" :label="item" ></el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+
+                    <el-form-item label="预约人数" prop="preordernum">
+                        <el-input-number v-model="zwfwItemConfig.preordernum" :min="1" label="预约人数"></el-input-number>
+                    </el-form-item>
+                </div>
+            </el-form>
+            <div style="text-align: center" slot="footer" class="dialog-footer">
+                <el-button icon="circle-cross" type="danger" @click="closeZwfwItemConfigForm">取 消</el-button>
+                <el-button type="primary" icon="circle-check"
+                           @click="submitItemConfig">确 定
+                </el-button>
+            </div>
+        </el-dialog>
+
     </div>
 </template>
 
@@ -639,7 +684,8 @@
     import {mapGetters} from 'vuex';
     import {
         getZwfwItemList, createZwfwItem, updateZwfwItem, delZwfwItems,
-        getPretrialUserListByItemId
+        getPretrialUserListByItemId,
+        getItemConfig, setItemConfig
     } from 'api/zwfwSystem/business/item';
     import {
         createZwfwItemMaterial,
@@ -779,6 +825,13 @@
                     example: '',
                     notice: ''
                 },
+                zwfwItemConfig: {
+                    ispreorder: 1,
+                    preorderTimeArray: [],
+                    preordernum: '',
+                    opentime: [],
+                    itemId: ''
+                },
                 applyMaterials: '',
                 itemId: '',
                 currentItem: [],
@@ -789,6 +842,7 @@
                 selectedRows: [],
                 dialogItemFormVisible: false,
                 dialogMaterialFormVisible: false,
+                dialogItemConfigFormVisible: false,
                 dialogStatus: '',
                 uploadAction: this.$store.state.app.uploadUrl,
                 fileAccepts: this.$store.state.app.fileAccepts,
@@ -840,6 +894,11 @@
                 zwfwItemMaterialRules: {
                     name: [
                         {required: true, message: '请输入材料名称'}
+                    ]
+                },
+                zwfwItemConfigFormRules: {
+                    preorderTimeArray: [
+                        {required: true, message: '请选择预约时间', trigger: 'blur'}
                     ]
                 },
                 userListPretrial: [],
@@ -936,8 +995,12 @@
                     this.zwfwItem.handTypes = ['1'];
                 }
             }
+
         },
         methods: {
+            preorderChange(value) {
+                console.log(value);
+            },
             initEditor() {
                 this.$nextTick(() => {
                     this.$refs.conditionEditor.quill.getModule('toolbar').addHandler('image', this.imgHandlerCondition);
@@ -1305,6 +1368,48 @@
                     this.dialogTableLoading = false;
                 })
             },
+            //事项预约配置编辑
+            handleItemConfig(item) {
+                this.currentItem = item;
+                this.itemId = item.id;
+                this.dialogStatus = 'itemConfigUpdate';
+                this.getItemConfig();
+                this.resetMaterialTemp();
+                this.dialogItemConfigFormVisible = true;
+            },
+            getItemConfig() {
+                getItemConfig(this.currentItem.id).then(response => {
+                    if (response.httpCode === 200) {
+                        this.zwfwItemConfig = response.data;
+                        this.zwfwItemConfig.itemId = this.currentItem.id;
+                    } else {
+                        this.$message.error(response.msg || '加载事项预约配置失败');
+                    }
+                })
+            },
+            submitItemConfig() {
+                if(this.zwfwItemConfig.ispreorder==1){
+                    if(this.zwfwItemConfig.preorderTimeArray==null || this.zwfwItemConfig.preorderTimeArray.length==0){
+                        this.$message.warn("请勾选预约时间");
+                        return false;
+                    }
+                }
+                this.zwfwItemConfig.preorderTime = this.zwfwItemConfig.preorderTimeArray.join(",");
+                this.zwfwItemConfig.preorderTimeArray1 = this.zwfwItemConfig.preorderTimeArray;
+                this.zwfwItemConfig.opentime1 = this.zwfwItemConfig.opentime;
+                this.zwfwItemConfig.preorderTimeArray = "";
+                this.zwfwItemConfig.opentime = "";
+                this.zwfwItemConfig.itemVo = "";
+                setItemConfig(this.zwfwItemConfig).then(response => {
+                    if (response.httpCode === 200) {
+                        this.closeZwfwItemConfigForm();
+                    } else {
+                        this.zwfwItemConfig.preorderTimeArray = this.zwfwItemConfig.preorderTimeArray1;
+                        this.zwfwItemConfig.opentime = this.zwfwItemConfig.opentime1;
+                        this.$message.error(response.msg || '事项预约配置失败');
+                    }
+                })
+            },
             searchMaterial(query) {
                 if (query !== '') {
                     let valid = validateQueryStr(query);
@@ -1507,6 +1612,10 @@
             },
             closeZwfwMaterialForm() {
                 this.dialogMaterialFormVisible = false;
+                this.resetZwfwMaterialForm();
+            },
+            closeZwfwItemConfigForm() {
+                this.dialogItemConfigFormVisible = false;
                 this.resetZwfwMaterialForm();
             },
             resetZwfwMaterialForm() {
