@@ -376,12 +376,12 @@
                 <el-form-item label="取件方式" prop="takeTypes">
                     <el-checkbox-group v-model="zwfwItem.takeTypes">
                         <el-checkbox v-for="item in enums['TakeType']"
-                                     :disabled="(zwfwItem.handleType=='blxs_ckbl' && (item.code==2 || item.code==3)) ? true : false"
                                      :key="item.code" :label="item.code + ''">
                             {{item.value}}
                         </el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
+                <!--:disabled="(zwfwItem.handleType=='blxs_ckbl' && (item.code==2 || item.code==3)) ? true : false"-->
                 <el-form-item label="版本生效时间" prop="versionAvailableTime">
                     <el-date-picker v-model="zwfwItem.versionAvailableTime" type="datetime"
                                     placeholder="选择日期"></el-date-picker>
@@ -934,7 +934,6 @@
             'zwfwItem.handleType'(value) {
                 if (value == 'blxs_ckbl') {
                     this.zwfwItem.handTypes = ['1'];
-                    this.zwfwItem.takeTypes = ['1'];
                 }
             }
         },
