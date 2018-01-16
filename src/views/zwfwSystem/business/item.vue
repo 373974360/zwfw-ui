@@ -639,7 +639,7 @@
         </el-dialog>
 
         <!--事项预约配置-->
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogItemConfigFormVisible" size="large"
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogItemConfigFormVisible"
                    :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemConfigForm">
             <el-form ref="zwfwItemConfigForm" class="small-space" :model="zwfwItemConfig"
                      label-position="right" v-loading="dialogFormLoading"
