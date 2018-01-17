@@ -924,7 +924,7 @@
     import {getCategoryCascader} from 'api/zwfwSystem/business/category';
     import {getAllMailbox} from 'api/hallSystem/window/mailbox';
     import {getAllAddresseesByMemberId} from 'api/hallSystem/member/memberAddressee';
-    import {validatMobiles} from 'utils/validate'
+    import {validatMobiles,checkSocialCreditCode,isIdCardNo} from 'utils/validate'
     import {mapGetters} from 'vuex';
     import {enums, parseToInt} from '../../../../filters';
     import {copyProperties} from 'utils';
@@ -1242,9 +1242,9 @@
              */
             queryCompanyInfo() {
                 this.companyInfo = {};
-                if (this.companyCode == '' || this.companyCode.length != 18) {
+                if(!checkSocialCreditCode(this.companyCode)){
                     this.companyInfo = {};
-                    this.$message.warning("社会统一信用代码不正确，跳过查询工商企业信息库");
+                    this.$message.warning("社会统一信用代码不正确，请重新输入");
                     return;
                 }
                 queryCompanyInfo({
@@ -1367,6 +1367,10 @@
              * 检测自然人用户是否注册，如果注册，返回用户信息，如果没有注册显示出快速注册界面
              * */
             checkNatureMemberExist() {
+                if(!isIdCardNo(this.memberCode)){
+                    this.$message.warning("身份证号码格式不正确，请重新输入");
+                    return;
+                }
                 checkNatureMemberExist({
                     memberCode: this.memberCode
                 }).then(response => {
@@ -1397,6 +1401,11 @@
              * 检测法人用户是否注册，如果注册，返回用户信息，如果没有注册显示出快速注册界面
              * */
             checkLegalMemberExist() {
+                if(!checkSocialCreditCode(this.companyCode)){
+                    this.companyInfo = {};
+                    this.$message.warning("社会统一信用代码不正确，请重新输入");
+                    return;
+                }
                 checkLegalMemberExist({
                     companyCode: this.companyCode
                 }).then(response => {
@@ -1763,12 +1772,12 @@
                         this.$message.warning('姓名没有填写，不能提交');
                         return;
                     }
-                    if (this.memberCode == '') {
-                        this.$message.warning('身份证没有填写，不能提交');
+                    if(!isIdCardNo(this.memberCode)){
+                        this.$message.warning("身份证号码格式不正确，请重新填写");
                         return;
                     }
-                    if (this.memberPhone == '') {
-                        this.$message.warning('手机号没有填写，不能提交');
+                    if(!validatMobiles(this.memberPhone)){
+                        this.$message.warning("手机号没格式不正确，请重新填写");
                         return;
                     }
                 } else {  //法人
@@ -1777,16 +1786,16 @@
                         this.$message.warning('姓名没有填写，不能提交');
                         return;
                     }
-                    if (this.memberCode == '') {
-                        this.$message.warning('身份证没有填写，不能提交');
+                    if(!isIdCardNo(this.memberCode)){
+                        this.$message.warning("身份证号码格式不正确，请重新填写");
                         return;
                     }
-                    if (this.memberPhone == '') {
-                        this.$message.warning('手机号没有填写，不能提交');
+                    if(!validatMobiles(this.memberPhone)){
+                        this.$message.warning("手机号没格式不正确，请重新填写");
                         return;
                     }
-                    if (this.companyCode == '') {
-                        this.$message.warning('社会统一信用代码没有填写，不能提交');
+                    if(!checkSocialCreditCode(this.companyCode)){
+                        this.$message.warning('社会统一信用代码输入不正确，请重新填写');
                         return;
                     }
                     if (this.companyName == '') {
