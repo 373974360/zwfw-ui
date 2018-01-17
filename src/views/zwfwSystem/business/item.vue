@@ -17,6 +17,9 @@
                            :label="item.value"></el-option>
             </el-select>
             <el-select class="filter-item" v-model="listQuery.enable" clearable placeholder="事项状态">
+                <el-option label="全部" value="">
+
+                </el-option>
                 <el-option
                         v-for="item in options"
                         :key="item.value"
@@ -61,31 +64,31 @@
                     <span>{{scope.row.type | dics('sslx')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="办件类型" prop="processType" width="100">
+            <el-table-column align="center" label="办件类型" prop="processType">
                 <template scope="scope">
                     <el-tag :type="scope.row.processType | dics('bjlx')">
                         {{scope.row.processType | dics('bjlx')}}
                     </el-tag>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="承诺时限" prop="promiseEndTime" >
+            <el-table-column align="center" label="承诺时限" prop="promiseEndTime">
                 <template scope="scope">
                     <span>{{scope.row.promiseEndTime}} 工作日</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="法定时限" prop="legalEndTime" >
+            <el-table-column align="center" label="法定时限" prop="legalEndTime">
                 <template scope="scope">
                     <span>{{scope.row.legalEndTime}} 工作日</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="办理形式" prop="handleType" >
+            <el-table-column align="center" label="办理形式" prop="handleType">
                 <template scope="scope">
                     <el-tag :type="scope.row.handleType | dics('blxs')">
                         {{scope.row.handleType | dics('blxs')}}
                     </el-tag>
                 </template>
             </el-table-column>
-            <el-table-column prop="enable" class-name="status-col" label="状态" >
+            <el-table-column prop="enable" class-name="status-col" label="状态">
                 <template scope="scope">
                     <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
                         {{scope.row.enable | enums('Enable')}}
@@ -1390,8 +1393,8 @@
                 })
             },
             submitItemConfig() {
-                if (this.zwfwItemConfig.ispreorder == 1) {
-                    if (this.zwfwItemConfig.preorderTimeArray == null || this.zwfwItemConfig.preorderTimeArray.length == 0) {
+                if(this.zwfwItemConfig.ispreorder==1){
+                    if(this.zwfwItemConfig.preorderTimeArray==null || this.zwfwItemConfig.preorderTimeArray.length==0){
                         this.$message.warn("请勾选预约时间");
                         return false;
                     }
