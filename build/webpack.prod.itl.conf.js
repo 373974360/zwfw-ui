@@ -8,6 +8,8 @@ var CopyWebpackPlugin = require('copy-webpack-plugin')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
 var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+var ZipPlugin = require('zip-webpack-plugin')
+
 
 var env = process.env.NODE_ENV === 'production' ? config.build.prodEnv : config.build.sitEnv
 
@@ -104,6 +106,11 @@ var webpackConfig = merge(baseWebpackConfig, {
         new webpack.ProvidePlugin({
             $: 'jquery',
             'jQuery': 'jquery'
+        }),
+        // 这插件输出到 dist 下面了，而且 zip 包中没有 dist 目录这一层
+        new ZipPlugin({
+            path:path.join(__dirname,'../dist'),
+            filename: 'dist.zip'
         })
     ]
 })
