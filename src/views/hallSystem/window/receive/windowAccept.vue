@@ -1288,7 +1288,8 @@
                     basicCode: undefined,
                     itemCategories: this.itemCategory,
                     serviceObject: this.memberType == '1' ?
-                        'fwdx_ziranren,fwdx_common' : 'fwdx_faren,fwdx_common'
+                        'fwdx_ziranren,fwdx_common' : 'fwdx_faren,fwdx_common',
+                    handleType:'blxs_ckbl'
                 };
                 // this.selectedItem= null;
                 if (query !== '') {
