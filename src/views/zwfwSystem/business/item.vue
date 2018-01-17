@@ -102,11 +102,11 @@
                             办件材料
                         </el-button>
                         <br />
-                        <br />
-                        <el-button class="filter-item" style="" @click="handleItemConfig(scope.row)"
-                                   type="primary" size="small">
-                            预约配置
-                        </el-button>
+                        <!--<br />-->
+                        <!--<el-button class="filter-item" style="" @click="handleItemConfig(scope.row)"-->
+                                   <!--type="primary" size="small">-->
+                            <!--预约配置-->
+                        <!--</el-button>-->
                     </el-badge>
                 </template>
             </el-table-column>
@@ -542,6 +542,9 @@
                     <template scope="scope">
                         <span>{{scope.row.id}}</span>
                     </template>
+                </el-table-column>
+                <el-table-column prop="sortNo" align="center" label="顺序" width="80">
+
                 </el-table-column>
                 <el-table-column prop="name" align="left" label="材料名称">
                     <template scope="scope">
