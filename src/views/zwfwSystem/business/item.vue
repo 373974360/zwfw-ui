@@ -36,9 +36,10 @@
         </div>
 
         <el-table ref="zwfwItemTable" :data="zwfwItemList" v-loading.body="pageLoading" border fit highlight-current-row
-                  style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
+                  style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection"
+                  row-class-name="elRow">
             <el-table-column type="selection" width="55"/>
-            <el-table-column align="center" label="序号">
+            <el-table-column align="center" label="序号" width="70">
                 <template scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
@@ -60,46 +61,46 @@
                     <span>{{scope.row.type | dics('sslx')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="办件类型" prop="processType">
+            <el-table-column align="center" label="办件类型" prop="processType" width="100">
                 <template scope="scope">
                     <el-tag :type="scope.row.processType | dics('bjlx')">
                         {{scope.row.processType | dics('bjlx')}}
                     </el-tag>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="承诺时限" prop="promiseEndTime">
+            <el-table-column align="center" label="承诺时限" prop="promiseEndTime" >
                 <template scope="scope">
                     <span>{{scope.row.promiseEndTime}} 工作日</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="法定时限" prop="legalEndTime">
+            <el-table-column align="center" label="法定时限" prop="legalEndTime" >
                 <template scope="scope">
                     <span>{{scope.row.legalEndTime}} 工作日</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="办理形式" prop="handleType">
+            <el-table-column align="center" label="办理形式" prop="handleType" >
                 <template scope="scope">
                     <el-tag :type="scope.row.handleType | dics('blxs')">
                         {{scope.row.handleType | dics('blxs')}}
                     </el-tag>
                 </template>
             </el-table-column>
-            <el-table-column prop="enable" class-name="status-col" label="状态">
+            <el-table-column prop="enable" class-name="status-col" label="状态" >
                 <template scope="scope">
                     <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
                         {{scope.row.enable | enums('Enable')}}
                     </el-tag>
                 </template>
             </el-table-column>
-            <el-table-column align="left" label="操作" width="110">
+            <el-table-column align="left" label="操作" width="200" class-name="action">
                 <template scope="scope">
                     <el-badge :value="scope.row.itemMaterialCount" class="item">
                         <el-button class="filter-item" style="" @click="handleMaterialList(scope.row)"
                                    type="primary" size="small">
                             办件材料
                         </el-button>
-                        <br />
-                        <br />
+                    </el-badge>
+                    <el-badge class="item" :hidden="true">
                         <el-button class="filter-item" style="" @click="handleItemConfig(scope.row)"
                                    type="primary" size="small">
                             预约配置
@@ -187,7 +188,7 @@
                     </el-switch>
                 </el-form-item>
                 <el-form-item label="承诺办结时间" prop="promiseEndTime">
-                    <el-input v-model="zwfwItem.promiseEndTime"></el-input>
+                    <el-input v-model="zwfwItem.promiseEndTime" placeholder="请填写承诺的工作日，最小单位为0.5天"></el-input>
                 </el-form-item>
                 <el-form-item label="运行系统" prop="runSystem">
                     <el-radio-group v-model="zwfwItem.runSystem">
@@ -659,7 +660,8 @@
                 <div v-if="zwfwItemConfig.ispreorder==1">
                     <el-form-item label="预约时间" prop="preorderTimeArray">
                         <el-checkbox-group v-model="zwfwItemConfig.preorderTimeArray" @change="preorderChange">
-                                <el-checkbox v-for="item in zwfwItemConfig.opentime" :key="item" :label="item" ></el-checkbox>
+                            <el-checkbox v-for="item in zwfwItemConfig.opentime" :key="item"
+                                         :label="item"></el-checkbox>
                         </el-checkbox-group>
                     </el-form-item>
 
@@ -748,7 +750,7 @@
                     rows: this.$store.state.app.rows,
                     name: undefined,
                     departmentId: undefined,
-                    processType:undefined,
+                    processType: undefined,
                     handleType: undefined,
                     enable: '1'
                 },
@@ -1388,8 +1390,8 @@
                 })
             },
             submitItemConfig() {
-                if(this.zwfwItemConfig.ispreorder==1){
-                    if(this.zwfwItemConfig.preorderTimeArray==null || this.zwfwItemConfig.preorderTimeArray.length==0){
+                if (this.zwfwItemConfig.ispreorder == 1) {
+                    if (this.zwfwItemConfig.preorderTimeArray == null || this.zwfwItemConfig.preorderTimeArray.length == 0) {
                         this.$message.warn("请勾选预约时间");
                         return false;
                     }
@@ -1724,33 +1726,47 @@
     }
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
+
     .item {
-        margin-top: 10px;
-        text-align: center;
+        margin-top: 12px;
+        margin-right: 10px;
     }
 
     .quill-editor {
         height: 218px;
         margin-bottom: 8px;
-        .ql-toolbar {
-            line-height: 24px;
-        }
-        .ql-container {
-            height: 180px;
-        }
+
+    .ql-toolbar {
+        line-height: 24px;
+    }
+
+    .ql-container {
+        height: 180px;
+    }
+
     }
 </style>
 <style rel="stylesheet/scss" lang="scss">
+    .el-table th.action .cell{line-height:50px;}
+    .elRow {
+        height: 50px;
+    }
+    .action .cell {
+        height: 50px;
+    }
     .card-header {
-        .card-item {
-            border: none;
-            margin: 0;
-            width: 80%;
-            float: left;
-        }
-        .el-button {
-            float: right;
-        }
+
+    .card-item {
+        border: none;
+        margin: 0;
+        width: 80%;
+        float: left;
+    }
+
+    .el-button {
+        float: right;
+    }
+
     }
 
     .card-item {
@@ -1759,32 +1775,37 @@
         font-size: 14px;
         border: 1px solid #d0d0d0;
         height: 80px;
-        .el-radio {
-            height: 64px;
-            line-height: 64px;
-            text-align: center;
-            width: 10%;
-            float: left;
-        }
-        p {
-            margin: 0;
-            height: 32px;
-            line-height: 32px;
-            width: 88%;
-            float: left;
-        }
-        .p1 {
-            font-size: 16px;
-            font-weight: bold;
-            span {
-                padding: 3px 6px;
-                color: #dd1100;
-                font-size: 14px;
-                font-weight: normal;
-                border: 1px solid #dd1100;
-                border-radius: 3px;
-            }
-        }
+
+    .el-radio {
+        height: 64px;
+        line-height: 64px;
+        text-align: center;
+        width: 10%;
+        float: left;
+    }
+
+    p {
+        margin: 0;
+        height: 32px;
+        line-height: 32px;
+        width: 88%;
+        float: left;
+    }
+
+    .p1 {
+        font-size: 16px;
+        font-weight: bold;
+
+    span {
+        padding: 3px 6px;
+        color: #dd1100;
+        font-size: 14px;
+        font-weight: normal;
+        border: 1px solid #dd1100;
+        border-radius: 3px;
+    }
+
+    }
     }
 
     .clearfix:before, .clearfix:after {
@@ -1798,11 +1819,14 @@
 
     .box-card {
         width: 100%;
-        .el-card__body {
-            padding: 0;
-        }
-        .card-body {
-            padding: 12px;
-        }
+
+    .el-card__body {
+        padding: 0;
+    }
+
+    .card-body {
+        padding: 12px;
+    }
+
     }
 </style>
