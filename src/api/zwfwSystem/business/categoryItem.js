@@ -49,4 +49,12 @@ export function getAllCategoeyItem(categoryId) {
     })
 }
 
+export function getAllPageList(query) {
+    return fetch({
+        url: '/api/zwfwSystem/business/categoryItem/getAllPageList',
+        method: 'get',
+        params: query
+    })
+}
+
 
