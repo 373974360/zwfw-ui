@@ -79,7 +79,7 @@
             <div class="top-serach">
                 <div class="top-serach-input-san">
                     <span>注册资本：</span>
-                    <el-input  style="width: 230px;" class="filter-item"
+                    <el-input style="width: 230px;" class="filter-item"
                               placeholder="开始金额"
                               v-model="listQuery.zczbstart"></el-input>
                     <span>（万）-</span>
@@ -146,168 +146,231 @@
                            :page-size="listQuery.rows" layout="total, sizes, prev, pager, next, jumper" :total="total">
             </el-pagination>
         </div>
-        <el-dialog :title="title" :visible.sync="dialogFormVisible"
+        <el-dialog :title="title" :visible.sync="dialogFormVisible" size="large"
                    :close-on-click-modal="closeOnClickModal" :before-close="resetEnterpriseForm">
             <el-form ref="enterpriseForm" class="small-space" :model="enterpriseList" label-position="right"
                      label-width="170px"
-                     style='width: 80%; margin-left:-3%;' v-loading="dialogLoading">
-                <div class="dialog-form-div-san">
-                    <el-form-item label="企业名称：">
-                        <el-input v-model="enterpriseList.qymc"></el-input>
-                    </el-form-item>
-                    <el-form-item label="法人：" prop="shortName">
-                        <el-input v-model="enterpriseList.fr"></el-input>
-                    </el-form-item>
-                </div>
-                <div class="dialog-form-div-san">
-                    <el-form-item label="社会同一信用码：">
-                        <el-input v-model="enterpriseList.ty_code"></el-input>
-                    </el-form-item>
-                    <el-form-item label="联系电话：">
-                        <el-input v-model="enterpriseList.lxdh"></el-input>
-                    </el-form-item>
-                </div>
-                <div class="dialog-form-div-san">
-                    <el-form-item label="工商注册号：">
-                        <el-input v-model="enterpriseList.gs_code"></el-input>
-                    </el-form-item>
-                    <el-form-item label="注册地址：">
-                        <el-input v-model="enterpriseList.jgzs"></el-input>
-                    </el-form-item>
-                </div>
-                <div class="dialog-form-div-san">
-                    <el-form-item label="企业类别：">
-                        <el-select class="filter-item" v-model="enterpriseList.qylb" clearable placeholder="请选择企业类别"
-                                   @change="changeQYLB1">
-                            <el-option
-                                    v-for="name in qylboptions1"
-                                    :key="name"
-                                    :label="name"
-                                    :value="name">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="企业类型：">
-                        <el-select class="filter-item" v-model="enterpriseList.qllx" clearable placeholder="请选择企业类型">
-                            <el-option
-                                    v-for="name in qllxoptions1"
-                                    :key="name"
-                                    :label="name"
-                                    :value="name">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </div>
-                <div class="dialog-form-div-san">
-                    <el-form-item label="成立日期：">
-                        <el-date-picker v-model="enterpriseList.clrq" type="date"
-                                        placeholder="选择日期" format="yyyy-MM-dd" clearable
-                                        @change="changeclrq"></el-date-picker>
-                    </el-form-item>
-                    <el-form-item label="登记机关：">
-                        <el-input v-model="enterpriseList.djjg"></el-input>
-                    </el-form-item>
-                </div>
-                <div class="dialog-form-div-san">
-                    <el-form-item label="经营范围：">
-                        <el-input type="textarea" v-model="enterpriseList.jyfw"></el-input>
-                    </el-form-item>
-                </div>
-                <div class="dialog-form-div-san">
-                    <el-form-item label="行业门类：">
-                        <el-select class="filter-item" v-model="enterpriseList.hyml" clearable @change="changeHyml">
-                            <el-option
-                                    v-for="name in hymloptions"
-                                    :key="name"
-                                    :label="name"
-                                    :value="name">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="行业：">
-                        <el-select class="filter-item" v-model="enterpriseList.hy" clearable>
-                            <el-option
-                                    v-for="name in hyoptions"
-                                    :key="name"
-                                    :label="name"
-                                    :value="name">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </div>
-                <div class="dialog-form-div-san">
-                    <el-form-item label="核准日期：">
-                        <el-date-picker v-model="enterpriseList.hzrq" type="date"
-                                        placeholder="选择日期" format="yyyy-MM-dd"
-                                        @change="changehzrq">
-                        </el-date-picker>
-                    </el-form-item>
-                    <el-form-item label="经营截止日期：">
-                        <el-date-picker v-model="enterpriseList.jyjzrq" type="date"
-                                        placeholder="选择日期" format="yyyy-MM-dd"
-                                        @change="changejyjzrq">
-                        </el-date-picker>
-                    </el-form-item>
-                </div>
-                <div class="dialog-form-div-san">
-                    <el-form-item label="管辖单位：">
-                        <el-input v-model="enterpriseList.gxdw"></el-input>
-                    </el-form-item>
-                    <el-form-item label="档案号：">
-                        <el-input v-model="enterpriseList.dah"></el-input>
-                    </el-form-item>
-                </div>
-                <div class="dialog-form-div-san">
-                    <el-form-item label="吊销时间：">
-                        <el-date-picker v-model="enterpriseList.dxsj" type="date"
-                                        placeholder="选择日期" format="yyyy-MM-dd" clearable
-                                        @change="changedxsj">
-                        </el-date-picker>
-                    </el-form-item>
-                    <el-form-item label="从业人数：">
-                        <el-input v-model="enterpriseList.cyrs"></el-input>
-                    </el-form-item>
-                </div>
-                <div class="dialog-form-div-san">
-                    <el-form-item label="国别地区：">
-                        <el-input v-model="enterpriseList.gbdq"></el-input>
-                    </el-form-item>
-                    <el-form-item label="投资者人数：">
-                        <el-input v-model="enterpriseList.tzzrs"></el-input>
-                    </el-form-item>
-                </div>
-                <div class="dialog-form-div-san">
-                    <el-form-item label="注册资金：">
-                        <el-input v-model="enterpriseList.zczj"></el-input>
-                    </el-form-item>
-                    <el-form-item label="注册资金折美元：">
-                        <el-input v-model="enterpriseList.zczbzmy"></el-input>
-                    </el-form-item>
-                </div>
-                <div class="dialog-form-div-san">
-                    <el-form-item label="投资总额：">
-                        <el-input v-model="enterpriseList.tzze"></el-input>
-                    </el-form-item>
-                    <el-form-item label="投资总额折美元：">
-                        <el-input v-model="enterpriseList.tzzezmy"></el-input>
-                    </el-form-item>
-                </div>
-                <div class="dialog-form-div-san">
-                    <el-form-item label="实际出资额：">
-                        <el-input v-model="enterpriseList.sjcze"></el-input>
-                    </el-form-item>
-                    <el-form-item label="实际出资额折美元：">
-                        <el-input v-model="enterpriseList.sjczwzmy"></el-input>
-                    </el-form-item>
-                </div>
-                <div class="dialog-form-div-san">
-                    <el-form-item label="外方认缴出资额：">
-                        <el-input v-model="enterpriseList.wfrjczezmy"></el-input>
-                    </el-form-item>
-                    <el-form-item label="外方实缴出资额折美元：">
-                        <el-input v-model="enterpriseList.wfsjczezmy"></el-input>
-                    </el-form-item>
-                </div>
+                     v-loading="dialogLoading">
+                <el-row :gutter="20">
+
+                    <el-col :span="12">
+                        <el-form-item label="企业名称：">
+                            <el-input v-model="enterpriseList.qymc"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="法人：" prop="shortName">
+                            <el-input v-model="enterpriseList.fr"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+
+                    <el-col :span="12">
+                        <el-form-item label="社会同一信用码：">
+                            <el-input v-model="enterpriseList.ty_code"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="联系电话：">
+                            <el-input v-model="enterpriseList.lxdh"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+
+                    <el-col :span="12">
+                        <el-form-item label="工商注册号：">
+                            <el-input v-model="enterpriseList.gs_code"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="注册地址：">
+                            <el-input v-model="enterpriseList.jgzs"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+
+                    <el-col :span="12">
+                        <el-form-item label="企业类别：">
+                            <el-select class="filter-item" v-model="enterpriseList.qylb" clearable placeholder="请选择企业类别"
+                                       @change="changeQYLB1">
+                                <el-option
+                                        v-for="name in qylboptions1"
+                                        :key="name"
+                                        :label="name"
+                                        :value="name">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="企业类型：">
+                            <el-select class="filter-item" v-model="enterpriseList.qllx" clearable
+                                       placeholder="请选择企业类型">
+                                <el-option
+                                        v-for="name in qllxoptions1"
+                                        :key="name"
+                                        :label="name"
+                                        :value="name">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+
+
+                    <el-col :span="12">
+                        <el-form-item label="成立日期：">
+                            <el-date-picker v-model="enterpriseList.clrq" type="date"
+                                            placeholder="选择日期" format="yyyy-MM-dd" clearable
+                                            @change="changeclrq"></el-date-picker>
+                        </el-form-item>
+                    </el-col>
+
+
+                    <el-col :span="12">
+                        <el-form-item label="登记机关：">
+                            <el-input v-model="enterpriseList.djjg"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="24">
+                        <el-form-item label="经营范围：">
+                            <el-input type="textarea" v-model="enterpriseList.jyfw" rows="6"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+
+                    <el-col :span="12">
+                        <el-form-item label="行业门类：">
+                            <el-select class="filter-item" v-model="enterpriseList.hyml" clearable
+                                       @change="changeHyml">
+                                <el-option
+                                        v-for="name in hymloptions"
+                                        :key="name"
+                                        :label="name"
+                                        :value="name">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="行业：">
+                            <el-select class="filter-item" v-model="enterpriseList.hy" clearable>
+                                <el-option
+                                        v-for="name in hyoptions"
+                                        :key="name"
+                                        :label="name"
+                                        :value="name">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+
+
+                    <el-col :span="12">
+                        <el-form-item label="核准日期：">
+                            <el-date-picker v-model="enterpriseList.hzrq" type="date"
+                                            placeholder="选择日期" format="yyyy-MM-dd"
+                                            @change="changehzrq">
+                            </el-date-picker>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="经营截止日期：">
+                            <el-date-picker v-model="enterpriseList.jyjzrq" type="date"
+                                            placeholder="选择日期" format="yyyy-MM-dd"
+                                            @change="changejyjzrq">
+                            </el-date-picker>
+                        </el-form-item>
+                    </el-col>
+
+
+                    <el-col :span="12">
+                        <el-form-item label="管辖单位：">
+                            <el-input v-model="enterpriseList.gxdw"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="档案号：">
+                            <el-input v-model="enterpriseList.dah"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+
+                    <el-col :span="12">
+                        <el-form-item label="吊销时间：">
+                            <el-date-picker v-model="enterpriseList.dxsj" type="date"
+                                            placeholder="选择日期" format="yyyy-MM-dd" clearable
+                                            @change="changedxsj">
+                            </el-date-picker>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="从业人数：">
+                            <el-input v-model="enterpriseList.cyrs"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+
+                    <el-col :span="12">
+                        <el-form-item label="国别地区：">
+                            <el-input v-model="enterpriseList.gbdq"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="投资者人数：">
+                            <el-input v-model="enterpriseList.tzzrs"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+
+                    <el-col :span="12">
+                        <el-form-item label="注册资金：">
+                            <el-input v-model="enterpriseList.zczj"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="注册资金折美元：">
+                            <el-input v-model="enterpriseList.zczbzmy"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+
+                    <el-col :span="12">
+                        <el-form-item label="投资总额：">
+                            <el-input v-model="enterpriseList.tzze"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="投资总额折美元：">
+                            <el-input v-model="enterpriseList.tzzezmy"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+
+                    <el-col :span="12">
+                        <el-form-item label="实际出资额：">
+                            <el-input v-model="enterpriseList.sjcze"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="实际出资额折美元：">
+                            <el-input v-model="enterpriseList.sjczwzmy"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+
+                    <el-col :span="12">
+                        <el-form-item label="外方认缴出资额：">
+                            <el-input v-model="enterpriseList.wfrjczezmy"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="外方实缴出资额折美元：">
+                            <el-input v-model="enterpriseList.wfsjczezmy"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+                </el-row>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="resetEnterpriseForm">取 消</el-button>
@@ -465,11 +528,11 @@
                 this.getQylx1(this.enterpriseList.qylb);
                 this.dialogFormVisible = true;
             },
-            changeHyml(){
+            changeHyml() {
                 this.enterpriseList.hy = '';
                 this.getHy(this.enterpriseList.hyml);
             },
-            getQylb(){
+            getQylb() {
                 getQylbOptions().then(response => {
                     if (response.httpCode === 200) {
                         this.qylboptions = response.data;
@@ -478,7 +541,7 @@
                     }
                 })
             },
-            getHy(hyml){
+            getHy(hyml) {
                 getHyOptions(hyml).then(response => {
                     if (response.httpCode === 200) {
                         this.hyoptions = response.data;
@@ -487,7 +550,7 @@
                     }
                 })
             },
-            getHyml(){
+            getHyml() {
                 getHymlOptions().then(response => {
                     if (response.httpCode === 200) {
                         this.hymloptions = response.data;
@@ -496,21 +559,21 @@
                     }
                 })
             },
-            changeQYLB(){
+            changeQYLB() {
                 this.listQuery.qllx = '';
-                if (this.listQuery.qylb == ""){
+                if (this.listQuery.qylb == "") {
                     this.listQuery.qylb = null;
                 }
                 this.getQylx(this.listQuery.qylb);
             },
-            changeQYLB1(){
+            changeQYLB1() {
                 this.enterpriseList.qllx = '';
-                if (this.enterpriseList.qylb == ""){
+                if (this.enterpriseList.qylb == "") {
                     this.enterpriseList.qylb = null;
                 }
                 this.getQylx1(this.enterpriseList.qylb);
             },
-            getQylx(qylb){
+            getQylx(qylb) {
                 getQylxOptions(qylb).then(response => {
                     if (response.httpCode === 200) {
                         this.qllxoptions = response.data;
@@ -519,7 +582,7 @@
                     }
                 })
             },
-            getQylx1(qylb){
+            getQylx1(qylb) {
                 getQylxOptions(qylb).then(response => {
                     if (response.httpCode === 200) {
                         this.qllxoptions1 = response.data;
@@ -528,7 +591,7 @@
                     }
                 })
             },
-            getQylx1(qylb){
+            getQylx1(qylb) {
                 getQylxOptions(qylb).then(response => {
                     if (response.httpCode === 200) {
                         this.qllxoptions1 = response.data;
@@ -574,16 +637,16 @@
                     this.listQuery.endDate = moment(this.listQuery.endDate).format('YYYY-MM-DD')
                 }
             },
-            changejyjzrq(){
+            changejyjzrq() {
                 this.enterpriseList.jyjzrq = moment(this.enterpriseList.jyjzrq).format('YYYY-MM-DD').toString()
             },
-            changehzrq(){
+            changehzrq() {
                 this.enterpriseList.hzrq = moment(this.enterpriseList.hzrq).format('YYYY-MM-DD').toString()
             },
-            changedxsj(){
+            changedxsj() {
                 this.enterpriseList.dxsj = moment(this.enterpriseList.dxsj).format('YYYY-MM-DD').toString()
             },
-            changeclrq(){
+            changeclrq() {
                 this.enterpriseList.clrq = moment(this.enterpriseList.clrq).format('YYYY-MM-DD').toString()
             }
 
@@ -607,20 +670,5 @@
         width: 230px;
     }
 
-    .dialog-form-div-san {
-        display: -webkit-box;
-    }
 
-    .dialog-form-div-san .el-input__inner {
-        width: 290px;
-    }
-
-    .dialog-form-div-san .el-textarea__inner {
-        width: 749px;
-        height: 128px;
-    }
-
-    .dialog-form-div-san .el-date-editor.el-input {
-        width: 291px;
-    }
 </style>
