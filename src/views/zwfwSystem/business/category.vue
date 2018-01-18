@@ -8,7 +8,7 @@
         </div>
         <tree-grid :columns="columns" :tree-structure="true" :data-source="categoryList" :list-loading="pageLoading"
                    :handle-toggle="handleToggle" :handle-create="handleCreate"
-                   :handle-update="handleUpdate" :handle-delete="handleDelete" :defaultExpandAll="true"
+                   :handle-update="handleUpdate" :handle-delete="handleDelete" :defaultExpandAll="false"
                    :handle-item="handleCreateItem"
                    :assoicateItem="showButton">
         </tree-grid>
