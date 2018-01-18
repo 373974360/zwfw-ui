@@ -5,6 +5,7 @@ const app = {
     state: {
         page: 1,
         rows: 15,
+        dialogRows: 10,
         pageSize: [10, 15, 20, 30, 40, 50, 100],
         textMap: {
             create: '创建',

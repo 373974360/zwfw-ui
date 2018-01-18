@@ -8,7 +8,7 @@
         </div>
         <tree-grid :columns="columns" :tree-structure="true" :data-source="categoryList" :list-loading="pageLoading"
                    :handle-toggle="handleToggle" :handle-create="handleCreate"
-                   :handle-update="handleUpdate" :handle-delete="handleDelete" :defaultExpandAll="true"
+                   :handle-update="handleUpdate" :handle-delete="handleDelete" :defaultExpandAll="false"
                    :handle-item="handleCreateItem"
                    :assoicateItem="showButton">
         </tree-grid>
@@ -59,8 +59,12 @@
 
         <!--事项关联dialog-->
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisibleItem"
-                   :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemForm" size="large">
+                   :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemForm" >
             <div class="filter-container">
+                <el-input @keyup.enter.native="getCategoryItemList" style="width: 230px;" class="filter-item"
+                          placeholder="输入事项名称/基本编码"
+                          v-model="listQuery.name"></el-input>
+                <el-button class="filter-item" type="primary" v-waves icon="search" @click="getCategoryItemList">搜索</el-button>
                 <el-button class="filter-item" style="margin-left: 10px;" @click="handleItemDelete" type="danger"
                            icon="delete">
                     删除
@@ -69,8 +73,8 @@
             <el-table ref="zwfwItemTable" :data="categoryItemList" v-loading.body="dialogTableLoading" border fit
                       highlight-current-row
                       style="width: 100%" @selection-change="handleSelectionChange">
-                <el-table-column type="selection" width="55"/>
-                <el-table-column align="center" label="序号">
+                <el-table-column type="selection" width="40"/>
+                <el-table-column align="center" label="序号" width="80">
                     <template scope="scope">
                         <span>{{scope.row.id}}</span>
                     </template>
@@ -80,24 +84,24 @@
                         <span>{{scope.row.itemName}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column align="center" label="基本编码" prop="basicCode">
+                <el-table-column align="center" label="基本编码" prop="basicCode" width="120">
                     <template scope="scope">
                         <span>{{scope.row.basicCode}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column align="center" label="事项类型" prop="type">
+                <el-table-column align="center" label="事项类型" prop="type" width="100">
                     <template scope="scope">
                         <span>{{scope.row.type | dics('sslx')}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column align="center" label="办件类型" prop="processType">
+                <el-table-column align="center" label="办件类型" prop="processType" width="110">
                     <template scope="scope">
                         <el-tag :type="scope.row.processType | dics('bjlx')">
                             {{scope.row.processType | dics('bjlx')}}
                         </el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column align="center" label="办理形式" prop="handleType">
+                <el-table-column align="center" label="办理形式" prop="handleType" width="110">
                     <template scope="scope">
                         <el-tag :type="scope.row.handleType | dics('blxs')">
                             {{scope.row.handleType | dics('blxs')}}
@@ -105,27 +109,25 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <div class="pagination-container">
+                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                               :current-page.sync="listQuery.page" :page-sizes="this.$store.state.app.pageSize"
+                               :page-size="listQuery.rows" layout="total, sizes, prev, pager, next, jumper" :total="categoryItemListTotle">
+                </el-pagination>
+            </div>
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem"
                      label-position="right"
                      label-width="80px"
                      style='width: 80%; margin-left:10%; margin-top: 5%;' v-loading="dialogFormLoading"
                      :rules="categoryItemRules">
                 <el-form-item label="事项名称" prop="name">
-                    <el-select
-                            v-model="zwfwItem"
-                            value-key="id"
-                            filterable
-                            remote
+                    <el-autocomplete
+                            v-model="zwfwItem.name"
+                            :fetch-suggestions="searchItem"
                             placeholder="请输入事项名称或基本编码"
-                            :remote-method="searchItem"
-                            @change="changeItem">
-                        <el-option
-                                v-for="item in optionsName"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item">
-                        </el-option>
-                    </el-select>
+                            @select="changeItem" style="width:100%"
+                            :props="{label:'name',value:'name'}"
+                    ></el-autocomplete>
                 </el-form-item>
             </el-form>
             <div style="text-align: center" slot="footer" class="dialog-footer">
@@ -147,7 +149,7 @@
     } from 'api/zwfwSystem/business/category';
     import {getAllByNameOrbasicCode} from 'api/zwfwSystem/business/item';
     import {
-        getAllCategoeyItem,
+        getAllPageList,
         createZwfwCategoryItem,
         deleteZwfwCategoryItem
     } from 'api/zwfwSystem/business/categoryItem';
@@ -165,6 +167,7 @@
                 itemList: [],
                 categoryItem: [],
                 categoryItemList: [],
+                categoryItemListTotle: 0,
                 pageLoading: true,
                 dialogTableLoading: true,
                 showButton: true,
@@ -214,6 +217,12 @@
                 dialogFormVisibleItem: false,
                 dialogStatus: '',
                 dialogFormLoading: false,
+                listQuery: {
+                    page: this.$store.state.app.page,
+                    rows: this.$store.state.app.dialogRows,
+                    categoryId: undefined,
+                    name: ''
+                },
                 categoryRules: {
                     name: [
                         {required: true, message: '请输入事项分类名称'}
@@ -426,16 +435,18 @@
             },
             getCategoryItemList() {
                 this.dialogTableLoading = true;
-                getAllCategoeyItem(this.categoryId).then(response => {
+                this.listQuery.categoryId = this.categoryId;
+                getAllPageList(this.listQuery).then(response => {
                     if (response.httpCode === 200) {
-                        this.categoryItemList = response.data;
+                        this.categoryItemList = response.data.list;
+                        this.categoryItemListTotle = response.data.total;
                     } else {
                         this.$message.error(response.msg);
                     }
                     this.dialogTableLoading = false;
                 })
             },
-            searchItem(query) {
+            searchItem(query, cb) {
                 const listQueryName = {
                     name: undefined,
                     basicCode: undefined
@@ -454,6 +465,7 @@
                     getAllByNameOrbasicCode(listQueryName).then(response => {
                         if (response.httpCode === 200) {
                             this.optionsName = response.data;
+                            cb(this.optionsName);
                         } else {
                             this.$message.error(response.msg);
                         }
@@ -463,6 +475,7 @@
                 }
             },
             changeItem(value) {
+                this.zwfwItem = value;
                 // for (const obj of this.itemList) {
                 //     if (obj.id === value) {
                 //         this.zwfwItem = Object.assign({}, obj);
@@ -547,6 +560,15 @@
             resetZwfwItemForm() {
                 this.resetItemTemp();
                 resetForm(this, 'zwfwItemForm');
+            },
+            handleSizeChange(val) {
+                this.listQuery.rows = val;
+                this.listQuery.categoryId = undefined;
+                this.getCategoryItemList();
+            },
+            handleCurrentChange(val) {
+                this.listQuery.page = val;
+                this.getCategoryItemList();
             },
             resetCategoryTemp() {
                 this.category = {

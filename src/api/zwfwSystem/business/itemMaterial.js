@@ -49,4 +49,13 @@ export function getAllItemMaterial(itemId) {
     })
 }
 
+export function doUpdateAndRelate(zwfwItemMaterial){
+    const data = zwfwItemMaterial;
+    return fetch({
+        url: '/api/zwfwSystem/business/itemMaterial/updateAndRelate',
+        method: 'post',
+        data
+    })
+}
+
 

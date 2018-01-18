@@ -387,10 +387,10 @@
                     <el-input v-model="memberInfo.naturePerson.idcard"
                               @blur="validateField('memberInfoForm', 'naturePerson.idcard')"></el-input>
                 </el-form-item>
-                <el-form-item label="手机号" prop="naturePerson.phone" v-show="memberInfo.type == 1"
-                              :rules="natureRequired ? memberInfoRules.phone : []">
-                    <el-input v-model="memberInfo.naturePerson.phone"
-                              @blur="validateField('memberInfoForm', 'naturePerson.phone')"></el-input>
+                <el-form-item label="手机号" prop="naturePerson.phone" v-show="memberInfo.type == 1">
+                    <!--:rules="natureRequired ? memberInfoRules.phone : []"-->
+                    <el-input v-model="memberInfo.naturePerson.phone"></el-input>
+                    <!--@blur="validateField('memberInfoForm', 'naturePerson.phone')"-->
                 </el-form-item>
                 <el-form-item label="公司名称" prop="legalPerson.companyName" v-show="memberInfo.type == 2"
                               :rules="legalRequired ? memberInfoRules.companyName : []">
@@ -402,20 +402,20 @@
                     <el-input v-model="memberInfo.legalPerson.companyCode"
                               @blur="validateField('memberInfoForm', 'legalPerson.companyCode')"></el-input>
                 </el-form-item>
-                <el-form-item label="法人姓名" prop="legalPerson.legalPerson" v-show="memberInfo.type == 2"
-                              :rules="legalRequired ? memberInfoRules.legalPerson : []">
-                    <el-input v-model="memberInfo.legalPerson.legalPerson"
-                              @blur="validateField('memberInfoForm', 'legalPerson.legalPerson')"></el-input>
+                <el-form-item label="法人姓名" prop="legalPerson.legalPerson" v-show="memberInfo.type == 2">
+                              <!--:rules="legalRequired ? memberInfoRules.legalPerson : []"-->
+                    <el-input v-model="memberInfo.legalPerson.legalPerson"></el-input>
+                    <!--@blur="validateField('memberInfoForm', 'legalPerson.legalPerson')"-->
                 </el-form-item>
-                <el-form-item label="法人身份证号" prop="legalPerson.idcard" v-show="memberInfo.type == 2"
-                              :rules="legalRequired ? memberInfoRules.legalPersonCard : []">
-                    <el-input v-model="memberInfo.legalPerson.idcard"
-                              @blur="validateField('memberInfoForm', 'legalPerson.idcard')"></el-input>
+                <el-form-item label="法人身份证号" prop="legalPerson.idcard" v-show="memberInfo.type == 2">
+                              <!--:rules="legalRequired ? memberInfoRules.legalPersonCard : []"-->
+                    <el-input v-model="memberInfo.legalPerson.idcard"></el-input>
+                    <!--@blur="validateField('memberInfoForm', 'legalPerson.idcard')"-->
                 </el-form-item>
-                <el-form-item label="联系电话" prop="legalPerson.phone" v-show="memberInfo.type == 2"
-                              :rules="legalRequired ? memberInfoRules.legalPersonPhone : []">
-                    <el-input v-model="memberInfo.legalPerson.phone"
-                              @blur="validateField('memberInfoForm', 'legalPerson.phone')"></el-input>
+                <el-form-item label="联系电话" prop="legalPerson.phone" v-show="memberInfo.type == 2">
+                              <!--:rules="legalRequired ? memberInfoRules.legalPersonPhone : []"-->
+                    <el-input v-model="memberInfo.legalPerson.phone"></el-input>
+                    <!--@blur="validateField('memberInfoForm', 'legalPerson.phone')"-->
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
