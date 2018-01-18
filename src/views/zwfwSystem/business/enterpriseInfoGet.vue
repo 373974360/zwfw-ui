@@ -7,12 +7,14 @@
 
             <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item"
                       placeholder="企业统一信用代码"
-                      v-model="listQuery.tyCode"></el-input>
+                      v-model="listQuery.ty_code"></el-input>
 
             <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item"
                       placeholder="法人姓名"
                       v-model="listQuery.fr"></el-input>
-
+            <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item"
+                      placeholder="联系电话"
+                      v-model="listQuery.lxdh"></el-input>
 
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
                 搜索
@@ -73,7 +75,8 @@
         </div>
         <el-dialog :title="title" :visible.sync="dialogFormVisible"
                    :close-on-click-modal="closeOnClickModal" :before-close="resetEnterpriseForm">
-            <el-form ref="enterpriseForm" class="small-space" :model="enterpriseList" label-position="right" label-width="80px"
+            <el-form ref="enterpriseForm" class="small-space" :model="enterpriseList" label-position="right"
+                     label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading">
                 <el-form-item label="企业名称">
                     <el-input v-model="enterpriseList.qymc" disabled></el-input>
@@ -81,7 +84,7 @@
                 <el-form-item label="法人" prop="shortName">
                     <el-input v-model="enterpriseList.fr" disabled></el-input>
                 </el-form-item>
-                <el-form-item label="社会同一信用码" >
+                <el-form-item label="社会同一信用码">
                     <el-input v-model="enterpriseList.ty_code" disabled></el-input>
                 </el-form-item>
                 <el-form-item label="联系电话">
@@ -106,7 +109,7 @@
                     <el-input v-model="enterpriseList.yyqx" disabled></el-input>
                 </el-form-item>
                 <el-form-item label="经营范围">
-                    <el-input  type="textarea" v-model="enterpriseList.jyfw" disabled></el-input>
+                    <el-input type="textarea" v-model="enterpriseList.jyfw" disabled></el-input>
                 </el-form-item>
                 <el-form-item label="核准日期">
                     <el-input v-model="enterpriseList.hzrq" disabled></el-input>
@@ -196,14 +199,15 @@
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     qymc: undefined,
-                    tyCode: undefined,
+                    ty_code: undefined,
                     fr: undefined,
+                    lxdh: undefined,
                     diff: 'gwq'
                 },
                 dialogFormVisible: false,
                 dialogLoading: false,
-                enterpriseList:{
-                    id:undefined,
+                enterpriseList: {
+                    id: undefined,
                     node_id: '',
                     ty_code: '',
                     zz_code: '',
@@ -274,7 +278,7 @@
                     } else {
                         this.$message.error('数据加载失败')
                     }
-                }).catch(e=>{
+                }).catch(e => {
                     this.listLoading = false;
                 })
             },

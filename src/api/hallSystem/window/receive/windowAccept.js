@@ -147,6 +147,15 @@ export function queryCompanysInfo(query) {
     });
 }
 
+
+export function updateCompanyInfo(enterpriseList){
+    const data = enterpriseList;
+    return fetch({
+        url: '/api/hallSystem/hallCompositeWindow/updateCompanyInfo',
+        method: 'post',
+        data
+    })
+}
 /**
  * 查询事项信息和办件材料列表
  * @param query
