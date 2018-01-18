@@ -526,119 +526,167 @@
         </el-dialog>
 
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogMaterialFormVisible" size="large"
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogMaterialFormVisible"
                    :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwMaterialForm">
-            <div class="filter-container">
+            <el-row>
                 <el-button class="filter-item" style="margin-left: 10px;" @click="handleMaterialDelete" type="danger"
                            icon="delete">
                     删除
                 </el-button>
-            </div>
+            </el-row>
             <el-table ref="zwfwItemMaterialForm" :data="zwfwItemMaterialList" v-loading.body="dialogTableLoading"
                       border fit
                       highlight-current-row
                       style="width: 100%" @selection-change="handleSelectionChange">
-                <el-table-column type="selection" width="55"/>
-                <el-table-column align="center" label="序号" width="200">
+                <el-table-column type="selection" width="40"/>
+                <el-table-column align="center" label="序号" width="70">
                     <template scope="scope">
                         <span>{{scope.row.id}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="name" align="left" label="材料名称">
+                <el-table-column prop="name" align="left" label="材料名称" widht="">
                     <template scope="scope">
                         <el-tooltip content="点击编辑" placement="right" effect="dark">
                             <span class="link-type" @click="handleMaterialUpdate(scope.row)">{{scope.row.name}}</span>
                         </el-tooltip>
                     </template>
                 </el-table-column>
-                <el-table-column prop="type" align="center" label="材料类型" width="200">
+                <el-table-column prop="type" align="center" label="材料类型" width="100">
                     <template scope="scope">
                         <span>{{scope.row.type | dics('cllx')}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column v-once prop="source" align="center" label="来源渠道" width="300">
+                <el-table-column v-once prop="source" align="center" label="来源渠道" width="100">
                     <template scope="scope">
                         <span>{{scope.row.source | dics('sxsqclly')}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="electronicMaterial" align="center" label="是否需要电子材料" width="200">
+                <el-table-column prop="electronicMaterial" align="center" label="是否需要电子材料" width="150">
                     <template scope="scope">
                         <span>{{scope.row.electronicMaterial | enums('YesNo')}}</span>
                     </template>
                 </el-table-column>
             </el-table>
+
             <el-form ref="zwfwMaterialForm" class="small-space" :model="zwfwItemMaterial"
                      label-position="right" v-loading="dialogFormLoading"
                      label-width="134px"
                      style="width: 80%; margin-left:10%; margin-top: 5%;"
                      :rules="zwfwItemMaterialRules">
                 <el-form-item label="材料名称" prop="name">
-                    <el-select
+                    <el-autocomplete
                             v-model="zwfwItemMaterial.name"
-                            filterable
-                            remote
+                            :fetch-suggestions="searchMaterial"
                             placeholder="请输入材料名称"
-                            :remote-method="searchMaterial"
-                            @change="changeMaterial"
-                            :disabled="changeMaterialName" style="width:100%">
+                            @select="changeMaterial" style="width:100%"
+                            :props="{label:'name',value:'name'}"
+                    ></el-autocomplete>
 
+                </el-form-item>
+                <el-form-item label="材料类型" prop="type">
+                    <el-select v-model="zwfwItemMaterial.type" placeholder="请选择材料类型">
                         <el-option
-                                v-for="item in optionsName"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
+                                v-for="item in dics['cllx']"
+                                :key="item.code"
+                                :label="item.value"
+                                :value="item.code">
                         </el-option>
                     </el-select>
                 </el-form-item>
-
-                <el-form-item label="纸质材料说明:" prop="paperDescription" v-show="changeMaterialInfo">
-                    <!--<span>{{zwfwItemMaterial.paperDescription}}</span>-->
+                <el-form-item label="是否需要电子材料" prop="electronicMaterial">
+                    <el-switch
+                            v-model="zwfwItemMaterial.electronicMaterial"
+                            on-color="#13ce66"
+                            off-color="#ff4949"
+                            :on-value="true"
+                            :off-value="false">
+                    </el-switch>
+                </el-form-item>
+                <el-form-item label="纸质材料说明:" prop="paperDescription">
                     <el-input v-model="zwfwItemMaterial.paperDescription" placeholder="数量和规格"></el-input>
                 </el-form-item>
-                <el-form-item label="排序" v-show="changeMaterialInfo">
+                <el-form-item label="受理标准" prop="acceptStandard">
+                    <el-input v-model="zwfwItemMaterial.acceptStandard"></el-input>
+                </el-form-item>
+                <el-form-item label="来源渠道" prop="source">
+                    <el-select v-model="zwfwItemMaterial.source" placeholder="请选择来源渠道" style="width:100%">
+                        <el-option
+                                v-for="item in dics['sxsqclly']"
+                                :key="item.code"
+                                :label="item.value"
+                                :value="item.code">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="材料样本" prop="example">
+                    <el-upload name="uploadFile"
+                               ref="uploadExample"
+                               :accept="fileAccepts"
+                               :action="uploadAction"
+                               :show-file-list="false"
+                               :with-credentials="true"
+                               :headers="uploadHeaders"
+                               :before-upload="beforeAvatarUpload"
+                               :on-change="changeAvatarExampleFile">
+                        <el-input slot="trigger" v-model="zwfwItemMaterial.example" placeholder="选择文件" readonly
+                                  style="width: 320px"></el-input>
+                        <!--<el-button slot="trigger" size="small" type="primary">选取文件</el-button>-->
+                        <!--<el-button style="margin-left: 10px;" size="small" type="success" @click="submitUploadExample">
+                            上传到服务器
+                        </el-button>-->
+                        <!--<el-button style="margin-left: 10px;" size="small" type="info" @click="showMaterialExample">
+                            点击下载
+                        </el-button>-->
+                        <a :href="zwfwItemMaterial.example" :download="downloadExample" :class="{disabled: !zwfwItemMaterial.example}">
+                            <el-button style="margin-left: 10px;" size="small" type="info" :disabled="!zwfwItemMaterial.example">点击下载</el-button>
+                        </a>
+                    </el-upload>
+                </el-form-item>
+                <el-form-item label="电子表单" prop="eform">
+                    <el-upload name="uploadFile"
+                               ref="uploadEform"
+                               :accept="fileAccepts"
+                               :action="uploadAction"
+                               :show-file-list="false"
+                               :with-credentials="true"
+                               :headers="uploadHeaders"
+                               :before-upload="beforeAvatarUpload"
+                               :on-change="changeAvatarEformFile">
+                        <el-input slot="trigger" v-model="zwfwItemMaterial.eform" placeholder="选择文件" readonly
+                                  style="width: 320px"></el-input>
+                        <!--<el-button slot="trigger" size="small" type="primary">选取文件</el-button>-->
+                        <!--<el-button style="margin-left: 10px;" size="small" type="success" @click="submitUploadEform">
+                            上传到服务器
+                        </el-button>-->
+                        <!--<el-button style="margin-left: 10px;" size="small" type="info" @click="showEformFile">
+                            点击下载
+                        </el-button>-->
+                        <a :href="zwfwItemMaterial.eform" :download="downloadEform" :class="{disabled: !zwfwItemMaterial.eform}">
+                            <el-button style="margin-left: 10px;" size="small" type="info" :disabled="!zwfwItemMaterial.eform">点击下载</el-button>
+                        </a>
+                    </el-upload>
+                </el-form-item>
+                <el-form-item label="填报须知" prop="notice">
+                    <el-input v-model="zwfwItemMaterial.notice"></el-input>
+                </el-form-item>
+                <el-form-item label="备注" prop="remark">
+                    <el-input v-model="zwfwItemMaterial.remark"></el-input>
+                </el-form-item>
+                <el-form-item label="排序">
                     <el-input-number v-model="zwfwItemMaterial.sortNo" :min="1" :max="100"/>
-                </el-form-item>
-                <table>
-                    <tr>
-                        <td>
-                            <el-form-item label="材料类型:" :inline="true" v-show="changeMaterialInfo">
-                                <span>{{zwfwItemMaterial.type | dics('cllx')}}</span>
-                                <!--<el-input v-model="zwfwItemMaterial.type"></el-input>-->
-                            </el-form-item>
-                        </td>
-                        <td width="100"></td>
-                        <td>
-                            <el-form-item label="是否需要电子材料:" :inline="true" prop="electronicMaterial"
-                                          v-show="changeMaterialInfo">
-                                <span>{{zwfwItemMaterial.electronicMaterial | enums('YesNo')}}</span>
-                            </el-form-item>
-                        </td>
-                    </tr>
-                </table>
-                <el-form-item label="受理标准:" prop="acceptStandard" v-show="changeMaterialInfo">
-                    <span>{{zwfwItemMaterial.acceptStandard}}</span>
-                </el-form-item>
-                <el-form-item label="来源渠道:" v-show="changeMaterialInfo">
-                    <span>{{zwfwItemMaterial.source | dics('sxsqclly')}}</span>
-                </el-form-item>
-                <el-form-item label="材料样本:" prop="example" v-show="changeMaterialInfo">
-                    <span>{{zwfwItemMaterial.example}}</span>
-                </el-form-item>
-                <el-form-item label="电子表单:" prop="eform" v-show="changeMaterialInfo">
-                    <span>{{zwfwItemMaterial.eform}}</span>
-                </el-form-item>
-                <el-form-item label="填报须知:" prop="notice" v-show="changeMaterialInfo">
-                    <span>{{zwfwItemMaterial.notice}}</span>
-                </el-form-item>
-                <el-form-item label="备注:" prop="remark" v-show="changeMaterialInfo">
-                    <span>{{zwfwItemMaterial.remark}}</span>
                 </el-form-item>
             </el-form>
             <div style="text-align: center" slot="footer" class="dialog-footer">
-                <el-button icon="circle-cross" type="danger" @click="closeZwfwMaterialForm">取 消</el-button>
                 <el-button type="primary" icon="circle-check"
-                           @click="relateMaterial">确 定
+                           @click="doMaterialUpdate">更新材料
                 </el-button>
+                <el-button type="success" icon="circle-check"
+                           @click="relateMaterial">关联材料
+                </el-button>
+                <el-button type="warning" icon="circle-check"
+                           @click="doUpdateAndRelate">更新并关联
+                </el-button>
+                <el-button icon="circle-cross" type="danger" @click="closeZwfwMaterialForm">取 消</el-button>
             </div>
         </el-dialog>
 
@@ -695,7 +743,8 @@
     import {
         createZwfwItemMaterial,
         getAllItemMaterial,
-        deleteZwfwItemMaterial
+        deleteZwfwItemMaterial,
+        doUpdateAndRelate
     } from 'api/zwfwSystem/business/itemMaterial';
     import {getAllMaterial, updateZwfwMaterial} from 'api/zwfwSystem/business/material';
     import {getAllUser} from '../../../api/baseSystem/org/user';
@@ -735,7 +784,6 @@
                     value: '0',
                     label: '禁用'
                 }],
-                changeMaterialName: false,
                 changeMaterialInfo: false,
                 zwfwItemList: [],
                 zwfwItemMaterialList: [],
@@ -818,6 +866,7 @@
                 },
                 zwfwItemMaterial: {
                     id: undefined,
+                    itemId: undefined,
                     electronicMaterial: true,
                     eform: '',
                     name: '',
@@ -830,6 +879,7 @@
                     example: '',
                     notice: ''
                 },
+                isMaterialExist: false,
                 zwfwItemConfig: {
                     ispreorder: 1,
                     preorderTimeArray: [],
@@ -899,6 +949,12 @@
                 zwfwItemMaterialRules: {
                     name: [
                         {required: true, message: '请输入材料名称'}
+                    ],
+                    source: [
+                        {required: true, message: '请输入来源渠道'}
+                    ],
+                    type: [
+                        {required: true, message: '请输入材料类型'}
                     ]
                 },
                 zwfwItemConfigFormRules: {
@@ -975,6 +1031,15 @@
                     }
                     return [];
                 }
+            },
+            uploadHeaders() {
+                return {'User-Authorization': this.$store.getters.token}
+            },
+            downloadEform() {
+                return this.zwfwItemMaterial.name + this.zwfwItemMaterial.eform.substring(this.zwfwItemMaterial.eform.lastIndexOf('.'))
+            },
+            downloadExample() {
+                return this.zwfwItemMaterial.name + this.zwfwItemMaterial.example.substring(this.zwfwItemMaterial.example.lastIndexOf('.'))
             },
             ...mapGetters([
                 'textMap',
@@ -1373,6 +1438,15 @@
                     this.dialogTableLoading = false;
                 })
             },
+            handleMaterialListSizeChange(val) {
+                this.listQuery.rows = val;
+                this.listQuery.name = null;
+                this.getItemList();
+            },
+            handleMaterialListCurrentChange(val) {
+                this.listQuery.page = val;
+                this.getItemList();
+            },
             //事项预约配置编辑
             handleItemConfig(item) {
                 this.currentItem = item;
@@ -1415,7 +1489,7 @@
                     }
                 })
             },
-            searchMaterial(query) {
+            searchMaterial(query, cb) {
                 if (query !== '') {
                     let valid = validateQueryStr(query);
                     if (valid) {
@@ -1428,6 +1502,7 @@
                     getAllMaterial(listQueryName).then(response => {
                         if (response.httpCode === 200) {
                             this.optionsName = response.data;
+                            cb(this.optionsName);
                         } else {
                             this.$message.error(response.msg || '材料查找失败');
                         }
@@ -1435,22 +1510,19 @@
                 } else {
                     this.optionsName = [];
                 }
+
+
             },
             changeMaterial(value) {
-                for (const obj of this.optionsName) {
-                    if (obj.id === value) {
-                        this.currentRow = obj
-                        this.zwfwItemMaterial = copyProperties(this.zwfwItemMaterial, obj)
-                        this.changeMaterialInfo = true;
-                        return;
-                    }
-                }
+                this.currentRow = value
+                this.zwfwItemMaterial = copyProperties(this.zwfwItemMaterial, value)
+                this.changeMaterialInfo = true;
+                return;
             },
             handleMaterialUpdate(row) {
                 this.currentRow = row;
                 this.resetMaterialTemp();
                 this.zwfwItemMaterial = copyProperties(this.zwfwItemMaterial, row);
-                this.changeMaterialName = true;
                 this.changeMaterialInfo = true;
             },
             handleMaterialDelete() {
@@ -1468,63 +1540,49 @@
                     });
                 }
             },
+            isExist(){
+                this.isMaterialExist = false;
+                for (let obj of this.zwfwItemMaterialList) {
+                    if (obj.id === this.zwfwItemMaterial.id) {
+                        this.resetZwfwMaterialForm();
+                        this.isMaterialExist = true;
+                    }
+                }
+            },
             relateMaterial() {
+                this.isExist();
+                if(this.isMaterialExist){
+                    this.$message.warning('资料已存在');
+                }
                 this.$refs['zwfwMaterialForm'].validate(valid => {
                     if (valid) {
-                        if (!this.changeMaterialName) {
-                            this.doMaterialAdd();
-                        } else {
-                            this.doMaterialUpdate();
+                        const query = {
+                            itemId: this.itemId,
+                            materialId: this.zwfwItemMaterial.id,
+                            paperDescription: this.zwfwItemMaterial.paperDescription,
+                            sortNo: this.zwfwItemMaterial.sortNo
                         }
+                        this.dialogFormLoading = true;
+                        createZwfwItemMaterial(query).then(response => {
+                            this.dialogFormLoading = false;
+                            if (response.httpCode === 200) {
+                                this.getItemMaterialList();
+                                this.resetZwfwMaterialForm();
+                                this.$message.success('关联成功');
+                                this.currentItem.itemMaterialCount += 1;
+                            } else {
+                                this.$message.error('关联失败');
+                            }
+                        })
                     } else {
                         return false;
                     }
                 });
             },
-            doMaterialAdd() {
-                for (let obj of this.zwfwItemMaterialList) {
-                    if (obj.id === this.zwfwItemMaterial.id) {
-                        this.$message.warning('资料已存在');
-                        this.resetZwfwMaterialForm();
-                        return false;
-                    }
-                }
-                const query = {
-                    itemId: this.itemId,
-                    materialId: this.zwfwItemMaterial.id,
-                    paperDescription: this.zwfwItemMaterial.paperDescription,
-                    sortNo: this.zwfwItemMaterial.sortNo
-                }
-                this.dialogFormLoading = true;
-                createZwfwItemMaterial(query).then(response => {
-                    this.dialogFormLoading = false;
-                    if (response.httpCode === 200) {
-                        this.getItemMaterialList();
-                        this.resetZwfwMaterialForm();
-                        this.$message.success('关联成功');
-                        this.currentItem.itemMaterialCount += 1;
-                    } else {
-                        this.$message.error('关联失败');
-                    }
-                })
-            },
             doMaterialUpdate() {
-                const zwfwMaterialList = {
-                    id: this.zwfwItemMaterial.id,
-                    electronicMaterial: this.zwfwItemMaterial.electronicMaterial,
-                    eform: this.zwfwItemMaterial.eform,
-                    name: this.zwfwItemMaterial.name,
-                    sortNo: this.zwfwItemMaterial.sortNo,
-                    paperDescription: this.zwfwItemMaterial.paperDescription,
-                    acceptStandard: this.zwfwItemMaterial.acceptStandard,
-                    remark: this.zwfwItemMaterial.remark,
-                    source: this.zwfwItemMaterial.source,
-                    type: this.zwfwItemMaterial.type,
-                    example: this.zwfwItemMaterial.example,
-                    notice: this.zwfwItemMaterial.notice
-                }
                 this.dialogFormLoading = true;
-                updateZwfwMaterial(zwfwMaterialList).then(response => {
+                this.zwfwItemMaterial.itemId = this.itemId;
+                updateZwfwMaterial(this.zwfwItemMaterial).then(response => {
                     this.dialogFormLoading = false;
                     if (response.httpCode === 200) {
                         this.getItemMaterialList();
@@ -1534,6 +1592,30 @@
                         this.$message.error('更新失败');
                     }
                 })
+            },
+            doUpdateAndRelate(){
+                this.isExist();
+                if(this.isMaterialExist){
+                    this.$message.warning('资料已存在');
+                }
+                this.$refs['zwfwMaterialForm'].validate(valid => {
+                    if (valid) {
+                        this.zwfwItemMaterial.itemId = this.itemId;
+                        doUpdateAndRelate(this.zwfwItemMaterial).then(response => {
+                            this.dialogFormLoading = false;
+                            if (response.httpCode === 200) {
+                                this.getItemMaterialList();
+                                this.resetZwfwMaterialForm();
+                                this.$message.success('更新并关联成功');
+                            } else {
+                                this.$message.error('更新并关联失败');
+                            }
+                        })
+                    } else {
+                        return false;
+                    }
+                });
+
             },
             doMaterialDelete() {
                 const length = this.selectedRows.length;
@@ -1553,6 +1635,25 @@
                         this.$message.error(response.msg || '删除失败');
                     }
                 })
+            },
+            beforeAvatarUpload(file) {
+                const isLt2M = file.size / 1024 / 1024 < 10;
+                if (!isLt2M) {
+                    this.$message.error('上传模板大小不能超过 10MB!');
+                }
+                return isLt2M;
+            },
+            changeAvatarExampleFile(file, fileList) {
+                this.zwfwItemMaterial.example = file.name;
+                if (file.response) {
+                    this.zwfwItemMaterial.example = file.response.url;
+                }
+            },
+            changeAvatarEformFile(file, fileList) {
+                this.zwfwItemMaterial.eform = file.name;
+                if (file.response) {
+                    this.zwfwItemMaterial.eform = file.response.url;
+                }
             },
             onEditorFocus(editor) {
                 this.editor = editor
@@ -1624,7 +1725,6 @@
                 this.resetZwfwMaterialForm();
             },
             resetZwfwMaterialForm() {
-                this.changeMaterialName = false;
                 this.changeMaterialInfo = false;
                 this.resetMaterialTemp();
                 resetForm(this, 'zwfwMaterialForm');
