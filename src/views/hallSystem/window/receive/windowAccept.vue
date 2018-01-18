@@ -30,7 +30,7 @@
                                     <el-col :span="25">
                                         <el-collapse v-model="showInputForm" style="margin-top:10px;">
                                             <el-collapse-item :title="'窗口办理事项受理'" name="1">
-                                                <el-tabs v-model="memberType" @tab-click="queryItem()">
+                                                <el-tabs v-model="memberType" @tab-click="memberTypeChange">
                                                     <el-tab-pane label="自然人" name="1">
 
                                                         <el-row :gutter="10">
@@ -64,7 +64,7 @@
 
                                                         <el-row :gutter="10">
                                                             <el-col :span="19">
-                                                                <el-input v-model="memberCode" placeholder="自然人身份证号码">
+                                                                <el-input v-model="memberCode" placeholder="自然人身份证号码" @keyup.native="toUpperCase">
                                                                     <template slot="prepend">身份证号：</template>
                                                                 </el-input>
                                                             </el-col>
@@ -176,7 +176,7 @@
                                                                 </el-input>
                                                             </el-col>
                                                             <el-col :span="10">
-                                                                <el-input v-model="memberCode" placeholder="法人身份证号">
+                                                                <el-input v-model="memberCode" placeholder="法人身份证号" @keyup.native="toUpperCase">
                                                                     <!--<template slot="prepend">身份证号：</template>-->
                                                                 </el-input>
                                                             </el-col>
@@ -283,7 +283,7 @@
                                         </el-radio-group>
                                     </el-col>
                                     <el-col :span="6">
-                                        <el-input v-model="memberCode" placeholder="身份证号码">
+                                        <el-input v-model="memberCode" placeholder="身份证号码" @keyup.native="toUpperCase">
                                         </el-input>
                                     </el-col>
                                     <el-col :span="5">
@@ -325,7 +325,7 @@
                                     </el-col>
                                     <el-col :span="3">
                                         <el-button type="primary" @click="takeNumberByItemCode"
-                                                   :disabled="!itemVo || !itemVo.id || !member ||  !member.id">事项抽号
+                                                   :disabled="!itemVo || !itemVo.id || !memberCode ||  !memberRealname || !memberPhone">事项抽号
                                         </el-button>
                                     </el-col>
                                 </el-row>
@@ -924,7 +924,7 @@
     import {getCategoryCascader} from 'api/zwfwSystem/business/category';
     import {getAllMailbox} from 'api/hallSystem/window/mailbox';
     import {getAllAddresseesByMemberId} from 'api/hallSystem/member/memberAddressee';
-    import {validatMobiles} from 'utils/validate'
+    import {validatMobiles,checkSocialCreditCode,isIdCardNo} from 'utils/validate'
     import {mapGetters} from 'vuex';
     import {enums, parseToInt} from '../../../../filters';
     import {copyProperties} from 'utils';
@@ -1235,15 +1235,16 @@
             },
             toUpperCase(){
                 this.companyCode = this.companyCode.toUpperCase();
+                this.memberCode = this.memberCode.toUpperCase();
             },
             /**
              * 查询企业信息
              */
             queryCompanyInfo() {
                 this.companyInfo = {};
-                if (this.companyCode == '' || this.companyCode.length != 18) {
+                if(!checkSocialCreditCode(this.companyCode)){
                     this.companyInfo = {};
-                    this.$message.warning("社会统一信用代码不正确，跳过查询工商企业信息库");
+                    this.$message.warning("社会统一信用代码不正确，请重新输入");
                     return;
                 }
                 queryCompanyInfo({
@@ -1254,7 +1255,12 @@
                         if (c) {
                             this.numberTab = 'company';
                             this.companyInfo = c;
-                            this.memberPhone = c.lxdh;
+                            if(c.lxdh && c.lxdh.length==11) {
+                                this.memberPhone = c.lxdh;
+                            }else{
+                                this.$message.warning("请注意填写手机号码");
+                                this.memberPhone = "";
+                            }
                             this.memberRealname = c.fr;
                             this.companyName = c.qymc;
                             this.companyCode = c.ty_code;
@@ -1273,7 +1279,6 @@
              * 查询事项列表
              * */
             queryItem(query) {
-                this.resetForm();
                 if (!this.itemCategory) {
                     return;
                 }
@@ -1283,7 +1288,8 @@
                     basicCode: undefined,
                     itemCategories: this.itemCategory,
                     serviceObject: this.memberType == '1' ?
-                        'fwdx_ziranren,fwdx_common' : 'fwdx_faren,fwdx_common'
+                        'fwdx_ziranren,fwdx_common' : 'fwdx_faren,fwdx_common',
+                    handleType:'blxs_ckbl'
                 };
                 // this.selectedItem= null;
                 if (query !== '') {
@@ -1361,6 +1367,10 @@
              * 检测自然人用户是否注册，如果注册，返回用户信息，如果没有注册显示出快速注册界面
              * */
             checkNatureMemberExist() {
+                if(!isIdCardNo(this.memberCode)){
+                    this.$message.warning("身份证号码格式不正确，请重新输入");
+                    return;
+                }
                 checkNatureMemberExist({
                     memberCode: this.memberCode
                 }).then(response => {
@@ -1391,6 +1401,11 @@
              * 检测法人用户是否注册，如果注册，返回用户信息，如果没有注册显示出快速注册界面
              * */
             checkLegalMemberExist() {
+                if(!checkSocialCreditCode(this.companyCode)){
+                    this.companyInfo = {};
+                    this.$message.warning("社会统一信用代码不正确，请重新输入");
+                    return;
+                }
                 checkLegalMemberExist({
                     companyCode: this.companyCode
                 }).then(response => {
@@ -1569,7 +1584,10 @@
                     this.queryLoading = false;
                 })
             },
-
+            memberTypeChange(){
+                this.queryItem();
+                this.resetForm();
+            },
             /**
              * 查询 - 根据呼叫号查询今日此号码信息
              */
@@ -1754,12 +1772,12 @@
                         this.$message.warning('姓名没有填写，不能提交');
                         return;
                     }
-                    if (this.memberCode == '') {
-                        this.$message.warning('身份证没有填写，不能提交');
+                    if(!isIdCardNo(this.memberCode)){
+                        this.$message.warning("身份证号码格式不正确，请重新填写");
                         return;
                     }
-                    if (this.memberPhone == '') {
-                        this.$message.warning('手机号没有填写，不能提交');
+                    if(!validatMobiles(this.memberPhone)){
+                        this.$message.warning("手机号没格式不正确，请重新填写");
                         return;
                     }
                 } else {  //法人
@@ -1768,16 +1786,16 @@
                         this.$message.warning('姓名没有填写，不能提交');
                         return;
                     }
-                    if (this.memberCode == '') {
-                        this.$message.warning('身份证没有填写，不能提交');
+                    if(!isIdCardNo(this.memberCode)){
+                        this.$message.warning("身份证号码格式不正确，请重新填写");
                         return;
                     }
-                    if (this.memberPhone == '') {
-                        this.$message.warning('手机号没有填写，不能提交');
+                    if(!validatMobiles(this.memberPhone)){
+                        this.$message.warning("手机号没格式不正确，请重新填写");
                         return;
                     }
-                    if (this.companyCode == '') {
-                        this.$message.warning('社会统一信用代码没有填写，不能提交');
+                    if(!checkSocialCreditCode(this.companyCode)){
+                        this.$message.warning('社会统一信用代码输入不正确，请重新填写');
                         return;
                     }
                     if (this.companyName == '') {

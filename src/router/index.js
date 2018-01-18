@@ -88,7 +88,7 @@ const ProcessDefinitionModel = () => import('../views/zwfwSystem/business/proces
 const ProcessDefinition = () => import('../views/zwfwSystem/business/processDefinition');
 const TaskSetting = () => import('../views/zwfwSystem/business/taskSetting');
 const EnterpriseInfoGet = () => import('../views/zwfwSystem/business/enterpriseInfoGet');
-// const EnterpriseInfoUp = () => import('../views/zwfwSystem/business/enterpriseInfoUp');
+const EnterpriseInfoUp = () => import('../views/zwfwSystem/business/enterpriseInfoUp');
 
 const FormEditor = () => import('../views/zwfwSystem/business/formEditor');
 /* 统计分析 */
@@ -496,12 +496,12 @@ export const asyncRouterMap = [
                 name: '企业信息查询',
                 meta: {permission: 'zwfwSystem:business:enterpriseInfoGet:list'}
             },
-            // {
-            //     path: 'enterpriseInfoUp',
-            //     component: EnterpriseInfoUp,
-            //     name: '企业信息管理',
-            //     meta: {permission: 'zwfwSystem:business:EnterpriseInfoUp:list'}
-            // },
+            {
+                path: 'enterpriseInfoUp',
+                component: EnterpriseInfoUp,
+                name: '企业信息管理',
+                meta: {permission: 'zwfwSystem:business:EnterpriseInfoUp:list'}
+            },
             {
                 path: 'processDefinitionModel',
                 component: ProcessDefinitionModel,
