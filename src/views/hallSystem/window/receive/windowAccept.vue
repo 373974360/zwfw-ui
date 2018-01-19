@@ -1251,7 +1251,8 @@
                     return;
                 }
                 queryCompanyInfo({
-                    companyCode: this.companyCode
+                    companyCode: this.companyCode,
+                    diff:'gwq'
                 }).then(response => {
                     if (response.httpCode === 200) {
                         let c = response.data;
