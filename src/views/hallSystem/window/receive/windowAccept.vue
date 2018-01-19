@@ -74,7 +74,7 @@
                                                                     <template slot="prepend">身份证号：</template>
                                                                 </el-input>
                                                             </el-col>
-                                                            <el-col :span="5" >
+                                                            <el-col :span="5">
                                                                 <el-tooltip content="查询注册状态，如果未注册，成功受理后会自动注册"
                                                                             placement="bottom"
                                                                             effect="light">
@@ -156,7 +156,7 @@
                                                                     </el-button>
                                                                 </el-tooltip>
                                                             </el-col>
-                                                            <el-col :span="6" >
+                                                            <el-col :span="6">
                                                                 <el-tooltip
                                                                         content="查询注册状态，如果能查到自动填充到输入框，如果未注册，成功受理后会自动注册用户，登录名为法人身份证号码"
                                                                         placement="bottom"
@@ -353,7 +353,7 @@
                                         </el-button>
                                     </el-col>
                                 </el-row>
-                                <el-row type="flex" justify="center" style="margin-top:20px;">
+                                <el-row type="flex" justify="center" style="margin-top: 10px;">
                                     <el-button :disabled="!itemNumber.id || itemNumber.status!=1" type="primary"
                                                @click="callNumber" title="设置当前号码为窗口已呼叫状态时点击">
                                         叫号
@@ -714,52 +714,54 @@
                         </el-tabs>
 
 
-                        <div style="margin-top: 20px;">
+                        <div style="margin-top: 10px;">
                             <!-- 打印按钮-->
-                            <template v-if="itemNumber.status==3" style="margin-top:20px;">
+                            <template v-if="itemNumber.status==3" >
                                 <el-button type="primary" @click="print_ywsld">打印业务受理单</el-button>
                                 <el-button type="primary" @click="print_wlzyd">打印物料转移单</el-button>
                             </template>
 
-                            <template v-if="itemNumber.status==4" style="margin-top:20px;">
+                            <template v-if="itemNumber.status==4" >
                                 <el-button type="primary" @click="print_ycxgzd">打印一次性告知单</el-button>
                             </template>
 
-                            <template class="block full-width" style="margin-top:20px;"
-                                      v-if="itemNumber.status==6">
+                            <div v-if="itemNumber.status==6">
                                 <el-input
                                         type="textarea"
                                         :autosize="{ minRows: 2, maxRows: 4}"
                                         placeholder="填写备注"
                                         v-model="remark">
                                 </el-input>
-                            </template>
-                            <template v-if="itemNumber.status!=3">
-                                <el-input v-model="handTypeText" placeholder="请选择交件方式" :disabled="!itemVo.id"
-                                          readonly style="width: 180px" icon="edit"
-                                          @focus="handleChangeHandType"></el-input>
-                                <el-input v-model="takeTypeText" placeholder="请选择取件方式"
-                                          v-if="itemVo.id && !takeTypeVo"
-                                          readonly style="width: 180px" icon="edit"
-                                          @focus="handleChangeTakeType"></el-input>
-                                <!--抽了号，但是号不是正在处理的不能点击确认收件；或者不关心是否抽号和抽号状态，没有手机号或姓名或身份证号或统一社会信用代码的按钮不可点击（莲湖直接收件）-->
-                                <el-button
-                                        :disabled="(itemNumber.id &&  itemNumber.status!=6) || !memberPhone || !memberRealname ||!memberCode || submiting || !itemVo || !itemVo.id"
-                                        type="primary"
-                                        :loading="submiting" @click="pass">
-                                    确认收件
-                                </el-button>
-                                <!--抽了号，但是号不是正在处理的不能点击确认收件；此处对于莲湖不在系统抽号直接提交的模式来说，一直会显示为禁用-->
-                                <!--TODO 按理说拒收也应该是要提交并保存一条抽号受理记录-->
-                                <el-button :disabled="!itemNumber.id || itemNumber.status!=6" type="primary"
-                                           @click="reject">
-                                    不予受理
-                                </el-button>
+                            </div>
+                            <div style="margin-top:10px;">
+                                <template v-if="itemNumber.status!=3">
 
-                            </template>
-                            <el-button type="primary" @click="resetForm">
-                                清空
-                            </el-button>
+                                    <el-input v-model="handTypeText" placeholder="请选择交件方式" :disabled="!itemVo.id"
+                                              readonly style="width: 180px" icon="edit"
+                                              @focus="handleChangeHandType"></el-input>
+                                    <el-input v-model="takeTypeText" placeholder="请选择取件方式"
+                                              v-if="itemVo.id && !takeTypeVo"
+                                              readonly style="width: 180px" icon="edit"
+                                              @focus="handleChangeTakeType"></el-input>
+                                    <!--抽了号，但是号不是正在处理的不能点击确认收件；或者不关心是否抽号和抽号状态，没有手机号或姓名或身份证号或统一社会信用代码的按钮不可点击（莲湖直接收件）-->
+                                    <el-button
+                                            :disabled="(itemNumber.id &&  itemNumber.status!=6) || !memberPhone || !memberRealname ||!memberCode || submiting || !itemVo || !itemVo.id"
+                                            type="primary"
+                                            :loading="submiting" @click="pass">
+                                        确认收件
+                                    </el-button>
+                                    <!--抽了号，但是号不是正在处理的不能点击确认收件；此处对于莲湖不在系统抽号直接提交的模式来说，一直会显示为禁用-->
+                                    <!--TODO 按理说拒收也应该是要提交并保存一条抽号受理记录-->
+                                    <el-button :disabled="!itemNumber.id || itemNumber.status!=6" type="primary"
+                                               @click="reject">
+                                        不予受理
+                                    </el-button>
+
+                                </template>
+                                <el-button type="primary" @click="resetForm">
+                                    清空
+                                </el-button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1252,7 +1254,7 @@
                 }
                 queryCompanyInfo({
                     companyCode: this.companyCode,
-                    diff:'gwq'
+                    diff: 'gwq'
                 }).then(response => {
                     if (response.httpCode === 200) {
                         let c = response.data;
@@ -1621,7 +1623,7 @@
                         } else {
                             _this.$message({
                                 showClose: true,
-                                message: '当前窗口没有正在办理的业务'
+                                message: _this.getNumberBy_hallNumber + '查询不到'
                             });
                         }
                     } else {
@@ -2133,7 +2135,7 @@
 
     #itemStepInfo table {
         width: 100%;
-        margin-top: 20px;
+        margin-top: 10px;
     }
 
     #itemStepInfo table th, #itemInfo table td {
