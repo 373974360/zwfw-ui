@@ -1291,7 +1291,6 @@
                         'fwdx_ziranren,fwdx_common' : 'fwdx_faren,fwdx_common',
                     handleType:'blxs_ckbl'
                 };
-                // this.selectedItem= null;
                 if (query !== '') {
                     if (/.*[\u4e00-\u9fa5]+.*$/.test(query)) {
                         listQueryName.name = query;
@@ -1436,19 +1435,30 @@
              * 清除
              * */
             resetForm() {
+                //清空填写的企业代码
                 this.companyCode = '';
+                //清空填写的企业名称
                 this.companyName = '';
-                this.itemVo = {};
-                this.itemNumber = {};
-                this.companyInfo = {};
+                //清空手机号
                 this.memberPhone = '';
+                //清空姓名
                 this.memberRealname = '';
+                //清空身份证号
                 this.memberCode = '';
+
+
+
+
+
+                //清空事项对象
+                this.itemVo = {};
+                //清空号码
+                this.itemNumber = {};
+                //清空企业工商信息
+                this.companyInfo = {};
+                //清空事项材料
                 this.itemMaterialVoList = [];
-                // this.selectedItem = null;
-                this.getNumberBy_processNumber = '';
-                // this.getNumberBy_hallNumber = '';
-                this.getNumberBy_expressNumber = '';
+
             },
 
             sendFastRegPhoneCode() {
@@ -1595,27 +1605,25 @@
                 let _this = this;
                 this.resetForm();
                 this.queryLoading = true;
-                setTimeout(function () {
-                    queryNumberByCallNumber({
-                        hallNumber: this.getNumberBy_hallNumber
-                    }).then(response => {
-                        _this.queryLoading = false;
-                        if (response.httpCode === 200) {
-                            if (response.data != null) {
-                                _this.refreshNumber(response.data);
-                            } else {
-                                _this.$message({
-                                    showClose: true,
-                                    message: '当前窗口没有正在办理的业务'
-                                });
-                            }
+                queryNumberByCallNumber({
+                    hallNumber: this.getNumberBy_hallNumber
+                }).then(response => {
+                    _this.queryLoading = false;
+                    if (response.httpCode === 200) {
+                        if (response.data != null) {
+                            _this.refreshNumber(response.data);
                         } else {
-                            _this.$message.error(response.msg);
+                            _this.$message({
+                                showClose: true,
+                                message: '当前窗口没有正在办理的业务'
+                            });
                         }
-                    }).catch(e => {
-                        _this.queryLoading = false;
-                    });
-                }, 1000);
+                    } else {
+                        _this.$message.error(response.msg);
+                    }
+                }).catch(e => {
+                    _this.queryLoading = false;
+                });
             },
             refreshNumber(data) {
                 let _this = this;
