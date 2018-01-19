@@ -149,7 +149,8 @@
                     rows: this.$store.state.app.rows,
                     qymc: undefined,
                     tyCode: undefined,
-                    fr: undefined
+                    fr: undefined,
+                    diff:'gwq'
                 },
                 dialogFormVisible: false,
                 dialogLoading: false,
