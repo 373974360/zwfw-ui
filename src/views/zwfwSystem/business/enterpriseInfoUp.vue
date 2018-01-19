@@ -230,7 +230,7 @@
 
                     <el-col :span="24">
                         <el-form-item label="经营范围：">
-                            <el-input type="textarea" v-model="enterpriseList.jyfw" rows="6"></el-input>
+                            <el-input :rows="6" type="textarea" v-model="enterpriseList.jyfw" ></el-input>
                         </el-form-item>
                     </el-col>
 
