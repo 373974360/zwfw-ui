@@ -35,7 +35,10 @@
             </el-table-column>
             <el-table-column align="left" label="机构名称" prop="companyName" width="300">
                 <template scope="scope">
-                    <span>{{scope.row.companyName}}</span>
+                    <el-tooltip class="item" effect="dark" content="天眼查" placement="right-start">
+                        <a :href="'https://www.tianyancha.com/search?key='+scope.row.companyCode"
+                           target="_blank">{{scope.row.companyName}}</a>
+                    </el-tooltip>
                 </template>
             </el-table-column>
             <!--<el-table-column align="left" label="机构代码" prop="agencyCode" width="100">
@@ -46,6 +49,11 @@
             <el-table-column align="center" label="法定代表人" prop="legalPerson">
                 <template scope="scope">
                     <span>{{scope.row.legalPerson}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="法人身份证/登录名" prop="legalPerson">
+                <template scope="scope">
+                    <span>{{scope.row.idcard}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="left" label="注册地址" prop="registerPlace" width="300">
@@ -84,7 +92,8 @@
                 </el-form-item>
                 <el-form-item label="机构类型" prop="companyType">
                     <el-select v-model="zwfwLegalPerson.companyType" placeholder="请选择">
-                        <el-option v-for="item in dics['gsxz']" :key="item.code" :value="item.code" :label="item.value"></el-option>
+                        <el-option v-for="item in dics['gsxz']" :key="item.code" :value="item.code"
+                                   :label="item.value"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="机构名称" prop="companyName">
@@ -96,8 +105,12 @@
                 <el-form-item label="法定代表人" prop="legalPerson">
                     <el-input v-model="zwfwLegalPerson.legalPerson"></el-input>
                 </el-form-item>
+
                 <el-form-item label="法人身份证" prop="idcard">
-                    <el-input v-model="zwfwLegalPerson.idcard"></el-input>
+                    <el-tooltip content="身份证号作为法人登录用户名" placement="bottom"
+                                effect="light">
+                        <el-input v-model="zwfwLegalPerson.idcard"></el-input>
+                    </el-tooltip>
                 </el-form-item>
                 <el-form-item label="联系电话" prop="phone">
                     <el-input v-model="zwfwLegalPerson.phone"></el-input>
@@ -106,7 +119,8 @@
                     <el-input v-model="zwfwLegalPerson.registerPlace"></el-input>
                 </el-form-item>
                 <el-form-item label="注册日期" prop="registerDate">
-                    <el-date-picker :editable="false" v-model="zwfwLegalPerson.registerDate" type="date" placeholder="选择日期" @change="formatDate"></el-date-picker>
+                    <el-date-picker :editable="false" v-model="zwfwLegalPerson.registerDate" type="date"
+                                    placeholder="选择日期" @change="formatDate"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="密码" prop="password">
                     <el-input v-model="zwfwLegalPerson.password" type="password" placeholder="修改密码时填入新密码，若不需要则无需输入"/>
@@ -131,9 +145,11 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="resetZwfwLegalPersonForm">取 消</el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" :loading="btnLoading" @click="doCreate">确 定
+                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" :loading="btnLoading"
+                           @click="doCreate">确 定
                 </el-button>
-                <el-button v-else type="primary" icon="circle-check" :loading="btnLoading" @Keyup.enter="doUpdate" @click="doUpdate">确 定
+                <el-button v-else type="primary" icon="circle-check" :loading="btnLoading" @Keyup.enter="doUpdate"
+                           @click="doUpdate">确 定
                 </el-button>
             </div>
         </el-dialog>
@@ -144,7 +160,7 @@
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import moment from 'moment';
-    import { isIdCardNo, validatMobiles, checkSocialCreditCode } from 'utils/validate'
+    import {isIdCardNo, validatMobiles, checkSocialCreditCode} from 'utils/validate'
     import {
         creditCodeExist,
         getZwfwLegalPersonList,
