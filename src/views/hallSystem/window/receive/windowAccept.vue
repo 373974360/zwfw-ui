@@ -143,7 +143,7 @@
                                                         <el-row :gutter="10">
                                                             <el-col :span="12">
                                                                 <el-input v-model="companyCode" placeholder="社会统一信用代码"
-                                                                          @keyup.native="toUpperCase" @keydown.native="scanInput" @keyup.native="toUpperCase">
+                                                                           @keydown.native="scanInput">
                                                                 </el-input>
                                                             </el-col>
                                                             <el-col :span="6">
@@ -197,6 +197,17 @@
                                                                     <!--<template slot="prepend">手机号：</template>-->
                                                                 </el-input>
                                                             </el-col>
+                                                        </el-row>
+                                                        <el-row>
+                                                            <el-col :span="25">
+                                                                <el-input v-model="companyAddress" placeholder="公司地址">
+                                                                </el-input>
+                                                            </el-col>
+                                                            <!--<el-col :span="5">
+                                                                <el-button type="primary" @click="sendFastRegPhoneCode"
+                                                                           :disabled="!doFastReg">发送验证码
+                                                                </el-button>
+                                                            </el-col>-->
                                                         </el-row>
 
 
@@ -970,6 +981,7 @@
                 memberPhone: '',
                 companyName: '',
                 companyCode: '',
+                companyAddress: '',
                 phoneCode: '',
                 companyInfo: {
                     id: '',
@@ -1251,26 +1263,33 @@
              */
             scanInput(event) {
                 this.isScanInput = false;
-                if (event.keyCode == 13 && this.companyCode.indexOf('：') > 0) {
-                    this.isScanInput = true;
-                    const companyInfo = this.companyCode.replace('：', ':').split(';');
-                    //社会统一信用代码
-                    this.companyInfo.ty_code = companyInfo[0].split(':')[1];
-                    //注册号
-                    this.companyInfo.gs_code = companyInfo[1].split(':')[1];
-                    //企业名称
-                    this.companyInfo.qymc = companyInfo[2].split(':')[1];
-                    //登记机关
-                    this.companyInfo.djjg = companyInfo[3].split(':')[1];
-                    //登记时间
-                    this.companyInfo.djsj = companyInfo[4].split(':')[1];
-                    for (const attr of companyInfo) {
-                        const arry = attr.split(':');
-                        console.dir(arry[0] + '--------' + arry[1]);
-                    }
-                    this.companyCode = companyInfo[0].split(':')[1];
-                    this.companyName = companyInfo[2].split(':')[1];
-                    this.queryCompanyInfo();
+                var _this = this;
+                if (event.keyCode == 13 ) {
+                    this.$nextTick(function(){
+                        console.log(_this.companyCode);
+
+                        if(_this.companyCode.indexOf('：') > 0 || _this.companyCode.indexOf(':') > 0) {
+                            _this.isScanInput = true;
+                            const companyInfo = _this.companyCode.replace('：', ':').split(';');
+                            //社会统一信用代码
+                            _this.companyInfo.ty_code = companyInfo[0].split(':')[1];
+                            //注册号
+                            _this.companyInfo.gs_code = companyInfo[1].split(':')[1];
+                            //企业名称
+                            _this.companyInfo.qymc = companyInfo[2].split(':')[1];
+                            //登记机关
+                            _this.companyInfo.djjg = companyInfo[3].split(':')[1];
+                            //登记时间
+                            _this.companyInfo.djsj = companyInfo[4].split(':')[1];
+                            for (const attr of companyInfo) {
+                                const arry = attr.split(':');
+                                console.dir(arry[0] + '--------' + arry[1]);
+                            }
+                            _this.companyCode = companyInfo[0].split(':')[1];
+                            _this.companyName = companyInfo[2].split(':')[1];
+                            _this.queryCompanyInfo();
+                        }
+                    });
                 }
             },
             /**
@@ -1297,9 +1316,11 @@
                             this.companyName = c.qymc;
                             this.companyCode = c.ty_code;
                             this.memberCode = c.fr_id ? c.fr_id : '';
+                            this.companyAddress = c.jgzs;
                         } else {
                             this.$message.warning("企业信息中没有搜索到【" + this.companyCode + "】企业信息");
                             if (this.isScanInput) {
+                                this.companyInfo.jgzs = this.companyAddress || '';
                                 addCompanyInfo(this.companyInfo).then(response => {
                                     this.isScanInput = false;
                                     if (response.httpCode === 200) {
