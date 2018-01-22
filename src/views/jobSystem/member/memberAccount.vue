@@ -18,6 +18,9 @@
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleDelete" type="danger" icon="delete">
                 删除
             </el-button>
+            <el-button class="filter-item" style="margin-left: 10px;" @click="startImport" type="danger" icon="delete">
+                开始导入
+            </el-button>
         </div>
         <el-table ref="jobMemberTable" :data="jobMemberList" v-loading.body="listLoading" border fit
                   highlight-current-row
@@ -26,6 +29,13 @@
             <el-table-column align="center" label="序号" width="165">
                 <template scope="scope">
                     <span>{{scope.row.id}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="left" label="登录名" prop="email">
+                <template scope="scope">
+                    <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
+                        <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
+                    </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column align="left" label="电子邮箱" prop="email">
@@ -94,11 +104,20 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
+                <el-form-item label="登录名" prop="name">
+                    <el-input v-model="jobMember.name"></el-input>
+                </el-form-item>
                 <el-form-item label="电子邮箱" prop="email">
                     <el-input v-model="jobMember.email"></el-input>
                 </el-form-item>
                 <el-form-item label="手机号码" prop="phone">
                     <el-input v-model="jobMember.phone"></el-input>
+                </el-form-item>
+                <el-form-item label="密保问题" prop="question">
+                    <el-input v-model="jobMember.question"></el-input>
+                </el-form-item>
+                <el-form-item label="答案" prop="answer">
+                    <el-input v-model="jobMember.answer"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -113,7 +132,7 @@
     import {copyProperties} from 'utils';
     import {validatMobiles, isWscnEmail} from 'utils/validate';
     import {mapGetters} from 'vuex';
-    import {getMemberList, createJobMember, updateJobMember, delJobMember, resetPassJobMember, resetJobMember} from 'api/jobSystem/member/memberAccount';
+    import {getMemberList, createJobMember, updateJobMember, delJobMember, resetPassJobMember, resetJobMember, startImport} from 'api/jobSystem/member/memberAccount';
     import {getAllJobMemberLevel} from 'api/jobSystem/member/memberLevel';
 
     export default {
@@ -146,6 +165,9 @@
                     id: undefined,
                     type: 1,
                     levels: '',
+                    name: '',
+                    question: '',
+                    answer: '',
                     email: '',
                     phone: ''
                 },
@@ -155,6 +177,9 @@
                 dialogStatus: '',
                 dialogLoading: false,
                 jobMemberRules: {
+                    name: [
+                        {required: true, message: '请填写登录名'}
+                    ],
                     levels: [
                         {required: true, message: '请选择会员级别', trigger: 'blur'}
                     ],
@@ -189,6 +214,14 @@
             getList() {
                 this.listLoading = true;
                 getMemberList(this.listQuery).then(response => {
+                    this.jobMemberList = response.data.list;
+                    this.total = response.data.total;
+                    this.listLoading = false;
+                })
+            },
+            startImport() {
+                this.listLoading = true;
+                startImport().then(response => {
                     this.jobMemberList = response.data.list;
                     this.total = response.data.total;
                     this.listLoading = false;
@@ -377,9 +410,12 @@
                 this.jobMember = {
                     id: undefined,
                     type: 1,
+                    levels: '',
+                    name: '',
+                    question: '',
+                    answer: '',
                     email: '',
-                    phone: '',
-                    levels: ''
+                    phone: ''
                 };
             }
         }

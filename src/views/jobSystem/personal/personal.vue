@@ -393,6 +393,7 @@
                 getPersonalList(this.listQuery).then(response => {
                     if (response.httpCode == 200) {
                         this.list = response.data.list;
+                        this.total = response.data.total;
                     } else {
                         this.$message.error(response.msg);
                     }

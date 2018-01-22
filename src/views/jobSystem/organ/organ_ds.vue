@@ -15,16 +15,18 @@
         <el-table ref="table_demo" :data="list" v-loading.body="listLoading" border fit style="width: 100%"
                   @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"/>
-            <el-table-column align="center" label="序号" width="165">
+            <el-table-column align="left" label="公司名称" min-width="260">
                 <template scope="scope">
-                    <span>{{scope.row.m_id}}</span>
+                    <nobr class="link-type" @click="handleView(scope.row)">
+                        <el-tag v-if="scope.row.islock == 2" type="danger">禁用</el-tag>
+                        <el-tag v-if="scope.row.isrec==2" type="danger">推荐</el-tag>
+                        {{scope.row.name}}
+                    </nobr>
                 </template>
             </el-table-column>
             <el-table-column align="left" label="电子邮箱" min-width="260">
                 <template scope="scope">
                     <nobr class="link-type" @click="handleView(scope.row)">
-                        <el-tag v-if="scope.row.islock == 2" type="danger">禁用</el-tag>
-                        <el-tag v-if="scope.row.isrec==2" type="danger">推荐</el-tag>
                         {{scope.row.email}}
                     </nobr>
                 </template>
@@ -42,11 +44,6 @@
             <el-table-column align="center" label="注册时间" width="180">
                 <template scope="scope">
                     <nobr>{{scope.row.registerdate | date('YYYY-MM-DD HH:mm:ss')}}</nobr>
-                </template>
-            </el-table-column>
-            <el-table-column align="left" label="公司名称" width="210">
-                <template scope="scope">
-                    <nobr>{{scope.row.name}}</nobr>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="公司性质" width="100">
@@ -109,7 +106,7 @@
                             <td colspan="5">{{jobOrgan.province}}{{jobOrgan.city}}{{jobOrgan.address}}</td>
                         </tr>
                         <tr>
-                            <th>公司简介:</th>
+                            <th valign="top">公司简介:</th>
                             <td colspan="5">{{jobOrgan.gsjj}}</td>
                         </tr>
                     </table>
@@ -201,6 +198,7 @@
                 getOrganList(this.listQuery).then(response => {
                     if (response.httpCode == 200) {
                         this.list = response.data.list;
+                        this.total = response.data.total;
                     } else {
                         this.$message.error(response.msg);
                     }
