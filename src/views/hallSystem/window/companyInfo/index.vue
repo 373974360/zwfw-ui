@@ -198,7 +198,7 @@
                     qymc: undefined,
                     tyCode: undefined,
                     fr: undefined,
-                    diff:'gwq'
+                    diff: null
                 },
                 dialogFormVisible: false,
                 dialogLoading: false,
