@@ -12,7 +12,7 @@
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible"
                    :close-on-click-modal="closeOnClickModal" :before-close="resetDeptForm">
-            <el-form ref="deptForm" class="small-space" :model="sysDept" label-position="right" label-width="80px"
+            <el-form ref="deptForm" class="small-space" :model="sysDept" label-position="right" label-width="100px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="deptRules">
                 <el-form-item label="上级部门">
                     <el-cascader :options="cascader" v-model="cascaderModel" @change="handleChange"
@@ -29,7 +29,7 @@
                     <el-input v-model="sysDept.deptCode"></el-input>
                 </el-form-item>
                 <el-form-item label="通知短信手机" prop="phone">
-                    <el-input v-model="sysDept.phone"></el-input>
+                    <el-input v-model="sysDept.phone" placeholder="多个手机号码请用英文逗号隔开"></el-input>
                 </el-form-item>
                 <el-form-item label="排序">
                     <el-input-number v-model="sysDept.sortNo" :min="1" :max="100"/>
@@ -118,10 +118,6 @@
                 deptRules: {
                     name: [
                         {required: true, message: '请输入部门名称'}
-                    ],
-                    phone: [
-                        {required: true, message: '请输入手机号码'},
-                        {validator: validateMobiles, trigger: 'blur'}
                     ]
                 }
             }

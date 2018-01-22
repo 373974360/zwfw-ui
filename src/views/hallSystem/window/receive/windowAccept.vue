@@ -5,10 +5,12 @@
                 <div class="grid-content " v-loading.body="queryLoading">
                     <div style="padding:10px">
                         <el-tabs v-model="leftTabName" type="card">
-                            <el-tab-pane label="当前窗口业务受理" name="virtualPanelLianhu">
+                            <el-tab-pane
+                                    :label="'窗口' + (windowInfo!=null?windowInfo.name:'') + '业务受理 - ' + (itemNumber!=null&&itemNumber.orderNo?itemNumber.orderNo:'')"
+                                    name="virtualPanelLianhu">
                                 <el-row :gutter="10">
                                     <el-col :span="10">
-                                        <el-tooltip content="查询当前登录用户正在受理事项的状态，通常与窗口叫号器同步" placement="right"
+                                        <el-tooltip content="查询当前登录用户正在受理事项的状态，通常与窗口叫号器同步" placement="bottom"
                                                     effect="light">
                                             <el-button type="primary" @click="queryCurrentNumber"
                                                        :disabled="queryLoading">
@@ -17,8 +19,11 @@
                                         </el-tooltip>
                                     </el-col>
                                     <el-col :span="7" :offset="3">
-                                        <el-input v-model="getNumberBy_hallNumber" placeholder="输入排队号查询">
-                                        </el-input>
+                                        <el-tooltip content="使用排队号查看状态时填入" placement="bottom"
+                                                    effect="light">
+                                            <el-input v-model="getNumberBy_hallNumber" placeholder="输入排队号查询">
+                                            </el-input>
+                                        </el-tooltip>
                                     </el-col>
                                     <el-col :span="4">
                                         <el-button type="primary" :disabled="!getNumberBy_hallNumber"
@@ -30,10 +35,10 @@
                                     <el-col :span="25">
                                         <el-collapse v-model="showInputForm" style="margin-top:10px;">
                                             <el-collapse-item :title="'窗口办理事项受理'" name="1">
-                                                <el-tabs v-model="memberType" @tab-click="queryItem()">
-                                                    <el-tab-pane label="自然人" name="1">
-
-                                                        <el-row :gutter="10">
+                                                <el-tabs v-model="memberType" @tab-click="memberTypeChange">
+                                                    <el-tab-pane label="自然人" name="1"
+                                                                 :disabled="member!=null && member.type==2">
+                                                        <el-row :gutter="10" v-show="!itemNumber.id">
                                                             <el-col :span="12">
                                                                 <el-cascader v-model="categoryCascaderModel"
                                                                              @change="handleCategoryChange"
@@ -43,13 +48,13 @@
                                                                              filterable
                                                                              expand-trigger="hover"
                                                                              :change-on-select="true"
-                                                                             placeholder="选择事项分类" style="width:100%">
+                                                                             placeholder="窗口办理事项分类" style="width:100%">
                                                                 </el-cascader>
                                                             </el-col>
                                                             <el-col :span="12">
                                                                 <el-select
                                                                         v-model="selectedItem"
-                                                                        placeholder="选择分类下的事项"
+                                                                        placeholder="窗口办理分类下的事项"
                                                                         filterable
                                                                         @change="changeItem" style="width:100%">
                                                                     <el-option
@@ -64,7 +69,8 @@
 
                                                         <el-row :gutter="10">
                                                             <el-col :span="19">
-                                                                <el-input v-model="memberCode" placeholder="自然人身份证号码">
+                                                                <el-input v-model="memberCode" placeholder="自然人身份证号码"
+                                                                          @keyup.native="toUpperCase">
                                                                     <template slot="prepend">身份证号：</template>
                                                                 </el-input>
                                                             </el-col>
@@ -74,6 +80,7 @@
                                                                             effect="light">
                                                                     <el-button type="primary"
                                                                                @click="checkNatureMemberExist()"
+
                                                                                :disabled="!memberCode">注册查询
                                                                     </el-button>
                                                                 </el-tooltip>
@@ -97,8 +104,9 @@
                                                             </el-col>
                                                         </el-row>
                                                     </el-tab-pane>
-                                                    <el-tab-pane label="法人" name="2">
-                                                        <el-row :gutter="10">
+                                                    <el-tab-pane label="法人" name="2"
+                                                                 :disabled="member!=null && member.type==1">
+                                                        <el-row :gutter="10" v-show="!itemNumber.id">
                                                             <el-col :span="12">
                                                                 <el-cascader v-model="categoryCascaderModel"
                                                                              @change="handleCategoryChange"
@@ -118,8 +126,10 @@
                                                                     <el-select
                                                                             v-model="selectedItem"
                                                                             placeholder="选择分类下的事项"
+                                                                            :loading="loadingItem"
                                                                             filterable
-                                                                            @change="changeItem" style="width:100%">
+                                                                            @change="changeItem"
+                                                                            style="width:100%">
                                                                         <el-option
                                                                                 v-for="item in optionsName"
                                                                                 :key="item.id"
@@ -133,7 +143,7 @@
                                                         <el-row :gutter="10">
                                                             <el-col :span="12">
                                                                 <el-input v-model="companyCode" placeholder="社会统一信用代码"
-                                                                          @keydown.native="scanInput">
+                                                                          @keyup.native="toUpperCase" @keydown.native="scanInput" @keyup.native="toUpperCase">
                                                                 </el-input>
                                                             </el-col>
                                                             <el-col :span="6">
@@ -177,7 +187,8 @@
                                                                 </el-input>
                                                             </el-col>
                                                             <el-col :span="10">
-                                                                <el-input v-model="memberCode" placeholder="法人身份证号">
+                                                                <el-input v-model="memberCode" placeholder="法人身份证号"
+                                                                          @keyup.native="toUpperCase">
                                                                     <!--<template slot="prepend">身份证号：</template>-->
                                                                 </el-input>
                                                             </el-col>
@@ -284,7 +295,7 @@
                                         </el-radio-group>
                                     </el-col>
                                     <el-col :span="6">
-                                        <el-input v-model="memberCode" placeholder="身份证号码">
+                                        <el-input v-model="memberCode" placeholder="身份证号码" @keyup.native="toUpperCase">
                                         </el-input>
                                     </el-col>
                                     <el-col :span="5">
@@ -326,7 +337,8 @@
                                     </el-col>
                                     <el-col :span="3">
                                         <el-button type="primary" @click="takeNumberByItemCode"
-                                                   :disabled="!itemVo || !itemVo.id || !member ||  !member.id">事项抽号
+                                                   :disabled="!itemVo || !itemVo.id || !memberCode ||  !memberRealname || !memberPhone">
+                                            事项抽号
                                         </el-button>
                                     </el-col>
                                 </el-row>
@@ -341,7 +353,7 @@
                                         </el-button>
                                     </el-col>
                                 </el-row>
-                                <el-row type="flex" justify="center" style="margin-top:20px;">
+                                <el-row type="flex" justify="center" style="margin-top: 10px;">
                                     <el-button :disabled="!itemNumber.id || itemNumber.status!=1" type="primary"
                                                @click="callNumber" title="设置当前号码为窗口已呼叫状态时点击">
                                         叫号
@@ -644,11 +656,11 @@
                                             <td>{{itemVo.processType | dics('bjlx')}}
                                             </td>
                                         </tr>
-                                        <tr v-if="itemVo.promiseEndTime!=0">
+                                        <tr v-if="itemVo.promiseEndTime && itemVo.promiseEndTime!=0">
                                             <th>承诺时限</th>
                                             <td>{{itemVo.promiseEndTime}} 个工作日</td>
                                         </tr>
-                                        <tr v-if="itemVo.legalEndTime!=0">
+                                        <tr v-if="itemVo.legalEndTime && itemVo.legalEndTime!=0">
                                             <th>法定时限</th>
                                             <td>{{itemVo.legalEndTime}} 个工作日</td>
                                         </tr>
@@ -695,71 +707,62 @@
                                     </div>
                                 </div>
                             </el-tab-pane>
-                            <el-tab-pane label="内部办理流程描述" name="itemStep">
+                            <el-tab-pane label="内部办理流程图" name="itemStep">
                                 <div id="itemStepInfo" style="white-space:pre-wrap"
                                      v-html="itemVo.workflowDescription"></div>
                             </el-tab-pane>
                         </el-tabs>
-                        <!-- 打印按钮-->
-                        <div v-if="itemNumber.status==3" style="margin-top:20px;">
-                            <el-button type="primary" @click="print_ywsld">打印业务受理单</el-button>
-                            <el-button type="primary" @click="print_wlzyd">打印物料转移单</el-button>
 
-                            <el-button type="primary" @click="resetForm">
-                                清空
-                            </el-button>
+
+                        <div style="margin-top: 10px;">
+                            <!-- 打印按钮-->
+                            <template v-if="itemNumber.status==3" >
+                                <el-button type="primary" @click="print_ywsld">打印业务受理单</el-button>
+                                <el-button type="primary" @click="print_wlzyd">打印物料转移单</el-button>
+                            </template>
+
+                            <template v-if="itemNumber.status==4" >
+                                <el-button type="primary" @click="print_ycxgzd">打印一次性告知单</el-button>
+                            </template>
+
+                            <div v-if="itemNumber.status==6">
+                                <el-input
+                                        type="textarea"
+                                        :autosize="{ minRows: 2, maxRows: 4}"
+                                        placeholder="填写备注"
+                                        v-model="remark">
+                                </el-input>
+                            </div>
+                            <div style="margin-top:10px;">
+                                <template v-if="itemNumber.status!=3">
+
+                                    <el-input v-model="handTypeText" placeholder="请选择交件方式" :disabled="!itemVo.id"
+                                              readonly style="width: 180px" icon="edit"
+                                              @focus="handleChangeHandType"></el-input>
+                                    <el-input v-model="takeTypeText" placeholder="请选择取件方式"
+                                              v-if="itemVo.id && !takeTypeVo"
+                                              readonly style="width: 180px" icon="edit"
+                                              @focus="handleChangeTakeType"></el-input>
+                                    <!--抽了号，但是号不是正在处理的不能点击确认收件；或者不关心是否抽号和抽号状态，没有手机号或姓名或身份证号或统一社会信用代码的按钮不可点击（莲湖直接收件）-->
+                                    <el-button
+                                            :disabled="(itemNumber.id &&  itemNumber.status!=6) || !memberPhone || !memberRealname ||!memberCode || submiting || !itemVo || !itemVo.id"
+                                            type="primary"
+                                            :loading="submiting" @click="pass">
+                                        确认收件
+                                    </el-button>
+                                    <!--抽了号，但是号不是正在处理的不能点击确认收件；此处对于莲湖不在系统抽号直接提交的模式来说，一直会显示为禁用-->
+                                    <!--TODO 按理说拒收也应该是要提交并保存一条抽号受理记录-->
+                                    <el-button :disabled="!itemNumber.id || itemNumber.status!=6" type="primary"
+                                               @click="reject">
+                                        不予受理
+                                    </el-button>
+
+                                </template>
+                                <el-button type="primary" @click="resetForm">
+                                    清空
+                                </el-button>
+                            </div>
                         </div>
-
-                        <div v-if="itemNumber.status==4" style="margin-top:20px;">
-                            <el-button type="primary" @click="print_ycxgzd">打印一次性告知单</el-button>
-                        </div>
-
-                        <div class="block full-width" style="margin-top:20px;"
-                             v-if="itemNumber.status==6">
-                            <el-input
-                                    type="textarea"
-                                    :autosize="{ minRows: 2, maxRows: 4}"
-                                    placeholder="填写备注"
-                                    v-model="remark">
-                            </el-input>
-                        </div>
-                        <div v-if="itemNumber.status!=3" style="margin-top:20px;">
-                            <!--根据事项的交件方式显示，此选择框是为了防止用户选择其他交件方式后，人工直接来大厅办理，收件后数据不一致-->
-                            <!--<el-select v-model="itemHandTypeVo.handType" placeholder="确定交件方式" :disabled="!itemVo.id"
-                                       @change="handleChangeHandType">
-                                <el-option v-for="item in itemHandTypeList" :key="item" :value="item"
-                                           :label="item | parseToInt | enums('HandType')">
-                                </el-option>
-                            </el-select>-->
-                            <el-input v-model="handTypeText" placeholder="请选择交件方式" :disabled="!itemVo.id"
-                                      readonly style="width: 180px" icon="edit"
-                                      @focus="handleChangeHandType"></el-input>
-                            <!--<el-select v-model="itemTakeTypeVo.takeType" placeholder="请选择取件方式" v-if="!takeTypeVo"
-                                       @change="handleChangeTakeType">
-                                <el-option v-for="item in itemTakeTypeList" :key="item" :value="item"
-                                           :label="item | parseToInt | enums('TakeType')">
-                                </el-option>
-                            </el-select>-->
-                            <el-input v-model="takeTypeText" placeholder="请选择取件方式"
-                                      v-if="itemVo.id && !takeTypeVo"
-                                      readonly style="width: 180px" icon="edit"
-                                      @focus="handleChangeTakeType"></el-input>
-                            <!--抽了号，但是号不是正在处理的不能点击确认收件；或者不关心是否抽号和抽号状态，没有手机号或姓名或身份证号或统一社会信用代码的按钮不可点击（莲湖直接收件）-->
-                            <el-button
-                                    :disabled="(itemNumber.id &&  itemNumber.status!=6) || !memberPhone || !memberRealname ||!memberCode || submiting || !itemVo || !itemVo.id"
-                                    type="primary"
-                                    :loading="submiting" @click="pass">
-                                确认收件
-                            </el-button>
-                            <!--抽了号，但是号不是正在处理的不能点击确认收件；此处对于莲湖不在系统抽号直接提交的模式来说，一直会显示为禁用-->
-                            <!--TODO 按理说拒收也应该是要提交并保存一条抽号受理记录-->
-                            <el-button :disabled="!itemNumber.id || itemNumber.status!=6" type="primary"
-                                       @click="reject">
-                                不予受理
-                            </el-button>
-
-                        </div>
-
                     </div>
                 </div>
             </el-col>
@@ -926,7 +929,7 @@
     import {getCategoryCascader} from 'api/zwfwSystem/business/category';
     import {getAllMailbox} from 'api/hallSystem/window/mailbox';
     import {getAllAddresseesByMemberId} from 'api/hallSystem/member/memberAddressee';
-    import {validatMobiles} from 'utils/validate'
+    import {validatMobiles, checkSocialCreditCode, isIdCardNo} from 'utils/validate'
     import {mapGetters} from 'vuex';
     import {enums, parseToInt} from '../../../../filters';
     import {copyProperties} from 'utils';
@@ -1093,6 +1096,8 @@
                 pendingFromBoxList: [],
                 pendingFromBoxListLoading: false,
                 isScanInput: false,
+                loadingItem: false
+
             }
         },
         watch: {
@@ -1237,6 +1242,10 @@
                 this.displayPendingFromBoxDialog = true;
                 this.queryPendingFromBoxList();
             },
+            toUpperCase() {
+                this.companyCode = this.companyCode.toUpperCase();
+                this.memberCode = this.memberCode.toUpperCase();
+            },
             /**
              * 扫码枪输入
              */
@@ -1268,9 +1277,10 @@
              * 查询企业信息
              */
             queryCompanyInfo() {
-                if (this.companyCode == '' || this.companyCode.length != 18) {
+                this.companyInfo = {};
+                if (!checkSocialCreditCode(this.companyCode)) {
                     this.companyInfo = {};
-                    this.$message.warning("社会统一信用代码不正确，跳过查询工商企业信息库");
+                    this.$message.warning("社会统一信用代码不正确，请重新输入");
                     return;
                 }
                 queryCompanyInfo({
@@ -1304,6 +1314,7 @@
                         this.$message.error("企业信息查询失败");
                         this.companyInfo = {};
                     }
+
                 })
             },
 
@@ -1311,7 +1322,6 @@
              * 查询事项列表
              * */
             queryItem(query) {
-                this.resetForm();
                 if (!this.itemCategory) {
                     return;
                 }
@@ -1321,9 +1331,9 @@
                     basicCode: undefined,
                     itemCategories: this.itemCategory,
                     serviceObject: this.memberType == '1' ?
-                        'fwdx_ziranren,fwdx_common' : 'fwdx_faren,fwdx_common'
+                        'fwdx_ziranren,fwdx_common' : 'fwdx_faren,fwdx_common',
+                    handleType: 'blxs_ckbl'
                 };
-                // this.selectedItem= null;
                 if (query !== '') {
                     if (/.*[\u4e00-\u9fa5]+.*$/.test(query)) {
                         listQueryName.name = query;
@@ -1333,12 +1343,16 @@
                 } else {
                     this.optionsName = [];
                 }
+                this.loadingItem = true;
                 getAllByNameOrbasicCode(listQueryName).then(response => {
+                    this.loadingItem = false;
                     if (response.httpCode === 200) {
                         this.optionsName = response.data;
                     } else {
                         this.$message.error('数据加载失败')
                     }
+                }).catch(e => {
+                    this.loadingItem = false;
                 });
             },
             /**
@@ -1399,6 +1413,10 @@
              * 检测自然人用户是否注册，如果注册，返回用户信息，如果没有注册显示出快速注册界面
              * */
             checkNatureMemberExist() {
+                if (!isIdCardNo(this.memberCode)) {
+                    this.$message.warning("身份证号码格式不正确，请重新输入");
+                    return;
+                }
                 checkNatureMemberExist({
                     memberCode: this.memberCode
                 }).then(response => {
@@ -1407,8 +1425,8 @@
                             //不存在
                             this.$message.warning("未注册");
                             this.doFastReg = true;
-                            this.memberRealname = '';
-                            this.memberPhone = '';
+                            // this.memberRealname = '';
+                            // this.memberPhone = '';
                         } else {
                             this.member = response.data;
                             this.$message.success("已注册");
@@ -1429,6 +1447,11 @@
              * 检测法人用户是否注册，如果注册，返回用户信息，如果没有注册显示出快速注册界面
              * */
             checkLegalMemberExist() {
+                if (!checkSocialCreditCode(this.companyCode)) {
+                    this.companyInfo = {};
+                    this.$message.warning("社会统一信用代码不正确，请重新输入");
+                    return;
+                }
                 checkLegalMemberExist({
                     companyCode: this.companyCode
                 }).then(response => {
@@ -1437,8 +1460,8 @@
                             //不存在
                             this.$message.warning("未注册");
                             this.doFastReg = true;
-                            this.memberRealname = '';
-                            this.memberPhone = '';
+                            // this.memberRealname = '';
+                            // this.memberPhone = '';
                         } else {
                             this.member = response.data;
                             this.$message.success("已注册");
@@ -1459,19 +1482,29 @@
              * 清除
              * */
             resetForm() {
+
+                //清空填写的企业代码
                 this.companyCode = '';
+                //清空填写的企业名称
                 this.companyName = '';
-                this.itemVo = {};
-                this.itemNumber = {};
-                this.companyInfo = {};
+                //清空手机号
                 this.memberPhone = '';
+                //清空姓名
                 this.memberRealname = '';
+                //清空身份证号
                 this.memberCode = '';
+                //清空事项对象
+                this.itemVo = {};
+                //清空号码
+                this.itemNumber = {};
+                //清空企业工商信息
+                this.companyInfo = {};
+                //清空事项材料
                 this.itemMaterialVoList = [];
-                // this.selectedItem = null;
-                this.getNumberBy_processNumber = '';
-                // this.getNumberBy_hallNumber = '';
-                this.getNumberBy_expressNumber = '';
+                //清空号码附带的会员信息
+                this.member = {};
+                //清空事项下拉框当前值
+                this.selectedItem = null;
             },
 
             sendFastRegPhoneCode() {
@@ -1545,7 +1578,6 @@
                     iDNum: this.member.memberCode
                 }).then(response => {
                     if (response.httpCode === 200) {
-                        _this.showInputForm = 1;
                         _this.$message.success('抽到的号码是：' + response.data.callNumber);
                         //执行查询
                         _this.getNumberBy_hallNumber = response.data.callNumber;
@@ -1607,7 +1639,10 @@
                     this.queryLoading = false;
                 })
             },
-
+            memberTypeChange() {
+                this.queryItem();
+                this.resetForm();
+            },
             /**
              * 查询 - 根据呼叫号查询今日此号码信息
              */
@@ -1615,27 +1650,25 @@
                 let _this = this;
                 this.resetForm();
                 this.queryLoading = true;
-                setTimeout(function () {
-                    queryNumberByCallNumber({
-                        hallNumber: this.getNumberBy_hallNumber
-                    }).then(response => {
-                        _this.queryLoading = false;
-                        if (response.httpCode === 200) {
-                            if (response.data != null) {
-                                _this.refreshNumber(response.data);
-                            } else {
-                                _this.$message({
-                                    showClose: true,
-                                    message: '当前窗口没有正在办理的业务'
-                                });
-                            }
+                queryNumberByCallNumber({
+                    hallNumber: this.getNumberBy_hallNumber
+                }).then(response => {
+                    _this.queryLoading = false;
+                    if (response.httpCode === 200) {
+                        if (response.data != null) {
+                            _this.refreshNumber(response.data);
                         } else {
-                            _this.$message.error(response.msg);
+                            _this.$message({
+                                showClose: true,
+                                message: _this.getNumberBy_hallNumber + '查询不到'
+                            });
                         }
-                    }).catch(e => {
-                        _this.queryLoading = false;
-                    });
-                }, 1000);
+                    } else {
+                        _this.$message.error(response.msg);
+                    }
+                }).catch(e => {
+                    _this.queryLoading = false;
+                });
             },
             refreshNumber(data) {
                 let _this = this;
@@ -1652,7 +1685,7 @@
                 _this.window = data.window;
                 _this.itemWindowUserName = data.itemWindowUserName;
                 if (data.itemNumber) {
-                    _this.showInputForm = data.itemNumber.flagPretrial ? 0 : 1;
+                    _this.showInputForm = data.itemNumber.flagPretrial ? '0' : '1';
                 }
 
                 //   取件方式
@@ -1792,12 +1825,12 @@
                         this.$message.warning('姓名没有填写，不能提交');
                         return;
                     }
-                    if (this.memberCode == '') {
-                        this.$message.warning('身份证没有填写，不能提交');
+                    if (!isIdCardNo(this.memberCode)) {
+                        this.$message.warning("身份证号码格式不正确，请重新填写");
                         return;
                     }
-                    if (this.memberPhone == '') {
-                        this.$message.warning('手机号没有填写，不能提交');
+                    if (!validatMobiles(this.memberPhone)) {
+                        this.$message.warning("手机号没格式不正确，请重新填写");
                         return;
                     }
                 } else {  //法人
@@ -1806,16 +1839,16 @@
                         this.$message.warning('姓名没有填写，不能提交');
                         return;
                     }
-                    if (this.memberCode == '') {
-                        this.$message.warning('身份证没有填写，不能提交');
+                    if (!isIdCardNo(this.memberCode)) {
+                        this.$message.warning("身份证号码格式不正确，请重新填写");
                         return;
                     }
-                    if (this.memberPhone == '') {
-                        this.$message.warning('手机号没有填写，不能提交');
+                    if (!validatMobiles(this.memberPhone)) {
+                        this.$message.warning("手机号没格式不正确，请重新填写");
                         return;
                     }
-                    if (this.companyCode == '') {
-                        this.$message.warning('社会统一信用代码没有填写，不能提交');
+                    if (!checkSocialCreditCode(this.companyCode)) {
+                        this.$message.warning('社会统一信用代码输入不正确，请重新填写');
                         return;
                     }
                     if (this.companyName == '') {
@@ -2139,7 +2172,7 @@
 
     #itemStepInfo table {
         width: 100%;
-        margin-top: 20px;
+        margin-top: 10px;
     }
 
     #itemStepInfo table th, #itemInfo table td {
@@ -2156,18 +2189,15 @@
     }
 
     .card-header {
-
-    .card-item {
-        border: none;
-        margin: 0;
-        width: 80%;
-        float: left;
-    }
-
-    .el-button {
-        float: right;
-    }
-
+        .card-item {
+            border: none;
+            margin: 0;
+            width: 80%;
+            float: left;
+        }
+        .el-button {
+            float: right;
+        }
     }
 
     .card-item {
@@ -2176,37 +2206,32 @@
         font-size: 14px;
         border: 1px solid #d0d0d0;
         height: 80px;
-
-    .el-radio {
-        height: 64px;
-        line-height: 64px;
-        text-align: center;
-        width: 10%;
-        float: left;
-    }
-
-    p {
-        margin: 0;
-        height: 32px;
-        line-height: 32px;
-        width: 88%;
-        float: left;
-    }
-
-    .p1 {
-        font-size: 16px;
-        font-weight: bold;
-
-    span {
-        padding: 3px 6px;
-        color: #dd1100;
-        font-size: 14px;
-        font-weight: normal;
-        border: 1px solid #dd1100;
-        border-radius: 3px;
-    }
-
-    }
+        .el-radio {
+            height: 64px;
+            line-height: 64px;
+            text-align: center;
+            width: 10%;
+            float: left;
+        }
+        p {
+            margin: 0;
+            height: 32px;
+            line-height: 32px;
+            width: 88%;
+            float: left;
+        }
+        .p1 {
+            font-size: 16px;
+            font-weight: bold;
+            span {
+                padding: 3px 6px;
+                color: #dd1100;
+                font-size: 14px;
+                font-weight: normal;
+                border: 1px solid #dd1100;
+                border-radius: 3px;
+            }
+        }
     }
 
     .clearfix:before, .clearfix:after {
@@ -2220,14 +2245,11 @@
 
     .box-card {
         width: 100%;
-
-    .el-card__body {
-        padding: 0;
-    }
-
-    .card-body {
-        padding: 12px;
-    }
-
+        .el-card__body {
+            padding: 0;
+        }
+        .card-body {
+            padding: 12px;
+        }
     }
 </style>

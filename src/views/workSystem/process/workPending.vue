@@ -93,14 +93,14 @@
 
                     <div style="margin-bottom:20px;">
                         <el-button class="filter-item" type="primary" @click="action='pass'">提交办理</el-button>
-                        <el-button v-if="itemTaskSetting.supportCorrection" class="filter-item" type="primary"
+                        <el-button v-if="itemTaskSetting.supportCorrection" class="filter-item" type="warning"
                                    @click="action='correction'" :disabled="itemProcessVo.flagCorrection || dialogLoading">整改
                         </el-button>
-                        <el-button v-if="itemTaskSetting.supportExtendTime" class="filter-item" type="primary"
+                        <el-button v-if="itemTaskSetting.supportExtendTime" class="filter-item" type="info"
                                    @click="action='extendTime'"
                                    :disabled="itemProcessVo.flagCorrection || itemProcessVo.extendTimeApplying || dialogLoading ">申请延期
                         </el-button>
-                        <el-button v-if="itemTaskSetting.supportClose" class="filter-item" type="primary"
+                        <el-button v-if="itemTaskSetting.supportClose" class="filter-item" type="danger"
                                    @click="action='close' || dialogLoading">不予处理
                         </el-button>
                     </div>

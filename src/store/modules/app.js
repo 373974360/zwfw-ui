@@ -5,6 +5,7 @@ const app = {
     state: {
         page: 1,
         rows: 15,
+        dialogRows: 10,
         pageSize: [10, 15, 20, 30, 40, 50, 100],
         textMap: {
             create: '创建',
@@ -13,7 +14,8 @@ const app = {
             associateMenu: '关联权限',
             associateUser: '关联用户',
             associateMaterial: '关联材料',
-            associateItem: '关联事项'
+            associateItem: '关联事项',
+            itemConfigUpdate: '事项预约配置编辑'
         },
         sidebar: {
             opened: !+Cookies.get('sidebarStatus')

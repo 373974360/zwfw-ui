@@ -4,33 +4,33 @@
         <levelbar></levelbar>
         <ErrLog v-if="log.length>0" class="errLog-container" :logsList="log"></ErrLog>
 
-        <el-dropdown class="avatar-container1" trigger="click">
-            <div class="avatar-wrapper" @click="dataNumberCount">
-                抽号信息
-                <i class="el-icon-caret-bottom"/>
-            </div>
-            <el-dropdown-menu class="user-dropdown11" slot="dropdown">
-                <el-dropdown-item>
-                    当前抽号等待人数：{{ waitItem.total }}
-                </el-dropdown-item>
-                <el-dropdown-item>
-                    当前所叫号：{{ inItem.itemId }}
-                </el-dropdown-item>
+        <!--<el-dropdown class="avatar-container1" trigger="click">-->
+            <!--<div class="avatar-wrapper" @click="dataNumberCount">-->
+                <!--抽号信息-->
+                <!--<i class="el-icon-caret-bottom"/>-->
+            <!--</div>-->
+            <!--<el-dropdown-menu class="user-dropdown11" slot="dropdown">-->
+                <!--<el-dropdown-item>-->
+                    <!--当前抽号等待人数：{{ waitItem.total }}-->
+                <!--</el-dropdown-item>-->
+                <!--<el-dropdown-item>-->
+                    <!--当前所叫号：{{ inItem.itemId }}-->
+                <!--</el-dropdown-item>-->
 
-                <br>
-                <el-select v-model="windowId" placeholder="请选择叫号窗口">
-                    <el-option
-                            v-for="item in windows"
-                            :key="item.windowId"
-                            :label="item.windowId"
-                            :value="item.windowId">
-                    </el-option>
-                </el-select>
-                <el-button style="margin-left: 40%;" :loading="loading" type="primary" @click="jiaohao">叫号</el-button>
+                <!--<br>-->
+                <!--<el-select v-model="windowId" placeholder="请选择叫号窗口">-->
+                    <!--<el-option-->
+                            <!--v-for="item in windows"-->
+                            <!--:key="item.windowId"-->
+                            <!--:label="item.windowId"-->
+                            <!--:value="item.windowId">-->
+                    <!--</el-option>-->
+                <!--</el-select>-->
+                <!--<el-button style="margin-left: 40%;" :loading="loading" type="primary" @click="jiaohao">叫号</el-button>-->
 
 
-            </el-dropdown-menu>
-        </el-dropdown>
+            <!--</el-dropdown-menu>-->
+        <!--</el-dropdown>-->
 
         <el-dropdown class="avatar-container" trigger="click">
             <div class="avatar-wrapper">

@@ -387,10 +387,10 @@
                     <el-input v-model="memberInfo.naturePerson.idcard"
                               @blur="validateField('memberInfoForm', 'naturePerson.idcard')"></el-input>
                 </el-form-item>
-                <el-form-item label="手机号" prop="naturePerson.phone" v-show="memberInfo.type == 1"
-                              :rules="natureRequired ? memberInfoRules.phone : []">
-                    <el-input v-model="memberInfo.naturePerson.phone"
-                              @blur="validateField('memberInfoForm', 'naturePerson.phone')"></el-input>
+                <el-form-item label="手机号" prop="naturePerson.phone" v-show="memberInfo.type == 1">
+                    <!--:rules="natureRequired ? memberInfoRules.phone : []"-->
+                    <el-input v-model="memberInfo.naturePerson.phone"></el-input>
+                    <!--@blur="validateField('memberInfoForm', 'naturePerson.phone')"-->
                 </el-form-item>
                 <el-form-item label="公司名称" prop="legalPerson.companyName" v-show="memberInfo.type == 2"
                               :rules="legalRequired ? memberInfoRules.companyName : []">
@@ -402,23 +402,24 @@
                     <el-input v-model="memberInfo.legalPerson.companyCode"
                               @blur="validateField('memberInfoForm', 'legalPerson.companyCode')"></el-input>
                 </el-form-item>
-                <el-form-item label="法人姓名" prop="legalPerson.legalPerson" v-show="memberInfo.type == 2"
-                              :rules="legalRequired ? memberInfoRules.legalPerson : []">
-                    <el-input v-model="memberInfo.legalPerson.legalPerson"
-                              @blur="validateField('memberInfoForm', 'legalPerson.legalPerson')"></el-input>
+                <el-form-item label="法人姓名" prop="legalPerson.legalPerson" v-show="memberInfo.type == 2">
+                              <!--:rules="legalRequired ? memberInfoRules.legalPerson : []"-->
+                    <el-input v-model="memberInfo.legalPerson.legalPerson"></el-input>
+                    <!--@blur="validateField('memberInfoForm', 'legalPerson.legalPerson')"-->
                 </el-form-item>
-                <el-form-item label="法人身份证号" prop="legalPerson.idcard" v-show="memberInfo.type == 2"
-                              :rules="legalRequired ? memberInfoRules.legalPersonCard : []">
-                    <el-input v-model="memberInfo.legalPerson.idcard"
-                              @blur="validateField('memberInfoForm', 'legalPerson.idcard')"></el-input>
+                <el-form-item label="法人身份证号" prop="legalPerson.idcard" v-show="memberInfo.type == 2">
+                              <!--:rules="legalRequired ? memberInfoRules.legalPersonCard : []"-->
+                    <el-input v-model="memberInfo.legalPerson.idcard"></el-input>
+                    <!--@blur="validateField('memberInfoForm', 'legalPerson.idcard')"-->
                 </el-form-item>
-                <el-form-item label="联系电话" prop="legalPerson.phone" v-show="memberInfo.type == 2"
-                              :rules="legalRequired ? memberInfoRules.legalPersonPhone : []">
-                    <el-input v-model="memberInfo.legalPerson.phone"
-                              @blur="validateField('memberInfoForm', 'legalPerson.phone')"></el-input>
+                <el-form-item label="联系电话" prop="legalPerson.phone" v-show="memberInfo.type == 2">
+                              <!--:rules="legalRequired ? memberInfoRules.legalPersonPhone : []"-->
+                    <el-input v-model="memberInfo.legalPerson.phone"></el-input>
+                    <!--@blur="validateField('memberInfoForm', 'legalPerson.phone')"-->
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
+                <el-button v-if="offlineReadonly && processOfflineInfo.offlineFlag" icon="edit" type="primary">编辑</el-button>
                 <el-button icon="circle-cross" type="danger" @click="resetProcessOfflineForm">取 消</el-button>
                 <el-button v-if="!offlineReadonly" type="primary" icon="circle-check" @click="submitProcessOffline"
                            :loading="btnLoading">确 定</el-button>
@@ -576,7 +577,8 @@
                             expressCompany: undefined,
                             expressNumber: undefined
                         }
-                    }
+                    },
+                    offlineFlag: false
                 },
                 memberInfo: {
                     type: 1,
@@ -827,7 +829,8 @@
             },
             searchItem1(query) {
                 const listQueryName = {
-                    name: undefined
+                    name: undefined,
+                    showStatus: 1
                 }
                 if (query !== '') {
                     let valid = validateQueryStr(query);
@@ -1097,18 +1100,26 @@
             submitTakeTypeExpress() {
                 this.$refs['expressInfoForm'].validate(valid => {
                     if (valid) {
-                        this.btnLoading = true;
-                        this.dialogLoading = true;
-                        saveExpressInfo(this.expressInfo).then(response => {
-                            this.dialogLoading = false;
-                            this.btnLoading = false;
-                            if (response.httpCode === 200) {
-                                this.resetExpressInfoForm();
-                                this.$message.success('信息保存成功');
-                                this.getList();
-                            } else {
-                                this.$message.error('操作失败')
-                            }
+                        this.$confirm('邮寄信息保存后将不可修改，请确认信息是否填写正确', '提示', {
+                            confirmButtonText: '填写正确',
+                            cancelButtonText: '返回确认',
+                            type: 'warning'
+                        }).then(() => {
+                            this.btnLoading = true;
+                            this.dialogLoading = true;
+                            saveExpressInfo(this.expressInfo).then(response => {
+                                this.dialogLoading = false;
+                                this.btnLoading = false;
+                                if (response.httpCode === 200) {
+                                    this.resetExpressInfoForm();
+                                    this.$message.success('信息保存成功');
+                                    this.getList();
+                                } else {
+                                    this.$message.error('操作失败')
+                                }
+                            });
+                        }).catch(() => {
+                            console.dir('取消');
                         });
                     } else {
                         return false;
@@ -1329,7 +1340,8 @@
                             expressCompany: undefined,
                             expressNumber: undefined
                         }
-                    }
+                    },
+                    offlineFlag: false
                 };
                 this.memberInfo = {
                     type: 1,
