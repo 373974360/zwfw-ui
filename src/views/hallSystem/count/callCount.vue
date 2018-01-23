@@ -74,8 +74,6 @@
 </template>
 
 <script>
-    import {getAllDept} from "../../../api/baseSystem/org/dept";
-
     const echarts = require('echarts/lib/echarts');
     require('echarts/lib/chart/bar');
     require('echarts/lib/chart/pie');
