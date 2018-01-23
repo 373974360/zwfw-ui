@@ -132,7 +132,30 @@
                                 {
                                     name: '受理量',
                                     type: 'bar',
-                                    data: this.handleNum
+                                    data: this.handleNum,
+                                    itemStyle: {
+                                        normal: {
+                                            color: new echarts.graphic.LinearGradient(
+                                                0, 0, 0, 1,
+                                                [
+                                                    {offset: 0, color: '#83bff6'},
+                                                    {offset: 0.5, color: '#188df0'},
+                                                    {offset: 1, color: '#188df0'}
+                                                ]
+                                            )
+                                        },
+                                        emphasis: {
+                                            color: new echarts.graphic.LinearGradient(
+                                                0, 0, 0, 1,
+                                                [
+                                                    {offset: 0, color: '#2378f7'},
+                                                    {offset: 0.7, color: '#2378f7'},
+                                                    {offset: 1, color: '#83bff6'}
+                                                ]
+                                            )
+                                        }
+                                    },
+                                    barMaxWidth: '150'
                                 }
                             ]
                         })
@@ -187,7 +210,30 @@
                                 {
                                     name: '等待时长',
                                     type: 'bar',
-                                    data: this.waitNum
+                                    data: this.waitNum,
+                                    itemStyle: {
+                                        normal: {
+                                            color: new echarts.graphic.LinearGradient(
+                                                0, 0, 0, 1,
+                                                [
+                                                    {offset: 0, color: '#83bff6'},
+                                                    {offset: 0.5, color: '#188df0'},
+                                                    {offset: 1, color: '#188df0'}
+                                                ]
+                                            )
+                                        },
+                                        emphasis: {
+                                            color: new echarts.graphic.LinearGradient(
+                                                0, 0, 0, 1,
+                                                [
+                                                    {offset: 0, color: '#2378f7'},
+                                                    {offset: 0.7, color: '#2378f7'},
+                                                    {offset: 1, color: '#83bff6'}
+                                                ]
+                                            )
+                                        }
+                                    },
+                                    barMaxWidth: '150'
                                 }
                             ]
                         })

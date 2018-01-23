@@ -19,7 +19,7 @@
                 <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="统计" placement="top-start">
                     <el-button class="filter-item" type="primary" v-waves icon="search" @click="doCategoryPlot">
                         统计
-                    </el-button> 
+                    </el-button>
                 </el-tooltip>
             </div>
             <div class="className" id="plotbyCategory"></div>
@@ -207,11 +207,11 @@
                                 data: this.categoryName
                             },
                             calculable: !0,
-                            series : [
+                            series: [
                                 {
                                     name: '叫号统计',
                                     type: 'pie',
-                                    radius : '55%',
+                                    radius: '55%',
                                     center: ['50%', '60%'],
                                     data: this.categoryTotal,
                                     itemStyle: {
@@ -268,7 +268,9 @@
                             legend: {top: 40, orient: 'horizontal', x: 'center', data: this.windowName},
                             grid: {x: 40, x2: 40, y2: 24},
                             calculable: !0,
-                            xAxis: [{type: 'category', data: this.windowName}],
+                            xAxis: [{
+                                type: 'category', data: this.windowName
+                            }],
                             yAxis: [{type: 'value'}],
                             series: [{
                                 name: '叫号数',
@@ -279,7 +281,30 @@
                                         position: 'top'
                                     }
                                 },
-                                data: this.windowTotal
+                                itemStyle: {
+                                    normal: {
+                                        color: new echarts.graphic.LinearGradient(
+                                            0, 0, 0, 1,
+                                            [
+                                                {offset: 0, color: '#83bff6'},
+                                                {offset: 0.5, color: '#188df0'},
+                                                {offset: 1, color: '#188df0'}
+                                            ]
+                                        )
+                                    },
+                                    emphasis: {
+                                        color: new echarts.graphic.LinearGradient(
+                                            0, 0, 0, 1,
+                                            [
+                                                {offset: 0, color: '#2378f7'},
+                                                {offset: 0.7, color: '#2378f7'},
+                                                {offset: 1, color: '#83bff6'}
+                                            ]
+                                        )
+                                    }
+                                },
+                                data: this.windowTotal,
+                                barMaxWidth: '150',
                             }]
                         });
                     } else {
@@ -330,7 +355,30 @@
                                         position: 'top'
                                     }
                                 },
-                                data: this.userTotal
+                                itemStyle: {
+                                    normal: {
+                                        color: new echarts.graphic.LinearGradient(
+                                            0, 0, 0, 1,
+                                            [
+                                                {offset: 0, color: '#83bff6'},
+                                                {offset: 0.5, color: '#188df0'},
+                                                {offset: 1, color: '#188df0'}
+                                            ]
+                                        )
+                                    },
+                                    emphasis: {
+                                        color: new echarts.graphic.LinearGradient(
+                                            0, 0, 0, 1,
+                                            [
+                                                {offset: 0, color: '#2378f7'},
+                                                {offset: 0.7, color: '#2378f7'},
+                                                {offset: 1, color: '#83bff6'}
+                                            ]
+                                        )
+                                    }
+                                },
+                                data: this.userTotal,
+                                barMaxWidth: '150',
                             }]
                         })
                     } else {

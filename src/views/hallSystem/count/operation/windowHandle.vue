@@ -6,16 +6,19 @@
                     <el-option :key="item.id" v-for="item in itemList" :label="item.name" :value="item.id">
                     </el-option>
                 </el-select>
-                <el-select v-model="checkDeptIds" class="filter-item" multiple filterable placeholder="选择部门" @change="reloadItemList">
+                <el-select v-model="checkDeptIds" class="filter-item" multiple filterable placeholder="选择部门"
+                           @change="reloadItemList">
                     <el-option :key="item.id" v-for="item in deptList" :label="item.name" :value="item.id">
                     </el-option>
                 </el-select>
-                <el-select v-model="checkWindowIds" class="filter-item" multiple filterable placeholder="选择窗口" @change="reloadItemList">
+                <el-select v-model="checkWindowIds" class="filter-item" multiple filterable placeholder="选择窗口"
+                           @change="reloadItemList">
                     <el-option :key="item.id" v-for="item in windowList" :label="item.name" :value="item.id">
                     </el-option>
                 </el-select>
                 <el-date-picker style="top: -5px;" v-model="listQuery.startDate" type="datetime" :editable="false"
-                                placeholder="开始时间" @change="formatStartDate" :clearable="false" format="yyyy-MM-dd HH:mm">
+                                placeholder="开始时间" @change="formatStartDate" :clearable="false"
+                                format="yyyy-MM-dd HH:mm">
                 </el-date-picker>
                 <el-date-picker style="top: -5px;" v-model="listQuery.endDate" type="datetime" :editable="false"
                                 placeholder="结束时间" @change="formatEndDate" :clearable="false" format="yyyy-MM-dd HH:mm">
@@ -176,7 +179,30 @@
                                 {
                                     name: '受理量',
                                     type: 'bar',
-                                    data: this.handleNum
+                                    data: this.handleNum,
+                                    itemStyle: {
+                                        normal: {
+                                            color: new echarts.graphic.LinearGradient(
+                                                0, 0, 0, 1,
+                                                [
+                                                    {offset: 0, color: '#83bff6'},
+                                                    {offset: 0.5, color: '#188df0'},
+                                                    {offset: 1, color: '#188df0'}
+                                                ]
+                                            )
+                                        },
+                                        emphasis: {
+                                            color: new echarts.graphic.LinearGradient(
+                                                0, 0, 0, 1,
+                                                [
+                                                    {offset: 0, color: '#2378f7'},
+                                                    {offset: 0.7, color: '#2378f7'},
+                                                    {offset: 1, color: '#83bff6'}
+                                                ]
+                                            )
+                                        }
+                                    },
+                                    barMaxWidth: '150'
                                 }
                             ]
                         })
@@ -231,7 +257,30 @@
                                 {
                                     name: '等待时长',
                                     type: 'bar',
-                                    data: this.waitNum
+                                    data: this.waitNum,
+                                    itemStyle: {
+                                        normal: {
+                                            color: new echarts.graphic.LinearGradient(
+                                                0, 0, 0, 1,
+                                                [
+                                                    {offset: 0, color: '#83bff6'},
+                                                    {offset: 0.5, color: '#188df0'},
+                                                    {offset: 1, color: '#188df0'}
+                                                ]
+                                            )
+                                        },
+                                        emphasis: {
+                                            color: new echarts.graphic.LinearGradient(
+                                                0, 0, 0, 1,
+                                                [
+                                                    {offset: 0, color: '#2378f7'},
+                                                    {offset: 0.7, color: '#2378f7'},
+                                                    {offset: 1, color: '#83bff6'}
+                                                ]
+                                            )
+                                        }
+                                    },
+                                    barMaxWidth: '150'
                                 }
                             ]
                         })
