@@ -86,7 +86,7 @@
     require('echarts/lib/component/visualMap');
     import {mapGetters} from 'vuex';
     import moment from 'moment';
-    import {getAllCategory} from 'api/zwfwSystem/business/category';
+    import {getAllDept} from 'api/baseSystem/org/dept';
     import {getAllWindow} from 'api/hallSystem/lobby/window';
     import {plotByCategory, plotByWindow, plotByUser} from 'api/hallSystem/count/dataPlot';
     import {getAllUser} from 'api/baseSystem/org/user';
