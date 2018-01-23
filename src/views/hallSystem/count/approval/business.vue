@@ -77,6 +77,7 @@
     require('echarts/lib/component/toolbox');
     require('echarts/lib/component/title');
     require('echarts/lib/component/visualMap');
+    require('echarts/lib/component/dataZoom');
     import {mapGetters} from 'vuex';
     import {date} from '../../../../filters';
     import {
@@ -177,6 +178,27 @@
                                     data: this.deptName
                                 }
                             ],
+
+                            dataZoom: [
+                                {
+                                    show: true,
+                                    start: 0,
+                                    end: 100
+                                },
+                                {
+                                    type: 'inside',
+                                    start: 0,
+                                    end: 100
+                                },
+                                {
+                                    show: true,
+                                    yAxisIndex: 0,
+                                    filterMode: 'empty',
+                                    width: 30,
+                                    showDataShadow: false,
+                                    left: '93%'
+                                }
+                            ],
                             yAxis: [
                                 {
                                     type: 'value'
@@ -193,6 +215,29 @@
                                     name: '整改件',
                                     type: 'bar',
                                     stack: '总分',
+                                    itemStyle: {
+                                        normal: {
+                                            color: new echarts.graphic.LinearGradient(
+                                                0, 0, 0, 1,
+                                                [
+                                                    {offset: 0, color: '#83bff6'},
+                                                    {offset: 0.5, color: '#188df0'},
+                                                    {offset: 1, color: '#188df0'}
+                                                ]
+                                            )
+                                        },
+                                        emphasis: {
+                                            color: new echarts.graphic.LinearGradient(
+                                                0, 0, 0, 1,
+                                                [
+                                                    {offset: 0, color: '#2378f7'},
+                                                    {offset: 0.7, color: '#2378f7'},
+                                                    {offset: 1, color: '#83bff6'}
+                                                ]
+                                            )
+                                        }
+                                    },
+                                    barMaxWidth: '150',
                                     data: this.correctionNum
                                 },
                                 {
@@ -247,6 +292,27 @@
                                     data: this.deptName2
                                 }
                             ],
+
+                            dataZoom: [
+                                {
+                                    show: true,
+                                    start: 0,
+                                    end: 100
+                                },
+                                {
+                                    type: 'inside',
+                                    start: 0,
+                                    end: 100
+                                },
+                                {
+                                    show: true,
+                                    yAxisIndex: 0,
+                                    filterMode: 'empty',
+                                    width: 30,
+                                    showDataShadow: false,
+                                    left: '6%'
+                                }
+                            ],
                             yAxis: [
                                 {
                                     type: 'value'
@@ -265,6 +331,28 @@
                                 {
                                     name: '业务量',
                                     type: 'bar',
+                                    itemStyle: {
+                                        normal: {
+                                            color: new echarts.graphic.LinearGradient(
+                                                0, 0, 0, 1,
+                                                [
+                                                    {offset: 0, color: '#83bff6'},
+                                                    {offset: 0.5, color: '#188df0'},
+                                                    {offset: 1, color: '#188df0'}
+                                                ]
+                                            )
+                                        },
+                                        emphasis: {
+                                            color: new echarts.graphic.LinearGradient(
+                                                0, 0, 0, 1,
+                                                [
+                                                    {offset: 0, color: '#2378f7'},
+                                                    {offset: 0.7, color: '#2378f7'},
+                                                    {offset: 1, color: '#83bff6'}
+                                                ]
+                                            )
+                                        }
+                                    },
                                     data: this.businessNum
                                 },
                                 {
