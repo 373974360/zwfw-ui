@@ -44,7 +44,7 @@
                     </nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="公司名称" width="200">
+            <el-table-column align="left" label="公司名称" width="200">
                 <template scope="scope">
                     <nobr>{{scope.row.organName}}</nobr>
                 </template>
@@ -61,7 +61,12 @@
             </el-table-column>
             <el-table-column align="center" label="最低学历" width="100">
                 <template scope="scope">
-                    <nobr>{{scope.row.zdxl | dics('xueli')}}</nobr>
+                    <span v-if="scope.row.zdxl!='' && scope.row.zdxl!=null">
+                        <nobr>{{scope.row.zdxl | dics('xueli')}}</nobr>
+                    </span>
+                    <span v-else>
+                        <nobr>不限</nobr>
+                    </span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="年龄" width="100">
@@ -76,7 +81,12 @@
             </el-table-column>
             <el-table-column align="center" label="工作性质" width="100">
                 <template scope="scope">
-                    <nobr>{{scope.row.gzxz | dics('gzxz')}}</nobr>
+                    <span v-if="scope.row.gzxz!='' && scope.row.gzxz!=null">
+                        <nobr>{{scope.row.gzxz | dics('gzxz')}}</nobr>
+                    </span>
+                    <span v-else>
+                        <nobr>不限</nobr>
+                    </span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="薪资标准" width="150">
@@ -118,7 +128,14 @@
                             <th>招聘人数:</th>
                             <td>{{zpxx.zprs}}</td>
                             <th>最低学历:</th>
-                            <td>{{zpxx.zdxl | dics('xueli')}}</td>
+                            <td>
+                                <span v-if="zpxx.zdxl!='' && zpxx.zdxl!=null">
+                                  {{zpxx.zdxl | dics('xueli')}}
+                                </span>
+                                <span v-else>
+                                    不限
+                                </span>
+                            </td>
                             <th>年龄要求:</th>
                             <td>{{zpxx.nlmin}} 至 {{zpxx.nlmax}}</td>
                         </tr>
@@ -126,9 +143,18 @@
                             <th>职能类别:</th>
                             <td>{{zpxx.znflName}}</td>
                             <th>工作年限:</th>
-                            <td>{{zpxx.gznx}}</td>
+                            <td>
+                                {{zpxx.gznx}}
+                            </td>
                             <th>工作性质:</th>
-                            <td>{{zpxx.gzxz | dics('gzxz')}}</td>
+                            <td>
+                                <span v-if="zpxx.gzxz!='' && zpxx.gzxz!=null">
+                                    {{zpxx.gzxz | dics('gzxz')}}
+                                </span>
+                                <span v-else>
+                                    不限
+                                </span>
+                            </td>
                         </tr>
                         <tr>
                             <th>关 键 字:</th>
@@ -139,11 +165,40 @@
                             <td>{{zpxx.xzlx | dics('xzfw')}}</td>
                         </tr>
                         <tr>
+                            <th>政治面貌:</th>
+                            <td>
+                                <span v-if="zpxx.zzmm!='' && zpxx.zzmm!=null">
+                                    {{zpxx.zzmm | dics('zzmm')}}
+                                </span>
+                                <span v-else>
+                                    不限
+                                </span>
+                            </td>
+                            <th>语言要求:</th>
+                            <td>
+                                <span v-if="zpxx.yyyq!='' && zpxx.yyyq!=null">
+                                    {{zpxx.yyyq | dics('yuyan')}}
+                                </span>
+                                <span v-else>
+                                    不限
+                                </span>
+                            </td>
+                            <th>熟练程度:</th>
+                            <td>
+                                <span v-if="zpxx.slcd!='' && zpxx.slcd!=null">
+                                    {{zpxx.slcd | dics('slcd')}}
+                                </span>
+                                <span v-else>
+                                    不限
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
                             <th>工作地点:</th>
                             <td colspan="5">{{zpxx.sbdz}}</td>
                         </tr>
                         <tr>
-                            <th>要求/描述:</th>
+                            <th valign="top">要求/描述:</th>
                             <td colspan="5">{{zpxx.zwms}}</td>
                         </tr>
                     </table>
@@ -212,6 +267,9 @@
                     xzlx: '',
                     zwgjz: '',
                     zwms: '',
+                    zzmm: '',
+                    yyyq: '',
+                    slcd: '',
                     reloadtime: ''
                 }
             }
@@ -427,6 +485,9 @@
                     xzlx: '',
                     zwgjz: '',
                     zwms: '',
+                    zzmm: '',
+                    yyyq: '',
+                    slcd: '',
                     reloadtime: ''
                 };
             }

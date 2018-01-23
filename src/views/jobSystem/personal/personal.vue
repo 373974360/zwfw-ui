@@ -18,16 +18,18 @@
         <el-table ref="table_demo" :data="list" v-loading.body="listLoading" border fit style="width: 100%"
                   @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"/>
-            <el-table-column align="center" label="序号" width="165">
+            <el-table-column align="left" label="真实姓名" width="160">
                 <template scope="scope">
-                    <span>{{scope.row.m_id}}</span>
+                    <nobr class="link-type" @click="handleView(scope.row)">
+                        <el-tag v-if="scope.row.islock == 2" type="danger">禁用</el-tag>
+                        <el-tag v-if="scope.row.isrec==2" type="danger">推荐</el-tag>
+                        {{scope.row.username}}
+                    </nobr>
                 </template>
             </el-table-column>
             <el-table-column align="left" label="电子邮箱" min-width="260">
                 <template scope="scope">
                     <nobr class="link-type" @click="handleView(scope.row)">
-                        <el-tag v-if="scope.row.islock == 2" type="danger">禁用</el-tag>
-                        <el-tag v-if="scope.row.isrec==2" type="danger">推荐</el-tag>
                         {{scope.row.email}}
                     </nobr>
                 </template>
@@ -40,16 +42,6 @@
             <el-table-column align="center" label="会员级别" width="125">
                 <template scope="scope">
                     <nobr>{{scope.row.levelsName}}</nobr>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="注册时间" width="180">
-                <template scope="scope">
-                    <nobr>{{scope.row.registerdate | date('YYYY-MM-DD HH:mm:ss')}}</nobr>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="真实姓名" width="95">
-                <template scope="scope">
-                    <nobr>{{scope.row.username}}</nobr>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="性别" width="70">
@@ -80,6 +72,11 @@
             <el-table-column align="center" label="求职状态" width="140">
                 <template scope="scope">
                     <nobr>{{scope.row.qzzt | dics('qzzt')}}</nobr>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="注册时间" width="180">
+                <template scope="scope">
+                    <nobr>{{scope.row.registerdate | date('YYYY-MM-DD HH:mm:ss')}}</nobr>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="刷新时间" width="175">
@@ -186,7 +183,7 @@
                             <td colspan="5">{{jobPersonalQzyx.gzlx | dics('gzxz')}}</td>
                         </tr>
                         <tr>
-                            <th>自我评价:</th>
+                            <th valign="top">自我评价:</th>
                             <td colspan="5">{{jobPersonalQzyx.zwpj}}</td>
                         </tr>
                     </table>
@@ -218,9 +215,9 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>责任描述:</th>
+                                <th valign="top">责任描述:</th>
                                 <td>
-                                    <nobr>{{gzjl.zrms}}</nobr>
+                                    {{gzjl.zrms}}
                                 </td>
                             </tr>
                         </table>
@@ -243,15 +240,15 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>责任描述:</th>
+                                <th valign="top">责任描述:</th>
                                 <td>
-                                    <nobr>{{item.zrms}}</nobr>
+                                    {{item.zrms}}
                                 </td>
                             </tr>
                             <tr>
-                                <th>项目描述:</th>
+                                <th valign="top">项目描述:</th>
                                 <td>
-                                    <nobr>{{item.xmms}}</nobr>
+                                    {{item.xmms}}
                                 </td>
                             </tr>
                         </table>
@@ -279,14 +276,14 @@
                                     <nobr>
                                         {{jyjl.ksrq}} 至 {{jyjl.jsrq}}　 | 　
                                         <span v-if="jyjl.sfqrz==1">全日制</span>
-                                        <span v-else>非全日制</span>
+                                        <span v-else-if="jyjl.sfqrz==2">非全日制</span>
                                     </nobr>
                                 </td>
                             </tr>
                             <tr>
-                                <th>专业描述:</th>
+                                <th valign="top">专业描述:</th>
                                 <td>
-                                    <nobr>{{jyjl.zyms}}</nobr>
+                                    {{jyjl.zyms}}
                                 </td>
                             </tr>
                         </table>

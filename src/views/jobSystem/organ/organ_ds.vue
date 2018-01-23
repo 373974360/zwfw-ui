@@ -56,7 +56,7 @@
                     <nobr>{{scope.row.gsgm | dics('gsgm')}}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="行业类别" width="170">
+            <el-table-column align="left" label="行业类别" width="170">
                 <template scope="scope">
                     <nobr>{{scope.row.hylbName}}</nobr>
                 </template>
