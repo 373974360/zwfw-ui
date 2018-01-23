@@ -585,6 +585,9 @@
                     ></el-autocomplete>
 
                 </el-form-item>
+                <el-form-item label="排序">
+                    <el-input-number v-model="zwfwItemMaterial.sortNo" :min="1" :max="10000"/>
+                </el-form-item>
                 <el-form-item label="材料类型" prop="type">
                     <el-select v-model="zwfwItemMaterial.type" placeholder="请选择材料类型">
                         <el-option
@@ -674,9 +677,7 @@
                 <el-form-item label="备注" prop="remark">
                     <el-input v-model="zwfwItemMaterial.remark"></el-input>
                 </el-form-item>
-                <el-form-item label="排序">
-                    <el-input-number v-model="zwfwItemMaterial.sortNo" :min="1" :max="100"/>
-                </el-form-item>
+
             </el-form>
             <div style="text-align: center" slot="footer" class="dialog-footer">
                 <el-button type="primary" icon="circle-check"
