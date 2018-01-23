@@ -64,7 +64,6 @@
                     </el-col>
                     <el-col :span="8">
                         <el-date-picker v-model="listQuery.dateRange" type="daterange"
-                        <el-date-picker v-model="listQuery.dateRange" type="daterange"
                                         :editable="false"
                                         placeholder="成立日期范围" :clearable="false" format="yyyy-MM-dd" clearable
                                         @change="dateChange" style="width:100%">
@@ -151,43 +150,43 @@
                 <el-row :gutter="20">
 
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="企业名称：">
                             <el-input v-model="enterpriseList.qymc"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="法人：" prop="shortName">
                             <el-input v-model="enterpriseList.fr"></el-input>
                         </el-form-item>
                     </el-col>
 
 
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="社会同一信用码：">
                             <el-input v-model="enterpriseList.ty_code"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="联系电话：">
                             <el-input v-model="enterpriseList.lxdh"></el-input>
                         </el-form-item>
                     </el-col>
 
 
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="工商注册号：">
                             <el-input v-model="enterpriseList.gs_code"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="注册地址：">
                             <el-input v-model="enterpriseList.jgzs"></el-input>
                         </el-form-item>
                     </el-col>
 
 
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="企业类别：">
                             <el-select class="filter-item" v-model="enterpriseList.qylb" clearable placeholder="请选择企业类别"
                                        @change="changeQYLB1">
                                 <el-option
@@ -200,7 +199,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="企业类型：">
                             <el-select class="filter-item" v-model="enterpriseList.qllx" clearable
                                        placeholder="请选择企业类型">
                                 <el-option
@@ -215,7 +214,7 @@
 
 
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="成立日期：">
                             <el-date-picker v-model="enterpriseList.clrq" type="date"
                                             placeholder="选择日期" format="yyyy-MM-dd" clearable
                                             @change="changeclrq"></el-date-picker>
@@ -224,20 +223,20 @@
 
 
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="登记机关：">
                             <el-input v-model="enterpriseList.djjg"></el-input>
                         </el-form-item>
                     </el-col>
 
                     <el-col :span="24">
-                        <el-form-item>
-                            <el-input type="textarea" v-model="enterpriseList.jyfw" rows="6"></el-input>
+                        <el-form-item label="经营范围：">
+                            <el-input :rows="6" type="textarea" v-model="enterpriseList.jyfw" ></el-input>
                         </el-form-item>
                     </el-col>
 
 
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="行业门类：">
                             <el-select class="filter-item" v-model="enterpriseList.hyml" clearable
                                        @change="changeHyml">
                                 <el-option
@@ -250,7 +249,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="行业：">
                             <el-select class="filter-item" v-model="enterpriseList.hy" clearable>
                                 <el-option
                                         v-for="name in hyoptions"
@@ -264,7 +263,7 @@
 
 
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="核准日期：">
                             <el-date-picker v-model="enterpriseList.hzrq" type="date"
                                             placeholder="选择日期" format="yyyy-MM-dd"
                                             @change="changehzrq">
@@ -272,7 +271,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="经营截止日期：">
                             <el-date-picker v-model="enterpriseList.jyjzrq" type="date"
                                             placeholder="选择日期" format="yyyy-MM-dd"
                                             @change="changejyjzrq">
@@ -282,19 +281,19 @@
 
 
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="管辖单位：">
                             <el-input v-model="enterpriseList.gxdw"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="档案号：">
                             <el-input v-model="enterpriseList.dah"></el-input>
                         </el-form-item>
                     </el-col>
 
 
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="吊销时间：">
                             <el-date-picker v-model="enterpriseList.dxsj" type="date"
                                             placeholder="选择日期" format="yyyy-MM-dd" clearable
                                             @change="changedxsj">
@@ -302,67 +301,67 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="从业人数：">
                             <el-input v-model="enterpriseList.cyrs"></el-input>
                         </el-form-item>
                     </el-col>
 
 
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="国别地区：">
                             <el-input v-model="enterpriseList.gbdq"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="投资者人数：">
                             <el-input v-model="enterpriseList.tzzrs"></el-input>
                         </el-form-item>
                     </el-col>
 
 
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="注册资金：">
                             <el-input v-model="enterpriseList.zczj"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="注册资金折美元：">
                             <el-input v-model="enterpriseList.zczbzmy"></el-input>
                         </el-form-item>
                     </el-col>
 
 
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="投资总额：">
                             <el-input v-model="enterpriseList.tzze"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="投资总额折美元：">
                             <el-input v-model="enterpriseList.tzzezmy"></el-input>
                         </el-form-item>
                     </el-col>
 
 
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="实际出资额：">
                             <el-input v-model="enterpriseList.sjcze"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="实际出资额折美元：">
                             <el-input v-model="enterpriseList.sjczwzmy"></el-input>
                         </el-form-item>
                     </el-col>
 
 
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="外方认缴出资额：">
                             <el-input v-model="enterpriseList.wfrjczezmy"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item>
+                        <el-form-item label="外方实缴出资额折美元：">
                             <el-input v-model="enterpriseList.wfsjczezmy"></el-input>
                         </el-form-item>
                     </el-col>

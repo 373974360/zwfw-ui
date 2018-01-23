@@ -7,7 +7,7 @@
 
             <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item"
                       placeholder="企业统一信用代码"
-                      v-model="listQuery.tyCode"></el-input>
+                      v-model="listQuery.ty_code"></el-input>
 
             <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item"
                       placeholder="法人姓名"
@@ -27,9 +27,9 @@
                 </template>
             </el-table-column>
             <!--<el-table-column align="center" label="编号" width="140">-->
-                <!--<template scope="scope">-->
-                    <!--{{scope.row.id}}-->
-                <!--</template>-->
+            <!--<template scope="scope">-->
+            <!--{{scope.row.id}}-->
+            <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column align="left" label="企业名称" width="300">
                 <template scope="scope">
@@ -73,50 +73,92 @@
         </div>
         <el-dialog :title="title" :visible.sync="dialogFormVisible"
                    :close-on-click-modal="closeOnClickModal" :before-close="resetEnterpriseForm">
-            <el-form ref="enterpriseForm" class="small-space" :model="enterpriseList" label-position="right" label-width="80px"
-                     style='width: 80%; margin-left:10%;' v-loading="dialogLoading">
-                <el-form-item label="企业名称">
-                    <el-input v-model="enterpriseList.qymc" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="法人" prop="shortName">
-                    <el-input v-model="enterpriseList.fr" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="社会同一信用码" >
-                    <el-input v-model="enterpriseList.ty_code" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="联系电话">
-                    <el-input v-model="enterpriseList.lxdh" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="工商注册号">
-                    <el-input v-model="enterpriseList.gs_code" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="企业类型">
-                    <el-input v-model="enterpriseList.qllx" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="注册地址">
-                    <el-input v-model="enterpriseList.jgzs" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="注册资金">
-                    <el-input v-model="enterpriseList.zczj" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="成立日期">
-                    <el-input v-model="enterpriseList.clrq" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="营业期限">
-                    <el-input v-model="enterpriseList.yyqx" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="经营范围">
-                    <el-input  type="textarea" v-model="enterpriseList.jyfw" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="登记机关">
-                    <el-input v-model="enterpriseList.djjg" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="核准日期">
-                    <el-input v-model="enterpriseList.hzrq" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="所属街道">
-                    <el-input v-model="enterpriseList.ssjd" disabled></el-input>
-                </el-form-item>
+            <el-form ref="enterpriseForm" class="small-space" :model="enterpriseList" label-position="right"
+                     v-loading="dialogLoading">
+                <el-row :gutter="20">
+                    <el-col :span="12">
+                        <el-form-item label="企业名称：">
+                            <span>{{enterpriseList.qymc}}</span>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="法人：" prop="shortName">
+                            <span>{{enterpriseList.fr}}</span>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="12">
+                        <el-form-item label="社会同一信用码：">
+                            <span>{{enterpriseList.ty_code}}</span>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="12">
+                        <el-form-item label="联系电话：">
+                            <span>{{enterpriseList.lxdh}}</span>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="12">
+                        <el-form-item label="工商注册号：">
+                            <span>{{enterpriseList.gs_code}}</span>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="12">
+                        <el-form-item label="企业类型：">
+                            <span>{{enterpriseList.qllx}}</span>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="12">
+                        <el-form-item label="注册资金：">
+                            <span>{{enterpriseList.zczj}}</span>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="12">
+                        <el-form-item label="成立日期：">
+                            <span>{{enterpriseList.clrq}}</span>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="24">
+                        <el-form-item label="注册地址：">
+                            <span>{{enterpriseList.jgzs}}</span>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="24">
+                        <el-form-item label="经营范围：">
+                            <span>{{enterpriseList.jyfw}}</span>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="12">
+                        <el-form-item label="登记机关：">
+                            <span>{{enterpriseList.djjg}}</span>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="12">
+                        <el-form-item label="营业期限：">
+                            <span>{{enterpriseList.yyqx}}</span>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="核准日期：">
+                            <span>{{enterpriseList.hzrq}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="所属街道：">
+                            <span>{{enterpriseList.ssjd}}</span>
+                        </el-form-item>
+                    </el-col>
+
+                </el-row>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="resetEnterpriseForm">关 闭</el-button>
@@ -135,8 +177,14 @@
     } from 'api/hallSystem/window/receive/windowAccept';
     import {mapGetters} from 'vuex';
     import {copyProperties, resetForm} from 'utils';
+    import ElRow from "element-ui/packages/row/src/row";
+    import ElCol from "element-ui/packages/col/src/col";
 
     export default {
+        components: {
+            ElCol,
+            ElRow
+        },
         name: 'table_demo',
         data() {
             return {
@@ -148,13 +196,14 @@
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     qymc: undefined,
-                    tyCode: undefined,
-                    fr: undefined
+                    ty_code: undefined,
+                    fr: undefined,
+                    diff:'gwq'
                 },
                 dialogFormVisible: false,
                 dialogLoading: false,
-                enterpriseList:{
-                    id:undefined,
+                enterpriseList: {
+                    id: undefined,
                     node_id: '',
                     ty_code: '',
                     zz_code: '',
@@ -206,7 +255,7 @@
                     } else {
                         this.$message.error('数据加载失败')
                     }
-                }).catch(e=>{
+                }).catch(e => {
                     this.listLoading = false;
                 })
             },

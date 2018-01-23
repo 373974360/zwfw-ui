@@ -102,12 +102,12 @@
                                    type="primary" size="small">
                             办件材料
                         </el-button>
-                    </el-badge>
-                    <el-badge class="item" :hidden="true">
-                        <el-button class="filter-item" style="" @click="handleItemConfig(scope.row)"
-                                   type="primary" size="small">
-                            预约配置
-                        </el-button>
+                        <br />
+                        <!--<br />-->
+                        <!--<el-button class="filter-item" style="" @click="handleItemConfig(scope.row)"-->
+                                   <!--type="primary" size="small">-->
+                            <!--预约配置-->
+                        <!--</el-button>-->
                     </el-badge>
                 </template>
             </el-table-column>
@@ -1469,7 +1469,7 @@
             submitItemConfig() {
                 if(this.zwfwItemConfig.ispreorder==1){
                     if(this.zwfwItemConfig.preorderTimeArray==null || this.zwfwItemConfig.preorderTimeArray.length==0){
-                        this.$message.warn("请勾选预约时间");
+                        this.$message.warning("请勾选预约时间");
                         return false;
                     }
                 }
@@ -1482,12 +1482,18 @@
                 setItemConfig(this.zwfwItemConfig).then(response => {
                     if (response.httpCode === 200) {
                         this.closeZwfwItemConfigForm();
+                        this.$message.success('事项预约配置成功');
                     } else {
+                        this.$message.error(response.msg || '事项预约配置失败');
                         this.zwfwItemConfig.preorderTimeArray = this.zwfwItemConfig.preorderTimeArray1;
                         this.zwfwItemConfig.opentime = this.zwfwItemConfig.opentime1;
-                        this.$message.error(response.msg || '事项预约配置失败');
                     }
-                })
+                }).catch(e=>{
+                    // console.dir(e);
+                    this.$message.error('事项预约配置失败');
+                    this.zwfwItemConfig.preorderTimeArray = this.zwfwItemConfig.preorderTimeArray1;
+                    this.zwfwItemConfig.opentime = this.zwfwItemConfig.opentime1;
+                });
             },
             searchMaterial(query, cb) {
                 if (query !== '') {

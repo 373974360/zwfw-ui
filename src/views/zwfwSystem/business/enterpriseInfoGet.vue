@@ -76,98 +76,180 @@
         <el-dialog :title="title" :visible.sync="dialogFormVisible"
                    :close-on-click-modal="closeOnClickModal" :before-close="resetEnterpriseForm">
             <el-form ref="enterpriseForm" class="small-space" :model="enterpriseList" label-position="right"
-                     label-width="80px"
-                     style='width: 80%; margin-left:10%;' v-loading="dialogLoading">
-                <el-form-item label="企业名称">
-                    <el-input v-model="enterpriseList.qymc" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="法人" prop="shortName">
-                    <el-input v-model="enterpriseList.fr" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="社会同一信用码">
-                    <el-input v-model="enterpriseList.ty_code" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="联系电话">
-                    <el-input v-model="enterpriseList.lxdh" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="工商注册号">
-                    <el-input v-model="enterpriseList.gs_code" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="企业类型">
-                    <el-input v-model="enterpriseList.qllx" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="注册地址">
-                    <el-input v-model="enterpriseList.jgzs" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="注册资金">
-                    <el-input v-model="enterpriseList.zczj" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="成立日期">
-                    <el-input v-model="enterpriseList.clrq" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="营业期限">
-                    <el-input v-model="enterpriseList.yyqx" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="经营范围">
-                    <el-input type="textarea" v-model="enterpriseList.jyfw" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="核准日期">
-                    <el-input v-model="enterpriseList.hzrq" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="管辖单位">
-                    <el-input v-model="enterpriseList.gxdw" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="注册资金折美元">
-                    <el-input v-model="enterpriseList.zczbzmy" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="档案号">
-                    <el-input v-model="enterpriseList.dah" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="行业">
-                    <el-input v-model="enterpriseList.hy" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="行业门类">
-                    <el-input v-model="enterpriseList.hyml" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="吊销时间">
-                    <el-input v-model="enterpriseList.dxsj" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="国别地区">
-                    <el-input v-model="enterpriseList.gbdq" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="企业类别">
-                    <el-input v-model="enterpriseList.qylb" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="从业人数">
-                    <el-input v-model="enterpriseList.cyrs" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="企业类别">
-                    <el-input v-model="enterpriseList.qylb" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="投资者人数">
-                    <el-input v-model="enterpriseList.tzzrs" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="投资总额">
-                    <el-input v-model="enterpriseList.tzze" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="投资总额折美元">
-                    <el-input v-model="enterpriseList.tzzezmy" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="实际出资额">
-                    <el-input v-model="enterpriseList.sjcze" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="实际出资额折美元">
-                    <el-input v-model="enterpriseList.sjczwzmy" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="外方认缴出资额">
-                    <el-input v-model="enterpriseList.wfrjczezmy" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="外方实缴出资额折美元">
-                    <el-input v-model="enterpriseList.wfsjczezmy" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="经营截止日期">
-                    <el-input v-model="enterpriseList.jyjzrq" disabled></el-input>
-                </el-form-item>
+s                     v-loading="dialogLoading">
+                <el-row :gutter="20">
+                    <el-col :span="12">
+                        <el-form-item label="企业名称：">
+                            <span>{{enterpriseList.qymc}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="社会同一信用码：">
+                            <span>{{enterpriseList.ty_code}}</span>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="法人：" prop="shortName">
+                            <span>{{enterpriseList.fr}}</span>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="12">
+                        <el-form-item label="联系电话：">
+                            <span>{{enterpriseList.lxdh}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="工商注册号：">
+                            <span>{{enterpriseList.gs_code}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="注册地址：">
+                            <span>{{enterpriseList.jgzs}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="企业类别：">
+                            <span>{{enterpriseList.qylb}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="企业类型：">
+                            <span>{{enterpriseList.qllx}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="成立日期：">
+                            <span>{{enterpriseList.clrq}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="登记机关：">
+                            <span>{{enterpriseList.djjg}}</span>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="经营范围：">
+                            <span type="textarea" >{{enterpriseList.jyfw}}</span>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="行业门类：">
+                            <span>{{enterpriseList.hyml}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="行业：">
+                            <span>{{enterpriseList.hy}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="核准日期：">
+                            <span>{{enterpriseList.hzrq}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="经营截止日期：">
+                            <span>{{enterpriseList.jyjzrq}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="管辖单位：">
+                            <span>{{enterpriseList.gxdw}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="档案号：">
+                            <span>{{enterpriseList.dah}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="吊销时间：">
+                            <span>{{enterpriseList.dxsj}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="从业人数：">
+                            <span>{{enterpriseList.cyrs}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="国别地区：">
+                            <span>{{enterpriseList.gbdq}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="投资者人数：">
+                            <span>{{enterpriseList.tzzrs}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="注册资金：">
+                            <span>{{enterpriseList.zczj}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="注册资金折美元：">
+                            <span>{{enterpriseList.zczbzmy}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="投资总额：">
+                            <span>{{enterpriseList.tzze}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="投资总额折美元：">
+                            <span>{{enterpriseList.tzzezmy}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="实际出资额：">
+                            <span>{{enterpriseList.sjcze}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="实际出资额折美元：">
+                            <span>{{enterpriseList.sjczwzmy}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="外方认缴出资额：">
+                            <span>{{enterpriseList.wfrjczezmy}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="外方实缴出资额折美元：">
+                            <span>{{enterpriseList.wfsjczezmy}}</span>
+                        </el-form-item>
+
+                    </el-col>
+                </el-row>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="resetEnterpriseForm">关 闭</el-button>
