@@ -539,12 +539,14 @@
                       highlight-current-row
                       style="width: 100%" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="40"/>
-                <el-table-column align="center" label="序号" width="70">
-                    <template scope="scope">
-                        <span>{{scope.row.id}}</span>
-                    </template>
+                <!--<el-table-column align="center" label="序号" width="70">-->
+                    <!--<template scope="scope">-->
+                        <!--<span>{{scope.row.id}}</span>-->
+                    <!--</template>-->
+                <!--</el-table-column>-->
+                <el-table-column prop="sortNo" align="center" label="排序" width="70">
                 </el-table-column>
-                <el-table-column prop="name" align="left" label="材料名称" widht="">
+                <el-table-column prop="name" align="left" label="材料名称">
                     <template scope="scope">
                         <el-tooltip content="点击编辑" placement="right" effect="dark">
                             <span class="link-type" @click="handleMaterialUpdate(scope.row)">{{scope.row.name}}</span>
@@ -561,7 +563,7 @@
                         <span>{{scope.row.source | dics('sxsqclly')}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="electronicMaterial" align="center" label="是否需要电子材料" width="150">
+                <el-table-column prop="electronicMaterial" align="center" label="预审材料" width="100">
                     <template scope="scope">
                         <span>{{scope.row.electronicMaterial | enums('YesNo')}}</span>
                     </template>
@@ -582,6 +584,9 @@
                             :props="{label:'name',value:'name'}"
                     ></el-autocomplete>
 
+                </el-form-item>
+                <el-form-item label="排序">
+                    <el-input-number v-model="zwfwItemMaterial.sortNo" :min="1" :max="10000"/>
                 </el-form-item>
                 <el-form-item label="材料类型" prop="type">
                     <el-select v-model="zwfwItemMaterial.type" placeholder="请选择材料类型">
@@ -672,9 +677,7 @@
                 <el-form-item label="备注" prop="remark">
                     <el-input v-model="zwfwItemMaterial.remark"></el-input>
                 </el-form-item>
-                <el-form-item label="排序">
-                    <el-input-number v-model="zwfwItemMaterial.sortNo" :min="1" :max="100"/>
-                </el-form-item>
+
             </el-form>
             <div style="text-align: center" slot="footer" class="dialog-footer">
                 <el-button type="primary" icon="circle-check"
