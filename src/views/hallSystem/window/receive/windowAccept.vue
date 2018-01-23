@@ -1852,7 +1852,7 @@
                             itemHandTypeVo: this.itemHandTypeVo,
                             itemTakeTypeVo: this.itemTakeTypeVo
                         }).then(response => {
-                            submiting = false;
+                            this.submiting = false;
                             if (response.httpCode === 200) {
                                 this.$message.success('提交成功');
                                 let data = response.data;
@@ -1865,6 +1865,7 @@
                                 this.$message.error('提交出错 ，' + response.msg);
                             }
                         }).catch(e => {
+                            console.log(e);
                             this.submiting = false;
                         });
                     } else {
