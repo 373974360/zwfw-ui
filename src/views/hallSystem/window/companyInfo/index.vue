@@ -7,7 +7,7 @@
 
             <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item"
                       placeholder="企业统一信用代码"
-                      v-model="listQuery.tyCode"></el-input>
+                      v-model="listQuery.ty_code"></el-input>
 
             <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item"
                       placeholder="法人姓名"
@@ -196,7 +196,7 @@
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     qymc: undefined,
-                    tyCode: undefined,
+                    ty_code: undefined,
                     fr: undefined,
                     diff: null
                 },
