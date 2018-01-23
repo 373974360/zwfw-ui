@@ -82,6 +82,7 @@
     require('echarts/lib/component/legend');
     require('echarts/lib/component/title');
     require('echarts/lib/component/visualMap');
+    require('echarts/lib/component/dataZoom');
     import {mapGetters} from 'vuex';
     import moment from 'moment';
     import {getAllDept} from 'api/baseSystem/org/dept';
@@ -114,7 +115,7 @@
                 windowTotal: [],
                 userName: [],
                 userTotal: [],
-                all: 0
+                all: 0,
             }
         },
         computed: {
@@ -266,11 +267,31 @@
                             title: {text: '按窗口统计叫号数据', x: 'center'},
                             tooltip: {trigger: 'axis'},
                             legend: {top: 40, orient: 'horizontal', x: 'center', data: this.windowName},
-                            grid: {x: 40, x2: 40, y2: 24},
+                            grid: {x: 40, x2: 40, y2: 70},
                             calculable: !0,
                             xAxis: [{
                                 type: 'category', data: this.windowName
                             }],
+                            dataZoom: [
+                                {
+                                    show: true,
+                                    start: 0,
+                                    end: 100,
+                                },
+                                {
+                                    type: 'inside',
+                                    start: 0,
+                                    end: 100
+                                },
+                                {
+                                    show: true,
+                                    yAxisIndex: 0,
+                                    filterMode: 'empty',
+                                    width: 30,
+                                    showDataShadow: false,
+                                    left: '98%'
+                                }
+                            ],
                             yAxis: [{type: 'value'}],
                             series: [{
                                 name: '叫号数',
@@ -342,9 +363,29 @@
                             title: {text: '按用户统计叫号数据', x: 'center'},
                             tooltip: {trigger: 'axis'},
                             legend: {top: 40, orient: 'horizontal', x: 'center', data: this.userName},
-                            grid: {x: 40, x2: 40, y2: 24},
+                            grid: {x: 40, x2: 40, y2: 70},
                             calculable: !0,
                             xAxis: [{type: 'category', data: this.userName}],
+                            dataZoom: [
+                                {
+                                    show: true,
+                                    start: 0,
+                                    end: 100,
+                                },
+                                {
+                                    type: 'inside',
+                                    start: 0,
+                                    end: 100
+                                },
+                                {
+                                    show: true,
+                                    yAxisIndex: 0,
+                                    filterMode: 'empty',
+                                    width: 30,
+                                    showDataShadow: false,
+                                    left: '98%'
+                                }
+                            ],
                             yAxis: [{type: 'value'}],
                             series: [{
                                 name: '叫号数',
@@ -447,7 +488,8 @@
     }
 
     .className {
-        width: 1614px;
-        height: 420px
+        width: 100%;
+        height: 420px;
     }
+
 </style>

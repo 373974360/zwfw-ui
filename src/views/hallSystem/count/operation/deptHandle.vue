@@ -36,6 +36,7 @@
     require('echarts/lib/component/toolbox');
     require('echarts/lib/component/title');
     require('echarts/lib/component/visualMap');
+    require('echarts/lib/component/dataZoom');
     import {mapGetters} from 'vuex';
     import {date} from '../../../../filters'
     import {getAllByNameOrbasicCode} from '../../../../api/zwfwSystem/business/item'
@@ -122,6 +123,26 @@
                                     data: this.handleDeptName
                                 }
                             ],
+                            dataZoom: [
+                                {
+                                    show: true,
+                                    start: 0,
+                                    end: 100,
+                                },
+                                {
+                                    type: 'inside',
+                                    start: 0,
+                                    end: 100
+                                },
+                                {
+                                    show: true,
+                                    yAxisIndex: 0,
+                                    filterMode: 'empty',
+                                    width: 30,
+                                    showDataShadow: false,
+                                    left: '93%'
+                                }
+                            ],
                             yAxis: [
                                 {
                                     type: 'value',
@@ -198,6 +219,26 @@
                                 {
                                     type: 'category',
                                     data: this.waitDeptName
+                                }
+                            ],
+                            dataZoom: [
+                                {
+                                    show: true,
+                                    start: 0,
+                                    end: 100,
+                                },
+                                {
+                                    type: 'inside',
+                                    start: 0,
+                                    end: 100
+                                },
+                                {
+                                    show: true,
+                                    yAxisIndex: 0,
+                                    filterMode: 'empty',
+                                    width: 30,
+                                    showDataShadow: false,
+                                    left: '93%'
                                 }
                             ],
                             yAxis: [
