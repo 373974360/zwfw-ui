@@ -1308,15 +1308,31 @@
                     if (response.httpCode === 200) {
                         let c = response.data;
                         if (c) {
-                            this.companyInfo = {};
                             this.numberTab = 'company';
                             this.companyInfo = c;
-                            this.memberPhone = c.lxdh;
-                            this.memberRealname = c.fr;
-                            this.companyName = c.qymc;
-                            this.companyCode = c.ty_code;
-                            this.memberCode = c.fr_id ? c.fr_id : '';
-                            this.companyAddress = c.jgzs;
+                            if(this.showInputForm =='1'){ //如果是窗口收件，自动覆盖输入框中的值
+                                if (c.lxdh && c.lxdh.length == 11 && !this.memberPhone) {
+                                    this.memberPhone = c.lxdh;
+                                } else {
+                                    // this.$message.warning("工商信息表中联系方式不是手机号码");
+                                    // this.memberPhone = "";
+                                }
+                                if(!this.memberRealname) {
+                                    this.memberRealname = c.fr;
+                                }
+                                if(!this.companyName) {
+                                    this.companyName = c.qymc;
+                                }
+                                if(!this.companyCode) {
+                                    this.companyCode = c.ty_code;
+                                }
+                                if(!this.memberCode) {
+                                    this.memberCode = c.fr_id ? c.fr_id : '';
+                                }
+                                if(!this.companyAddress) {
+                                    this.companyAddress = c.jgzs;
+                                }
+                            }
                         } else {
                             this.$message.warning("企业信息中没有搜索到【" + this.companyCode + "】企业信息");
                             if (this.isScanInput) {
