@@ -12,6 +12,14 @@
                 <el-option v-for="item in enums['Gender']" :key="item.code" :value="item.code"
                            :label="item.value"></el-option>
             </el-select>
+            <el-select class="filter-item" v-model="listQuery.enable" clearable placeholder="状态">
+                <el-option
+                        v-for="item in options"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
+            </el-select>
             <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item" placeholder="请输入联系电话"
                       v-model="listQuery.phone"></el-input>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
@@ -225,6 +233,17 @@
                 callback()
             };
             return {
+                options: [
+                    {
+                        value: '',
+                        label: '全部状态'
+                    }, {
+                        value: '1',
+                        label: '启用'
+                    }, {
+                        value: '0',
+                        label: '禁用'
+                    }],
                 zwfwNaturePersonList: [],
                 total: null,
                 listLoading: true,
@@ -236,7 +255,8 @@
                     name: undefined,
                     gender: "",
                     idcard: undefined,
-                    phone: undefined
+                    phone: undefined,
+                    enable: ''
                 },
                 zwfwNaturePerson: {
                     id: undefined,

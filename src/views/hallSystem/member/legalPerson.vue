@@ -12,6 +12,14 @@
                       v-model="listQuery.idcard"></el-input>
             <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item" placeholder="请输入联系电话"
                       v-model="listQuery.phone"></el-input>
+            <el-select class="filter-item" v-model="listQuery.enable" clearable placeholder="状态">
+                <el-option
+                        v-for="item in options"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
+            </el-select>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">
                 添加
@@ -71,9 +79,9 @@
                 </template>
             </el-table-column>
             <!--<el-table-column align="center" label="注册日期" prop="registerDate">-->
-                <!--<template scope="scope">-->
-                    <!--<span>{{scope.row.registerDate | date('YYYY-MM-DD')}}</span>-->
-                <!--</template>-->
+            <!--<template scope="scope">-->
+            <!--<span>{{scope.row.registerDate | date('YYYY-MM-DD')}}</span>-->
+            <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column prop="enable" class-name="status-col" label="状态">
                 <template scope="scope">
@@ -230,6 +238,17 @@
                 callback()
             };
             return {
+                options: [
+                    {
+                        value: '',
+                        label: '全部状态'
+                    }, {
+                        value: '1',
+                        label: '启用'
+                    }, {
+                        value: '0',
+                        label: '禁用'
+                    }],
                 zwfwLegalPersonList: [],
                 total: null,
                 listLoading: true,
@@ -241,7 +260,8 @@
                     companyCode: undefined,
                     idcard: undefined,
                     phone: undefined,
-                    legalPerson: undefined
+                    legalPerson: undefined,
+                    enable: ''
                 },
                 zwfwLegalPerson: {
                     id: undefined,
