@@ -1219,12 +1219,16 @@
                     this.resultExampleFileList.push({url: this.zwfwItem.resultExample, name: '结果样本'});
                 }
                 if (this.zwfwItem.handTypes) {
-                    this.zwfwItem.handTypes = this.zwfwItem.handTypes.split(',');
+                    if(typeof this.zwfwItem.handTypes == 'string') {
+                        this.zwfwItem.handTypes = this.zwfwItem.handTypes.split(',');
+                    }
                 } else {
                     this.zwfwItem.handTypes = []
                 }
                 if (this.zwfwItem.takeTypes) {
-                    this.zwfwItem.takeTypes = this.zwfwItem.takeTypes.split(',');
+                    if(typeof this.zwfwItem.takeTypes == 'string') {
+                        this.zwfwItem.takeTypes = this.zwfwItem.takeTypes.split(',');
+                    }
                 } else {
                     this.zwfwItem.takeTypes = []
                 }

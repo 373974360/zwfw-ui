@@ -1,8 +1,19 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="名称"
+            <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item" placeholder="请输入姓名"
                       v-model="listQuery.name"></el-input>
+            <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item" placeholder="请输入身份证号"
+                      v-model="listQuery.idcard"></el-input>
+            <el-select @keyup.enter.native="getList" class="filter-item" v-model="listQuery.gender" clearable
+                       placeholder="请选择性别">
+                <el-option label="全部" value="">
+                </el-option>
+                <el-option v-for="item in enums['Gender']" :key="item.code" :value="item.code"
+                           :label="item.value"></el-option>
+            </el-select>
+            <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item" placeholder="请输入联系电话"
+                      v-model="listQuery.phone"></el-input>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">
                 添加
@@ -33,7 +44,7 @@
                     <span>{{scope.row.idcard}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="性别" prop="gender" >
+            <el-table-column align="center" label="性别" prop="gender">
                 <template scope="scope">
                     <span>{{scope.row.gender | enums('Gender')}}</span>
                 </template>
@@ -83,7 +94,7 @@
                     <el-input v-model="zwfwNaturePerson.name"></el-input>
                 </el-form-item>
                 <el-form-item label="身份证号" prop="idcard">
-                    <el-input  v-model="zwfwNaturePerson.idcard" @blur="handleIdCard"></el-input>
+                    <el-input v-model="zwfwNaturePerson.idcard" @blur="handleIdCard"></el-input>
                 </el-form-item>
                 <el-form-item label="性别" prop="gender">
                     <el-radio-group disabled v-model="zwfwNaturePerson.gender">
@@ -96,14 +107,16 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="出生日期" prop="birthday">
-                    <el-date-picker v-model="zwfwNaturePerson.birthday" type="date" placeholder="选择日期" disabled></el-date-picker>
+                    <el-date-picker v-model="zwfwNaturePerson.birthday" type="date" placeholder="选择日期"
+                                    disabled></el-date-picker>
                 </el-form-item>
                 <el-form-item label="住址" prop="address">
                     <el-input v-model="zwfwNaturePerson.address"></el-input>
                 </el-form-item>
                 <el-form-item label="民族" prop="nation">
                     <el-select v-model="zwfwNaturePerson.nation" placeholder="请选择">
-                        <el-option v-for="item in dics['mz']" :key="item.code" :value="item.code" :label="item.value"></el-option>
+                        <el-option v-for="item in dics['mz']" :key="item.code" :value="item.code"
+                                   :label="item.value"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="联系电话" prop="phone">
@@ -111,7 +124,8 @@
                 </el-form-item>
                 <el-form-item label="照片" prop="photo">
                     <el-upload class="avatar-uploader" name="uploadFile" :action="uploadUrl" :show-file-list="false"
-                               :accept="acceptTypes" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+                               :accept="acceptTypes" :on-success="handleAvatarSuccess"
+                               :before-upload="beforeAvatarUpload">
                         <img v-if="zwfwNaturePerson.photo" :src="zwfwNaturePerson.photo" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         <div slot="tip" class="el-upload__tip">只能上传jpg文件，且不超过2MB</div>
@@ -121,7 +135,8 @@
                     <el-input v-model="zwfwNaturePerson.password" type="password" placeholder="修改密码时填入新密码，若不需要则无需输入"/>
                 </el-form-item>
                 <el-form-item label="确认密码" prop="passwordConfirm">
-                    <el-input v-model="zwfwNaturePerson.passwordConfirm" type="password" placeholder="修改密码时填入新密码，若不需要则无需输入"/>
+                    <el-input v-model="zwfwNaturePerson.passwordConfirm" type="password"
+                              placeholder="修改密码时填入新密码，若不需要则无需输入"/>
                 </el-form-item>
                 <el-form-item label="状态" prop="enable">
                     <el-radio-group v-model="zwfwNaturePerson.enable">
@@ -139,9 +154,11 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="resetZwfwNaturePersonForm">取 消</el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" :loading="btnLoading" @click="doCreate">确 定
+                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" :loading="btnLoading"
+                           @click="doCreate">确 定
                 </el-button>
-                <el-button v-else type="primary" icon="circle-check" :loading="btnLoading" @Keyup.enter="doUpdate" @click="doUpdate">确 定
+                <el-button v-else type="primary" icon="circle-check" :loading="btnLoading" @Keyup.enter="doUpdate"
+                           @click="doUpdate">确 定
                 </el-button>
             </div>
         </el-dialog>
@@ -151,7 +168,7 @@
 <script>
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
-    import { isIdCardNo, validatMobiles } from 'utils/validate';
+    import {isIdCardNo, validatMobiles} from 'utils/validate';
     import {moment} from 'moment';
     import {
         idCardExist,
@@ -216,7 +233,10 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
-                    name: undefined
+                    name: undefined,
+                    gender: "",
+                    idcard: undefined,
+                    phone: undefined
                 },
                 zwfwNaturePerson: {
                     id: undefined,
@@ -463,9 +483,11 @@
         position: relative;
         overflow: hidden;
     }
+
     .avatar-uploader .el-upload:hover {
         border-color: #20a0ff;
     }
+
     .avatar-uploader-icon {
         font-size: 28px;
         color: #8c939d;
@@ -474,6 +496,7 @@
         line-height: 178px;
         text-align: center;
     }
+
     .avatar {
         width: 178px;
         height: 178px;

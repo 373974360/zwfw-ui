@@ -19,7 +19,7 @@
                 <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="统计" placement="top-start">
                     <el-button class="filter-item" type="primary" v-waves icon="search" @click="doCategoryPlot">
                         统计
-                    </el-button> 
+                    </el-button>
                 </el-tooltip>
             </div>
             <div class="className" id="plotbyCategory"></div>
@@ -74,6 +74,8 @@
 </template>
 
 <script>
+    import {getAllDept} from "../../../api/baseSystem/org/dept";
+
     const echarts = require('echarts/lib/echarts');
     require('echarts/lib/chart/bar');
     require('echarts/lib/chart/pie');
@@ -82,6 +84,7 @@
     require('echarts/lib/component/legend');
     require('echarts/lib/component/title');
     require('echarts/lib/component/visualMap');
+    require('echarts/lib/component/dataZoom');
     import {mapGetters} from 'vuex';
     import moment from 'moment';
     import {getAllCategory} from 'api/zwfwSystem/business/category';
@@ -134,7 +137,7 @@
         },
         methods: {
             getCategoryList() {
-                getAllCategory().then(response => {
+                getAllDept().then(response => {
                     if (response.httpCode === 200) {
                         this.categoryList = response.data;
                     } else {
@@ -207,11 +210,11 @@
                                 data: this.categoryName
                             },
                             calculable: !0,
-                            series : [
+                            series: [
                                 {
                                     name: '叫号统计',
                                     type: 'pie',
-                                    radius : '55%',
+                                    radius: '55%',
                                     center: ['50%', '60%'],
                                     data: this.categoryTotal,
                                     itemStyle: {
@@ -266,9 +269,31 @@
                             title: {text: '按窗口统计叫号数据', x: 'center'},
                             tooltip: {trigger: 'axis'},
                             legend: {top: 40, orient: 'horizontal', x: 'center', data: this.windowName},
-                            grid: {x: 40, x2: 40, y2: 24},
+                            grid: {x: 40, x2: 40, y2: 70},
                             calculable: !0,
-                            xAxis: [{type: 'category', data: this.windowName}],
+                            xAxis: [{
+                                type: 'category', data: this.windowName
+                            }],
+                            dataZoom: [
+                                {
+                                    show: true,
+                                    start: 0,
+                                    end: 100,
+                                },
+                                {
+                                    type: 'inside',
+                                    start: 0,
+                                    end: 100
+                                },
+                                {
+                                    show: true,
+                                    yAxisIndex: 0,
+                                    filterMode: 'empty',
+                                    width: 30,
+                                    showDataShadow: false,
+                                    left: '98%'
+                                }
+                            ],
                             yAxis: [{type: 'value'}],
                             series: [{
                                 name: '叫号数',
@@ -279,7 +304,30 @@
                                         position: 'top'
                                     }
                                 },
-                                data: this.windowTotal
+                                itemStyle: {
+                                    normal: {
+                                        color: new echarts.graphic.LinearGradient(
+                                            0, 0, 0, 1,
+                                            [
+                                                {offset: 0, color: '#83bff6'},
+                                                {offset: 0.5, color: '#188df0'},
+                                                {offset: 1, color: '#188df0'}
+                                            ]
+                                        )
+                                    },
+                                    emphasis: {
+                                        color: new echarts.graphic.LinearGradient(
+                                            0, 0, 0, 1,
+                                            [
+                                                {offset: 0, color: '#2378f7'},
+                                                {offset: 0.7, color: '#2378f7'},
+                                                {offset: 1, color: '#83bff6'}
+                                            ]
+                                        )
+                                    }
+                                },
+                                data: this.windowTotal,
+                                barMaxWidth: '150',
                             }]
                         });
                     } else {
@@ -317,9 +365,29 @@
                             title: {text: '按用户统计叫号数据', x: 'center'},
                             tooltip: {trigger: 'axis'},
                             legend: {top: 40, orient: 'horizontal', x: 'center', data: this.userName},
-                            grid: {x: 40, x2: 40, y2: 24},
+                            grid: {x: 40, x2: 40, y2: 70},
                             calculable: !0,
                             xAxis: [{type: 'category', data: this.userName}],
+                            dataZoom: [
+                                {
+                                    show: true,
+                                    start: 0,
+                                    end: 100,
+                                },
+                                {
+                                    type: 'inside',
+                                    start: 0,
+                                    end: 100
+                                },
+                                {
+                                    show: true,
+                                    yAxisIndex: 0,
+                                    filterMode: 'empty',
+                                    width: 30,
+                                    showDataShadow: false,
+                                    left: '98%'
+                                }
+                            ],
                             yAxis: [{type: 'value'}],
                             series: [{
                                 name: '叫号数',
@@ -330,7 +398,30 @@
                                         position: 'top'
                                     }
                                 },
-                                data: this.userTotal
+                                itemStyle: {
+                                    normal: {
+                                        color: new echarts.graphic.LinearGradient(
+                                            0, 0, 0, 1,
+                                            [
+                                                {offset: 0, color: '#83bff6'},
+                                                {offset: 0.5, color: '#188df0'},
+                                                {offset: 1, color: '#188df0'}
+                                            ]
+                                        )
+                                    },
+                                    emphasis: {
+                                        color: new echarts.graphic.LinearGradient(
+                                            0, 0, 0, 1,
+                                            [
+                                                {offset: 0, color: '#2378f7'},
+                                                {offset: 0.7, color: '#2378f7'},
+                                                {offset: 1, color: '#83bff6'}
+                                            ]
+                                        )
+                                    }
+                                },
+                                data: this.userTotal,
+                                barMaxWidth: '150',
                             }]
                         })
                     } else {
@@ -399,7 +490,8 @@
     }
 
     .className {
-        width: 1614px;
-        height: 420px
+        width: 100%;
+        height: 420px;
     }
+
 </style>
