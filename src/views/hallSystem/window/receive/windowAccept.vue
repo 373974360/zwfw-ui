@@ -1329,6 +1329,9 @@
                                 if(!this.memberCode) {
                                     this.memberCode = c.fr_id ? c.fr_id : '';
                                 }
+                                if(!this.companyAddress) {
+                                    this.companyAddress = c.jgzs;
+                                }
                             }
                         } else {
                             this.$message.warning("企业信息中没有搜索到【" + this.companyCode + "】企业信息");
