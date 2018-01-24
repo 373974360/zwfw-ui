@@ -1310,11 +1310,11 @@
                         if (c) {
                             this.numberTab = 'company';
                             this.companyInfo = c;
-                            if (c.lxdh && c.lxdh.length == 11) {
+                            if (c.lxdh && c.lxdh.length == 11 && !this.memberPhone) {
                                 this.memberPhone = c.lxdh;
                             } else {
-                                this.$message.warning("请注意填写手机号码");
-                                this.memberPhone = "";
+                                // this.$message.warning("请注意核手机号码");
+                                // this.memberPhone = "";
                             }
                             this.memberRealname = c.fr;
                             this.companyName = c.qymc;
