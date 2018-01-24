@@ -1,8 +1,17 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="handleFilter" style="width: 130px;" class="filter-item" placeholder="名称"
+            <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item" placeholder="请输入公司名称"
                       v-model="listQuery.companyName"></el-input>
+            <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item"
+                      placeholder="请输入统一社会信用代码"
+                      v-model="listQuery.companyCode"></el-input>
+            <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item" placeholder="请输入法定代表人"
+                      v-model="listQuery.legalPerson"></el-input>
+            <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item" placeholder="请输入法人身份证号"
+                      v-model="listQuery.idcard"></el-input>
+            <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item" placeholder="请输入联系电话"
+                      v-model="listQuery.phone"></el-input>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">
                 添加
@@ -28,11 +37,6 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="机构类型" prop="companyType">
-                <template scope="scope">
-                    <span>{{scope.row.companyType | dics('gsxz')}}</span>
-                </template>
-            </el-table-column>
             <el-table-column align="left" label="机构名称" prop="companyName" width="300">
                 <template scope="scope">
                     <el-tooltip class="item" effect="dark" content="天眼查" placement="right-start">
@@ -41,31 +45,36 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <!--<el-table-column align="left" label="机构代码" prop="agencyCode" width="100">
+            <el-table-column align="left" label="联系电话" prop="phone">
                 <template scope="scope">
-                    <span>{{scope.row.agencyCode}}</span>
+                    <span>{{scope.row.phone}}</span>
                 </template>
-            </el-table-column>-->
+            </el-table-column>
             <el-table-column align="center" label="法定代表人" prop="legalPerson">
                 <template scope="scope">
                     <span>{{scope.row.legalPerson}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="法人身份证/登录名" prop="legalPerson">
+            <el-table-column align="center" label="法人身份证/登录名" prop="legalPerson" width="180px">
                 <template scope="scope">
                     <span>{{scope.row.idcard}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="left" label="注册地址" prop="registerPlace" width="300">
+            <el-table-column align="center" label="机构类型" prop="companyType">
+                <template scope="scope">
+                    <span>{{scope.row.companyType | dics('gsxz')}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="left" label="注册地址" prop="registerPlace">
                 <template scope="scope">
                     <span>{{scope.row.registerPlace}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="注册日期" prop="registerDate">
-                <template scope="scope">
-                    <span>{{scope.row.registerDate | date('YYYY-MM-DD')}}</span>
-                </template>
-            </el-table-column>
+            <!--<el-table-column align="center" label="注册日期" prop="registerDate">-->
+                <!--<template scope="scope">-->
+                    <!--<span>{{scope.row.registerDate | date('YYYY-MM-DD')}}</span>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
             <el-table-column prop="enable" class-name="status-col" label="状态">
                 <template scope="scope">
                     <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
@@ -228,7 +237,11 @@
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     name: undefined,
-                    companyName: ''
+                    companyName: undefined,
+                    companyCode: undefined,
+                    idcard: undefined,
+                    phone: undefined,
+                    legalPerson: undefined
                 },
                 zwfwLegalPerson: {
                     id: undefined,

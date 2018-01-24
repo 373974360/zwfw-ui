@@ -112,6 +112,26 @@
                                         data: this.deptName
                                     }
                                 ],
+                                dataZoom: [
+                                    {
+                                        show: true,
+                                        start: 0,
+                                        end: 100
+                                    },
+                                    {
+                                        type: 'inside',
+                                        start: 0,
+                                        end: 100
+                                    },
+                                    {
+                                        show: true,
+                                        yAxisIndex: 0,
+                                        filterMode: 'empty',
+                                        width: 30,
+                                        showDataShadow: false,
+                                        left: '6%'
+                                    }
+                                ],
                                 yAxis: [
                                     {
                                         type: 'value'
