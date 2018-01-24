@@ -1313,13 +1313,21 @@
                             if (c.lxdh && c.lxdh.length == 11 && !this.memberPhone) {
                                 this.memberPhone = c.lxdh;
                             } else {
-                                // this.$message.warning("请注意核手机号码");
+                                // this.$message.warning("工商信息表中联系方式不是手机号码");
                                 // this.memberPhone = "";
                             }
-                            this.memberRealname = c.fr;
-                            this.companyName = c.qymc;
-                            this.companyCode = c.ty_code;
-                            this.memberCode = c.fr_id ? c.fr_id : '';
+                            if(!this.memberRealname) {
+                                this.memberRealname = c.fr;
+                            }
+                            if(!this.companyName) {
+                                this.companyName = c.qymc;
+                            }
+                            if(!this.companyCode) {
+                                this.companyCode = c.ty_code;
+                            }
+                            if(!this.memberCode) {
+                                this.memberCode = c.fr_id ? c.fr_id : '';
+                            }
                         } else {
                             this.$message.warning("企业信息中没有搜索到【" + this.companyCode + "】企业信息");
                         }
