@@ -1310,23 +1310,25 @@
                         if (c) {
                             this.numberTab = 'company';
                             this.companyInfo = c;
-                            if (c.lxdh && c.lxdh.length == 11 && !this.memberPhone) {
-                                this.memberPhone = c.lxdh;
-                            } else {
-                                // this.$message.warning("工商信息表中联系方式不是手机号码");
-                                // this.memberPhone = "";
-                            }
-                            if(!this.memberRealname) {
-                                this.memberRealname = c.fr;
-                            }
-                            if(!this.companyName) {
-                                this.companyName = c.qymc;
-                            }
-                            if(!this.companyCode) {
-                                this.companyCode = c.ty_code;
-                            }
-                            if(!this.memberCode) {
-                                this.memberCode = c.fr_id ? c.fr_id : '';
+                            if(this.showInputForm =='1'){ //如果是窗口收件，自动覆盖输入框中的值
+                                if (c.lxdh && c.lxdh.length == 11 && !this.memberPhone) {
+                                    this.memberPhone = c.lxdh;
+                                } else {
+                                    // this.$message.warning("工商信息表中联系方式不是手机号码");
+                                    // this.memberPhone = "";
+                                }
+                                if(!this.memberRealname) {
+                                    this.memberRealname = c.fr;
+                                }
+                                if(!this.companyName) {
+                                    this.companyName = c.qymc;
+                                }
+                                if(!this.companyCode) {
+                                    this.companyCode = c.ty_code;
+                                }
+                                if(!this.memberCode) {
+                                    this.memberCode = c.fr_id ? c.fr_id : '';
+                                }
                             }
                         } else {
                             this.$message.warning("企业信息中没有搜索到【" + this.companyCode + "】企业信息");
