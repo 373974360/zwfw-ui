@@ -160,7 +160,7 @@ export function queryCompanysInfo(query) {
 }
 
 
-export function updateCompanyInfo(enterpriseList){
+export function updateCompanyInfo(enterpriseList) {
     const data = enterpriseList;
     return fetch({
         url: '/api/hallSystem/hallCompositeWindow/updateCompanyInfo',
@@ -168,6 +168,7 @@ export function updateCompanyInfo(enterpriseList){
         data
     })
 }
+
 /**
  * 查询事项信息和办件材料列表
  * @param query
@@ -187,6 +188,18 @@ export function submitNoPretrial(query) {
     const data = query;
     return fetch({
         url: '/api/hallSystem/hallCompositeWindow/submitNoPretrial',
+        method: 'post',
+        data
+    });
+}
+
+/**
+ * 综合窗口提交非预审的不予受理
+ * */
+export function rejectNoPretrial(query) {
+    const data = query;
+    return fetch({
+        url: '/api/hallSystem/hallCompositeWindow/rejectNoPretrial',
         method: 'post',
         data
     });
