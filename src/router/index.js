@@ -338,12 +338,12 @@ export const asyncRouterMap = [
         icon: 'neirongguanli',
         component: Layout,
         children: [
-            {
+            /*{
                 path: 'zpxx_ds',
                 component: ZpxxDs,
                 name: '待审信息',
                 meta: {permission: 'jobSystem:zpxx:notstatus:list'}
-            },
+            },*/
             {
                 path: 'zpxx',
                 component: Zpxx,

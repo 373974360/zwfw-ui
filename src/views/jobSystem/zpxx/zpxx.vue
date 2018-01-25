@@ -20,7 +20,7 @@
                     取消推荐
                 </el-button>
             </el-tooltip>
-            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="撤销审核" placement="top-start">
+            <!--<el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="撤销审核" placement="top-start">
                 <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="delete"
                            @click="handleUnaudit">
                     撤销审核
@@ -31,7 +31,7 @@
                            @click="handleDelete">
                     删除
                 </el-button>
-            </el-tooltip>
+            </el-tooltip>-->
         </div>
         <el-table :data="list" v-loading.body="listLoading" border fit style="width: 100%"
                   @selection-change="handleSelectionChange">
@@ -102,6 +102,11 @@
             <el-table-column align="center" label="刷新日期" width="173">
                 <template scope="scope">
                     <nobr>{{scope.row.reloadtime | date('YYYY-MM-DD HH:mm:ss')}}</nobr>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="截止日期" width="173">
+                <template scope="scope">
+                    <nobr>{{scope.row.endtime | date('YYYY-MM-DD HH:mm:ss')}}</nobr>
                 </template>
             </el-table-column>
         </el-table>
@@ -270,7 +275,8 @@
                     zzmm: '',
                     yyyq: '',
                     slcd: '',
-                    reloadtime: ''
+                    reloadtime: '',
+                    endtime: ''
                 }
             }
         },
@@ -488,7 +494,8 @@
                     zzmm: '',
                     yyyq: '',
                     slcd: '',
-                    reloadtime: ''
+                    reloadtime: '',
+                    endtime: ''
                 };
             }
         }

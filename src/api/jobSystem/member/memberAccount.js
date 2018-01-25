@@ -53,7 +53,7 @@ export function resetJobMember(data) {
 
 export function startImport() {
     return fetch({
-        url: '/api/jobSystem/jobMember/startgPersonalImport',
+        url: '/api/jobSystem/jobMember/startTdjlImport',
         method: 'get'
     });
 }

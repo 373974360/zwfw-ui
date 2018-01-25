@@ -267,7 +267,7 @@
                             <tr>
                                 <th>学校名称:</th>
                                 <td>
-                                    <nobr>{{jyjl.xxmc}}　 | 　{{jyjl.xlxw | dicts('xueli')}}　 | 　{{jyjl.zyName}}</nobr>
+                                    <nobr>{{jyjl.xxmc}}　 | 　{{jyjl.xlxw | dics('xueli')}}　 | 　{{jyjl.zyName}}</nobr>
                                 </td>
                             </tr>
                             <tr>
