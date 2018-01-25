@@ -18,9 +18,9 @@
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleDelete" type="danger" icon="delete">
                 删除
             </el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="startImport" type="danger" icon="delete">
+            <!--<el-button class="filter-item" style="margin-left: 10px;" @click="startImport" type="danger" icon="delete">
                 开始导入
-            </el-button>
+            </el-button>-->
         </div>
         <el-table ref="jobMemberTable" :data="jobMemberList" v-loading.body="listLoading" border fit
                   highlight-current-row
