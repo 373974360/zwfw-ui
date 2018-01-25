@@ -119,6 +119,11 @@ export function checkSocialCreditCode(code) {
     if ((code.length != 18) || !reg.test(code)) {
         return false;
     }
+    //如果15位前面补三个0就让过，兼容旧注册号
+    if (/^000[0-9A-Z]{15}$/.test(code)) {
+        return true;
+    }
+
     let codeChar, codeCharValue;
     let total = 0;
     let weightedFactors = [1, 3, 9, 27, 19, 26, 16, 17, 20, 29, 25, 13, 8, 24, 10, 30, 28];
