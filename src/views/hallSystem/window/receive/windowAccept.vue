@@ -421,8 +421,12 @@
                                             <th>姓名:</th>
                                             <td>{{member.naturePerson.name}}</td>
                                         </tr>
+                                        <tr v-if="itemNumber!=null && itemNumber.personPhone!=null">
+                                            <th>办事员电话:</th>
+                                            <td>{{itemNumber.personPhone}}</td>
+                                        </tr>
                                         <tr v-if="member!=null && member.naturePerson!=null">
-                                            <th>联系电话:</th>
+                                            <th>自然人手机号:</th>
                                             <td>{{member.naturePerson.phone}}</td>
                                         </tr>
                                         <tr v-if="member!=null && member.legalPerson!=null">
@@ -430,7 +434,7 @@
                                             <td>{{member.legalPerson.legalPerson}}</td>
                                         </tr>
                                         <tr v-if="member!=null && member.legalPerson!=null">
-                                            <th>联系电话:</th>
+                                            <th>法人电话:</th>
                                             <td>{{member.legalPerson.phone}}</td>
                                         </tr>
                                         <tr v-if="member!=null && member.legalPerson!=null">
@@ -746,13 +750,13 @@
                         <div style="margin-top: 10px;">
 
                             <template v-if="itemNumber.status!=3">
-                                <el-input
+                                <el-input v-if="itemNumber.status!=4"
                                         type="textarea"
                                         :autosize="{ minRows: 2, maxRows: 4}"
                                         placeholder="填写备注"
                                         v-model="remark">
                                 </el-input>
-                                <div style="margin-top:10px;">
+                                <div style="margin-top:10px;" v-if="itemNumber.status!=4">
 
                                     <el-input v-model="contactsPhone" placeholder="请输入申请人联系手机号"
                                               style="width: 180px"></el-input>
@@ -761,12 +765,12 @@
                                               readonly style="width: 180px" icon="edit"
                                               @focus="handleChangeHandType"></el-input>
                                     <el-input v-model="takeTypeText" placeholder="请选择取件方式"
-                                              :disabled="!itemVo.id || takeTypeVo"
+                                              :disabled="!itemVo.id"
                                               readonly style="width: 180px" icon="edit"
                                               @focus="handleChangeTakeType"></el-input>
                                     <!--抽了号，但是号不是正在处理的不能点击确认收件；或者不关心是否抽号和抽号状态，没有手机号或姓名或身份证号或统一社会信用代码的按钮不可点击（莲湖直接收件）-->
                                 </div>
-                                <div style="margin-top:10px;">
+                                <div v-if="itemNumber.status!=4" style="margin-top:10px;">
                                     <el-button
                                             :disabled="disableSubmit"
                                             type="primary"
@@ -962,6 +966,7 @@
         // addCompanyInfo,
         getItemInfo,
         submitNoPretrial,
+        rejectNoPretrial,
         getCurrentUserLoginedWindow,
         sendFastRegPhoneCode,
         checkLegalMemberExist,
@@ -2048,29 +2053,126 @@
 
                 let msg = '确定不予受理吗？';
 
+                let checked_m = this.materialSelection.map(function (m) {
+                    return m.id;
+                });
+                if (checked_m.length > 0) {
+                    msg = '确认已经退还材料（' + checked_m.length + '项），确认不予受理吗？'
+                } else {
+                    msg = '您没有勾选退还材料！！，确定不予受理吗？';
+                }
+
                 this.$confirm(msg, '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    this.submiting = true;
-                    submitWork({
-                        numberId: _itemNumber.id,
-                        status: 4,  //不予受理
-                        remark: this.remark
-                    }).then(response => {
-                        this.submiting = false;
-                        if (response.httpCode === 200) {
-                            let data = response.data;
-                            if (data != null) {
-                                _this.refreshNumber(response.data);
-                            }
-                        } else {
-                            _this.$message.error(response.msg);
+
+                    if (!this.itemNumber.id) {
+
+                        if (!this.itemHandTypeVo.handType) {
+                            this.$message.warning('请选择交件方式');
+                            return;
                         }
-                    }).catch(e => {
-                        this.submiting = false;
-                    });
+                        if (!this.itemTakeTypeVo.takeType) {
+                            this.$message.warning('请选择取件方式');
+                            return;
+                        }
+                        if (!this.contactsPhone) {
+                            this.$message.warning('请输入联系人手机号');
+                        }
+                        //判断如果是无预审收件，则验证无预审表单各项目是否填写完整
+                        if (this.memberType == 1) { //自然人
+                            //判断姓名，手机号，身份证号是否填写
+                            if (this.memberRealname == '') {
+                                this.$message.warning('姓名没有填写，不能提交');
+                                return;
+                            }
+                            if (!isIdCardNo(this.memberCode)) {
+                                this.$message.warning("身份证号码格式不正确，请重新填写");
+                                return;
+                            }
+                            if (!validatMobiles(this.memberPhone)) {
+                                this.$message.warning("手机号没格式不正确，请重新填写");
+                                return;
+                            }
+                        } else {  //法人
+                            //判断法人姓名，法人身份证号，手机号，统一社会信用代码是否填写
+                            if (this.memberRealname == '') {
+                                this.$message.warning('姓名没有填写，不能提交');
+                                return;
+                            }
+                            if (!isIdCardNo(this.memberCode)) {
+                                this.$message.warning("身份证号码格式不正确，请重新填写");
+                                return;
+                            }
+                            if (!validatMobiles(this.memberPhone)) {
+                                this.$message.warning("手机号没格式不正确，请重新填写");
+                                return;
+                            }
+                            if (!checkSocialCreditCode(this.companyCode)) {
+                                this.$message.warning('社会统一信用代码输入不正确，请重新填写');
+                                return;
+                            }
+                            if (this.companyName == '') {
+                                this.$message.warning('企业名称没有填写，不能提交');
+                                return;
+                            }
+                        }
+
+                        this.submiting = true;
+                        //TODO 此处填充纯窗口办理的不予受理代码
+                        rejectNoPretrial({
+                            memberType: this.memberType,
+                            itemId: this.itemVo.id,
+                            //身份证号
+                            memberCode: this.memberCode,
+                            //姓名
+                            memberRealname: this.memberRealname,
+                            memberPhone: this.memberPhone,
+                            companyCode: this.companyCode,
+                            companyName: this.companyName,
+                            contactsPhone: this.contactsPhone,
+                            received: checked_m.join(','),
+                            remark: this.remark,
+                            itemHandTypeVo: this.itemHandTypeVo,
+                            itemTakeTypeVo: this.itemTakeTypeVo
+                        }).then(response => {
+                            this.submiting = false;
+                            if (response.httpCode === 200) {
+                                this.$message.success('提交成功');
+                                let data = response.data;
+                                if (data != null) {
+                                    _this.refreshNumber(response.data);
+                                } else {
+                                    this.$message.error('提交出错 ，' + response.msg);
+                                }
+                            } else {
+                                this.$message.error('提交出错 ，' + response.msg);
+                            }
+                        }).catch(e => {
+                            this.submiting = false;
+                        });
+                    }else{
+                        this.submiting = true;
+                        submitWork({
+                            numberId: _itemNumber.id,
+                            status: 4,  //不予受理
+                            remark: this.remark
+                        }).then(response => {
+                            this.submiting = false;
+                            if (response.httpCode === 200) {
+                                let data = response.data;
+                                if (data != null) {
+                                    _this.refreshNumber(response.data);
+                                }
+                            } else {
+                                _this.$message.error(response.msg);
+                            }
+                        }).catch(e => {
+                            this.submiting = false;
+                        });
+                    }
                 }).catch(() => {
                     this.$message({
                         type: 'info',

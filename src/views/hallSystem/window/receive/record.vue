@@ -84,15 +84,24 @@
                             <td><strong class="font-size:5rem">{{itemNumber.orderNo}}</strong></td>
                         </tr>
                         <tr>
-                            <th>办理事项</th>
+                            <th>办理事项:</th>
                             <td style="color:red">{{itemVo.name}}</td>
                         </tr>
+                        <!--<tr>-->
+                        <!--<th width="140">所需服务:</th>-->
+                        <!--<td style="color:red"><strong class="font-size:5rem">{{itemNumber.type | enum-->
+                        <!--'ItemWindowSupport'}}</strong></td>-->
+                        <!--</tr>-->
                         <tr v-if="member!=null && member.naturePerson!=null">
-                            <th>申报人:</th>
+                            <th>姓名:</th>
                             <td>{{member.naturePerson.name}}</td>
                         </tr>
+                        <tr v-if="itemNumber!=null && itemNumber.personPhone!=null">
+                            <th>办事员电话:</th>
+                            <td>{{itemNumber.personPhone}}</td>
+                        </tr>
                         <tr v-if="member!=null && member.naturePerson!=null">
-                            <th>联系电话:</th>
+                            <th>自然人手机号:</th>
                             <td>{{member.naturePerson.phone}}</td>
                         </tr>
                         <tr v-if="member!=null && member.legalPerson!=null">
@@ -100,60 +109,84 @@
                             <td>{{member.legalPerson.legalPerson}}</td>
                         </tr>
                         <tr v-if="member!=null && member.legalPerson!=null">
-                            <th>联系电话:</th>
+                            <th>法人电话:</th>
                             <td>{{member.legalPerson.phone}}</td>
                         </tr>
                         <tr v-if="member!=null && member.legalPerson!=null">
-                            <th>办事企业:</th>
+                            <th>企业名称:</th>
                             <td>{{member.legalPerson.companyName}}</td>
+                        </tr>
+                        <tr v-if="member!=null && member.legalPerson!=null">
+                            <th>社会统一信用代码:</th>
+                            <td>{{member.legalPerson.companyCode}}</td>
                         </tr>
                         <tr v-if="itemPretrialVo!=null">
                             <th>预审号码:</th>
                             <td>{{itemPretrialVo.processNumber}}</td>
                         </tr>
-                        <tr v-if="itemPretrialVo==null">
-                            <th>预审状态</th>
-                            <td>没有提交预审</td>
-                        </tr>
-                        <tr v-if="itemPretrialVo">
+                        <tr v-else>
                             <th>预审状态:</th>
-                            <td>{{itemPretrialVo.status | enums('PretrialStatus')}}</td>
+                            <td>无预审</td>
+                        </tr>
+                        <tr v-if="itemPretrialVo!=null">
+                            <th>预审状态:</th>
+                            <td>{{itemPretrialVo.status | enums('PretrialStatus')}}
+                            </td>
                         </tr>
                         <tr>
-                            <th>排号状态</th>
-                            <td style="color:red">{{itemNumber.status | enums('ItemNumberStatus')}}</td>
+                            <th>取件方式:</th>
+                            <td>
+                                <span v-if="takeTypeVo!=null">{{takeTypeVo.takeType | enums('TakeType')}}</span>
+                                <span v-else style="color:red">未设置</span>
+                            </td>
                         </tr>
                         <tr>
-                            <th>备注</th>
+                            <th>交件方式:</th>
+                            <td>
+                                <span v-if="handTypeVo!=null">{{handTypeVo.handType | enums('HandType')}}</span>
+                                <span v-else style="color:red">未设置</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>排号状态:</th>
+                            <td style="color:red">{{itemNumber.status | enums('ItemNumberStatus')}}
+                            </td>
+                        </tr>
+                        <tr v-if="itemNumber.status!=6">
+                            <th>备注:</th>
                             <td>{{itemNumber.remark}}</td>
                         </tr>
                         <tr width="140">
                             <th>受理窗口:</th>
                             <td style="color:red">
-                                <strong v-if="windowVo!=null"
-                                        class="font-size:5rem">{{windowVo.name}}</strong>
-                                <strong v-if="windowVo==null" class="font-size:5rem">无</strong>
+                                <strong v-if="window!=null"
+                                        class="font-size:5rem">{{window.name}}</strong>
+                                <strong v-if="window==null" class="font-size:5rem">非窗口</strong>
                             </td>
                         </tr>
                         <tr v-show="itemWindowUserName">
-                            <th>工作人员</th>
+                            <th>工作人员:</th>
                             <td>{{itemWindowUserName}}</td>
                         </tr>
                         <tr>
                             <th width="140">领号时间:</th>
-                            <td>{{itemNumber.takeTime | date('YYYY-MM-DD HH:mm')}}</td>
+                            <td>{{itemNumber.takeTime | date('YYYY-MM-DD HH:mm') }}
+                            </td>
                         </tr>
                         <tr v-show="itemNumber.callTime">
                             <th width="140">呼叫时间:</th>
-                            <td>{{itemNumber.callTime | date('YYYY-MM-DD HH:mm')}}</td>
+                            <td>{{itemNumber.callTime | date('YYYY-MM-DD HH:mm') }}
+                            </td>
                         </tr>
                         <tr v-show="itemNumber.welcomeTime">
-                            <th>欢迎时间</th>
-                            <td>{{itemNumber.welcomeTime | date('YYYY-MM-DD HH:mm')}}</td>
+                            <th>欢迎时间:</th>
+                            <td>{{itemNumber.welcomeTime | date('YYYY-MM-DD HH:mm') }}
+                            </td>
                         </tr>
                         <tr v-show="itemNumber.applyFinishTime">
-                            <th>窗口完成处理时间</th>
-                            <td>{{itemNumber.applyFinishTime | date('YYYY-MM-DD HH:mm')}}</td>
+                            <th>窗口完成处理时间:</th>
+                            <td>{{itemNumber.applyFinishTime | date('YYYY-MM-DD HH:mm') }}
+                            </td>
                         </tr>
                     </table>
                 </el-col>
