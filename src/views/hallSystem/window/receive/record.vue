@@ -391,7 +391,7 @@
                 tabName: 'materialListPanel',
                 itemNumber: [],
                 itemWindowUserName: '',
-                windowVo: [],
+                window: [],
                 itemPretrialVo: [],
                 member: {
                     legalPerson: {},
@@ -403,7 +403,9 @@
                 rightTabName: 'materialListPanel',
                 dialogFormVisible: false,
                 dialogStatus: 'view',
-                dialogLoading: false
+                dialogLoading: false,
+                takeTypeVo: null,
+                handTypeVo: null
             }
         },
         computed: {
@@ -445,7 +447,7 @@
                 this.itemNumber = copyProperties(this.itemNumber, row);
                 this.dialogFormVisible = true;
                 this.itemNumberId = row.id;
-                this.getDatilList();
+                this.getDetailList();
             },
             print_ywsld() {
                 if (this.itemNumber != null) {
@@ -465,7 +467,7 @@
                     // window.open('/api/hallSystem/hallCompositeWindow/downloadYcxgzd?numberId=' + this.itemNumber.id);
                 }
             },
-            getDatilList() {
+            getDetailList() {
                 this.dialogLoading = true;
 
                 getDatilByItemNumberId(this.itemNumberId).then(response => {
@@ -480,7 +482,7 @@
                             this.itemMaterialVoList = response.data.itemMaterialVoList;
                             this.itemPretrialMaterialVoList = response.data.itemPretrialMaterialVoList;
                             this.itemPretrialVo = response.data.itemPretrialVo;
-                            this.windowVo = response.data.window;
+                            this.window = response.data.window;
                             this.itemWindowUserName = response.data.itemWindowUserName;
                         }
                     } else {
