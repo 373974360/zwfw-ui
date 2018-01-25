@@ -33,7 +33,7 @@
                                 </el-row>
                                 <el-row :gutter="10">
                                     <el-col :span="25">
-                                        <el-collapse v-model="showInputForm" style="margin-top:10px;">
+                                        <el-collapse v-model="showInputForm" style="margin-top:10px;" accordion>
                                             <el-collapse-item :title="'窗口办理事项受理'" name="1">
                                                 <el-tabs v-model="memberType" @tab-click="memberTypeChange">
                                                     <el-tab-pane label="自然人" name="1"
@@ -69,10 +69,15 @@
 
                                                         <el-row :gutter="10">
                                                             <el-col :span="19">
-                                                                <el-input v-model="memberCode" placeholder="自然人身份证号码"
-                                                                          @keyup.native="toUpperCase">
-                                                                    <template slot="prepend">身份证号：</template>
-                                                                </el-input>
+                                                                <el-tooltip content="政务网站使用此身份证号码作为用户名登录"
+                                                                            placement="bottom"
+                                                                            effect="light">
+                                                                    <el-input v-model="memberCode"
+                                                                              placeholder="自然人身份证号码"
+                                                                              @keyup.native="toUpperCase">
+                                                                        <template slot="prepend">身份证号：</template>
+                                                                    </el-input>
+                                                                </el-tooltip>
                                                             </el-col>
                                                             <el-col :span="5">
                                                                 <el-tooltip content="查询注册状态，如果未注册，成功受理后会自动注册"
@@ -88,7 +93,7 @@
                                                         </el-row>
                                                         <el-row :gutter="10">
                                                             <el-col :span="11">
-                                                                <el-tooltip content="如果已注册点击查找用户会自动填入，如果未注册请人工填写自然人姓名"
+                                                                <el-tooltip content="如果已注册点击查询会自动填入，如果未注册请人工填写"
                                                                             placement="bottom"
                                                                             effect="light">
                                                                     <el-input v-model="memberRealname"
@@ -98,9 +103,13 @@
                                                                 </el-tooltip>
                                                             </el-col>
                                                             <el-col :span="13">
-                                                                <el-input v-model="memberPhone" placeholder="手机号">
-                                                                    <template slot="prepend">手机号：</template>
-                                                                </el-input>
+                                                                <el-tooltip content="如果已注册点击查询会自动填入，如果未注册请人工填写"
+                                                                            placement="bottom"
+                                                                            effect="light">
+                                                                    <el-input v-model="memberPhone" placeholder="用户手机号">
+                                                                        <template slot="prepend">手机号：</template>
+                                                                    </el-input>
+                                                                </el-tooltip>
                                                             </el-col>
                                                         </el-row>
                                                     </el-tab-pane>
@@ -142,9 +151,14 @@
                                                         </el-row>
                                                         <el-row :gutter="10">
                                                             <el-col :span="12">
-                                                                <el-input v-model="companyCode" placeholder="社会统一信用代码"
-                                                                          @keyup.native="toUpperCase">
-                                                                </el-input>
+                                                                <el-tooltip content="如果只有15位注册号，使用000作为前缀后面跟入15位注册号"
+                                                                            placement="bottom"
+                                                                            effect="light">
+                                                                    <el-input v-model="companyCode"
+                                                                              placeholder="社会统一信用代码"
+                                                                              @keyup.native="toUpperCase">
+                                                                    </el-input>
+                                                                </el-tooltip>
                                                             </el-col>
                                                             <el-col :span="6">
                                                                 <el-tooltip content="从工商数据中查询，如果能查到自动填充到输入框"
@@ -187,13 +201,17 @@
                                                                 </el-input>
                                                             </el-col>
                                                             <el-col :span="10">
-                                                                <el-input v-model="memberCode" placeholder="法人身份证号"
-                                                                          @keyup.native="toUpperCase">
-                                                                    <!--<template slot="prepend">身份证号：</template>-->
-                                                                </el-input>
+                                                                <el-tooltip content="政务网站使用此身份证号码作为认证账号用户名登录"
+                                                                            placement="bottom"
+                                                                            effect="light">
+                                                                    <el-input v-model="memberCode" placeholder="法人身份证号"
+                                                                              @keyup.native="toUpperCase">
+                                                                        <!--<template slot="prepend">身份证号：</template>-->
+                                                                    </el-input>
+                                                                </el-tooltip>
                                                             </el-col>
                                                             <el-col :span="6">
-                                                                <el-input v-model="memberPhone" placeholder="手机号">
+                                                                <el-input v-model="memberPhone" placeholder="法人手机号">
                                                                     <!--<template slot="prepend">手机号：</template>-->
                                                                 </el-input>
                                                             </el-col>
@@ -726,37 +744,31 @@
 
 
                         <div style="margin-top: 10px;">
-                            <!-- 打印按钮-->
-                            <template v-if="itemNumber.status==3" >
-                                <el-button type="primary" @click="print_ywsld">打印业务受理单</el-button>
-                                <el-button type="primary" @click="print_wlzyd">打印物料转移单</el-button>
-                            </template>
 
-                            <template v-if="itemNumber.status==4" >
-                                <el-button type="primary" @click="print_ycxgzd">打印一次性告知单</el-button>
-                            </template>
-
-                            <div v-if="itemNumber.status==6">
+                            <template v-if="itemNumber.status!=3">
                                 <el-input
                                         type="textarea"
                                         :autosize="{ minRows: 2, maxRows: 4}"
                                         placeholder="填写备注"
                                         v-model="remark">
                                 </el-input>
-                            </div>
-                            <div style="margin-top:10px;">
-                                <template v-if="itemNumber.status!=3">
+                                <div style="margin-top:10px;">
+
+                                    <el-input v-model="contactsPhone" placeholder="请输入申请人联系手机号"
+                                              style="width: 180px"></el-input>
 
                                     <el-input v-model="handTypeText" placeholder="请选择交件方式" :disabled="!itemVo.id"
                                               readonly style="width: 180px" icon="edit"
                                               @focus="handleChangeHandType"></el-input>
                                     <el-input v-model="takeTypeText" placeholder="请选择取件方式"
-                                              v-if="itemVo.id && !takeTypeVo"
+                                              :disabled="!itemVo.id || takeTypeVo"
                                               readonly style="width: 180px" icon="edit"
                                               @focus="handleChangeTakeType"></el-input>
                                     <!--抽了号，但是号不是正在处理的不能点击确认收件；或者不关心是否抽号和抽号状态，没有手机号或姓名或身份证号或统一社会信用代码的按钮不可点击（莲湖直接收件）-->
+                                </div>
+                                <div style="margin-top:10px;">
                                     <el-button
-                                            :disabled="(itemNumber.id &&  itemNumber.status!=6) || !memberPhone || !memberRealname ||!memberCode || submiting || !itemVo || !itemVo.id"
+                                            :disabled="disableSubmit"
                                             type="primary"
                                             :loading="submiting" @click="pass">
                                         确认收件
@@ -768,11 +780,34 @@
                                         不予受理
                                     </el-button>
 
-                                </template>
+                                    <el-button type="primary" @click="resetForm">
+                                        清空
+                                    </el-button>
+                                </div>
+                                <p v-show="showInputForm =='1' || itemNumber.status == 6"
+                                   style="color:red;padding:0px;margin:10px 0px;list-style: none;">
+                                    <span v-show="!memberCode">缺少{{memberType==2?'法人':'自然人'}}身份证号码；</span>
+                                    <span v-show="!memberPhone">缺少{{memberType==2?'法人':'自然人'}}手机号；</span>
+                                    <span v-show="!contactsPhone">缺少联系手机号；</span>
+                                    <span v-show="memberType=='2' && !companyCode">缺少社会统一信用代码；</span>
+                                    <span v-show="memberType=='2' && !companyName">缺少公司名称；</span>
+                                    <span v-show="memberType=='2' && !companyAddress">缺少公司地址；</span>
+                                    <span v-show="!itemVo.id">缺少事项；</span>
+                                </p>
+                            </template>
+                            <template v-else>
+                                <el-button type="primary" @click="print_ywsld">打印业务受理单</el-button>
+                                <el-button type="primary" @click="print_wlzyd">打印物料转移单</el-button>
                                 <el-button type="primary" @click="resetForm">
                                     清空
                                 </el-button>
-                            </div>
+                            </template>
+                            <template v-if="itemNumber.status==4">
+                                <el-button type="primary" @click="print_ycxgzd">打印一次性告知单</el-button>
+                                <el-button type="primary" @click="resetForm">
+                                    清空
+                                </el-button>
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -885,8 +920,6 @@
                 <el-button type="primary" icon="circle-check" @click="saveTakeType">确 定</el-button>
             </div>
         </el-dialog>
-
-
         <el-dialog title="收件箱办件受理" :visible.sync="displayPendingFromBoxDialog" size="large">
             <el-table :data="pendingFromBoxList" v-loading="pendingFromBoxListLoading"
 
@@ -978,6 +1011,7 @@
                 loginCallerKey: '',
                 memberCode: '',
                 memberRealname: '',
+                contactsPhone: '', //联系人手机号
                 memberPhone: '',
                 companyName: '',
                 companyCode: '',
@@ -1130,6 +1164,19 @@
             },
             takeTypeText() {
                 return enums(parseToInt(this.itemTakeTypeVo.takeType), 'TakeType');
+            },
+            disableSubmit() {
+
+                return (this.itemNumber.id && this.itemNumber.status != 6) || (!this.memberCode) ||
+                    (!this.memberPhone) ||
+                    (!this.contactsPhone) ||
+                    (this.memberType == '2' && !this.companyCode) ||
+                    (this.memberType == '2' && !this.companyName) ||
+                    (this.memberType == '2' && !this.companyAddress) ||
+                    (!this.itemVo.id)
+
+                // return (this.itemNumber.id && this.itemNumber.status != 6) || !this.memberPhone || !this.memberRealname || !this.memberCode || this.submiting || !this.itemVo || !this.itemVo.id
+                //     || !this.contactsPhone;
             }
         },
 //        beforeRouteEnter(to, from, next) {
@@ -1310,26 +1357,26 @@
                         if (c) {
                             this.numberTab = 'company';
                             this.companyInfo = c;
-                            if(this.showInputForm =='1'){ //如果是窗口收件，自动覆盖输入框中的值
+                            if (this.showInputForm == '1') { //如果是窗口收件，自动覆盖输入框中的值
                                 if (c.lxdh && c.lxdh.length == 11 && !this.memberPhone) {
                                     this.memberPhone = c.lxdh;
                                 } else {
                                     // this.$message.warning("工商信息表中联系方式不是手机号码");
                                     // this.memberPhone = "";
                                 }
-                                if(!this.memberRealname) {
+                                if (!this.memberRealname) {
                                     this.memberRealname = c.fr;
                                 }
-                                if(!this.companyName) {
+                                if (!this.companyName) {
                                     this.companyName = c.qymc;
                                 }
-                                if(!this.companyCode) {
+                                if (!this.companyCode) {
                                     this.companyCode = c.ty_code;
                                 }
-                                if(!this.memberCode) {
+                                if (!this.memberCode) {
                                     this.memberCode = c.fr_id ? c.fr_id : '';
                                 }
-                                if(!this.companyAddress) {
+                                if (!this.companyAddress) {
                                     this.companyAddress = c.jgzs;
                                 }
                             }
@@ -1463,6 +1510,9 @@
                             if (!this.memberPhone) {
                                 this.memberPhone = this.member.mobilephone;
                             }
+                            if (!this.memberCode) {
+                                this.memberCode = this.member.memberCode;
+                            }
                         }
                     } else {
                         this.$message.error(response.msg);
@@ -1497,6 +1547,20 @@
                             }
                             if (!this.memberPhone) {
                                 this.memberPhone = this.member.mobilephone;
+                            }
+                            if (!this.memberCode) {
+                                this.memberCode = this.member.memberCode;
+                            }
+                            if (this.member.type == 2 && this.member.legalPerson) {
+                                if (!this.companyName) {
+                                    this.companyName = this.member.legalPerson.companyName;
+                                }
+                                if (!this.companyCode) {
+                                    this.companyCode = this.member.legalPerson.companyCode;
+                                }
+                                if (!this.companyAddress) {
+                                    this.companyAddress = this.member.legalPerson.registerPlace;
+                                }
                             }
                         }
                     } else {
@@ -1745,7 +1809,7 @@
              */
             queryCurrentNumber() {
                 let _this = this;
-                this.showInputForm = 1;
+                // this.showInputForm = '1';
                 this.resetForm();
                 this.queryLoading = true;
                 queryCurrentNumber({}).then(response => {
@@ -1844,6 +1908,9 @@
                     this.$message.warning('请选择取件方式');
                     return;
                 }
+                if (!this.contactsPhone) {
+                    this.$message.warning('请输入联系人手机号');
+                }
                 //判断如果是无预审收件，则验证无预审表单各项目是否填写完整
                 if (this.memberType == 1) { //自然人
                     //判断姓名，手机号，身份证号是否填写
@@ -1910,6 +1977,7 @@
                             memberPhone: this.memberPhone,
                             companyCode: this.companyCode,
                             companyName: this.companyName,
+                            contactsPhone: this.contactsPhone,
                             received: checked_m.join(','),
                             remark: this.remark,
                             itemHandTypeVo: this.itemHandTypeVo,
@@ -1937,6 +2005,7 @@
                             status: 3,  //受理
                             remark: this.remark,
                             received: checked_m.join(','),
+                            contactsPhone: this.contactsPhone,
                             itemHandType: this.itemHandType,
                             itemHandTypeVo: this.itemHandTypeVo,
                             itemTakeTypeVo: this.takeTypeVo && this.takeTypeVo.takeType ? {} : this.itemTakeTypeVo
