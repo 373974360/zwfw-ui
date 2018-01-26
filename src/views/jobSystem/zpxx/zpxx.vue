@@ -8,14 +8,8 @@
                     搜索
                 </el-button>
             </el-tooltip>
-            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="推荐" placement="top-start">
-                <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="circle-check"
-                           @click="handleIsRec">
-                    推荐
-                </el-button>
-            </el-tooltip>
             <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="取消推荐" placement="top-start">
-                <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="circle-cross"
+                <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="delete"
                            @click="handleNotRec">
                     取消推荐
                 </el-button>
@@ -25,13 +19,13 @@
                            @click="handleUnaudit">
                     撤销审核
                 </el-button>
-            </el-tooltip>
+            </el-tooltip>-->
             <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
                 <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="delete"
                            @click="handleDelete">
                     删除
                 </el-button>
-            </el-tooltip>-->
+            </el-tooltip>
         </div>
         <el-table :data="list" v-loading.body="listLoading" border fit style="width: 100%"
                   @selection-change="handleSelectionChange">
@@ -396,39 +390,6 @@
                                 this.$message.success('撤销成功');
                             } else {
                                 this.$message.error('撤销失败！');
-                            }
-                            this.listLoading = false;
-                        })
-                        for (const deleteRow of this.selectedRows) {
-                            const index = this.list.indexOf(deleteRow);
-                            this.list.splice(index, 1);
-                        }
-                    }).catch(() => {
-                        console.dir('取消');
-                    });
-                }
-            },
-            handleIsRec() {
-                var selectCounts = this.selectedRows.length;
-                if (this.selectedRows == 0) {
-                    this.$message.warning('请选择需要操作的记录');
-                } else {
-                    this.$confirm('此操作将推荐企业信息到指定位置, 是否继续?', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-                        let ids = new Array();
-                        for (const deleteRow of this.selectedRows) {
-                            ids.push(deleteRow.id);
-                        }
-                        this.listLoading = true;
-                        resetOrganZpxx({"ids": ids, "isrec": 2}).then(response => {
-                            if (response.httpCode == 200) {
-                                this.getList();
-                                this.$message.success('推荐成功');
-                            } else {
-                                this.$message.error('推荐失败！');
                             }
                             this.listLoading = false;
                         })

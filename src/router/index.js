@@ -60,9 +60,11 @@ const MemberPersonal = () => import('../views/jobSystem/personal/personal');
 
 /* 企业信息库 */
 const MemberOrganDs = () => import('../views/jobSystem/organ/organ_ds');
+const MemberOrganAuth = () => import('../views/jobSystem/organ/organ_auth');
+const MemberOrganRec = () => import('../views/jobSystem/organ/organ_rec');
 const MemberOrgan = () => import('../views/jobSystem/organ/organ');
 /* 招聘信息 */
-const ZpxxDs = () => import('../views/jobSystem/zpxx/zpxx_ds');
+const ZpxxRec = () => import('../views/jobSystem/zpxx/zpxx_rec');
 const Zpxx = () => import('../views/jobSystem/zpxx/zpxx');
 
 
@@ -323,6 +325,18 @@ export const asyncRouterMap = [
                 meta: {permission: 'jobSystem:member:organ:statuslist'}
             },
             {
+                path: 'organ_auth',
+                component: MemberOrganAuth,
+                name: '申请实名认证企业',
+                meta: {permission: 'jobSystem:member:organ:authlist'}
+            },
+            {
+                path: 'organ_rec',
+                component: MemberOrganRec,
+                name: '申请推荐企业',
+                meta: {permission: 'jobSystem:member:organ:reclist'}
+            },
+            {
                 path: 'organ',
                 component: MemberOrgan,
                 name: '企业信息管理',
@@ -338,12 +352,12 @@ export const asyncRouterMap = [
         icon: 'neirongguanli',
         component: Layout,
         children: [
-            /*{
-                path: 'zpxx_ds',
-                component: ZpxxDs,
-                name: '待审信息',
+            {
+                path: 'zpxx_rec',
+                component: ZpxxRec,
+                name: '申请推荐招聘信息',
                 meta: {permission: 'jobSystem:zpxx:notstatus:list'}
-            },*/
+            },
             {
                 path: 'zpxx',
                 component: Zpxx,

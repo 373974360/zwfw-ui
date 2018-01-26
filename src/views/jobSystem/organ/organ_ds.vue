@@ -11,6 +11,9 @@
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleAudit" type="primary" icon="circle-check">
                 审核
             </el-button>
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleNoAudit" type="danger" icon="delete">
+                驳回
+            </el-button>
         </div>
         <el-table ref="table_demo" :data="list" v-loading.body="listLoading" border fit style="width: 100%"
                   @selection-change="handleSelectionChange">
@@ -247,6 +250,34 @@
                         this.$message.error(response.msg);
                     }
                 })
+            },
+            handleNoAudit() {
+                if (this.selectedRows.length === 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将驳回企业的信息审核, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.listLoading = true;
+                        let ids = [];
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id_);
+                        }
+                        resetJobOrgan({"ids": ids, "status": 3}).then(response => {
+                            if (response.httpCode === 200) {
+                                this.$message.success('驳回成功！');
+                                this.getList();
+                            } else {
+                                this.$message.error('驳回失败！');
+                            }
+                            this.listLoading = false;
+                        })
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
             },
             handleAudit() {
                 if (this.selectedRows.length === 0) {

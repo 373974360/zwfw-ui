@@ -10,8 +10,14 @@
             </el-tooltip>
             <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="审核" placement="top-start">
                 <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="circle-check"
-                           @click="handleAudit">
+                           @click="handleIsRec">
                     审核
+                </el-button>
+            </el-tooltip>
+            <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
+                <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="delete"
+                           @click="handleNoRec">
+                    驳回
                 </el-button>
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
@@ -233,7 +239,8 @@
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     zwmc: '',
-                    status: 1
+                    status: 2,
+                    isrec: 3
                 },
                 selectedRows: [],
                 dialogVisible: false,
@@ -357,12 +364,12 @@
                     });
                 }
             },
-            handleAudit() {
+            handleIsRec() {
                 var selectCounts = this.selectedRows.length;
                 if (this.selectedRows == 0) {
                     this.$message.warning('请选择需要操作的记录');
                 } else {
-                    this.$confirm('此操作将审核通过企业发布的招聘信息, 是否继续?', '提示', {
+                    this.$confirm('此操作将通过招聘信息的推荐申请, 是否继续?', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning'
@@ -372,12 +379,45 @@
                             ids.push(deleteRow.id);
                         }
                         this.listLoading = true;
-                        resetOrganZpxx({"ids": ids, "status": 2}).then(response => {
+                        resetOrganZpxx({"ids": ids, "isrec": 2}).then(response => {
                             if (response.httpCode == 200) {
                                 this.getList();
                                 this.$message.success('审核成功');
                             } else {
                                 this.$message.error('审核失败！');
+                            }
+                            this.listLoading = false;
+                        })
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.list.indexOf(deleteRow);
+                            this.list.splice(index, 1);
+                        }
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
+            handleNoRec() {
+                var selectCounts = this.selectedRows.length;
+                if (this.selectedRows == 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将驳回招聘信息的推荐申请, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        let ids = new Array();
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        this.listLoading = true;
+                        resetOrganZpxx({"ids": ids, "isrec": 4}).then(response => {
+                            if (response.httpCode == 200) {
+                                this.getList();
+                                this.$message.success('驳回成功');
+                            } else {
+                                this.$message.error('驳回失败！');
                             }
                             this.listLoading = false;
                         })
