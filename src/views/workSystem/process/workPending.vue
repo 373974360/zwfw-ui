@@ -161,7 +161,7 @@
                     <h2 class="h2-style-show">上传附件：</h2>
                     <div style="margin-bottom:20px;">
                         <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
-                                   :action="uploadAction" :file-list="uploadAvatars"
+                                   :action="uploadAction" :file-list="uploadAvatars" multiple
                                    :on-success="handleAvatarSuccess"
                                    :on-error="handlerAvatarError"
                                    :show-file-list="true"
@@ -822,23 +822,33 @@
                 window.open(file.url);
             },
             handleRemove(file) {
-                this.dialogLoading = true;
-
-                console.log(file);
-                const data = {
-                    id: file.id,
-                    taskId: file.taskId
-                }
-                workUploadImgRemove(data).then(response => {
-                    this.dialogLoading = false;
-                    if(response.httpCode === 200){
-                        this.$message.success("删除成功");
-                    }else{
-                        this.$message.error("删除失败");
+                this.$confirm(msg, '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.dialogLoading = true;
+                    console.log(file);
+                    const data = {
+                        id: file.id,
+                        taskId: file.taskId
                     }
-                }).then(e=>{
-                    this.dialogLoading = false;
-                })
+                    workUploadImgRemove(data).then(response => {
+                        this.dialogLoading = false;
+                        if(response.httpCode === 200){
+                            this.$message.success("删除成功");
+                        }else{
+                            this.$message.error("删除失败");
+                        }
+                    }).then(e=>{
+                        this.dialogLoading = false;
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });;
             }
 
         }
@@ -881,7 +891,7 @@
     }
 
     .h2-style-show {
-        font-weight: 100;
+        font-weight: 400;
         font-size: 24px;
         margin-top: 5px;
     }
