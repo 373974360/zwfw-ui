@@ -74,7 +74,7 @@
                                                                             effect="light">
                                                                     <el-input v-model="memberCode"
                                                                               placeholder="自然人身份证号码"
-                                                                              @keyup.native="toUpperCase">
+                                                                              @keyup.native="toUpperCase" :maxlength="18">
                                                                         <template slot="prepend">身份证号：</template>
                                                                     </el-input>
                                                                 </el-tooltip>
@@ -106,7 +106,7 @@
                                                                 <el-tooltip content="如果已注册点击查询会自动填入，如果未注册请人工填写"
                                                                             placement="bottom"
                                                                             effect="light">
-                                                                    <el-input v-model="memberPhone" placeholder="用户手机号">
+                                                                    <el-input v-model="memberPhone" placeholder="用户手机号" :maxlength="11" :minlength="11">
                                                                         <template slot="prepend">手机号：</template>
                                                                     </el-input>
                                                                 </el-tooltip>
@@ -205,13 +205,13 @@
                                                                             placement="bottom"
                                                                             effect="light">
                                                                     <el-input v-model="memberCode" placeholder="法人身份证号"
-                                                                              @keyup.native="toUpperCase">
+                                                                              @keyup.native="toUpperCase" :maxlength="18">
                                                                         <!--<template slot="prepend">身份证号：</template>-->
                                                                     </el-input>
                                                                 </el-tooltip>
                                                             </el-col>
                                                             <el-col :span="6">
-                                                                <el-input v-model="memberPhone" placeholder="法人手机号">
+                                                                <el-input v-model="memberPhone" placeholder="法人手机号" :maxlength="11">
                                                                     <!--<template slot="prepend">手机号：</template>-->
                                                                 </el-input>
                                                             </el-col>
@@ -324,7 +324,7 @@
                                         </el-radio-group>
                                     </el-col>
                                     <el-col :span="6">
-                                        <el-input v-model="memberCode" placeholder="身份证号码" @keyup.native="toUpperCase">
+                                        <el-input v-model="memberCode" placeholder="身份证号码" @keyup.native="toUpperCase" :maxlength="18">
                                         </el-input>
                                     </el-col>
                                     <el-col :span="5">
@@ -332,7 +332,7 @@
                                         </el-input>
                                     </el-col>
                                     <el-col :span="5">
-                                        <el-input v-model="memberPhone" placeholder="手机号">
+                                        <el-input v-model="memberPhone" placeholder="手机号" :maxlength="11">
                                         </el-input>
                                     </el-col>
                                 </el-row>
@@ -650,6 +650,31 @@
                                     <el-table-column
                                             prop="paperDescription"
                                             label="纸质说明">
+                                        <template scope="scope">
+                                            {{scope.row.paperDescription}}
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column
+                                            label="上传">
+                                        <template scope="scope">
+                                            <el-upload
+                                                    name="uploadFile"
+                                                    action="https://jsonplaceholder.typicode.com/posts/"
+                                                    :file-list="uploadFileListMap[scope.row.id]"
+                                                    :data="scope.row"
+                                                    :accept="acceptTypes"
+                                                    :action="uploadAction"
+                                                    :on-preview="handleUploadPreview"
+                                                    :on-remove="handleUploadRemove"
+                                                    :on-progress="handleUploadProgress"
+                                                    :on-success="handleUploadSuccess"
+                                                    :on-error="handleUploadError"
+                                                    :before-upload="beforeUpload"
+                                                    :show-file-list="false"
+                                                    multiple>
+                                                <el-button size="small" type="primary">上传</el-button>
+                                            </el-upload>
+                                        </template>
                                     </el-table-column>
                                     <!--<el-table-column-->
                                     <!--prop="notice"-->
@@ -759,7 +784,7 @@
                                 <div style="margin-top:10px;" v-if="itemNumber.status!=4">
 
                                     <el-input v-model="contactsPhone" placeholder="请输入申请人联系手机号"
-                                              style="width: 180px"></el-input>
+                                              style="width: 180px" :maxlength="11"></el-input>
 
                                     <el-input v-model="handTypeText" placeholder="请选择交件方式" :disabled="!itemVo.id"
                                               readonly style="width: 180px" icon="edit"
@@ -883,7 +908,7 @@
                               v-if="itemTakeTypeVo.takeType == 3 && !cardVisible"
                               :rules="itemTakeTypeVo.takeType == 3 ? takeTypeInfoRules.postPhone : []">
                     <el-input v-model="itemTakeTypeVo.postInfo.mobilephone"
-                              @blur="validateField('takeTypeForm', 'postInfo.mobilephone')"></el-input>
+                              @blur="validateField('takeTypeForm', 'postInfo.mobilephone')" :maxlength="11"></el-input>
                 </el-form-item>
                 <el-form-item label="收件地址" prop="postInfo.address" v-if="itemTakeTypeVo.takeType == 3 && !cardVisible"
                               :rules="itemTakeTypeVo.takeType == 3 ? takeTypeInfoRules.postAddress : []">
@@ -1147,8 +1172,12 @@
                 pendingFromBoxList: [],
                 pendingFromBoxListLoading: false,
                 isScanInput: false,
-                loadingItem: false
-
+                loadingItem: false,
+                /*上传材料*/
+                uploadFileListMap: {},
+                currentUploadMaterialId:null,
+                uploadAction: this.$store.state.app.uploadUrl,
+                acceptTypes: this.$store.state.app.fileAccepts
             }
         },
         watch: {
@@ -1191,6 +1220,35 @@
 //            })
 //        },
         methods: {
+            handleUploadSuccess(response, file, fileList) {
+                console.log(file);
+                if (response.state === 'SUCCESS') {
+                    this.$message.success(file + '上传成功！');
+                } else {
+                    this.$message.error('上传失败！');
+                }
+            },
+            handleUploadError(err, file, fileList) {
+                console.log(file);
+                this.$message.error('网络不稳定，'+file+'上传失败');
+
+            },
+            handleUploadProgress(event, file, fileList) {
+
+            },
+            beforeUpload(file) {
+                const limitSize = file.size / 1024 / 1024 < 50;
+                if (!limitSize) {
+                    this.$message.error('上传文件大小不能超过 50MB!');
+                }
+                return limitSize;
+            },
+            handleUploadPreview(file) {
+
+            },
+            handleUploadRemove(file, fileList) {
+
+            },
             queryPendingFromBoxList() {
                 this.pendingFromBoxList = [];
                 this.pendingFromBoxListLoading = true;
