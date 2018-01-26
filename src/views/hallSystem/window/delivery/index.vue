@@ -414,7 +414,8 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button v-if="offlineReadonly && processOfflineInfo.offlineFlag" icon="edit" type="primary" @click="updateProcessOffline">编辑</el-button>
-                <el-button icon="circle-cross" type="danger" @click="resetProcessOfflineForm">取 消</el-button>
+                <el-button v-if="offlineReadonly && processOfflineInfo.offlineFlag" icon="circle-cross" type="danger" @click="handleDeleteProcessOffline">删除</el-button>
+                <el-button v-if="!offlineReadonly" icon="circle-cross" type="danger" @click="resetProcessOfflineForm">取 消</el-button>
                 <el-button v-if="!offlineReadonly" type="primary" icon="circle-check" @click="submitProcessOffline"
                            :loading="btnLoading">确 定</el-button>
             </div>
@@ -458,7 +459,7 @@
     import {getByNameOrLoginName, getMemberById} from '../../../../api/hallSystem/member/member'
     import {idCardExist} from '../../../../api/hallSystem/member/naturePerson'
     import {creditCodeExist} from '../../../../api/hallSystem/member/legalPerson'
-    import {getFinishList, addProcessOffline, saveExpressInfo, saveTakeType, complete, reserve, cancelReserve,
+    import {getFinishList, addProcessOffline, deleteProcessOffline, saveExpressInfo, saveTakeType, complete, reserve, cancelReserve,
         getOrderStatus, getOrderDetail} from '../../../../api/hallSystem/window/delivery'
     import {getAllAddresseesByMemberId, getMemberAddresseeById} from '../../../../api/hallSystem/member/memberAddressee';
     import {queryLogistics} from '../../../../api/hallSystem/window/express'
@@ -1251,6 +1252,29 @@
                     this.processOfflineInfo.hasMemberId = false;
                 }
                 this.offlineReadonly = false;
+            },
+            handleDeleteProcessOffline() {
+                if (![1, 3, 6].includes(this.processOfflineInfo.takeTypeInfo.flagTakeCert)) {
+                    this.$message.error('当前状态不允许删除');
+                    return;
+                }
+                this.$confirm('确定要删除该条信息吗？', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    deleteProcessOffline(this.processOfflineInfo.processNumber).then(response => {
+                        if (response.httpCode === 200) {
+                            this.$message.success('删除成功');
+                            this.processOfflineVisible = false;
+                            this.getList();
+                        } else {
+                            this.$message.error('删除失败');
+                        }
+                    })
+                }).catch(() => {
+                    console.dir('取消');
+                })
             },
             showLogistics(takeTypeInfo) {
                 let company = takeTypeInfo.postInfo.expressCompany;
