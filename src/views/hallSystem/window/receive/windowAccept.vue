@@ -1389,14 +1389,14 @@
                             this.$message.warning("企业信息中没有搜索到【" + this.companyCode + "】企业信息");
                             if (this.isScanInput) {
                                 this.companyInfo.jgzs = this.companyAddress || '';
-                                addCompanyInfo(this.companyInfo).then(response => {
-                                    this.isScanInput = false;
-                                    if (response.httpCode === 200) {
-                                        console.dir('插入远程工商信息库数据成功');
-                                    } else {
-                                        this.$message.error("插入远程工商信息库数据失败");
-                                    }
-                                })
+                                // addCompanyInfo(this.companyInfo).then(response => {
+                                //     this.isScanInput = false;
+                                //     if (response.httpCode === 200) {
+                                //         console.dir('插入远程工商信息库数据成功');
+                                //     } else {
+                                //         this.$message.error("插入远程工商信息库数据失败");
+                                //     }
+                                // })
                             }
                         }
                     } else {
