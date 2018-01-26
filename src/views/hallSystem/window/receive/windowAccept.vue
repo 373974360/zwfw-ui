@@ -1348,7 +1348,6 @@
              * 查询企业信息
              */
             queryCompanyInfo() {
-                this.companyInfo = {};
                 if (!checkSocialCreditCode(this.companyCode)) {
                     this.companyInfo = {};
                     this.$message.warning("社会统一信用代码不正确，请重新输入");
