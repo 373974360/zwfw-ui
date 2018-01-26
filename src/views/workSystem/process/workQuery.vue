@@ -168,6 +168,12 @@
                                             <th width="140">联系电话</th>
                                             <td >{{member.legalPerson.phone}}</td>
                                         </tr>
+                                        <tr>
+                                            <th width="140">办事员电话</th>
+                                            <td >{{itemProcessVo.contactsPhone}}</td>
+                                            <th width="140"></th>
+                                            <td ></td>
+                                        </tr>
                                         <template v-if="companyInfo.id">
                                             <tr>
                                                 <th width="140">联系电话</th>
