@@ -513,7 +513,7 @@
                     </el-upload>
                 </el-form-item>
             </el-form>
-            <div slot="footer" class="dialog-footer" style="text-align: center;">
+            <div slot="footer" class="dialog-footer" style="margin-top:30px; text-align: center;">
                 <el-button icon="circle-cross" type="danger" @click="closeZwfwItemForm">取 消
                 </el-button>
                 <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="doItemCreate">
@@ -1219,12 +1219,16 @@
                     this.resultExampleFileList.push({url: this.zwfwItem.resultExample, name: '结果样本'});
                 }
                 if (this.zwfwItem.handTypes) {
-                    this.zwfwItem.handTypes = this.zwfwItem.handTypes.split(',');
+                    if(typeof this.zwfwItem.handTypes == 'string') {
+                        this.zwfwItem.handTypes = this.zwfwItem.handTypes.split(',');
+                    }
                 } else {
                     this.zwfwItem.handTypes = []
                 }
                 if (this.zwfwItem.takeTypes) {
-                    this.zwfwItem.takeTypes = this.zwfwItem.takeTypes.split(',');
+                    if(typeof this.zwfwItem.takeTypes == 'string') {
+                        this.zwfwItem.takeTypes = this.zwfwItem.takeTypes.split(',');
+                    }
                 } else {
                     this.zwfwItem.takeTypes = []
                 }
