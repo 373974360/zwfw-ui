@@ -168,6 +168,12 @@
                                             <th width="140">联系电话</th>
                                             <td >{{member.legalPerson.phone}}</td>
                                         </tr>
+                                        <tr>
+                                            <th width="140">办事员电话</th>
+                                            <td >{{itemProcessVo.contactsPhone}}</td>
+                                            <th width="140"></th>
+                                            <td ></td>
+                                        </tr>
                                         <template v-if="companyInfo.id">
                                             <tr>
                                                 <th width="140">联系电话</th>
@@ -326,6 +332,8 @@
                             </table>
                         </el-tab-pane>
                         <el-tab-pane label="办件材料" name="fifth">
+                            <el-button @click="downloadMaterialFiles()" type="primary">一键下载材料</el-button><br><br>
+                            <!--<el-button @click="printMaterialFiles()" type="primary">打印</el-button><br><br>-->
                             <table class="table table-bordered table-responsive">
                                 <tr>
                                     <th>序号</th>
@@ -616,6 +624,13 @@
             handlePictureCardPreview(file) {
                 window.open(file.url);
             },
+            downloadMaterialFiles() {
+                console.log(this.itemProcessVo);
+                window.open('/api/common/downloadMaterialFiles?processNumber='+this.itemProcessVo.processNumber+'&taskId='+this.itemProcessVo.taskId);
+            },
+            printMaterialFiles() {
+                print();
+            }
 
         }
     }
