@@ -1240,8 +1240,9 @@
                 const limitSize = file.size / 1024 / 1024 < 50;
                 if (!limitSize) {
                     this.$message.error('上传文件大小不能超过 50MB!');
+                    return false;
                 }
-                return limitSize;
+                return true;
             },
             handleUploadPreview(file) {
 
