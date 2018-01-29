@@ -340,6 +340,12 @@
                         </div>
                     </el-card>
                 </el-form-item>
+                <el-form-item label="出件窗口" v-if="offlineReadonly && window && window.name">
+                    <span>&nbsp;&nbsp;<b>{{window.name}}</b></span>
+                </el-form-item>
+                <el-form-item label="出件人员" v-if="offlineReadonly && user && user.name">
+                    <span>&nbsp;&nbsp;<b>{{user.name}} {{user.empNo}}</b></span>
+                </el-form-item>
                 <el-form-item label="申请人是否注册帐号" v-show="!offlineReadonly">
                     <el-radio-group v-model="processOfflineInfo.hasMemberId">
                         <el-radio :label="true">已注册</el-radio>
@@ -462,7 +468,9 @@
     import {getFinishList, addProcessOffline, deleteProcessOffline, saveExpressInfo, saveTakeType, complete, reserve, cancelReserve,
         getOrderStatus, getOrderDetail} from '../../../../api/hallSystem/window/delivery'
     import {getAllAddresseesByMemberId, getMemberAddresseeById} from '../../../../api/hallSystem/member/memberAddressee';
-    import {queryLogistics} from '../../../../api/hallSystem/window/express'
+    import {queryLogistics} from '../../../../api/hallSystem/window/express';
+    import {getUserInfo} from '../../../../api/baseSystem/org/user'
+    import {getWindowInfo} from '../../../../api/hallSystem/lobby/window'
 
     export default {
         name: 'table_demo',
@@ -558,6 +566,8 @@
                         takeType: '',
                         flagTakeCert: undefined,
                         takeCertTime: undefined,
+                        userId: undefined,
+                        windowId: undefined,
                         mailboxInfo: {
                             id: undefined,
                             mailboxId: '',
@@ -595,6 +605,8 @@
                         phone: ''
                     }
                 },
+                user: {},
+                window: {},
                 processOfflineInfoRules: {
                     itemId: [
                         {required: true, message: '请选择事项', trigger: 'change'}
@@ -1001,9 +1013,9 @@
                             this.dialogLoading = false;
                             this.btnLoading = false;
                             if (response.httpCode === 200) {
-                                this.resetProcessOfflineForm();
                                 this.$message.success('保存成功');
                                 this.getList();
+                                this.resetProcessOfflineForm();
                             } else {
                                 this.$message.error('保存失败');
                             }
@@ -1237,6 +1249,8 @@
             },
             showProcessTakeInfo(row) {
                 this.offlineReadonly = true;
+                this.getUser(row.takeTypeInfo.userId);
+                this.getWindow(row.takeTypeInfo.windowId);
                 Promise.all([
                     this.getMemberInfo(row.memberId),
                     this.changeMemberAddressee(row.memberId)
@@ -1246,6 +1260,28 @@
                     this.processOfflineInfo.memberId += '';
                     this.processOfflineVisible = true;
                 });
+            },
+            getUser(userId) {
+                if (userId) {
+                    getUserInfo(userId).then(response => {
+                        if (response.httpCode === 200) {
+                            this.user = response.data;
+                        } else {
+                            this.$message.error('获取出件人员信息失败');
+                        }
+                    })
+                }
+            },
+            getWindow(windowId) {
+                if (windowId) {
+                    getWindowInfo(windowId).then(response => {
+                        if (response.httpCode === 200) {
+                            this.window = response.data;
+                        } else {
+                            this.$message.error('获取出件窗口信息失败');
+                        }
+                    })
+                }
             },
             updateProcessOffline() {
                 if (this.memberInfo.enable !== 1) {
@@ -1389,6 +1425,8 @@
                         takeType: '',
                         flagTakeCert: undefined,
                         takeCertTime: undefined,
+                        userId: undefined,
+                        windowId: undefined,
                         mailboxInfo: {
                             id: undefined,
                             mailboxId: '',
@@ -1425,7 +1463,9 @@
                         idcard: '',
                         phone: ''
                     }
-                }
+                };
+                this.user = {};
+                this.window = {};
             },
             resetOfflineCardHeader() {
                 this.offlineCardHeader = {
