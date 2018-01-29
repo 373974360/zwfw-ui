@@ -795,7 +795,7 @@
                                     <span v-show="!contactsPhone">缺少联系手机号；</span>
                                     <span v-show="memberType=='2' && !companyCode">缺少社会统一信用代码；</span>
                                     <span v-show="memberType=='2' && !companyName">缺少公司名称；</span>
-                                    <span v-show="memberType=='2' && !companyAddress">缺少公司地址；</span>
+                                    <!--<span v-show="memberType=='2' && !companyAddress">缺少公司地址；</span>-->
                                     <span v-show="!itemVo.id">缺少事项；</span>
                                 </p>
                             </template>
@@ -1177,7 +1177,7 @@
                     (!this.contactsPhone) ||
                     (this.memberType == '2' && !this.companyCode) ||
                     (this.memberType == '2' && !this.companyName) ||
-                    (this.memberType == '2' && !this.companyAddress) ||
+                    // (this.memberType == '2' && !this.companyAddress) ||
                     (!this.itemVo.id)
 
                 // return (this.itemNumber.id && this.itemNumber.status != 6) || !this.memberPhone || !this.memberRealname || !this.memberCode || this.submiting || !this.itemVo || !this.itemVo.id
