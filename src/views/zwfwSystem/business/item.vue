@@ -42,15 +42,10 @@
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection"
                   row-class-name="elRow">
             <el-table-column type="selection" width="55"/>
-            <el-table-column align="center" label="序号" width="70">
-                <template scope="scope">
-                    <span>{{scope.row.id}}</span>
-                </template>
-            </el-table-column>
             <el-table-column align="left" label="事项名称" prop="name" width="300">
                 <template scope="scope">
                     <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
-                        <span class="link-type" @click="handleItemUpdate(scope.row)">{{scope.row.name}}</span>
+                        <span class="link-type" @click="handleItemUpdate(scope.row)">{{scope.row.name}}<br/>({{scope.row.id}})</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
@@ -66,9 +61,7 @@
             </el-table-column>
             <el-table-column align="center" label="办件类型" prop="processType">
                 <template scope="scope">
-                    <el-tag :type="scope.row.processType | dics('bjlx')">
                         {{scope.row.processType | dics('bjlx')}}
-                    </el-tag>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="承诺时限" prop="promiseEndTime">
@@ -83,9 +76,7 @@
             </el-table-column>
             <el-table-column align="center" label="办理形式" prop="handleType">
                 <template scope="scope">
-                    <el-tag :type="scope.row.handleType | dics('blxs')">
                         {{scope.row.handleType | dics('blxs')}}
-                    </el-tag>
                 </template>
             </el-table-column>
             <el-table-column prop="enable" class-name="status-col" label="状态">
@@ -95,20 +86,26 @@
                     </el-tag>
                 </template>
             </el-table-column>
-            <el-table-column align="left" label="操作" width="200" class-name="action">
+            <el-table-column align="center" label="操作" width="220">
                 <template scope="scope">
                     <el-badge :value="scope.row.itemMaterialCount" class="item">
                         <el-button class="filter-item" style="" @click="handleMaterialList(scope.row)"
                                    type="primary" size="small">
                             办件材料
                         </el-button>
-                        <br />
-                        <!--<br />-->
-                        <!--<el-button class="filter-item" style="" @click="handleItemConfig(scope.row)"-->
-                                   <!--type="primary" size="small">-->
-                            <!--预约配置-->
-                        <!--</el-button>-->
                     </el-badge>
+
+                    <el-badge :value="scope.row.itemCategoryCount" class="item">
+                        <el-button class="filter-item" style="" @click="handleCategoryList(scope.row)"
+                                   type="primary" size="small">
+                            关联事项分类
+                        </el-button>
+                    </el-badge>
+
+                    <!--<el-button class="filter-item" style="" @click="handleItemConfig(scope.row)"-->
+                    <!--type="primary" size="small">-->
+                    <!--预约配置-->
+                    <!--</el-button>-->
                 </template>
             </el-table-column>
         </el-table>
@@ -120,6 +117,20 @@
             </el-pagination>
         </div>
 
+
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="itemCategoryDialogFormVisible"
+                   :close-on-click-modal="closeOnClickModal" @open="getAllItemCategory">
+            <el-form ref="itemCatrgoryForm" class="small-space" :model="zwfwItem" label-position="left" label-width="80px"
+                     style='width: 80%; margin-left:10%;' v-loading="itemCategoryDialogLoading">
+                <el-tree ref="categoryTree" :data="categoryTree" show-checkbox node-key="id" :default-expand-all="true"
+                         @check-change="categoryTreeChecked" :check-strictly="true"></el-tree>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button icon="circle-cross" type="danger" @click="itemCategoryDialogFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="submitItemCategory">确 定</el-button>
+            </div>
+        </el-dialog> 
+        
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogItemFormVisible" @open="initEditor"
                    :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemForm">
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem" label-position="right"
@@ -754,6 +765,8 @@
     import {getDeptCascader} from 'api/baseSystem/org/dept';
     import {getAllAddressees, getAddresseeById} from 'api/hallSystem/window/addressee';
     import {quillEditor} from 'vue-quill-editor'
+    import {getAllCategoeyItems,createItemCategorys} from '../../../api/zwfwSystem/business/categoryItem';
+    import {getCategoryTree} from '../../../api/zwfwSystem/business/category'
 
     export default {
         name: 'zwfwItem_table',
@@ -780,6 +793,11 @@
                 callback();
             };
             return {
+                childrenChecked: [],
+                itemCategoryDialogLoading:false,
+                itemCategoryDialogFormVisible:false,
+                currentItemCategory: [],
+                categoryTree: [],
                 options: [{
                     value: '1',
                     label: '启用'
@@ -999,6 +1017,7 @@
             }
         },
         computed: {
+
             belongDeptCascader() {
                 if (this.zwfwItem.departmentId) {
                     if (this.zwfwItem.departmentTreePosition) {
@@ -1055,6 +1074,7 @@
             this.getItemList();
             this.getDeptTree();
             this.getAddresseeList();
+            this.getCategoryTree()
         },
         watch: {
             'zwfwItem.addresseeId'() {
@@ -1071,6 +1091,64 @@
 
         },
         methods: {
+            getCategoryTree: function () {
+                getCategoryTree().then(response => {
+                    if (response.httpCode === 200) {
+                        this.categoryTree = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                })
+            },
+            handleCategoryList(item){
+                this.currentItemCategory = item;
+                this.dialogStatus = '关联事项分类';
+                this.itemCategoryDialogFormVisible = true;
+            },
+            getAllItemCategory() {
+                this.$nextTick(() => {
+                    this.itemCategoryDialogLoading = true;
+                    this.$refs.categoryTree.setCheckedKeys([])
+                    getAllCategoeyItems(this.currentItemCategory.id).then(response => {
+                        if (response.httpCode === 200) {
+                            const itemCategoryInfo = response.data;
+                            for (const i of itemCategoryInfo) {
+                                this.$refs.categoryTree.setChecked(i.categoryId, true, false);
+                            }
+                        } else {
+                            this.$message.error(response.msg);
+                        }
+                        this.itemCategoryDialogLoading = false;
+                    })
+                })
+            },
+            categoryTreeChecked(data, checked) {
+                if (checked) {
+                    if (data.parentId != 0) {
+                        this.$refs.categoryTree.setChecked(data.parentId, true, false);
+                    }
+                } else {
+                    if (data.children != null && data.children.length > 0) {
+                        for (let c of data.children) {
+                            this.$refs.categoryTree.setChecked(c.id, false, true);
+                        }
+                    }
+                }
+            },
+            submitItemCategory() {
+                this.itemCategoryDialogLoading = true;
+                let checked = this.$refs.categoryTree.getCheckedKeys(false);
+                createItemCategorys(this.currentItemCategory.id,checked).then(response => {
+                    this.itemCategoryDialogLoading = false;
+                    this.roleMenuDialogFormVisible = false;
+                    if (response.httpCode === 200) {
+                        this.$message.success('关联成功！');
+                        this.currentItemCategory.itemCategoryCount = checked.length;
+                    } else {
+                        this.$message.error('关联失败！');
+                    }
+                })
+            },
             preorderChange(value) {
                 console.log(value);
             },
@@ -1863,13 +1941,6 @@
     }
 </style>
 <style rel="stylesheet/scss" lang="scss">
-    .el-table th.action .cell{line-height:50px;}
-    .elRow {
-        height: 50px;
-    }
-    .action .cell {
-        height: 50px;
-    }
     .card-header {
 
     .card-item {

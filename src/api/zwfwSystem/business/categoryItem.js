@@ -48,6 +48,13 @@ export function getAllCategoeyItem(categoryId) {
         params: {categoryId}
     })
 }
+export function getAllCategoeyItems(itemId) {
+    return fetch({
+        url: '/api/zwfwSystem/business/categoryItem/getAll',
+        method: 'get',
+        params: {itemId}
+    })
+}
 
 export function getAllPageList(query) {
     return fetch({
@@ -57,4 +64,13 @@ export function getAllPageList(query) {
     })
 }
 
+
+export function createItemCategorys(itemId, categoryIds) {
+    const data = {itemId, categoryIds};
+    return fetch({
+        url: '/api/zwfwSystem/business/categoryItem/addList',
+        method: 'post',
+        data
+    })
+}
 
