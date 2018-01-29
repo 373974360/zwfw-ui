@@ -33,7 +33,7 @@
                                 </el-row>
                                 <el-row :gutter="10">
                                     <el-col :span="25">
-                                        <el-collapse v-model="showInputForm" style="margin-top:10px;">
+                                        <el-collapse v-model="showInputForm" style="margin-top:10px;" accordion>
                                             <el-collapse-item :title="'窗口办理事项受理'" name="1">
                                                 <el-tabs v-model="memberType" @tab-click="memberTypeChange">
                                                     <el-tab-pane label="自然人" name="1"
@@ -69,10 +69,15 @@
 
                                                         <el-row :gutter="10">
                                                             <el-col :span="19">
-                                                                <el-input v-model="memberCode" placeholder="自然人身份证号码"
-                                                                          @keyup.native="toUpperCase">
-                                                                    <template slot="prepend">身份证号：</template>
-                                                                </el-input>
+                                                                <el-tooltip content="政务网站使用此身份证号码作为用户名登录"
+                                                                            placement="bottom"
+                                                                            effect="light">
+                                                                    <el-input v-model="memberCode"
+                                                                              placeholder="自然人身份证号码"
+                                                                              @keyup.native="toUpperCase">
+                                                                        <template slot="prepend">身份证号：</template>
+                                                                    </el-input>
+                                                                </el-tooltip>
                                                             </el-col>
                                                             <el-col :span="5">
                                                                 <el-tooltip content="查询注册状态，如果未注册，成功受理后会自动注册"
@@ -88,7 +93,7 @@
                                                         </el-row>
                                                         <el-row :gutter="10">
                                                             <el-col :span="11">
-                                                                <el-tooltip content="如果已注册点击查找用户会自动填入，如果未注册请人工填写自然人姓名"
+                                                                <el-tooltip content="如果已注册点击查询会自动填入，如果未注册请人工填写"
                                                                             placement="bottom"
                                                                             effect="light">
                                                                     <el-input v-model="memberRealname"
@@ -98,9 +103,13 @@
                                                                 </el-tooltip>
                                                             </el-col>
                                                             <el-col :span="13">
-                                                                <el-input v-model="memberPhone" placeholder="手机号">
-                                                                    <template slot="prepend">手机号：</template>
-                                                                </el-input>
+                                                                <el-tooltip content="如果已注册点击查询会自动填入，如果未注册请人工填写"
+                                                                            placement="bottom"
+                                                                            effect="light">
+                                                                    <el-input v-model="memberPhone" placeholder="用户手机号">
+                                                                        <template slot="prepend">手机号：</template>
+                                                                    </el-input>
+                                                                </el-tooltip>
                                                             </el-col>
                                                         </el-row>
                                                     </el-tab-pane>
@@ -142,9 +151,14 @@
                                                         </el-row>
                                                         <el-row :gutter="10">
                                                             <el-col :span="12">
-                                                                <el-input v-model="companyCode" placeholder="社会统一信用代码"
-                                                                          @keyup.native="toUpperCase">
-                                                                </el-input>
+                                                                <el-tooltip content="如果只有15位注册号，使用000作为前缀后面跟入15位注册号，可用于注册查询"
+                                                                            placement="bottom"
+                                                                            effect="light">
+                                                                    <el-input v-model="companyCode"
+                                                                              placeholder="社会统一信用代码"
+                                                                              @keyup.native="toUpperCase">
+                                                                    </el-input>
+                                                                </el-tooltip>
                                                             </el-col>
                                                             <el-col :span="6">
                                                                 <el-tooltip content="从工商数据中查询，如果能查到自动填充到输入框"
@@ -163,7 +177,7 @@
                                                                         effect="light">
                                                                     <el-button type="primary"
                                                                                @click="checkLegalMemberExist()"
-                                                                               :disabled="!companyCode">注册查询
+                                                                               :disabled="!companyCode && !memberCode">注册查询
                                                                     </el-button>
                                                                 </el-tooltip>
                                                             </el-col>
@@ -187,13 +201,17 @@
                                                                 </el-input>
                                                             </el-col>
                                                             <el-col :span="10">
-                                                                <el-input v-model="memberCode" placeholder="法人身份证号"
-                                                                          @keyup.native="toUpperCase">
-                                                                    <!--<template slot="prepend">身份证号：</template>-->
-                                                                </el-input>
+                                                                <el-tooltip content="政务网站使用此身份证号码作为认证账号用户名登录，可用于注册查询"
+                                                                            placement="bottom"
+                                                                            effect="light">
+                                                                    <el-input v-model="memberCode" placeholder="法人身份证号"
+                                                                              @keyup.native="toUpperCase">
+                                                                        <!--<template slot="prepend">身份证号：</template>-->
+                                                                    </el-input>
+                                                                </el-tooltip>
                                                             </el-col>
                                                             <el-col :span="6">
-                                                                <el-input v-model="memberPhone" placeholder="手机号">
+                                                                <el-input v-model="memberPhone" placeholder="法人手机号">
                                                                     <!--<template slot="prepend">手机号：</template>-->
                                                                 </el-input>
                                                             </el-col>
@@ -336,7 +354,7 @@
                                                     v-model="selectedItem"
                                                     placeholder="选择分类下的事项"
                                                     filterable
-                                                    @change="changeItem" style="width:100%">
+                                                    @change="changeItem" :loading="loadingItem" style="width:100%" >
                                                 <el-option
                                                         v-for="item in optionsName"
                                                         :key="item.id"
@@ -403,8 +421,12 @@
                                             <th>姓名:</th>
                                             <td>{{member.naturePerson.name}}</td>
                                         </tr>
+                                        <tr v-if="itemNumber!=null && itemNumber.personPhone!=null">
+                                            <th>办事员电话:</th>
+                                            <td>{{itemNumber.personPhone}}</td>
+                                        </tr>
                                         <tr v-if="member!=null && member.naturePerson!=null">
-                                            <th>联系电话:</th>
+                                            <th>自然人手机号:</th>
                                             <td>{{member.naturePerson.phone}}</td>
                                         </tr>
                                         <tr v-if="member!=null && member.legalPerson!=null">
@@ -412,7 +434,7 @@
                                             <td>{{member.legalPerson.legalPerson}}</td>
                                         </tr>
                                         <tr v-if="member!=null && member.legalPerson!=null">
-                                            <th>联系电话:</th>
+                                            <th>法人电话:</th>
                                             <td>{{member.legalPerson.phone}}</td>
                                         </tr>
                                         <tr v-if="member!=null && member.legalPerson!=null">
@@ -726,37 +748,31 @@
 
 
                         <div style="margin-top: 10px;">
-                            <!-- 打印按钮-->
-                            <template v-if="itemNumber.status==3" >
-                                <el-button type="primary" @click="print_ywsld">打印业务受理单</el-button>
-                                <el-button type="primary" @click="print_wlzyd">打印物料转移单</el-button>
-                            </template>
 
-                            <template v-if="itemNumber.status==4" >
-                                <el-button type="primary" @click="print_ycxgzd">打印一次性告知单</el-button>
-                            </template>
-
-                            <div v-if="itemNumber.status==6">
-                                <el-input
+                            <template v-if="itemNumber.status!=3">
+                                <el-input v-if="itemNumber.status!=4"
                                         type="textarea"
                                         :autosize="{ minRows: 2, maxRows: 4}"
                                         placeholder="填写备注"
                                         v-model="remark">
                                 </el-input>
-                            </div>
-                            <div style="margin-top:10px;">
-                                <template v-if="itemNumber.status!=3">
+                                <div style="margin-top:10px;" v-if="itemNumber.status!=4">
+
+                                    <el-input v-model="contactsPhone" placeholder="请输入申请人联系手机号"
+                                              style="width: 180px"></el-input>
 
                                     <el-input v-model="handTypeText" placeholder="请选择交件方式" :disabled="!itemVo.id"
                                               readonly style="width: 180px" icon="edit"
                                               @focus="handleChangeHandType"></el-input>
                                     <el-input v-model="takeTypeText" placeholder="请选择取件方式"
-                                              v-if="itemVo.id && !takeTypeVo"
+                                              :disabled="!itemVo.id"
                                               readonly style="width: 180px" icon="edit"
                                               @focus="handleChangeTakeType"></el-input>
                                     <!--抽了号，但是号不是正在处理的不能点击确认收件；或者不关心是否抽号和抽号状态，没有手机号或姓名或身份证号或统一社会信用代码的按钮不可点击（莲湖直接收件）-->
+                                </div>
+                                <div v-if="itemNumber.status!=4" style="margin-top:10px;">
                                     <el-button
-                                            :disabled="(itemNumber.id &&  itemNumber.status!=6) || !memberPhone || !memberRealname ||!memberCode || submiting || !itemVo || !itemVo.id"
+                                            :disabled="disableSubmit"
                                             type="primary"
                                             :loading="submiting" @click="pass">
                                         确认收件
@@ -768,11 +784,34 @@
                                         不予受理
                                     </el-button>
 
-                                </template>
+                                    <el-button type="primary" @click="resetForm">
+                                        清空
+                                    </el-button>
+                                </div>
+                                <p v-show="showInputForm =='1' || itemNumber.status == 6"
+                                   style="color:red;padding:0px;margin:10px 0px;list-style: none;">
+                                    <span v-show="!memberCode">缺少{{memberType==2?'法人':'自然人'}}身份证号码；</span>
+                                    <span v-show="!memberPhone">缺少{{memberType==2?'法人':'自然人'}}手机号；</span>
+                                    <span v-show="!contactsPhone">缺少联系手机号；</span>
+                                    <span v-show="memberType=='2' && !companyCode">缺少社会统一信用代码；</span>
+                                    <span v-show="memberType=='2' && !companyName">缺少公司名称；</span>
+                                    <span v-show="memberType=='2' && !companyAddress">缺少公司地址；</span>
+                                    <span v-show="!itemVo.id">缺少事项；</span>
+                                </p>
+                            </template>
+                            <template v-else>
+                                <el-button type="primary" @click="print_ywsld">打印业务受理单</el-button>
+                                <el-button type="primary" @click="print_wlzyd">打印物料转移单</el-button>
                                 <el-button type="primary" @click="resetForm">
                                     清空
                                 </el-button>
-                            </div>
+                            </template>
+                            <template v-if="itemNumber.status==4">
+                                <el-button type="primary" @click="print_ycxgzd">打印一次性告知单</el-button>
+                                <el-button type="primary" @click="resetForm">
+                                    清空
+                                </el-button>
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -885,8 +924,6 @@
                 <el-button type="primary" icon="circle-check" @click="saveTakeType">确 定</el-button>
             </div>
         </el-dialog>
-
-
         <el-dialog title="收件箱办件受理" :visible.sync="displayPendingFromBoxDialog" size="large">
             <el-table :data="pendingFromBoxList" v-loading="pendingFromBoxListLoading"
 
@@ -929,6 +966,7 @@
         // addCompanyInfo,
         getItemInfo,
         submitNoPretrial,
+        rejectNoPretrial,
         getCurrentUserLoginedWindow,
         sendFastRegPhoneCode,
         checkLegalMemberExist,
@@ -978,6 +1016,7 @@
                 loginCallerKey: '',
                 memberCode: '',
                 memberRealname: '',
+                contactsPhone: '', //联系人手机号
                 memberPhone: '',
                 companyName: '',
                 companyCode: '',
@@ -1130,6 +1169,19 @@
             },
             takeTypeText() {
                 return enums(parseToInt(this.itemTakeTypeVo.takeType), 'TakeType');
+            },
+            disableSubmit() {
+
+                return (this.itemNumber.id && this.itemNumber.status != 6) || (!this.memberCode) ||
+                    (!this.memberPhone) ||
+                    (!this.contactsPhone) ||
+                    (this.memberType == '2' && !this.companyCode) ||
+                    (this.memberType == '2' && !this.companyName) ||
+                    (this.memberType == '2' && !this.companyAddress) ||
+                    (!this.itemVo.id)
+
+                // return (this.itemNumber.id && this.itemNumber.status != 6) || !this.memberPhone || !this.memberRealname || !this.memberCode || this.submiting || !this.itemVo || !this.itemVo.id
+                //     || !this.contactsPhone;
             }
         },
 //        beforeRouteEnter(to, from, next) {
@@ -1310,16 +1362,29 @@
                         if (c) {
                             this.numberTab = 'company';
                             this.companyInfo = c;
-                            if (c.lxdh && c.lxdh.length == 11) {
-                                this.memberPhone = c.lxdh;
-                            } else {
-                                this.$message.warning("请注意填写手机号码");
-                                this.memberPhone = "";
+                            if (this.showInputForm == '1') { //如果是窗口收件，自动覆盖输入框中的值
+                                if (c.lxdh && c.lxdh.length == 11 && !this.memberPhone) {
+                                    this.memberPhone = c.lxdh;
+                                } else {
+                                    // this.$message.warning("工商信息表中联系方式不是手机号码");
+                                    // this.memberPhone = "";
+                                }
+                                if (!this.memberRealname) {
+                                    this.memberRealname = c.fr;
+                                }
+                                if (!this.companyName) {
+                                    this.companyName = c.qymc;
+                                }
+                                if (!this.companyCode) {
+                                    this.companyCode = c.ty_code;
+                                }
+                                if (!this.memberCode) {
+                                    this.memberCode = c.fr_id ? c.fr_id : '';
+                                }
+                                if (!this.companyAddress) {
+                                    this.companyAddress = c.jgzs;
+                                }
                             }
-                            this.memberRealname = c.fr;
-                            this.companyName = c.qymc;
-                            this.companyCode = c.ty_code;
-                            this.memberCode = c.fr_id ? c.fr_id : '';
                         } else {
                             this.$message.warning("企业信息中没有搜索到【" + this.companyCode + "】企业信息");
                         }
@@ -1450,6 +1515,9 @@
                             if (!this.memberPhone) {
                                 this.memberPhone = this.member.mobilephone;
                             }
+                            if (!this.memberCode) {
+                                this.memberCode = this.member.memberCode;
+                            }
                         }
                     } else {
                         this.$message.error(response.msg);
@@ -1460,13 +1528,14 @@
              * 检测法人用户是否注册，如果注册，返回用户信息，如果没有注册显示出快速注册界面
              * */
             checkLegalMemberExist() {
-                if (!checkSocialCreditCode(this.companyCode)) {
+                if (this.companyCode && !checkSocialCreditCode(this.companyCode)) {
                     this.companyInfo = {};
                     this.$message.warning("社会统一信用代码不正确，请重新输入");
                     return;
                 }
                 checkLegalMemberExist({
-                    companyCode: this.companyCode
+                    companyCode: this.companyCode,
+                    memberCode:this.memberCode
                 }).then(response => {
                     if (response.httpCode === 200) {
                         if (response.data == null) {
@@ -1484,6 +1553,20 @@
                             }
                             if (!this.memberPhone) {
                                 this.memberPhone = this.member.mobilephone;
+                            }
+                            if (!this.memberCode) {
+                                this.memberCode = this.member.memberCode;
+                            }
+                            if (this.member.type == 2 && this.member.legalPerson) {
+                                if (!this.companyName) {
+                                    this.companyName = this.member.legalPerson.companyName;
+                                }
+                                if (!this.companyCode) {
+                                    this.companyCode = this.member.legalPerson.companyCode;
+                                }
+                                if (!this.companyAddress) {
+                                    this.companyAddress = this.member.legalPerson.registerPlace;
+                                }
                             }
                         }
                     } else {
@@ -1732,7 +1815,7 @@
              */
             queryCurrentNumber() {
                 let _this = this;
-                this.showInputForm = 1;
+                // this.showInputForm = '1';
                 this.resetForm();
                 this.queryLoading = true;
                 queryCurrentNumber({}).then(response => {
@@ -1831,6 +1914,9 @@
                     this.$message.warning('请选择取件方式');
                     return;
                 }
+                if (!this.contactsPhone) {
+                    this.$message.warning('请输入联系人手机号');
+                }
                 //判断如果是无预审收件，则验证无预审表单各项目是否填写完整
                 if (this.memberType == 1) { //自然人
                     //判断姓名，手机号，身份证号是否填写
@@ -1897,6 +1983,7 @@
                             memberPhone: this.memberPhone,
                             companyCode: this.companyCode,
                             companyName: this.companyName,
+                            contactsPhone: this.contactsPhone,
                             received: checked_m.join(','),
                             remark: this.remark,
                             itemHandTypeVo: this.itemHandTypeVo,
@@ -1924,6 +2011,7 @@
                             status: 3,  //受理
                             remark: this.remark,
                             received: checked_m.join(','),
+                            contactsPhone: this.contactsPhone,
                             itemHandType: this.itemHandType,
                             itemHandTypeVo: this.itemHandTypeVo,
                             itemTakeTypeVo: this.takeTypeVo && this.takeTypeVo.takeType ? {} : this.itemTakeTypeVo
@@ -1965,29 +2053,126 @@
 
                 let msg = '确定不予受理吗？';
 
+                let checked_m = this.materialSelection.map(function (m) {
+                    return m.id;
+                });
+                if (checked_m.length > 0) {
+                    msg = '确认已经退还材料（' + checked_m.length + '项），确认不予受理吗？'
+                } else {
+                    msg = '您没有勾选退还材料！！，确定不予受理吗？';
+                }
+
                 this.$confirm(msg, '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    this.submiting = true;
-                    submitWork({
-                        numberId: _itemNumber.id,
-                        status: 4,  //不予受理
-                        remark: this.remark
-                    }).then(response => {
-                        this.submiting = false;
-                        if (response.httpCode === 200) {
-                            let data = response.data;
-                            if (data != null) {
-                                _this.refreshNumber(response.data);
-                            }
-                        } else {
-                            _this.$message.error(response.msg);
+
+                    if (!this.itemNumber.id) {
+
+                        if (!this.itemHandTypeVo.handType) {
+                            this.$message.warning('请选择交件方式');
+                            return;
                         }
-                    }).catch(e => {
-                        this.submiting = false;
-                    });
+                        if (!this.itemTakeTypeVo.takeType) {
+                            this.$message.warning('请选择取件方式');
+                            return;
+                        }
+                        if (!this.contactsPhone) {
+                            this.$message.warning('请输入联系人手机号');
+                        }
+                        //判断如果是无预审收件，则验证无预审表单各项目是否填写完整
+                        if (this.memberType == 1) { //自然人
+                            //判断姓名，手机号，身份证号是否填写
+                            if (this.memberRealname == '') {
+                                this.$message.warning('姓名没有填写，不能提交');
+                                return;
+                            }
+                            if (!isIdCardNo(this.memberCode)) {
+                                this.$message.warning("身份证号码格式不正确，请重新填写");
+                                return;
+                            }
+                            if (!validatMobiles(this.memberPhone)) {
+                                this.$message.warning("手机号没格式不正确，请重新填写");
+                                return;
+                            }
+                        } else {  //法人
+                            //判断法人姓名，法人身份证号，手机号，统一社会信用代码是否填写
+                            if (this.memberRealname == '') {
+                                this.$message.warning('姓名没有填写，不能提交');
+                                return;
+                            }
+                            if (!isIdCardNo(this.memberCode)) {
+                                this.$message.warning("身份证号码格式不正确，请重新填写");
+                                return;
+                            }
+                            if (!validatMobiles(this.memberPhone)) {
+                                this.$message.warning("手机号没格式不正确，请重新填写");
+                                return;
+                            }
+                            if (!checkSocialCreditCode(this.companyCode)) {
+                                this.$message.warning('社会统一信用代码输入不正确，请重新填写');
+                                return;
+                            }
+                            if (this.companyName == '') {
+                                this.$message.warning('企业名称没有填写，不能提交');
+                                return;
+                            }
+                        }
+
+                        this.submiting = true;
+                        //TODO 此处填充纯窗口办理的不予受理代码
+                        rejectNoPretrial({
+                            memberType: this.memberType,
+                            itemId: this.itemVo.id,
+                            //身份证号
+                            memberCode: this.memberCode,
+                            //姓名
+                            memberRealname: this.memberRealname,
+                            memberPhone: this.memberPhone,
+                            companyCode: this.companyCode,
+                            companyName: this.companyName,
+                            contactsPhone: this.contactsPhone,
+                            received: checked_m.join(','),
+                            remark: this.remark,
+                            itemHandTypeVo: this.itemHandTypeVo,
+                            itemTakeTypeVo: this.itemTakeTypeVo
+                        }).then(response => {
+                            this.submiting = false;
+                            if (response.httpCode === 200) {
+                                this.$message.success('提交成功');
+                                let data = response.data;
+                                if (data != null) {
+                                    _this.refreshNumber(response.data);
+                                } else {
+                                    this.$message.error('提交出错 ，' + response.msg);
+                                }
+                            } else {
+                                this.$message.error('提交出错 ，' + response.msg);
+                            }
+                        }).catch(e => {
+                            this.submiting = false;
+                        });
+                    }else{
+                        this.submiting = true;
+                        submitWork({
+                            numberId: _itemNumber.id,
+                            status: 4,  //不予受理
+                            remark: this.remark
+                        }).then(response => {
+                            this.submiting = false;
+                            if (response.httpCode === 200) {
+                                let data = response.data;
+                                if (data != null) {
+                                    _this.refreshNumber(response.data);
+                                }
+                            } else {
+                                _this.$message.error(response.msg);
+                            }
+                        }).catch(e => {
+                            this.submiting = false;
+                        });
+                    }
                 }).catch(() => {
                     this.$message({
                         type: 'info',
