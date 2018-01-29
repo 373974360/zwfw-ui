@@ -8,6 +8,9 @@
                     搜索
                 </el-button>
             </el-tooltip>
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleIsRec" type="primary" icon="circle-check">
+                推荐
+            </el-button>
             <el-button class="filter-item" style="margin-left: 10px;" type="danger" @click="handleNotRec" icon="delete">
                 撤销推荐
             </el-button>
@@ -255,6 +258,34 @@
                         this.$message.error(response.msg);
                     }
                 })
+            },
+            handleIsRec() {
+                if (this.selectedRows.length === 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将推荐会员, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.listLoading = true;
+                        let ids = [];
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id_);
+                        }
+                        resetJobOrgan({"ids": ids, "isrec": 2}).then(response => {
+                            if (response.httpCode === 200) {
+                                this.$message.success('推荐成功！');
+                                this.getList();
+                            } else {
+                                this.$message.error('推荐失败！');
+                            }
+                            this.listLoading = false;
+                        })
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
             },
             handleNotRec() {
                 if (this.selectedRows.length === 0) {
