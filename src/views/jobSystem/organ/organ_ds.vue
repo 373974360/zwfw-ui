@@ -11,7 +11,7 @@
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleAudit" type="primary" icon="circle-check">
                 审核
             </el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleNoAudit" type="danger" icon="delete">
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleNoAudit" type="danger" icon="circle-cross">
                 驳回
             </el-button>
         </div>

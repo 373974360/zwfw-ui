@@ -11,7 +11,7 @@
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleIsAuth" type="primary" icon="circle-check">
                 通过
             </el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleNoAuth" type="danger" icon="delete">
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleNoAuth" type="danger" icon="circle-cross">
                 驳回
             </el-button>
         </div>

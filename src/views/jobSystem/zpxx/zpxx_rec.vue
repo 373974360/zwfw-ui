@@ -15,7 +15,7 @@
                 </el-button>
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
-                <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="delete"
+                <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="circle-cross"
                            @click="handleNoRec">
                     驳回
                 </el-button>

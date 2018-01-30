@@ -3,6 +3,14 @@
         <div class="filter-container">
             <el-input v-model="listQuery.zwmc" style="width: 180px;" class="filter-item"
                       placeholder="职位名称"></el-input>
+            <el-select v-model="listQuery.isrec" placeholder="请选择" style="width: 120px;" class="filter-item">
+                <el-option
+                        v-for="item in recOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
+            </el-select>
             <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="搜索" placement="top-start">
                 <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
                     搜索
@@ -12,7 +20,7 @@
                 推荐
             </el-button>
             <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="取消推荐" placement="top-start">
-                <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="delete"
+                <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="circle-cross"
                            @click="handleNotRec">
                     取消推荐
                 </el-button>
@@ -248,8 +256,19 @@
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     zwmc: '',
-                    status: 2
+                    status: 2,
+                    isrec: ''
                 },
+                recOptions: [{
+                    value: '0',
+                    label: '全部'
+                }, {
+                    value: '1',
+                    label: '未推荐'
+                }, {
+                    value: '2',
+                    label: '已推荐'
+                }],
                 selectedRows: [],
                 dialogVisible: false,
                 dialogStatus: '',
