@@ -22,6 +22,9 @@
             <el-button class="filter-item" style="margin-left: 10px;" type="danger" @click="handleNotRec" icon="circle-cross">
                 取消推荐
             </el-button>
+            <el-button class="filter-item" style="margin-left: 10px;" type="danger" @click="handleDelete" icon="delete">
+                删除
+            </el-button>
         </div>
         <el-table ref="table_demo" :data="list" v-loading.body="listLoading" border fit style="width: 100%"
                   @selection-change="handleSelectionChange">
@@ -351,7 +354,7 @@
     }
 </style>
 <script>
-    import {getPersonalList, getPersional, getPersionalQzyx, getPersionalGzjl, getPersionalItem, getPersionalJyjl, getPersionalZs, resetJobPersonal} from "api/jobSystem/personal/personal";
+    import {getPersonalList, getPersional, getPersionalQzyx, getPersionalGzjl, getPersionalItem, getPersionalJyjl, getPersionalZs, resetJobPersonal, delJobPersonal} from "api/jobSystem/personal/personal";
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import SplitPane from "../../../components/SplitPane/index";
@@ -558,6 +561,34 @@
                                 this.getList();
                             } else {
                                 this.$message.error('取消失败！');
+                            }
+                            this.listLoading = false;
+                        })
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
+            handleDelete() {
+                if (this.selectedRows.length === 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.listLoading = true;
+                        let memberIds = [];
+                        for (const deleteRow of this.selectedRows) {
+                            memberIds.push(deleteRow.member_id);
+                        }
+                        delJobPersonal(memberIds).then(response => {
+                            if (response.httpCode === 200) {
+                                this.$message.success('删除成功！');
+                                this.getList();
+                            } else {
+                                this.$message.error('删除失败！');
                             }
                             this.listLoading = false;
                         })

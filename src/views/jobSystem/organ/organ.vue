@@ -28,6 +28,9 @@
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleNotAuth" type="danger" icon="circle-cross">
                 撤销实名认证
             </el-button>
+            <el-button class="filter-item" style="margin-left: 10px;" type="danger" @click="handleDelete" icon="delete">
+                删除
+            </el-button>
         </div>
         <el-table ref="table_demo" :data="list" v-loading.body="listLoading" border fit style="width: 100%"
                   @selection-change="handleSelectionChange">
@@ -175,7 +178,7 @@
     }
 </style>
 <script>
-    import {getOrganList, getOrgan, getOrganAuth, resetJobOrgan} from "api/jobSystem/organ/organ";
+    import {getOrganList, getOrgan, getOrganAuth, resetJobOrgan, delJobOrgan} from "api/jobSystem/organ/organ";
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     export default{
@@ -382,6 +385,34 @@
                                 this.getList();
                             } else {
                                 this.$message.error('撤销失败！');
+                            }
+                            this.listLoading = false;
+                        })
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
+            handleDelete() {
+                if (this.selectedRows.length === 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.listLoading = true;
+                        let memberIds = [];
+                        for (const deleteRow of this.selectedRows) {
+                            memberIds.push(deleteRow.member_id);
+                        }
+                        delJobOrgan(memberIds).then(response => {
+                            if (response.httpCode === 200) {
+                                this.$message.success('删除成功！');
+                                this.getList();
+                            } else {
+                                this.$message.error('删除失败！');
                             }
                             this.listLoading = false;
                         })

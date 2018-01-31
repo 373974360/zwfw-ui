@@ -58,6 +58,15 @@ export function resetJobPersonal(data) {
     })
 }
 
+export function delJobPersonal(memberIds) {
+    const data = {memberIds};
+    return fetch({
+        url: '/api/jobSystem/jobPersonal/deletes',
+        method: 'post',
+        data
+    })
+}
+
 
 
 

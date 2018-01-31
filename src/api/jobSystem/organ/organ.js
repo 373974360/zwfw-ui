@@ -31,3 +31,12 @@ export function resetJobOrgan(data) {
         data
     })
 }
+
+export function delJobOrgan(memberIds) {
+    const data = {memberIds};
+    return fetch({
+        url: '/api/jobSystem/jobOrgan/deletes',
+        method: 'post',
+        data
+    })
+}
