@@ -592,13 +592,33 @@
                                           height="400"
                                           border
                                           style="width: 100%"
-
                                           @selection-change="handleMaterialSelectionChange"
                                 >
-                                    <el-table-column
-                                            type="index"
-                                            width="50">
+                                    <el-table-column type="expand">
+                                        <template scope="scope">
+                                            <el-upload
+                                                    name="uploadFile"
+                                                    action="https://jsonplaceholder.typicode.com/posts/"
+                                                    list-type="picture-card"
+                                                    :file-list="uploadFileListMap[scope.row.id]"
+                                                    :data="scope.row"
+                                                    :accept="acceptTypes"
+                                                    :action="uploadAction"
+                                                    :on-preview="handleUploadPreview"
+                                                    :on-remove="handleUploadRemove"
+                                                    :on-progress="handleUploadProgress"
+                                                    :on-success="handleUploadSuccess"
+                                                    :on-error="handleUploadError"
+                                                    :before-upload="beforeUpload"
+                                                    multiple>
+                                                <i class="el-icon-plus"></i>
+                                            </el-upload>
+                                        </template>
                                     </el-table-column>
+                                    <!--<el-table-column-->
+                                            <!--type="index"-->
+                                            <!--width="50">-->
+                                    <!--</el-table-column>-->
                                     <el-table-column
                                             v-if="itemNumber.status==6 || (itemVo.id && !itemNumber.id)"
                                             type="selection"
@@ -654,28 +674,28 @@
                                             {{scope.row.paperDescription}}
                                         </template>
                                     </el-table-column>
-                                    <el-table-column
-                                            label="上传">
-                                        <template scope="scope">
-                                            <el-upload
-                                                    name="uploadFile"
-                                                    action="https://jsonplaceholder.typicode.com/posts/"
-                                                    :file-list="uploadFileListMap[scope.row.id]"
-                                                    :data="scope.row"
-                                                    :accept="acceptTypes"
-                                                    :action="uploadAction"
-                                                    :on-preview="handleUploadPreview"
-                                                    :on-remove="handleUploadRemove"
-                                                    :on-progress="handleUploadProgress"
-                                                    :on-success="handleUploadSuccess"
-                                                    :on-error="handleUploadError"
-                                                    :before-upload="beforeUpload"
-                                                    :show-file-list="false"
-                                                    multiple>
-                                                <el-button size="small" type="primary">上传</el-button>
-                                            </el-upload>
-                                        </template>
-                                    </el-table-column>
+                                    <!--<el-table-column-->
+                                            <!--label="上传">-->
+                                        <!--<template scope="scope">-->
+                                            <!--<el-upload-->
+                                                    <!--name="uploadFile"-->
+                                                    <!--action="https://jsonplaceholder.typicode.com/posts/"-->
+                                                    <!--:file-list="uploadFileListMap[scope.row.id]"-->
+                                                    <!--:data="scope.row"-->
+                                                    <!--:accept="acceptTypes"-->
+                                                    <!--:action="uploadAction"-->
+                                                    <!--:on-preview="handleUploadPreview"-->
+                                                    <!--:on-remove="handleUploadRemove"-->
+                                                    <!--:on-progress="handleUploadProgress"-->
+                                                    <!--:on-success="handleUploadSuccess"-->
+                                                    <!--:on-error="handleUploadError"-->
+                                                    <!--:before-upload="beforeUpload"-->
+                                                    <!--:show-file-list="false"-->
+                                                    <!--multiple>-->
+                                                <!--<el-button size="small" type="primary">上传</el-button>-->
+                                            <!--</el-upload>-->
+                                        <!--</template>-->
+                                    <!--</el-table-column>-->
                                     <!--<el-table-column-->
                                     <!--prop="notice"-->
                                     <!--label="填报须知">-->
@@ -1028,7 +1048,8 @@
                 itemVo: {},
                 member: {
                     legalPerson: {},
-                    naturePerson: {}
+                    naturePerson: {},
+                    personName:''
                 },
 
                 itemPretrialVo: {},
@@ -1221,8 +1242,23 @@
 //        },
         methods: {
             handleUploadSuccess(response, file, fileList) {
-                console.log(file);
+                // console.log("---------------");
+                // console.log(this);
+                // console.log("===============");
+                // console.log(response);
+                // console.log("===============");
+                // console.log(file);
+                // console.log("===============");
+                // console.log("===============");
                 if (response.state === 'SUCCESS') {
+                    var obj = {
+                        url:response.url,
+                        fileName:file.name,
+                        materialId:'',
+                        fileId:file.uid,
+                        size:file.size
+                    }
+                    fileList.push(obj);
                     this.$message.success(file + '上传成功！');
                 } else {
                     this.$message.error('上传失败！');
@@ -1527,6 +1563,17 @@
                         this.itemHandTypeList = data.itemVo.handTypes.split(',');
                         this.itemTakeTypeList = data.itemVo.takeTypes.split(',');
                         this.itemMaterialVoList = data.itemMaterialVoList;
+                        if (this.itemMaterialVoList != null) {
+                            this.itemMaterialVoList.forEach(function (value,index) {
+                                this.uploadFileListMap[value.id] = {
+                                    materialId:value.id,
+                                    list:[]
+                                };
+                                this.uploadFileListMap[value.id].list.push(value.multipleFile.map(function(){
+                                    return this.url;
+                                }));
+                            });
+                        }
                     } else {
                         this.$message.error('网络超时');
                     }
@@ -1619,7 +1666,7 @@
                             this.$message.success("已注册");
                             this.doFastReg = false;
                             if (!this.memberRealname) {
-                                this.memberRealname = this.member.name;
+                                this.memberRealname = this.member.personName;
                             }
                             if (!this.memberPhone) {
                                 this.memberPhone = this.member.mobilephone;
@@ -1848,6 +1895,18 @@
                 // _this.company = data.company;
                 _this.itemPretrialVo = data.itemPretrialVo;
                 _this.itemMaterialVoList = data.itemMaterialVoList;
+
+                if (this.itemMaterialVoList != null) {
+                    this.itemMaterialVoList.forEach(function (value,index) {
+                        this.uploadFileListMap[value.id] = {
+                            materialId:value.id,
+                            list:[]
+                        };
+                        this.uploadFileListMap[value.id].list.push(value.multipleFile.map(function(){
+                            return this.url;
+                        }));
+                    });
+                }
                 _this.window = data.window;
                 _this.itemWindowUserName = data.itemWindowUserName;
                 if (data.itemNumber) {
