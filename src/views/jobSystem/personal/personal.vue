@@ -147,6 +147,14 @@
                             <td>{{jobPersonal.grzy}}</td>
                         </tr>
                         <tr>
+                            <th>专　　业:</th>
+                            <td>{{jobPersonal.zy}}</td>
+                            <th>精通语言:</th>
+                            <td>{{jobPersonal.jtyy | dics('yuyan')}}</td>
+                            <th>熟练程度:</th>
+                            <td>{{jobPersonal.slcd | dics('slcd')}}</td>
+                        </tr>
+                        <tr>
                             <th>最高学历:</th>
                             <td>{{jobPersonal.zgxl | dics('xueli')}}</td>
                             <th>
