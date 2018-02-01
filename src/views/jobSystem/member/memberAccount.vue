@@ -1,7 +1,7 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="getList" style="width: 300px;" class="filter-item" placeholder="电子邮箱/手机号码" v-model="listQuery.email"></el-input>
+            <el-input @keyup.enter.native="getList" style="width: 300px;" class="filter-item" placeholder="电子邮箱/手机号码" v-model="listQuery.search"></el-input>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">
                 添加
@@ -159,7 +159,7 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
-                    email: ''
+                    search: ''
                 },
                 jobMember: {
                     id: undefined,
