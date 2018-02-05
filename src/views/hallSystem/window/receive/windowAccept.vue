@@ -156,7 +156,7 @@
                                                                             effect="light">
                                                                     <el-input v-model="companyCode"
                                                                               placeholder="社会统一信用代码"
-                                                                              @keyup.native="scanInput">
+                                                                              @keyup.native="toUpperCase">
                                                                     </el-input>
                                                                 </el-tooltip>
                                                             </el-col>
@@ -795,7 +795,7 @@
                                     <span v-show="!contactsPhone">缺少联系手机号；</span>
                                     <span v-show="memberType=='2' && !companyCode">缺少社会统一信用代码；</span>
                                     <span v-show="memberType=='2' && !companyName">缺少公司名称；</span>
-                                    <span v-show="memberType=='2' && !companyAddress">缺少公司地址；</span>
+                                    <!--<span v-show="memberType=='2' && !companyAddress">缺少公司地址；</span>-->
                                     <span v-show="!itemVo.id">缺少事项；</span>
                                 </p>
                             </template>
@@ -963,7 +963,7 @@
         welcomeNumber,
         submitWork,
         queryCompanyInfo,
-        addCompanyInfo,
+        // addCompanyInfo,
         getItemInfo,
         submitNoPretrial,
         rejectNoPretrial,
@@ -1059,7 +1059,7 @@
                 categoryCascader: [],
                 itemCategory: null,
                 categoryCascaderModel: [],
-                showInputForm: '1',
+                showInputForm: '0',
                 memberType: '2',
                 itemHandTypeList: [],
                 itemTakeTypeList: [],
@@ -1146,7 +1146,6 @@
                 displayPendingFromBoxDialog: false,
                 pendingFromBoxList: [],
                 pendingFromBoxListLoading: false,
-                isScanInput: false,
                 loadingItem: false
 
             }
@@ -1178,7 +1177,7 @@
                     (!this.contactsPhone) ||
                     (this.memberType == '2' && !this.companyCode) ||
                     (this.memberType == '2' && !this.companyName) ||
-                    (this.memberType == '2' && !this.companyAddress) ||
+                    // (this.memberType == '2' && !this.companyAddress) ||
                     (!this.itemVo.id)
 
                 // return (this.itemNumber.id && this.itemNumber.status != 6) || !this.memberPhone || !this.memberRealname || !this.memberCode || this.submiting || !this.itemVo || !this.itemVo.id
@@ -1310,40 +1309,40 @@
                 this.companyCode = this.companyCode.toUpperCase();
                 this.memberCode = this.memberCode.toUpperCase();
             },
-            /**
-             * 扫码枪输入
-             */
-            scanInput(event) {
-                this.isScanInput = false;
-                var _this = this;
-                if (event.keyCode == 13 ) {
-                    this.$nextTick(function(){
-                        console.log(_this.companyCode);
-
-                        if(_this.companyCode.indexOf('：') > 0 || _this.companyCode.indexOf(':') > 0) {
-                            _this.isScanInput = true;
-                            const companyInfo = _this.companyCode.replace('：', ':').split(';');
-                            //社会统一信用代码
-                            _this.companyInfo.ty_code = companyInfo[0].split(':')[1];
-                            //注册号
-                            _this.companyInfo.gs_code = companyInfo[1].split(':')[1];
-                            //企业名称
-                            _this.companyInfo.qymc = companyInfo[2].split(':')[1];
-                            //登记机关
-                            _this.companyInfo.djjg = companyInfo[3].split(':')[1];
-                            //登记时间
-                            _this.companyInfo.djsj = companyInfo[4].split(':')[1];
-                            for (const attr of companyInfo) {
-                                const arry = attr.split(':');
-                                console.dir(arry[0] + '--------' + arry[1]);
-                            }
-                            _this.companyCode = companyInfo[0].split(':')[1];
-                            _this.companyName = companyInfo[2].split(':')[1];
-                            _this.queryCompanyInfo();
-                        }
-                    });
-                }
-            },
+            // /**
+            //  * 扫码枪输入
+            //  */
+            // scanInput(event) {
+            //     this.isScanInput = false;
+            //     var _this = this;
+            //     if (event.keyCode == 13 ) {
+            //         this.$nextTick(function(){
+            //             console.log(_this.companyCode);
+            //
+            //             if(_this.companyCode.indexOf('：') > 0 || _this.companyCode.indexOf(':') > 0) {
+            //                 _this.isScanInput = true;
+            //                 const companyInfo = _this.companyCode.replace('：', ':').split(';');
+            //                 //社会统一信用代码
+            //                 _this.companyInfo.ty_code = companyInfo[0].split(':')[1];
+            //                 //注册号
+            //                 _this.companyInfo.gs_code = companyInfo[1].split(':')[1];
+            //                 //企业名称
+            //                 _this.companyInfo.qymc = companyInfo[2].split(':')[1];
+            //                 //登记机关
+            //                 _this.companyInfo.djjg = companyInfo[3].split(':')[1];
+            //                 //登记时间
+            //                 _this.companyInfo.djsj = companyInfo[4].split(':')[1];
+            //                 for (const attr of companyInfo) {
+            //                     const arry = attr.split(':');
+            //                     console.dir(arry[0] + '--------' + arry[1]);
+            //                 }
+            //                 _this.companyCode = companyInfo[0].split(':')[1];
+            //                 _this.companyName = companyInfo[2].split(':')[1];
+            //                 _this.queryCompanyInfo();
+            //             }
+            //         });
+            //     }
+            // },
             /**
              * 查询企业信息
              */
@@ -1355,7 +1354,8 @@
                     return;
                 }
                 queryCompanyInfo({
-                    companyCode: this.companyCode
+                    companyCode: this.companyCode,
+                    diff: 'gwq'
                 }).then(response => {
                     if (response.httpCode === 200) {
                         let c = response.data;
@@ -1387,17 +1387,6 @@
                             }
                         } else {
                             this.$message.warning("企业信息中没有搜索到【" + this.companyCode + "】企业信息");
-                            if (this.isScanInput) {
-                                this.companyInfo.jgzs = this.companyAddress || '';
-                                // addCompanyInfo(this.companyInfo).then(response => {
-                                //     this.isScanInput = false;
-                                //     if (response.httpCode === 200) {
-                                //         console.dir('插入远程工商信息库数据成功');
-                                //     } else {
-                                //         this.$message.error("插入远程工商信息库数据失败");
-                                //     }
-                                // })
-                            }
                         }
                     } else {
                         this.$message.error("企业信息查询失败");

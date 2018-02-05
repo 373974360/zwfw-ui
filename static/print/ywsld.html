@@ -52,67 +52,67 @@
 
     <div style="width:600px;margin:10px auto">
 
-        <table width="100%" >
-            <tbody>
-            <tr>
-                <td colspan="100" align="right">办件号：{{processNumber}}</td>
-            </tr>
-            <tr>
-                <td colspan="2" align="left">事项名称：{{itemName}}</td>
-            </tr>
-            <tr>
-                <td colspan="2" align="left">申请单位：{{companyName}}</td>
-            </tr>
-            <tr>
-                <td colspan="1" align="left" width="50%">联系人：{{memberName}}</td>
-                <td colspan="1" align="left">联系电话：{{memberMobilephone}}</td>
-            </tr>
-            <tr>
-                <td colspan="1" align="left">证件类型：身份证</td>
-                <td colspan="1" align="left">身份证号：{{memberIdNumber}}</td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div style=" margin-top:1em">
-                        物料清单：
-                        <div >
-                            <ul id="wl_list" style="margin:0px;">
-                                <li v-for="material in materialList">
-                                    {{material}}
-                                </li>
-                            </ul>
-                        </div>
+    <table width="100%" >
+        <tbody>
+        <tr>
+            <td colspan="100" align="right">办件号：{{processNumber}}</td>
+        </tr>
+        <tr>
+            <td colspan="2" align="left">事项名称：{{itemName}}</td>
+        </tr>
+        <tr>
+            <td colspan="2" align="left">申请单位：{{companyName}}</td>
+        </tr>
+        <tr>
+            <td colspan="1" align="left" width="50%">联系人：{{memberName}}</td>
+            <td colspan="1" align="left">联系电话：{{memberMobilephone}}</td>
+        </tr>
+        <tr>
+            <td colspan="1" align="left">证件类型：身份证</td>
+            <td colspan="1" align="left">身份证号：{{memberIdNumber}}</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div style=" margin-top:1em">
+                    物料清单：
+                    <div >
+                        <ul id="wl_list" style="margin:0px;">
+                            <li v-for="material in materialList">
+                                {{material}}
+                            </li>
+                        </ul>
                     </div>
+                </div>
 
-                    <div style="min-height: 7em;">
+                <div style="min-height: 7em;">
 
-                        <p>备注：
-                            <br>
-                            {{remark}}
-                        </p>
-                    </div>
-                    <div style="margin-top:1em;font-size:1em;">* 取件时，需要申请人携带受理单与本人身份证（缺一不可），请妥善保管。</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1" align="left" style="height: 5em">
-                    申请人：
-                </td>
-                <td colspan="1" align="left">
-                    收件人：
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1" align="right">
-                    日期：{{date}}
-                </td>
-                <td colspan="1" align="right">
-                    日期：{{date}}
-                </td>
-            </tr>
+                    <p>备注：
+                        <br>
+                        {{remark}}
+                    </p>
+                </div>
+                <div style="margin-top:1em;font-size:1em;">* 取件时，需要申请人携带受理单与本人身份证（缺一不可），请妥善保管。</div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="1" align="left" style="height: 5em">
+                申请人：
+            </td>
+            <td colspan="1" align="left">
+                收件人：
+            </td>
+        </tr>
+        <tr>
+            <td colspan="1" align="right">
+                日期：{{date}}
+            </td>
+            <td colspan="1" align="right">
+                日期：{{date}}
+            </td>
+        </tr>
 
-            </tbody>
-        </table>
+        </tbody>
+    </table>
     </div>
 
 
