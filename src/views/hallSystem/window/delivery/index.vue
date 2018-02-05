@@ -79,37 +79,44 @@
                 <template scope="scope">
                     <el-tooltip class="item" effect="dark" placement="right" content="点击修改">
                         <el-button type="text" @click="changeTakeType(scope.row)">
-                            <span>{{scope.row.takeTypeInfo.takeType | enums('TakeType')}}</span>
+                            <span v-if="scope.row.takeTypeInfo">{{scope.row.takeTypeInfo.takeType | enums('TakeType')}}</span>
+                            <span v-else>未设置</span>
                         </el-button>
                     </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="取件状态">
                 <template scope="scope">
-                    <span>{{scope.row.takeTypeInfo.flagTakeCert | enums('TakeStatus')}}</span>
+                    <span v-if="scope.row.takeTypeInfo">{{scope.row.takeTypeInfo.flagTakeCert | enums('TakeStatus')}}</span>
+                    <span v-else>未知</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作" width="240">
                 <template scope="scope">
-                    <el-button v-if="scope.row.takeTypeInfo.flagTakeCert == 1 || scope.row.takeTypeInfo.flagTakeCert == 7"
-                               type="primary" @click="completeTake(scope.row)">确认取件</el-button>
-                    <el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert == 3 && scope.row.takeTypeInfo.mailboxInfo.status == 1"
-                               type="primary" @click="mailboxReserve(scope.row)">预约投递</el-button>
-                    <el-tooltip v-else-if="scope.row.takeTypeInfo.flagTakeCert == 3 && scope.row.takeTypeInfo.mailboxInfo.status == 2"
-                                class="item" effect="dark" placement="right" content="点击更新状态">
-                        <el-button type="text" @click="mailboxInfoUpdate(scope.row)">预约中...</el-button>
-                    </el-tooltip>
-                    <el-button-group v-else-if="scope.row.takeTypeInfo.flagTakeCert == 3 && scope.row.takeTypeInfo.mailboxInfo.status == 3">
-                        <el-button type="primary" @click="showReserveCode(scope.row)">获取<br>开箱码</el-button>
-                        <el-button type="primary" @click="mailboxCancelReserve(scope.row)">取消<br>预约</el-button>
-                        <el-button type="primary" @click="mailboxInfoUpdate(scope.row)">更新<br>状态</el-button>
-                    </el-button-group>
-                    <el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert == 4" type="primary" @click="mailboxStatusUpdate(scope.row)">
-                        更新状态
-                    </el-button>
-                    <el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert == 6" type="primary"
-                               @click="enterExpressInfo(scope.row)">录入邮寄信息</el-button>
-                    <el-button v-else type="primary" @click="showProcessTakeInfo(scope.row)">查看</el-button>
+                    <template v-if="scope.row.takeTypeInfo">
+                        <el-button v-if="scope.row.takeTypeInfo.flagTakeCert == 1 || scope.row.takeTypeInfo.flagTakeCert == 7"
+                                   type="primary" @click="completeTake(scope.row)">确认取件</el-button>
+                        <el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert == 3 && scope.row.takeTypeInfo.mailboxInfo.status == 1"
+                                   type="primary" @click="mailboxReserve(scope.row)">预约投递</el-button>
+                        <el-tooltip v-else-if="scope.row.takeTypeInfo.flagTakeCert == 3 && scope.row.takeTypeInfo.mailboxInfo.status == 2"
+                                    class="item" effect="dark" placement="right" content="点击更新状态">
+                            <el-button type="text" @click="mailboxInfoUpdate(scope.row)">预约中...</el-button>
+                        </el-tooltip>
+                        <el-button-group v-else-if="scope.row.takeTypeInfo.flagTakeCert == 3 && scope.row.takeTypeInfo.mailboxInfo.status == 3">
+                            <el-button type="primary" @click="showReserveCode(scope.row)">获取<br>开箱码</el-button>
+                            <el-button type="primary" @click="mailboxCancelReserve(scope.row)">取消<br>预约</el-button>
+                            <el-button type="primary" @click="mailboxInfoUpdate(scope.row)">更新<br>状态</el-button>
+                        </el-button-group>
+                        <el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert == 4" type="primary" @click="mailboxStatusUpdate(scope.row)">
+                            更新状态
+                        </el-button>
+                        <el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert == 6" type="primary"
+                                   @click="enterExpressInfo(scope.row)">录入邮寄信息</el-button>
+                        <el-button v-else type="primary" @click="showProcessTakeInfo(scope.row)">查看</el-button>
+                    </template>
+                    <template v-else>
+                        <el-button type="primary" @click="showProcessTakeInfo(scope.row)">查看</el-button>
+                    </template>
                 </template>
             </el-table-column>
         </el-table>
@@ -789,7 +796,7 @@
             },
             getItemTakeTypes(id) {
                 return new Promise((resolve, reject) => {
-                    if (this.offlineReadonly) {
+                    if (this.offlineReadonly && this.processOfflineVisible) {
                         return reject();
                     }
                     getDetailById(id).then(response => {
@@ -991,21 +998,23 @@
                 this.cardItemVisible = false;
             },
             changeTakeType(row) {
-                if (row.takeTypeInfo.flagTakeCert !== 1
+                if (row.takeTypeInfo && row.takeTypeInfo.flagTakeCert !== 1
                     && row.takeTypeInfo.flagTakeCert !== 3
                     && row.takeTypeInfo.flagTakeCert !== 6) {
                     this.$message.warning('当前状态不可修改取件方式');
                     return;
                 }
-                this.takeTypeInfo.id = row.takeTypeInfo.id;
                 this.takeTypeInfo.processNumber = row.processNumber;
                 this.takeTypeInfo.memberId = row.memberId;
-                this.takeTypeInfo.takeType = row.takeTypeInfo.takeType + '';
-                if (row.takeTypeInfo.mailboxInfo) {
-                    copyProperties(this.takeTypeInfo.mailboxInfo, row.takeTypeInfo.mailboxInfo);
-                }
-                if (row.takeTypeInfo.postInfo) {
-                    copyProperties(this.takeTypeInfo.postInfo, row.takeTypeInfo.postInfo);
+                if (row.takeTypeInfo) {
+                    this.takeTypeInfo.id = row.takeTypeInfo.id;
+                    this.takeTypeInfo.takeType = row.takeTypeInfo.takeType + '';
+                    if (row.takeTypeInfo.mailboxInfo) {
+                        copyProperties(this.takeTypeInfo.mailboxInfo, row.takeTypeInfo.mailboxInfo);
+                    }
+                    if (row.takeTypeInfo.postInfo) {
+                        copyProperties(this.takeTypeInfo.postInfo, row.takeTypeInfo.postInfo);
+                    }
                 }
                 this.getSelectedAddressee();
                 Promise.all([this.getItemTakeTypes(row.itemId), this.getMemberAddressees()]).then(() => {
