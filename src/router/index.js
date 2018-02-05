@@ -359,13 +359,13 @@ export const asyncRouterMap = [
                         component: Record,
                         name: '收件记录',
                         meta: {permission: 'hallSystem:window:receive:record:list'}
-                    },
-                    {
-                        path: 'sendingMaterial',
-                        component: SendingMaterial,
-                        name: '待收件查询',
-                        meta: {permission: 'hallSystem:window:receive:record:list'}
                     }
+                    // {
+                    //     path: 'sendingMaterial',
+                    //     component: SendingMaterial,
+                    //     name: '待收件查询',
+                    //     meta: {permission: 'hallSystem:window:receive:record:list'}
+                    // }
                 ]
             },
             {
