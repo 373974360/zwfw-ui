@@ -42,9 +42,11 @@ const TimedJob = () => import('../views/baseSystem/task/timedJob');
 /* index */
 const HallSystem = () => import('../views/hallSystem/index');
 /* 大厅管理 */
+// const Sort = () => import('../views/hallSystem/lobby/sort');
 const Window = () => import('../views/hallSystem/lobby/window');
 const NumberScope = () => import('../views/hallSystem/lobby/numberScope');
 /* 会员管理 */
+const LegalPersonExamined = () => import('../views/hallSystem/member/legalPersonExamined');
 const NaturePerson = () => import('../views/hallSystem/member/naturePerson');
 const LegalPerson = () => import('../views/hallSystem/member/legalPerson');
 /* 综合窗口 */
@@ -298,6 +300,12 @@ export const asyncRouterMap = [
         icon: 'lobby',
         component: Layout,
         children: [
+            // {
+            //     path: 'sort',
+            //     component: Sort,
+            //     name: '窗口分类管理 ',
+            //     meta: {permission: 'hallSystem:lobby:sort:list'}
+            // },
             {
                 path: 'window',
                 component: Window,
@@ -320,6 +328,12 @@ export const asyncRouterMap = [
         icon: 'member',
         component: Layout,
         children: [
+            {
+                path: 'legalPersonExamined',
+                component: LegalPersonExamined,
+                name: '法人账号审核 ',
+                meta: {permission: 'hallSystem:member:legalPersonExamined:list'}
+            },
             {
                 path: 'naturePerson',
                 component: NaturePerson,

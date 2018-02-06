@@ -33,6 +33,14 @@ export function updateZwfwLegalPerson(zwfwLegalPersonVo){
         data
     })
 }
+export function companyInfoVerify(zwfwLegalPersonVo){
+    const data = zwfwLegalPersonVo;
+    return fetch({
+        url: '/api/hallSystem/legalPerson/companyInfoVerify',
+        method: 'post',
+        data
+    })
+}
 export function delZwfwLegalPersons(ids) {
     const data = {ids};
     return fetch({
@@ -41,8 +49,8 @@ export function delZwfwLegalPersons(ids) {
         data
     })
 }
-export function deleteZwfwLegalPerson(id) {
-    const data = {id};
+export function deleteZwfwLegalPerson(zwfwLegalPersonVo) {
+    const data = zwfwLegalPersonVo;
     return fetch({
         url: '/api/hallSystem/legalPerson/delete',
         method: 'post',
