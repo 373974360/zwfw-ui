@@ -1245,6 +1245,9 @@
             },
             initCardHeader() {
                 if (!this.addresseeList || this.addresseeList.length <= 0 || this.itemTakeTypeVo.takeType != 3) {
+                    if (this.itemTakeTypeVo.takeType == 3) {
+                        this.initDefaultAddressee();
+                    }
                     return;
                 }
                 let addressee;
@@ -1283,6 +1286,12 @@
                 this.cardVisible = false;
                 this.cardItemVisible = false;
                 this.itemTakeTypeVo.postInfo.addresseeId = undefined;
+                this.initDefaultAddressee();
+            },
+            initDefaultAddressee() {
+                this.itemTakeTypeVo.postInfo.name = this.memberRealname;
+                this.itemTakeTypeVo.postInfo.mobilephone = this.memberPhone;
+                this.itemTakeTypeVo.postInfo.address = this.memberType == 2 ? this.companyAddress : '';
             },
             saveHandType() {
                 this.$refs['handTypeForm'].validate(valid => {

@@ -343,6 +343,7 @@
                     <el-checkbox-group v-model="zwfwItem.handTypes" @change="handleHandTypesChange">
                         <template v-for="item in enums['HandType']">
                             <el-checkbox
+                                    v-if="item.code == 1"
                                     :disabled="(zwfwItem.handleType=='blxs_ckbl' && (item.code==2 || item.code==3)) ? true : false"
                                     :key="item.code" :label="item.code + ''">
                                 {{item.value}}
@@ -385,7 +386,7 @@
                 </el-form-item>
                 <el-form-item label="取件方式" prop="takeTypes">
                     <el-checkbox-group v-model="zwfwItem.takeTypes">
-                        <el-checkbox v-for="item in enums['TakeType']"
+                        <el-checkbox v-for="item in enums['TakeType']" v-if="item.code != 2"
                                      :key="item.code" :label="item.code + ''">
                             {{item.value}}
                         </el-checkbox>
@@ -513,7 +514,7 @@
                     </el-upload>
                 </el-form-item>
             </el-form>
-            <div slot="footer" class="dialog-footer" style="text-align: center;">
+            <div slot="footer" class="dialog-footer" style="margin-top:30px; text-align: center;">
                 <el-button icon="circle-cross" type="danger" @click="closeZwfwItemForm">取 消
                 </el-button>
                 <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="doItemCreate">
