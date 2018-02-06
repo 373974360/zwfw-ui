@@ -148,18 +148,6 @@ export function queryCompanyInfo(query) {
 // }
 
 /**
- * 添加企业信息
- * @param compony
- */
-export function addCompanyInfo(compony) {
-    return fetch({
-        url: '/api/hallSystem/hallCompositeWindow/addCompanyInfo',
-        method: 'post',
-        params: compony
-    });
-}
-
-/**
  * 分页查询企业信息
  * @param query
  */
