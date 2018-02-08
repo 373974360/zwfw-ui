@@ -233,6 +233,7 @@
                 zwfwLegalPersonList: [],
                 total: null,
                 listLoading: true,
+                statusList: [0, 1],
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
@@ -241,7 +242,8 @@
                     companyCode: undefined,
                     idcard: undefined,
                     phone: undefined,
-                    legalPerson: undefined
+                    legalPerson: undefined,
+                    inStatus: undefined
                 },
                 zwfwLegalPerson: {
                     id: undefined,
@@ -323,6 +325,7 @@
         methods: {
             getList() {
                 this.listLoading = true;
+                this.listQuery.inStatus = this.statusList.join();
                 getZwfwLegalPersonList(this.listQuery).then(response => {
                     this.listLoading = false;
                     if (response.httpCode === 200) {
