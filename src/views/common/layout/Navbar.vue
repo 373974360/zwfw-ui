@@ -1,7 +1,17 @@
 <template>
     <el-menu class="navbar" mode="horizontal">
-        <Hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></Hamburger>
-        <levelbar></levelbar>
+        <div class="logo">
+            <div class="left">
+                <img src="../../../assets/logo.png" @click="toggleSideBar" :isActive="sidebar.opened" class="humbg"/>
+            </div>
+            <div class="left word">
+                <p>西安市阎良区人民政府</p>
+                <p>12345市民热线综合服务平台</p>
+            </div>
+            <div class="left kouhao">
+                <img src="../../../assets/kouhao.png" />
+            </div>
+        </div>
         <ErrLog v-if="log.length>0" class="errLog-container" :logsList="log"></ErrLog>
         <el-dropdown class="avatar-container" trigger="click">
             <div class="avatar-wrapper">
@@ -64,8 +74,8 @@
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
     .navbar {
-        height: 50px;
-        line-height: 50px;
+        height: 90px;
+        line-height: 90px;
         border-radius: 0px !important;
         .hamburger-container {
             line-height: 58px;
@@ -73,6 +83,13 @@
             float: left;
             padding: 0 10px;
         }
+        .logo{
+            margin-top: 10px;
+        }
+        .left{float: left; display: inline; margin-left: 20px;}
+        .humbg{ cursor: pointer;}
+        .word{line-height: 13px;}
+        .kouhao{ margin-left: 50px;margin-top: 4px;}
         .errLog-container {
             display: inline-block;
             position: absolute;

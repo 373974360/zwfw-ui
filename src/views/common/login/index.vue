@@ -1,19 +1,13 @@
 <template>
     <div class="login">
-        <canvas id="canvas"></canvas>
-        <div class="topTitle">
-            <h1>{{siteTitle}}</h1>
-        </div>
         <div class="login-container">
             <el-form autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left"
                      label-width="0px"
                      class="card-box login-form">
-                <h3 class="title">12345市民热线管理系统</h3>
                 <el-input type="hidden" v-model="loginForm.random"></el-input>
                 <el-row type="flex" justify="center">
                     <el-col :span="24">
                         <el-form-item prop="account">
-                            <span class="svg-container"><wscn-icon-svg icon-class="youxiang"/></span>
                             <el-input type="text" v-model="loginForm.account" autoComplete="off"
                                       placeholder="帐号"></el-input>
                         </el-form-item>
@@ -22,40 +16,39 @@
                 <el-row type="flex" justify="center">
                     <el-col :span="24">
                         <el-form-item prop="password">
-                            <span class="svg-container"><wscn-icon-svg icon-class="mima"/></span>
                             <el-input type="password" @keyup.enter.native="handleLogin"
                                       v-model="loginForm.password"
                                       autoComplete="off" placeholder="密码"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <el-row type="flex" justify="center">
+                <el-row type="flex" justify="center" >
                     <el-col :span="24">
-                        <el-form-item prop="captcha">
-                            <span class="svg-container"><wscn-icon-svg icon-class="yanzhengma"/></span>
+                        <el-form-item prop="captcha" >
                             <el-input type="text" v-model="loginForm.verifyCode" @keyup.enter.native="handleLogin"
-                                      placeholder="验证码" autoComplete="off"></el-input>
+                                      placeholder="验证码" autoComplete="off" class="validate"></el-input>
                             <img class="captcha" :src="loginForm.imgUrl" @click.self="changeCaptcha">
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <el-row type="flex" justify="center">
-                    <el-col :span="24">
-                        <el-form-item>
-                            <el-button type="primary" style="width:100%;" :loading="loading"
-                                       @click.native.prevent="handleLogin">
-                                登录
-                            </el-button>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-row type="flex" justify="center">
+                <!--<el-row type="flex" justify="center" class="forgetRow">
                     <el-col :span="24" style="text-align: right">
                         <router-link to="/sendpwd" class="forget-pwd">
                             忘记密码?
                         </router-link>
                     </el-col>
+                </el-row>-->
+                <el-row type="flex" justify="center">
+                    <el-col :span="24">
+                        <el-form-item>
+                            <el-button class="loginBtn"  :loading="loading"
+                                       @click.native.prevent="handleLogin">
+                                登 录
+                            </el-button>
+                        </el-form-item>
+                    </el-col>
                 </el-row>
+
             </el-form>
         </div>
     </div>
@@ -85,7 +78,7 @@
                 },
                 loginRules: {
                     account: [
-                        {required: true,message: '账号不能为空', trigger: 'blur'}
+                        {required: true, message: '账号不能为空', trigger: 'blur'}
                     ],
                     password: [
                         {min: 6, message: '密码不能小于6位', trigger: 'blur'}
@@ -99,8 +92,8 @@
                 canvas: true
             }
         },
-        computed:{
-            siteTitle:function () {
+        computed: {
+            siteTitle: function () {
                 return window.siteTitle;
             }
         },
@@ -140,86 +133,19 @@
     }
 </script>
 
-<style rel="stylesheet/scss" lang="scss">
+<style rel="stylesheet/scss" lang="scss" scope="scope">
     @import 'src/styles/mixin.scss';
-    canvas {
-        position: fixed;
-    }
-    .login {
-        position: fixed;
-        display: flex;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        background-color: #2d3a4b;
-    }
-    .topTitle{
-        width:850px;margin: 0 auto; text-align: center;
-        h1{color: #00A0FF; margin-top: 100px;}
-    }
-    .login-container {
-        input:-webkit-autofill {
-            -webkit-box-shadow: 0 0 0px 1000px #283443 inset !important;
-            -webkit-text-fill-color: #ffffff !important;
-            background-color: rgba(0, 0, 0, 0.1);
-            caret-color: #ffffff;
-        }
-        input {
-            background: transparent;
-            border: 0px;
-            -webkit-appearance: none;
-            border-radius: 0px;
-            padding: 12px 5px 12px 15px;
-            color: #FFFFFF;
-            height: 47px;
-        }
-        .login-form {
-            position: absolute;
-            left: 0;
-            right: 0;
-            width: 350px;
-            padding: 35px 35px 15px 35px;
-            margin: 170px auto;
-        }
-        .card-box {
-            padding: 20px;
-            margin-bottom: 20px;
-            width: 430px;
-        }
-        .title {
-            font-size: 26px;
-            margin: 0px auto;
-            text-align: center;
-            color: #FFFFFF;
-        }
-        .el-input {
-            display: inline-block;
-            height: 47px;
-            width: 85%;
-        }
-        .svg-container {
-            padding: 6px 5px 6px 15px;
-            color: #889aa4;
-        }
-        .el-form-item {
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            color: #454545;
-        }
-        .captcha {
-            width: 70px;
-            height: 35px;
-            position: absolute;
-            right: 10px;
-            top: 6px;
-            cursor: pointer;
-        }
-        .forget-pwd {
-            color: #ffffff;
-            font-size: small;
-            margin-right: 10px;
-        }
-    }
+
+    .login{background: url("../../../assets/login.png") top center no-repeat; min-height: 930px;
+        overflow: hidden;}
+    .login-container{width: 1120px; margin: 0 auto;}
+    .login-form{width: 308px; margin-top: 454px; margin-left: 732px;}
+    .el-input__inner{border: none;-webkit-box-shadow:0 0 0 50px #ffffff inset;}
+    .validate{width: 190px;}
+    .captcha{width: 95px; position: absolute; right: 0px;top: -2px; cursor: pointer;}
+    .el-form-item__error{right: 0px;text-align: right;}
+    .loginBtn{width: 200px; height: 45px;margin-left: 35px; background: #1d6885; color: #ffffff;}
+    .marginBottonNone{margin-bottom: 0px;}
+    .forgetRow{margin-top: 15px;margin-bottom: 13px;}
+    .forget-pwd{color: #2b5062; font-size: 14px;}
 </style>
