@@ -32,9 +32,10 @@
             </el-table-column>
             <el-table-column align="center" label="统一社会信用代码" prop="companyCode" width="200">
                 <template scope="scope">
-                    <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
+                    <!--<el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.companyCode}}</span>
-                    </el-tooltip>
+                    </el-tooltip>-->
+                    <span>{{scope.row.companyCode}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="left" label="机构名称" prop="companyName" width="300">
@@ -318,7 +319,8 @@
                     companyCode: undefined,
                     idcard: undefined,
                     phone: undefined,
-                    legalPerson: undefined
+                    legalPerson: undefined,
+                    inStatus: 1
                 },
                 zwfwLegalPerson: {
                     id: undefined,
