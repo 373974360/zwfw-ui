@@ -1,9 +1,43 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-date-picker style="top: -5px;" v-model="listQuery.selectDateTime" type="datetimerange"
+            <el-date-picker v-model="listQuery.selectDateTime" type="datetimerange"
                             placeholder="选择时间范围" format="yyyy-MM-dd HH:mm:ss" @change="changeDate">
             </el-date-picker>
+            <el-input class="filter-item" style="width: 240px; height: 30px" v-model="listQuery.processNumber" placeholder="按办件号搜索"></el-input>
+            <el-select
+                    v-model="listQuery.itemId"
+                    value-key="id"
+                    clearable filterable remote
+                    placeholder="按事项名称搜索"
+                    :remote-method="searchItem"
+                    style="width: 320px;">
+                <el-option
+                        v-for="item in itemList"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id">
+                </el-option>
+            </el-select>
+            <br>
+            <el-select v-model="listQuery.memberId" class="filter-item"
+                       clearable filterable remote
+                       placeholder="按申请人名称或证件号搜索"
+                       :remote-method="searchMember"
+                       style="width: 320px">
+                <el-option
+                        v-for="item in memberList"
+                        :key="item.id"
+                        :label="item.name + ' | ' + item.loginName"
+                        :value="item.id">
+                </el-option>
+            </el-select>
+            <el-input class="filter-item" style="width: 240px; height: 30px" v-model="listQuery.mobilephone" placeholder="按联系电话搜索"></el-input>
+            <el-checkbox-group v-model="numberStatus" style="display: inline-block; margin: 0 20px">
+                <el-checkbox :label="3">成功受理</el-checkbox>
+                <el-checkbox :label="4">不予受理</el-checkbox>
+            </el-checkbox-group>
+            <br>
             <el-tooltip style="margin-left: 10px;" class="item" effect="dark" placement="top-start">
                 <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
                     搜索
@@ -371,7 +405,9 @@
 <script>
     import {getZwfwApiHost} from 'utils/fetch';
     import {getZwfwItemNumberList, getDatilByItemNumberId} from 'api/hallSystem/window/receive/itemNumber';
-    import {copyProperties} from 'utils';
+    import {getAllByNameOrbasicCode} from '../../../../api/zwfwSystem/business/item';
+    import {getByNameOrLoginName} from '../../../../api/hallSystem/member/member'
+    import {copyProperties, validateQueryStr} from 'utils';
     import {mapGetters} from 'vuex';
     import moment from 'moment';
 
@@ -382,16 +418,23 @@
                 list: null,
                 total: null,
                 listLoading: true,
+                itemList: [],
+                memberList: [],
+                numberStatus: [3],
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     selectDateTime: undefined,
-                    inStatus: [3, 4].join(",")
+                    processNumber: undefined,
+                    itemId: undefined,
+                    memberId: undefined,
+                    mobilephone: undefined,
+                    inStatus: undefined
                 },
                 tabName: 'materialListPanel',
                 itemNumber: [],
                 itemWindowUserName: '',
-                windowVo: [],
+                window: [],
                 itemPretrialVo: [],
                 member: {
                     legalPerson: {},
@@ -403,7 +446,9 @@
                 rightTabName: 'materialListPanel',
                 dialogFormVisible: false,
                 dialogStatus: 'view',
-                dialogLoading: false
+                dialogLoading: false,
+                takeTypeVo: null,
+                handTypeVo: null
             }
         },
         computed: {
@@ -419,6 +464,7 @@
         methods: {
             getList() {
                 this.listLoading = true;
+                this.listQuery.inStatus = this.numberStatus.join();
                 getZwfwItemNumberList(this.listQuery).then(response => {
                     this.listLoading = false;
                     if (response.httpCode === 200) {
@@ -428,6 +474,48 @@
                         this.$message.error('数据加载失败')
                     }
                 })
+            },
+            searchItem(query) {
+                const listQueryName = {
+                    name: undefined
+                }
+                if (query !== '') {
+                    let valid = validateQueryStr(query);
+                    if (valid) {
+                        this.$message.error(`输入中包含非法字符 ${valid}`)
+                        return
+                    }
+                    if (/.*[\u4e00-\u9fa5]+.*$/.test(query)) {
+                        listQueryName.name = query;
+                    }
+                    getAllByNameOrbasicCode(listQueryName).then(response => {
+                        if (response.httpCode === 200) {
+                            this.itemList = response.data;
+                        } else {
+                            this.$message.error(response.msg);
+                        }
+                    })
+                } else {
+                    this.itemList = [];
+                }
+            },
+            searchMember(query) {
+                if (query !== '') {
+                    let valid = validateQueryStr(query);
+                    if (valid) {
+                        this.$message.error(`输入中包含非法字符 ${valid}`)
+                        return
+                    }
+                    getByNameOrLoginName(query).then(response => {
+                        if (response.httpCode === 200) {
+                            this.memberList = response.data;
+                        } else {
+                            this.$message.error('数据加载失败')
+                        }
+                    })
+                } else {
+                    this.memberList = [];
+                }
             },
             handleSizeChange(val) {
                 this.listQuery.rows = val;
@@ -445,7 +533,7 @@
                 this.itemNumber = copyProperties(this.itemNumber, row);
                 this.dialogFormVisible = true;
                 this.itemNumberId = row.id;
-                this.getDatilList();
+                this.getDetailList();
             },
             print_ywsld() {
                 if (this.itemNumber != null) {
@@ -465,7 +553,7 @@
                     // window.open('/api/hallSystem/hallCompositeWindow/downloadYcxgzd?numberId=' + this.itemNumber.id);
                 }
             },
-            getDatilList() {
+            getDetailList() {
                 this.dialogLoading = true;
 
                 getDatilByItemNumberId(this.itemNumberId).then(response => {
@@ -480,7 +568,7 @@
                             this.itemMaterialVoList = response.data.itemMaterialVoList;
                             this.itemPretrialMaterialVoList = response.data.itemPretrialMaterialVoList;
                             this.itemPretrialVo = response.data.itemPretrialVo;
-                            this.windowVo = response.data.window;
+                            this.window = response.data.window;
                             this.itemWindowUserName = response.data.itemWindowUserName;
                         }
                     } else {
