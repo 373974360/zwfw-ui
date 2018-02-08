@@ -93,4 +93,10 @@ export function deleteZwfwWindowItem(windowId, ids) {
     })
 }
 
-
+export function getWindowInfo(id) {
+    return fetch({
+        url: '/api/hallSystem/window/get',
+        method: 'get',
+        params: {id}
+    })
+}
