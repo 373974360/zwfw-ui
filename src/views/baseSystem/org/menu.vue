@@ -1,7 +1,7 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">
+            <el-button class="filter-item" @click="handleCreate" type="primary" icon="plus">
                 添加
             </el-button>
         </div>

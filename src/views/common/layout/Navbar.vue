@@ -12,7 +12,6 @@
                 <img src="../../../assets/kouhao.png" />
             </div>
         </div>
-        <ErrLog v-if="log.length>0" class="errLog-container" :logsList="log"></ErrLog>
         <el-dropdown class="avatar-container" trigger="click">
             <div class="avatar-wrapper">
                 <img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'">
@@ -85,6 +84,11 @@
         }
         .logo{
             margin-top: 10px;
+            overflow: hidden;
+            height: 80px;
+            width: 800px;
+            float: left;
+            display:inline;
         }
         .left{float: left; display: inline; margin-left: 20px;}
         .humbg{ cursor: pointer;}

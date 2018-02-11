@@ -9,7 +9,7 @@
                     <el-col :span="24">
                         <el-form-item prop="account">
                             <el-input type="text" v-model="loginForm.account" autoComplete="off"
-                                      placeholder="帐号"></el-input>
+                                      placeholder="帐号" class="borderNone"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -18,7 +18,7 @@
                         <el-form-item prop="password">
                             <el-input type="password" @keyup.enter.native="handleLogin"
                                       v-model="loginForm.password"
-                                      autoComplete="off" placeholder="密码"></el-input>
+                                      autoComplete="off" placeholder="密码" class="borderNone"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -26,7 +26,7 @@
                     <el-col :span="24">
                         <el-form-item prop="captcha" >
                             <el-input type="text" v-model="loginForm.verifyCode" @keyup.enter.native="handleLogin"
-                                      placeholder="验证码" autoComplete="off" class="validate"></el-input>
+                                      placeholder="验证码" autoComplete="off" class="validate borderNone"></el-input>
                             <img class="captcha" :src="loginForm.imgUrl" @click.self="changeCaptcha">
                         </el-form-item>
                     </el-col>
@@ -133,14 +133,15 @@
     }
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scope="scope">
+<style rel="stylesheet/scss" lang="scss">
     @import 'src/styles/mixin.scss';
 
     .login{background: url("../../../assets/login.png") top center no-repeat; min-height: 930px;
         overflow: hidden;}
     .login-container{width: 1120px; margin: 0 auto;}
     .login-form{width: 308px; margin-top: 454px; margin-left: 732px;}
-    .el-input__inner{border: none;-webkit-box-shadow:0 0 0 50px #ffffff inset;}
+    .el-input__inner{-webkit-box-shadow:0 0 0 50px #ffffff inset;}
+    .borderNone .el-input__inner{border:none;}
     .validate{width: 190px;}
     .captcha{width: 95px; position: absolute; right: 0px;top: -2px; cursor: pointer;}
     .el-form-item__error{right: 0px;text-align: right;}
