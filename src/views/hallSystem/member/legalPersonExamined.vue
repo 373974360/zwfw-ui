@@ -21,7 +21,7 @@
             <!--</el-button>-->
         </div>
 
-        <el-table ref="zwfwLegalPersonTable" :data="zwfwLegalPersonList" v-loading.body="listLoading" border fit
+        <el-table ref="legalPersonVerifyTable" :data="legalPersonVerifyList" v-loading.body="listLoading" border fit
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <!--<el-table-column type="selection" width="55"/>-->
@@ -48,7 +48,7 @@
                     <span>{{scope.row.phone}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="法定代表人" prop="legalPerson">
+            <el-table-column align="center" label="法定代表人" prop="legalPerson" width="120">
                 <template scope="scope">
                     <span>{{scope.row.legalPerson}}</span>
                 </template>
@@ -68,18 +68,18 @@
                     <span>{{scope.row.registerPlace}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="enable" class-name="status-col" label="状态">
+            <el-table-column prop="enable" class-name="status-col" label="审核状态">
                 <template scope="scope">
-                    <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
-                        {{scope.row.enable | enums('Enable')}}
+                    <el-tag :type="scope.row.verifyStatus | enums('VerifyStatus') | statusFilter">
+                        {{scope.row.verifyStatus | enums('VerifyStatus')}}
                     </el-tag>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作">
                 <template scope="scope">
-                    <el-button v-if="scope.row.pass == 1" @click="showDetail(scope.row)" type="primary">查看
+                    <el-button v-if="scope.row.verifyStatus == 0" @click="showDetail(scope.row)" type="primary">审核
                     </el-button>
-                    <el-button v-if="scope.row.pass == 0" @click="showDetail(scope.row)" type="primary">审核
+                    <el-button v-else @click="showDetail(scope.row)" type="primary">查看
                     </el-button>
                 </template>
             </el-table-column>
@@ -92,117 +92,44 @@
             </el-pagination>
         </div>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible"
-                   :close-on-click-modal="closeOnClickModal" :before-close="resetZwfwLegalPersonForm">
-            <el-form ref="zwfwLegalPersonForm" class="small-space" :model="zwfwLegalPerson" label-position="right"
-                     label-width="100px"
-                     style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="zwfwLegalPersonRules">
-                <el-form-item label="统一社会信用代码" prop="companyCode">
-                    <el-input :disabled="readonlyFlag" v-model="zwfwLegalPerson.companyCode"></el-input>
-                </el-form-item>
-                <el-form-item label="机构类型" prop="companyType">
-                    <el-select v-model="zwfwLegalPerson.companyType" placeholder="请选择">
-                        <el-option v-for="item in dics['gsxz']" :key="item.code" :value="item.code"
-                                   :label="item.value"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="机构名称" prop="companyName">
-                    <el-input v-model="zwfwLegalPerson.companyName"></el-input>
-                </el-form-item>
-                <!--<el-form-item label="机构代码" prop="agencyCode">
-                    <el-input v-model="zwfwLegalPerson.agencyCode"></el-input>
-                </el-form-item>-->
-                <el-form-item label="法定代表人" prop="legalPerson">
-                    <el-input v-model="zwfwLegalPerson.legalPerson"></el-input>
-                </el-form-item>
-
-                <el-form-item label="法人身份证" prop="idcard">
-                    <el-tooltip content="身份证号作为法人登录用户名" placement="bottom"
-                                effect="light">
-                        <el-input v-model="zwfwLegalPerson.idcard"></el-input>
-                    </el-tooltip>
-                </el-form-item>
-                <el-form-item label="联系电话" prop="phone">
-                    <el-input v-model="zwfwLegalPerson.phone"></el-input>
-                </el-form-item>
-                <el-form-item label="注册地址" prop="registerPlace">
-                    <el-input v-model="zwfwLegalPerson.registerPlace"></el-input>
-                </el-form-item>
-                <el-form-item label="注册日期" prop="registerDate">
-                    <el-date-picker :editable="false" v-model="zwfwLegalPerson.registerDate" type="date"
-                                    placeholder="选择日期" @change="formatDate"></el-date-picker>
-                </el-form-item>
-                <el-form-item label="密码" prop="password">
-                    <el-input v-model="zwfwLegalPerson.password" type="password" placeholder="修改密码时填入新密码，若不需要则无需输入"/>
-                </el-form-item>
-                <el-form-item label="确认密码" prop="passwordConfirm">
-                    <el-input v-model="zwfwLegalPerson.passwordConfirm" type="password"
-                              placeholder="修改密码时填入新密码，若不需要则无需输入"/>
-                </el-form-item>
-                <el-form-item label="状态" prop="enable">
-                    <el-radio-group v-model="zwfwLegalPerson.enable">
-                        <el-radio v-for="item in enums['Enable']"
-                                  :key="item.code"
-                                  :label="item.code"
-                                  :value="item.code">
-                            <span style="font-weight:normal;">{{item.value}}</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="备注" prop="remark">
-                    <el-input v-model="zwfwLegalPerson.remark"></el-input>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button icon="circle-cross" type="danger" @click="resetZwfwLegalPersonForm">取 消</el-button>
-                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" :loading="btnLoading"
-                           @click="doCreate">确 定
-                </el-button>
-                <el-button v-else type="primary" icon="circle-check" :loading="btnLoading" @Keyup.enter="doUpdate"
-                           @click="doUpdate">确 定
-                </el-button>
-            </div>
-        </el-dialog>
-
-        <el-dialog :close-on-click-modal="closeOnClickModal" :title="titleName"
-                   :visible.sync="dialogFormVisible1">
+        <el-dialog title="帐号审核" :close-on-click-modal="closeOnClickModal" :visible.sync="dialogFormVisible">
             <div>
                 <div>
                     <h2 class="h2-style-show">企业信息:</h2>
                     <table class="table table-responsive table-bordered">
                         <tr>
                             <th width="140">统一社会信用代码</th>
-                            <td>{{zwfwLegalPerson.companyCode}}</td>
+                            <td>{{legalPersonVerify.companyCode}}</td>
                             <th width="140">机构名称</th>
-                            <td>{{zwfwLegalPerson.companyName}}</td>
+                            <td>{{legalPersonVerify.companyName}}</td>
                         </tr>
                         <tr>
                             <th width="140">法人身份证号</th>
-                            <td>{{zwfwLegalPerson.idcard}}</td>
+                            <td>{{legalPersonVerify.idcard}}</td>
                             <th width="140">机构类型</th>
-                            <td>{{zwfwLegalPerson.companyType | dics('gsxz')}}</td>
+                            <td>{{legalPersonVerify.companyType | dics('gsxz')}}</td>
                         </tr>
                         <tr>
                             <th width="140">法定代表人</th>
-                            <td>{{zwfwLegalPerson.legalPerson}}</td>
+                            <td>{{legalPersonVerify.legalPerson}}</td>
                             <th width="140">联系电话</th>
-                            <td>{{zwfwLegalPerson.phone}}</td>
+                            <td>{{legalPersonVerify.phone}}</td>
                         </tr>
                         <tr>
                             <th width="140">注册地址</th>
-                            <td>{{zwfwLegalPerson.registerPlace}}</td>
+                            <td>{{legalPersonVerify.registerPlace}}</td>
                             <th width="140">注册日期</th>
-                            <td>{{zwfwLegalPerson.registerDate}}</td>
+                            <td>{{legalPersonVerify.registerDate}}</td>
                         </tr>
                     </table>
                 </div>
                 <div>
                     <div v-show="!showExamined">
                         <h2 class="h2-style-show">审核结果:</h2>
-                        <el-form ref="zwfwLegalPersonRef" label-width="140px" :model="zwfwLegalPerson"
-                                 :rules="zwfwLegalPersonVerifyRules">
-                            <el-form-item label="审核结果" prop="pass">
-                                <el-select v-model="zwfwLegalPerson.pass" placeholder="请选择">
+                        <el-form ref="legalPersonVerifyForm" label-width="140px" :model="legalPersonVerify"
+                                 :rules="legalPersonVerifyRules">
+                            <el-form-item label="审核结果" prop="verifyStatus">
+                                <el-select v-model="legalPersonVerify.verifyStatus" placeholder="请选择">
                                     <el-option label="通过" value="1"></el-option>
                                     <el-option label="未通过" value="2"></el-option>
                                 </el-select>
@@ -224,7 +151,7 @@
                         <table class="table table-responsive table-bordered">
                             <tr>
                                 <th width="140">审核结果</th>
-                                <td>通过</td>
+                                <td>{{legalPersonVerify.verifyStatus | enums('VerifyStatus')}}</td>
                                 <!--<th width="140">通过备注</th>-->
                                 <!--<td>{{zwfwLegalPerson.remark}}</td>-->
                             </tr>
@@ -237,75 +164,16 @@
 </template>
 
 <script>
-    import {copyProperties, resetForm} from 'utils';
+    import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
-    import moment from 'moment';
-    import {isIdCardNo, validatMobiles, checkSocialCreditCode} from 'utils/validate'
-    import {
-        creditCodeExist,
-        getZwfwLegalPersonList,
-        // createZwfwLegalPerson,
-        updateZwfwLegalPerson,
-        companyInfoVerify,
-        delZwfwLegalPersons,
-        deleteZwfwLegalPerson
-    } from '../../../api/hallSystem/member/legalPerson';
+    import {getPage, verify} from '../../../api/hallSystem/member/legalPersonVerify';
 
     export default {
-        name: 'zwfwLegalPerson_table',
+        name: 'legalPersonVerify_table',
         data() {
-            const validatCompanyCode = (rule, value, callback) => {
-                if (this.readonlyFlag) {
-                    callback()
-                    return;
-                }
-                if (!checkSocialCreditCode(value)) {
-                    return callback(new Error('不是有效的统一社会信用代码，请重新输入'));
-                } else {
-                    creditCodeExist(value).then(response => {
-                        if (response.httpCode === 200) {
-                            if (!response.data) {
-                                callback();
-                            } else {
-                                callback(new Error('统一社会信用代码已存在'))
-                            }
-                        } else {
-                            callback(new Error(response.msg))
-                        }
-                    }).catch(error => {
-                        callback(new Error(error))
-                    })
-                }
-            };
-            const validateIdcard = (rule, value, callback) => {
-                if (!isIdCardNo(value)) {
-                    callback(new Error('身份证号格式不正确，请重新输入'));
-                }
-                callback();
-            };
-            const validateMobiles = (rule, value, callback) => {
-                if (!validatMobiles(value)) {
-                    callback(new Error('手机号码格式不正确'));
-                }
-                callback();
-            };
-            const validatePassword = (rule, value, callback) => {
-                if (this.zwfwLegalPerson.passwordConfirm) {
-                    this.$refs.zwfwLegalPersonForm.validateField('passwordConfirm')
-                }
-                callback()
-            };
-            const validatePass2 = (rule, value, callback) => {
-                if (this.zwfwLegalPerson.password && this.zwfwLegalPerson.passwordConfirm
-                    && this.zwfwLegalPerson.password != this.zwfwLegalPerson.passwordConfirm) {
-                    callback(new Error('两次密码输入不同，请重新输入'))
-                }
-                callback()
-            };
             return {
                 showExamined: false,
-                titleName: '',
-                zwfwLegalPersonList: [],
+                legalPersonVerifyList: [],
                 total: null,
                 listLoading: true,
                 listQuery: {
@@ -318,78 +186,28 @@
                     phone: undefined,
                     legalPerson: undefined
                 },
-                zwfwLegalPerson: {
-                    id: undefined,
-                    companyCode: '',
-                    companyType: '',
-                    companyName: '',
-                    agencyCode: '',
-                    legalPerson: '',
-                    idcard: '',
-                    phone: '',
-                    registerPlace: '',
-                    registerDate: '',
-                    password: '',
-                    passwordConfirm: '',
-                    remark: '',
-                    enable: 1,
-                    pass: '',
-                    reason: '',
-                    resultSendMail: true
-                },
                 currentRow: null,
                 selectedRows: [],
                 dialogFormVisible: false,
-                dialogFormVisible1: false,
                 passRemark: '确认通过',
                 noPassRemark: '信息不符',
-                dialogStatus: '',
                 dialogLoading: false,
                 btnLoading: false,
-                readonlyFlag: false,
-                zwfwLegalPersonRules: {
-                    companyCode: [
-                        {required: true, message: '请输入统一社会信用代码', trigger: 'blur'},
-                        {validator: validatCompanyCode, trigger: 'blur'}
-                    ],
-                    companyType: [
-                        {required: true, message: '请选择机构类型', trigger: 'blur'}
-                    ],
-                    companyName: [
-                        {required: true, message: '请输入机构名称', trigger: 'blur'}
-                    ],
-//                    agencyCode: [
-//                        {required: true, message: '请输入机构代码', trigger: 'blur'}
-//                    ],
-                    legalPerson: [
-                        {required: true, message: '请输入法定代表人', trigger: 'blur'}
-                    ],
-                    idcard: [
-                        {required: true, message: '请输入法人身份证号', trigger: 'blur'},
-                        {validator: validateIdcard, trigger: 'blur'}
-                    ],
-                    phone: [
-                        {required: true, message: '请输入联系电话', trigger: 'blur'},
-                        {validator: validateMobiles, trigger: 'blur'}
-                    ],
-                    registerPlace: [
-                        {required: true, message: '请输入注册地址', trigger: 'blur'}
-                    ],
-                    registerDate: [
-                        {required: true, message: '请选择注册日期', trigger: 'blur'}
-                    ],
-                    password: [
-                        {required: true, message: '请输入密码', trigger: 'blur'},
-                        {min: 6, max: 18, message: '长度在 6 到 18 个字符', trigger: 'blur'},
-                        {validator: validatePassword, trigger: 'blur'}
-                    ],
-                    passwordConfirm: [
-                        {required: true, message: '请输入确认密码', trigger: 'blur'},
-                        {validator: validatePass2, trigger: 'blur'}
-                    ]
+                legalPersonVerify: {
+                    id: undefined,
+                    companyCode: undefined,
+                    companyType: undefined,
+                    companyName: undefined,
+                    agencyCode: undefined,
+                    legalPerson: undefined,
+                    idcard: undefined,
+                    phone: undefined,
+                    registerPlace: undefined,
+                    registerDate: undefined,
+                    verifyStatus: undefined
                 },
-                zwfwLegalPersonVerifyRules: {
-                    pass: [{required: true, message: '请选择审核结果', trigger: 'blur'}]
+                legalPersonVerifyRules: {
+                    verifyStatus: [{required: true, message: '请选择审核结果', trigger: 'blur'}]
                 }
             }
         },
@@ -404,25 +222,49 @@
                 'dics'
             ])
         },
+        filters: {
+            statusFilter(status) {
+                const statusMap = {
+                    '审核中': 'primary',
+                    '审核通过': 'success',
+                    '审核不通过': 'danger'
+                };
+                return statusMap[status];
+            }
+        },
         methods: {
+            getList() {
+                this.listLoading = true;
+                getPage(this.listQuery).then(response => {
+                    this.listLoading = false;
+                    if (response.httpCode === 200) {
+                        this.legalPersonVerifyList = response.data.list;
+                        this.total = response.data.total;
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
+                })
+            },
             showDetail(row) {
                 this.currentRow = row;
                 this.resetTemp();
-                this.zwfwLegalPerson = copyProperties(this.zwfwLegalPerson, row);
-                if (this.zwfwLegalPerson.pass == 0) {
+                this.legalPersonVerify = copyProperties(this.legalPersonVerify, row);
+                if (this.legalPersonVerify.verifyStatus == 0) {
                     this.showExamined = false;
-                    this.zwfwLegalPerson.pass = ''
+                    this.legalPersonVerify.verifyStatus = undefined;
                 } else {
                     this.showExamined = true;
                 }
-                this.titleName = '账号审核';
-                this.dialogFormVisible1 = true;
+                this.dialogFormVisible = true;
             },
             submitReview() {
-                this.$refs['zwfwLegalPersonRef'].validate((valid) => {
+                this.$refs['legalPersonVerifyForm'].validate(valid => {
                     if (valid) {
-                        this.dialogFormVisible1 = false;
-                        companyInfoVerify(this.zwfwLegalPerson).then(response => {
+                        this.dialogFormVisible = false;
+                        verify({
+                            id: this.legalPersonVerify.id,
+                            verifyStatus: this.legalPersonVerify.verifyStatus
+                        }).then(response => {
                             if (response.httpCode === 200) {
                                 this.$message.success('审核成功！');
                                 this.getList();
@@ -435,142 +277,20 @@
                     }
                 });
             },
-            getList() {
-                this.listLoading = true;
-                getZwfwLegalPersonList(this.listQuery).then(response => {
-                    this.listLoading = false;
-                    if (response.httpCode === 200) {
-                        this.zwfwLegalPersonList = response.data.list;
-                        this.total = response.data.total;
-                    } else {
-                        this.$message.error('数据加载失败')
-                    }
-                })
-            },
-            // handleCreate(row) {
-            //     this.currentRow = row;
-            //     this.resetTemp();
-            //     this.readonlyFlag = false;
-            //     this.zwfwLegalPersonRules.password[0].required = true;
-            //     this.zwfwLegalPersonRules.passwordConfirm[0].required = true;
-            //     this.dialogStatus = 'create';
-            //     this.dialogFormVisible = true;
-            // },
-            // handleUpdate(row) {
-            //     this.currentRow = row;
-            //     this.resetTemp();
-            //     this.readonlyFlag = true;
-            //     this.zwfwLegalPerson = copyProperties(this.zwfwLegalPerson, row);
-            //     this.zwfwLegalPerson.password = '';
-            //     this.zwfwLegalPersonRules.password[0].required = false;
-            //     this.zwfwLegalPersonRules.passwordConfirm[0].required = false;
-            //     this.dialogStatus = 'update';
-            //     this.dialogFormVisible = true;
-            // },
-            // handleDelete() {
-            //     if (this.selectedRows.length === 0) {
-            //         this.$message.warning('请选择需要操作的记录');
-            //     } else {
-            //         this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
-            //             confirmButtonText: '确定',
-            //             cancelButtonText: '取消',
-            //             type: 'warning'
-            //         }).then(() => {
-            //             this.doDelete();
-            //         }).catch(() => {
-            //             console.dir('取消');
-            //         });
-            //     }
-            // },
-            // doCreate() {
-            //     this.$refs['zwfwLegalPersonForm'].validate(valid => {
-            //         if (valid) {
-            //             this.btnLoading = true;
-            //             this.dialogLoading = true;
-            //             createZwfwLegalPerson(this.zwfwLegalPerson).then(response => {
-            //                 this.btnLoading = false;
-            //                 this.dialogLoading = false;
-            //                 if (response.httpCode === 200) {
-            //                     this.resetZwfwLegalPersonForm();
-            //                     this.$message.success('创建成功');
-            //                     this.getList();
-            //                 } else {
-            //                     this.$message.error('创建失败');
-            //                 }
-            //             })
-            //         } else {
-            //             return false;
-            //         }
-            //     });
-            // },
-            doUpdate() {
-                this.$refs['zwfwLegalPersonForm'].validate(valid => {
-                    if (valid) {
-                        this.btnLoading = true;
-                        this.dialogLoading = true;
-                        updateZwfwLegalPerson(this.zwfwLegalPerson).then(response => {
-                            this.btnLoading = false;
-                            this.dialogLoading = false;
-                            if (response.httpCode === 200) {
-                                this.resetZwfwLegalPersonForm();
-                                this.$message.success('更新成功');
-                                this.getList();
-                            } else {
-                                this.$message.error('更新失败');
-                            }
-                        })
-                    } else {
-                        return false;
-                    }
-                });
-            },
-            doDelete() {
-                this.listLoading = true;
-                let ids = [];
-                for (const deleteRow of this.selectedRows) {
-                    ids.push(deleteRow.id);
-                }
-                delZwfwLegalPersons(ids.join()).then(response => {
-                    if (response.httpCode === 200) {
-                        this.$message.success('删除成功');
-                        this.getList();
-                    } else {
-                        this.$message.error('删除失败');
-                    }
-                    this.listLoading = false;
-                })
-            },
-            formatDate() {
-                if (!this.zwfwLegalPerson.registerDate) {
-                    return '';
-                }
-                this.zwfwLegalPerson.registerDate = moment(this.zwfwLegalPerson.registerDate).format('YYYY-MM-DD')
-            },
             resetTemp() {
-                this.zwfwLegalPerson = {
+                this.legalPersonVerify = {
                     id: undefined,
-                    companyCode: '',
-                    companyType: '',
-                    companyName: '',
-                    agencyCode: '',
-                    legalPerson: '',
-                    idcard: '',
-                    phone: '',
-                    registerPlace: '',
-                    registerDate: '',
-                    password: '',
-                    passwordConfirm: '',
-                    remark: '',
-                    enable: 1,
-                    pass: '',
-                    reason: '',
-                    resultSendMail: true
-                };
-            },
-            resetZwfwLegalPersonForm() {
-                this.dialogFormVisible = false;
-                this.resetTemp();
-                resetForm(this, 'zwfwLegalPersonForm');
+                    companyCode: undefined,
+                    companyType: undefined,
+                    companyName: undefined,
+                    agencyCode: undefined,
+                    legalPerson: undefined,
+                    idcard: undefined,
+                    phone: undefined,
+                    registerPlace: undefined,
+                    registerDate: undefined,
+                    verifyStatus: undefined
+                }
             },
             handleSizeChange(val) {
                 this.listQuery.rows = val;
@@ -585,7 +305,7 @@
                 this.selectedRows = rows;
             },
             toggleSelection(row) {
-                this.$refs.zwfwLegalPersonTable.toggleRowSelection(row);
+                this.$refs.legalPersonVerifyTable.toggleRowSelection(row);
             }
         }
     }

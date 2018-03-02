@@ -33,14 +33,6 @@ export function updateZwfwLegalPerson(zwfwLegalPersonVo){
         data
     })
 }
-export function companyInfoVerify(zwfwLegalPersonVo){
-    const data = zwfwLegalPersonVo;
-    return fetch({
-        url: '/api/hallSystem/legalPerson/companyInfoVerify',
-        method: 'post',
-        data
-    })
-}
 export function delZwfwLegalPersons(ids) {
     const data = {ids};
     return fetch({
@@ -63,5 +55,13 @@ export function creditCodeExist(companyCode) {
         url: '/api/hallSystem/legalPerson/creditCodeExist',
         method: 'get',
         params: {companyCode}
+    })
+}
+
+export function legalCardExist(idCard) {
+    return fetch({
+        url: '/api/hallSystem/legalPerson/legalCardExist',
+        method: 'post',
+        params: {idCard}
     })
 }

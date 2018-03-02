@@ -172,6 +172,7 @@
     import {isIdCardNo, validatMobiles, checkSocialCreditCode} from 'utils/validate'
     import {
         creditCodeExist,
+        legalCardExist,
         getZwfwLegalPersonList,
         createZwfwLegalPerson,
         updateZwfwLegalPerson,
@@ -207,6 +208,24 @@
             const validateIdcard = (rule, value, callback) => {
                 if (!isIdCardNo(value)) {
                     callback(new Error('身份证号格式不正确，请重新输入'));
+                } else {
+                    legalCardExist(value).then(response => {
+                        if (response.httpCode === 200) {
+                            if (response.data) {
+                                this.zwfwLegalPerson.phone = response.data.phone;
+                                this.zwfwLegalPerson.password = '';
+                                this.zwfwLegalPersonRules.password[0].required = false;
+                                this.zwfwLegalPersonRules.passwordConfirm[0].required = false;
+                                this.$message('法人身份证已注册其他企业帐号，已自动填充手机号，密码不需要填写');
+                            } else {
+                                callback();
+                            }
+                        } else {
+                            callback(new Error(response.msg));
+                        }
+                    }).catch(error => {
+                        callback(new Error(error));
+                    })
                 }
                 callback();
             };
