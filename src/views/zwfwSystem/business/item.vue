@@ -102,13 +102,14 @@
                                    type="primary" size="small">
                             办件材料
                         </el-button>
-                        <br />
                         <!--<br />-->
-                        <!--<el-button class="filter-item" style="" @click="handleItemConfig(scope.row)"-->
-                                   <!--type="primary" size="small">-->
-                            <!--预约配置-->
-                        <!--</el-button>-->
+                        <!--<br />-->
+
                     </el-badge>
+                    <el-button class="filter-item" style="" @click="handleItemConfig(scope.row)"
+                               type="primary" size="small">
+                        预约配置
+                    </el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -1844,7 +1845,7 @@
 <style rel="stylesheet/scss" lang="scss" scoped>
 
     .item {
-        margin-top: 12px;
+        /*margin-top: 12px;*/
         margin-right: 10px;
     }
 
@@ -1869,6 +1870,7 @@
     }
     .action .cell {
         height: 50px;
+        padding-top:10px;
     }
     .card-header {
 
