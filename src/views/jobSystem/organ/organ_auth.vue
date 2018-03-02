@@ -120,18 +120,10 @@
                     </table>
                 </el-tab-pane>
                 <el-tab-pane label="认证信息" name="second">
-                    <table v-if="this.jobOrganAuth.length>0" class="member_view" width="100%">
+                    <table v-if="jobOrganAuth!=null" class="member_view" width="100%">
                         <tr>
-                            <th>资料1:</th>
-                            <td>{{jobOrganAuth.img1}}</td>
-                        </tr>
-                        <tr>
-                            <th>资料2:</th>
-                            <td>{{jobOrganAuth.img2}}</td>
-                        </tr>
-                        <tr>
-                            <th>资料3:</th>
-                            <td>{{jobOrganAuth.img3}}</td>
+                            <th valign="top">资料:</th>
+                            <td><img :src="jobOrganAuth.img1" width="680" height="500"/></td>
                         </tr>
                     </table>
                     <table v-else class="member_view" width="100%">
@@ -232,6 +224,9 @@
             handleClick(tab, event) {
                 if (tab.name == 'first') {
                     this.jobOrganView();
+                }
+                if (tab.name == 'second') {
+                    this.jobOrganAuthView();
                 }
             },
             jobOrganView() {
