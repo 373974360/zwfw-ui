@@ -720,7 +720,7 @@
                         </el-checkbox-group>
                     </el-form-item>
 
-                    <el-form-item label="预约人数" prop="preordernum">
+                    <el-form-item label="每个时段预约人数" prop="preordernum">
                         <el-input-number v-model="zwfwItemConfig.preordernum" :min="1" label="预约人数"></el-input-number>
                     </el-form-item>
                 </div>
