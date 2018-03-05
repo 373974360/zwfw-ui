@@ -1496,7 +1496,7 @@
                         this.zwfwItemConfig.opentime = this.zwfwItemConfig.opentime1;
                     }
                 }).catch(e=>{
-                    // console.dir(e);
+                    console.dir(e);
                     this.$message.error('事项预约配置失败');
                     this.zwfwItemConfig.preorderTimeArray = this.zwfwItemConfig.preorderTimeArray1;
                     this.zwfwItemConfig.opentime = this.zwfwItemConfig.opentime1;
@@ -1735,7 +1735,7 @@
             },
             closeZwfwItemConfigForm() {
                 this.dialogItemConfigFormVisible = false;
-                this.resetZwfwMaterialForm();
+                // this.resetZwfwMaterialForm();
             },
             resetZwfwMaterialForm() {
                 this.changeMaterialInfo = false;
