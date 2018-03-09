@@ -316,8 +316,8 @@
         name: 'table_demo',
         data() {
             return {
-                importEnterpriseInfoAction: 'api/hallSystem/hallCompositeWindow/importEnterpriseInfo',
-                importUpdateEnterpriseInfoAction: 'api/hallSystem/hallCompositeWindow/importUpdateEnterpriseInfo',
+                importEnterpriseInfoAction: '/api/hallSystem/hallCompositeWindow/importEnterpriseInfo',
+                importUpdateEnterpriseInfoAction: '/api/hallSystem/hallCompositeWindow/importUpdateEnterpriseInfo',
                 title: null,
                 list: null,
                 total: null,
