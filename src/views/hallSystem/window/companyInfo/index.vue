@@ -24,14 +24,18 @@
                     class="filter-item" style="margin-left: 10px;"
                     :action="importEnterpriseInfoAction"
                     multiple
-                    :limit="3">
+                    :limit="3"
+                    :show-file-list=false
+                    :on-success="success">
                 <el-button type="primary" icon="upload">设立导入</el-button>
             </el-upload>
             <el-upload
                     class="filter-item" style="margin-left: 10px;"
                     :action="importUpdateEnterpriseInfoAction"
                     multiple
-                    :limit="3">
+                    :limit="3"
+                    :show-file-list=false
+                    :on-success="success">
                 <el-button type="primary" icon="upload">变更导入</el-button>
             </el-upload>
         </div>
@@ -529,6 +533,13 @@
                 }).catch(e => {
                     this.listLoading = false;
                 })
+            },
+            success(response, file, fileList) {
+                if (response.httpCode === 200) {
+                    this.$message.success('导入成功');
+                } else {
+                    this.$message.error('导入失败');
+                }
             }
         }
     }
