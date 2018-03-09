@@ -4,10 +4,14 @@
             <el-input @keyup.enter.native="getItemList" style="width: 230px;" class="filter-item"
                       placeholder="输入事项名称/基本编码"
                       v-model="listQuery.name"></el-input>
-            <el-cascader :options="cascader" class="filter-item" @change="handleChange"
-                         :show-all-levels="true" clearable filterable expand-trigger="hover"
-                         :change-on-select="true" style="width: 180px" placeholder="所属部门">
-            </el-cascader>
+            <el-select v-model="listQuery.itemCategories" class="filter-item"  filterable placeholder="选择科室分类">
+                <el-option :key="category.id" v-for="category in categoryDept" :label="category.name" :value="category.id">
+                </el-option>
+            </el-select>
+            <!--<el-cascader :options="cascader" class="filter-item" @change="handleChange"-->
+                         <!--:show-all-levels="true" clearable filterable expand-trigger="hover"-->
+                         <!--:change-on-select="true" style="width: 180px" placeholder="所属部门">-->
+            <!--</el-cascader>-->
             <el-select class="filter-item" v-model="listQuery.processType" clearable placeholder="请选择办件类型">
                 <el-option v-for="item in dics['bjlx']" :key="item.code" :value="item.code"
                            :label="item.value"></el-option>
@@ -102,11 +106,11 @@
                                    type="primary" size="small">
                             办件材料
                         </el-button>
-                        <br />
+                        <br/>
                         <!--<br />-->
                         <!--<el-button class="filter-item" style="" @click="handleItemConfig(scope.row)"-->
-                                   <!--type="primary" size="small">-->
-                            <!--预约配置-->
+                        <!--type="primary" size="small">-->
+                        <!--预约配置-->
                         <!--</el-button>-->
                     </el-badge>
                 </template>
@@ -541,9 +545,9 @@
                       style="width: 100%" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="40"/>
                 <!--<el-table-column align="center" label="序号" width="70">-->
-                    <!--<template scope="scope">-->
-                        <!--<span>{{scope.row.id}}</span>-->
-                    <!--</template>-->
+                <!--<template scope="scope">-->
+                <!--<span>{{scope.row.id}}</span>-->
+                <!--</template>-->
                 <!--</el-table-column>-->
                 <el-table-column prop="sortNo" align="center" label="排序" width="70">
                 </el-table-column>
@@ -643,8 +647,11 @@
                         <!--<el-button style="margin-left: 10px;" size="small" type="info" @click="showMaterialExample">
                             点击下载
                         </el-button>-->
-                        <a :href="zwfwItemMaterial.example" :download="downloadExample" :class="{disabled: !zwfwItemMaterial.example}">
-                            <el-button style="margin-left: 10px;" size="small" type="info" :disabled="!zwfwItemMaterial.example">点击下载</el-button>
+                        <a :href="zwfwItemMaterial.example" :download="downloadExample"
+                           :class="{disabled: !zwfwItemMaterial.example}">
+                            <el-button style="margin-left: 10px;" size="small" type="info"
+                                       :disabled="!zwfwItemMaterial.example">点击下载
+                            </el-button>
                         </a>
                     </el-upload>
                 </el-form-item>
@@ -667,8 +674,11 @@
                         <!--<el-button style="margin-left: 10px;" size="small" type="info" @click="showEformFile">
                             点击下载
                         </el-button>-->
-                        <a :href="zwfwItemMaterial.eform" :download="downloadEform" :class="{disabled: !zwfwItemMaterial.eform}">
-                            <el-button style="margin-left: 10px;" size="small" type="info" :disabled="!zwfwItemMaterial.eform">点击下载</el-button>
+                        <a :href="zwfwItemMaterial.eform" :download="downloadEform"
+                           :class="{disabled: !zwfwItemMaterial.eform}">
+                            <el-button style="margin-left: 10px;" size="small" type="info"
+                                       :disabled="!zwfwItemMaterial.eform">点击下载
+                            </el-button>
                         </a>
                     </el-upload>
                 </el-form-item>
@@ -754,6 +764,7 @@
     import {getAllUser} from '../../../api/baseSystem/org/user';
     import {getDeptCascader} from 'api/baseSystem/org/dept';
     import {getAllAddressees, getAddresseeById} from 'api/hallSystem/window/addressee';
+    import {getCategoryListByPid} from "../../../api/zwfwSystem/business/category";
     import {quillEditor} from 'vue-quill-editor'
 
     export default {
@@ -777,6 +788,25 @@
             const addresseeIdValidate = (rule, value, callback) => {
                 if (this.zwfwItem.handTypes.includes('3') && !value) {
                     callback(new Error('请选择收件地址'));
+                }
+                callback();
+            };
+            const promiseEndTimeValidate = (rule, value, callback) => {
+                if (!/^[1-9]+(\.5)?$|^0\.5$/.test(this.zwfwItem.promiseEndTime)) {
+                    callback(new Error('请填写承诺的工作日，最小单位为0.5天'));
+                }
+                callback();
+            };
+
+            const pretrialDaysValidate = (rule, value, callback) => {
+                if (!/^[1-9]+(\.5)?$|^0\.5$/.test(this.zwfwItem.pretrialDays)) {
+                    callback(new Error('请填写预审的工作日，最小单位为0.5天'));
+                }
+                callback();
+            };
+            const legalEndTimeValidate = (rule, value, callback) => {
+                if (!/^[1-9]+(\.5)?$|^0\.5$/.test(this.zwfwItem.legalEndTime)) {
+                    callback(new Error('请填写法定办结的工作日，最小单位为0.5天'));
                 }
                 callback();
             };
@@ -807,7 +837,8 @@
                     departmentId: undefined,
                     processType: undefined,
                     handleType: undefined,
-                    enable: '1'
+                    enable: '1',
+                    itemCategories: undefined
                 },
                 activeName: 'first',
                 zwfwItem: {
@@ -923,7 +954,7 @@
                         {required: true, message: '请输入事项类型'}
                     ],
                     pretrialDays: [
-                        {required: true, message: '请输入预审天数'}
+                        {required: true, validator: pretrialDaysValidate, trigger: 'blur'}
                     ],
                     askPhone: [
                         {required: true, message: '请输入咨询电话'}
@@ -948,6 +979,12 @@
                     ],
                     addresseeId: [
                         {validator: addresseeIdValidate, trigger: 'blur'}
+                    ],
+                    promiseEndTime: [
+                        {required: true, validator: promiseEndTimeValidate, trigger: 'blur'}
+                    ],
+                    legalEndTime: [
+                        {required: true, validator: legalEndTimeValidate, trigger: 'blur'}
                     ]
                 },
                 zwfwItemMaterialRules: {
@@ -996,7 +1033,8 @@
                     defaultFlag: false
                 },
                 cardItemVisible: false,
-                cascader: []
+                cascader: [],
+                categoryDept: []
             }
         },
         computed: {
@@ -1056,6 +1094,7 @@
             this.getItemList();
             this.getDeptTree();
             this.getAddresseeList();
+            this.getCategoryListByPid();
         },
         watch: {
             'zwfwItem.addresseeId'() {
@@ -1072,6 +1111,16 @@
 
         },
         methods: {
+            getCategoryListByPid() {
+                this.parentId = '7344364064835072';
+                getCategoryListByPid(this.parentId).then(response => {
+                    if (response.httpCode === 200) {
+                        this.categoryDept = response.data;
+                    } else {
+                        this.$message.error('加载部门信息失败');
+                    }
+                })
+            },
             preorderChange(value) {
                 console.log(value);
             },
@@ -1220,14 +1269,14 @@
                     this.resultExampleFileList.push({url: this.zwfwItem.resultExample, name: '结果样本'});
                 }
                 if (this.zwfwItem.handTypes) {
-                    if(typeof this.zwfwItem.handTypes == 'string') {
+                    if (typeof this.zwfwItem.handTypes == 'string') {
                         this.zwfwItem.handTypes = this.zwfwItem.handTypes.split(',');
                     }
                 } else {
                     this.zwfwItem.handTypes = []
                 }
                 if (this.zwfwItem.takeTypes) {
-                    if(typeof this.zwfwItem.takeTypes == 'string') {
+                    if (typeof this.zwfwItem.takeTypes == 'string') {
                         this.zwfwItem.takeTypes = this.zwfwItem.takeTypes.split(',');
                     }
                 } else {
@@ -1475,8 +1524,8 @@
                 })
             },
             submitItemConfig() {
-                if(this.zwfwItemConfig.ispreorder==1){
-                    if(this.zwfwItemConfig.preorderTimeArray==null || this.zwfwItemConfig.preorderTimeArray.length==0){
+                if (this.zwfwItemConfig.ispreorder == 1) {
+                    if (this.zwfwItemConfig.preorderTimeArray == null || this.zwfwItemConfig.preorderTimeArray.length == 0) {
                         this.$message.warning("请勾选预约时间");
                         return false;
                     }
@@ -1496,7 +1545,7 @@
                         this.zwfwItemConfig.preorderTimeArray = this.zwfwItemConfig.preorderTimeArray1;
                         this.zwfwItemConfig.opentime = this.zwfwItemConfig.opentime1;
                     }
-                }).catch(e=>{
+                }).catch(e => {
                     // console.dir(e);
                     this.$message.error('事项预约配置失败');
                     this.zwfwItemConfig.preorderTimeArray = this.zwfwItemConfig.preorderTimeArray1;
@@ -1554,7 +1603,7 @@
                     });
                 }
             },
-            isExist(){
+            isExist() {
                 this.isMaterialExist = false;
                 for (let obj of this.zwfwItemMaterialList) {
                     if (obj.id === this.zwfwItemMaterial.id) {
@@ -1565,7 +1614,7 @@
             },
             relateMaterial() {
                 this.isExist();
-                if(this.isMaterialExist){
+                if (this.isMaterialExist) {
                     this.$message.warning('资料已存在');
                 }
                 this.$refs['zwfwMaterialForm'].validate(valid => {
@@ -1607,9 +1656,9 @@
                     }
                 })
             },
-            doUpdateAndRelate(){
+            doUpdateAndRelate() {
                 this.isExist();
-                if(this.isMaterialExist){
+                if (this.isMaterialExist) {
                     this.$message.warning('资料已存在');
                 }
                 this.$refs['zwfwMaterialForm'].validate(valid => {
@@ -1853,36 +1902,41 @@
         height: 218px;
         margin-bottom: 8px;
 
-    .ql-toolbar {
-        line-height: 24px;
-    }
+        .ql-toolbar {
+            line-height: 24px;
+        }
 
-    .ql-container {
-        height: 180px;
-    }
+        .ql-container {
+            height: 180px;
+        }
 
     }
 </style>
 <style rel="stylesheet/scss" lang="scss">
-    .el-table th.action .cell{line-height:50px;}
+    .el-table th.action .cell {
+        line-height: 50px;
+    }
+
     .elRow {
         height: 50px;
     }
+
     .action .cell {
         height: 50px;
     }
+
     .card-header {
 
-    .card-item {
-        border: none;
-        margin: 0;
-        width: 80%;
-        float: left;
-    }
+        .card-item {
+            border: none;
+            margin: 0;
+            width: 80%;
+            float: left;
+        }
 
-    .el-button {
-        float: right;
-    }
+        .el-button {
+            float: right;
+        }
 
     }
 
@@ -1893,36 +1947,36 @@
         border: 1px solid #d0d0d0;
         height: 80px;
 
-    .el-radio {
-        height: 64px;
-        line-height: 64px;
-        text-align: center;
-        width: 10%;
-        float: left;
-    }
+        .el-radio {
+            height: 64px;
+            line-height: 64px;
+            text-align: center;
+            width: 10%;
+            float: left;
+        }
 
-    p {
-        margin: 0;
-        height: 32px;
-        line-height: 32px;
-        width: 88%;
-        float: left;
-    }
+        p {
+            margin: 0;
+            height: 32px;
+            line-height: 32px;
+            width: 88%;
+            float: left;
+        }
 
-    .p1 {
-        font-size: 16px;
-        font-weight: bold;
+        .p1 {
+            font-size: 16px;
+            font-weight: bold;
 
-    span {
-        padding: 3px 6px;
-        color: #dd1100;
-        font-size: 14px;
-        font-weight: normal;
-        border: 1px solid #dd1100;
-        border-radius: 3px;
-    }
+            span {
+                padding: 3px 6px;
+                color: #dd1100;
+                font-size: 14px;
+                font-weight: normal;
+                border: 1px solid #dd1100;
+                border-radius: 3px;
+            }
 
-    }
+        }
     }
 
     .clearfix:before, .clearfix:after {
@@ -1937,13 +1991,13 @@
     .box-card {
         width: 100%;
 
-    .el-card__body {
-        padding: 0;
-    }
+        .el-card__body {
+            padding: 0;
+        }
 
-    .card-body {
-        padding: 12px;
-    }
+        .card-body {
+            padding: 12px;
+        }
 
     }
 </style>
