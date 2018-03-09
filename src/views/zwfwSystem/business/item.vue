@@ -721,7 +721,7 @@
                     </el-form-item>
 
                     <el-form-item label="预约人数" prop="preordernum">
-                        <el-input-number v-model="zwfwItemConfig.preordernum" :min="1" label="预约人数"></el-input-number>
+                        <el-input-number v-model="zwfwItemConfig.preordernum" :min="1" label="每天预约人数"></el-input-number>
                     </el-form-item>
                 </div>
             </el-form>
