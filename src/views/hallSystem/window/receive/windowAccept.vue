@@ -1914,8 +1914,9 @@
                     this.$message.warning('请选择取件方式');
                     return;
                 }
-                if (!this.contactsPhone) {
-                    this.$message.warning('请输入联系人手机号');
+                if (!validatMobiles(this.contactsPhone)) {
+                    this.$message.warning('联系人手机号格式不正确');
+                    return;
                 }
                 //判断如果是无预审收件，则验证无预审表单各项目是否填写完整
                 if (this.memberType == 1) { //自然人

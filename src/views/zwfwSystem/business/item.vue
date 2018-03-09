@@ -17,7 +17,7 @@
                            :label="item.value"></el-option>
             </el-select>
             <el-select class="filter-item" v-model="listQuery.enable" clearable placeholder="事项状态">
-                <el-option label="全部" value="2">
+                <el-option label="全部" value="">
 
                 </el-option>
                 <el-option
@@ -720,8 +720,8 @@
                         </el-checkbox-group>
                     </el-form-item>
 
-                    <el-form-item label="预约人数" prop="preordernum">
-                        <el-input-number v-model="zwfwItemConfig.preordernum" :min="1" label="每天预约人数"></el-input-number>
+                    <el-form-item label="每个时段预约人数" prop="preordernum">
+                        <el-input-number v-model="zwfwItemConfig.preordernum" :min="1" label="预约人数"></el-input-number>
                     </el-form-item>
                 </div>
             </el-form>
