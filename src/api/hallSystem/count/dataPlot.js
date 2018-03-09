@@ -24,3 +24,10 @@ export function plotByUser(query) {
     });
 }
 
+export function plotByFixCategory(query) {
+    return fetch({
+        url: '/api/hallSystem/count/dataPlot/plotByFixCategory',
+        method: 'get',
+        params: query
+    });
+}

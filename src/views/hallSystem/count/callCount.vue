@@ -12,10 +12,10 @@
                 <el-date-picker style="top: -5px;" v-model="listQuery.endDateCategory" type="date"
                                 placeholder="结束时间" @change="changeDateEndCategory" :clearable="false">
                 </el-date-picker>
-                <el-select v-model="listQuery.categoryIds" class="filter-item" multiple filterable placeholder="选择部门">
-                    <el-option :key="item.id" v-for="item in categoryList" :label="item.name" :value="item.id">
-                    </el-option>
-                </el-select>
+                <!--<el-select v-model="listQuery.itemCategories" class="filter-item"  filterable placeholder="选择科室分类">-->
+                    <!--<el-option :key="category.id" v-for="category in categoryList" :label="category.name" :value="category.id">-->
+                    <!--</el-option>-->
+                <!--</el-select>-->
                 <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="统计" placement="top-start">
                     <el-button class="filter-item" type="primary" v-waves icon="search" @click="doCategoryPlot">
                         统计
@@ -74,7 +74,6 @@
 </template>
 
 <script>
-    import {getAllDept} from "../../../api/baseSystem/org/dept";
 
     const echarts = require('echarts/lib/echarts');
     require('echarts/lib/chart/bar');
@@ -89,7 +88,7 @@
     import moment from 'moment';
     import {getAllCategory} from 'api/zwfwSystem/business/category';
     import {getAllWindow} from 'api/hallSystem/lobby/window';
-    import {plotByCategory, plotByWindow, plotByUser} from 'api/hallSystem/count/dataPlot';
+    import {plotByCategory, plotByWindow, plotByUser, plotByFixCategory} from 'api/hallSystem/count/dataPlot';
     import {getAllUser} from 'api/baseSystem/org/user';
 
     export default {
@@ -103,7 +102,7 @@
                     endDateWindow: undefined,
                     startDateUser: moment(new Date()).format('YYYY-MM-DD'),
                     endDateUser: undefined,
-                    categoryIds: undefined,
+                    itemCategories: undefined,
                     windowIds: undefined,
                     userIds: undefined
                 },
@@ -128,7 +127,7 @@
             ])
         },
         created() {
-            this.getCategoryList();
+            // this.getCategoryList();
             this.getWindowList();
             this.getUserList();
             this.plotByCategory();
@@ -136,15 +135,17 @@
             this.plotByUser();
         },
         methods: {
-            getCategoryList() {
-                getAllDept().then(response => {
-                    if (response.httpCode === 200) {
-                        this.categoryList = response.data;
-                    } else {
-                        this.$message.error('事项分类信息加载失败')
-                    }
-                })
-            },
+            // getCategoryList() {
+            //     this.parentId = '1';
+            //     // this.parentId = '7344364064835072';
+            //     getCategoryListByPid(this.parentId).then(response => {
+            //         if (response.httpCode === 200) {
+            //             this.categoryList = response.data;
+            //         } else {
+            //             this.$message.error('事项分类信息加载失败')
+            //         }
+            //     })
+            // },
             getWindowList() {
                 getAllWindow().then(response => {
                     if (response.httpCode === 200) {
@@ -165,21 +166,21 @@
             },
             plotByCategory() {
                 let query = {};
-                if (this.listQuery.categoryIds != undefined) {
-                    const categoryId = this.listQuery.categoryIds.toString();
+                if (this.listQuery.itemCategories != undefined) {
+                    const categoryId = this.listQuery.itemCategories.toString();
                     query = {
                         startDate: this.listQuery.startDateCategory,
                         endDate: this.listQuery.endDateCategory,
-                        categoryIds: categoryId
+                        itemCategories: categoryId
                     }
                 } else {
                     query = {
                         startDate: this.listQuery.startDateCategory,
                         endDate: this.listQuery.endDateCategory,
-                        categoryIds: this.listQuery.categoryIds
+                        itemCategories: this.listQuery.itemCategories
                     }
                 }
-                plotByCategory(query).then(response => {
+                plotByFixCategory(query).then(response => {
                     if (response.httpCode === 200) {
                         const list = response.data;
                         this.categoryName = [];
