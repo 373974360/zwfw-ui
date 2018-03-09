@@ -26,7 +26,8 @@
                     multiple
                     :limit="3"
                     :show-file-list=false
-                    :on-success="success">
+                    :on-success="success"
+                    :on-error="error">
                 <el-button type="primary" icon="upload">设立导入</el-button>
             </el-upload>
             <el-upload
@@ -35,7 +36,8 @@
                     multiple
                     :limit="3"
                     :show-file-list=false
-                    :on-success="success">
+                    :on-success="success"
+                    :on-error="error">
                 <el-button type="primary" icon="upload">变更导入</el-button>
             </el-upload>
         </div>
@@ -540,6 +542,9 @@
                 } else {
                     this.$message.error('导入失败');
                 }
+            },
+            error(err, file, fileList) {
+                this.$message.error('系统繁忙，请稍后重试');
             }
         }
     }
