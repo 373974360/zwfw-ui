@@ -269,7 +269,7 @@
                                 this.$message.success('审核成功！');
                                 this.getList();
                             } else {
-                                this.$message.error(response.msg);
+                                this.$message.error(response.msg || '审核失败');
                             }
                         })
                     } else {
