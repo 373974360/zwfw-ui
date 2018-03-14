@@ -153,6 +153,8 @@
                             <tr>
                                 <th width="140">审核结果</th>
                                 <td>{{legalPersonVerify.verifyStatus | enums('VerifyStatus')}}</td>
+                            </tr>
+                            <tr>
                                 <th width="140">审核结果说明</th>
                                 <td>{{legalPersonVerify.verifyResult}}</td>
                             </tr>
