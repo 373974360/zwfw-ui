@@ -41,7 +41,7 @@
                 <el-row type="flex" justify="center">
                     <el-col :span="24">
                         <el-form-item>
-                            <el-button class="loginBtn"  :loading="loading"
+                            <el-button id="loginBtn"  :loading="loading"
                                        @click.native.prevent="handleLogin">
                                 登 录
                             </el-button>
@@ -142,10 +142,10 @@
     .login-form{width: 308px; margin-top: 454px; margin-left: 732px;}
     .el-input__inner{-webkit-box-shadow:0 0 0 50px #ffffff inset;}
     .borderNone .el-input__inner{border:none;}
-    .validate{width: 190px;}
+    .validate .el-input__inner{width: 190px;}
     .captcha{width: 95px; position: absolute; right: 0px;top: -2px; cursor: pointer;}
     .el-form-item__error{right: 0px;text-align: right;}
-    .loginBtn{width: 200px; height: 45px;margin-left: 35px; background: #1d6885; color: #ffffff;}
+    #loginBtn{width: 200px; height: 45px;margin-left: 35px; background: #1d6885; color: #ffffff;}
     .marginBottonNone{margin-bottom: 0px;}
     .forgetRow{margin-top: 15px;margin-bottom: 13px;}
     .forget-pwd{color: #2b5062; font-size: 14px;}
