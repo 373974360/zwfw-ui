@@ -42,14 +42,14 @@
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection"
                   row-class-name="elRow">
             <el-table-column type="selection" width="55"/>
-            <el-table-column align="center" label="序号" width="70">
+            <!--<el-table-column align="center" label="序号" width="70">-->
+                <!--<template scope="scope">-->
+                    <!--<span>{{scope.row.id}}</span>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
+            <el-table-column align="left" label="事项名称" prop="name" width="360">
                 <template scope="scope">
-                    <span>{{scope.row.id}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="left" label="事项名称" prop="name" width="300">
-                <template scope="scope">
-                    <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
+                    <el-tooltip class="item" effect="dark" :content="'点击编辑：' +scope.row.id " placement="right-start">
                         <span class="link-type" @click="handleItemUpdate(scope.row)">{{scope.row.name}}</span>
                     </el-tooltip>
                 </template>
@@ -95,7 +95,7 @@
                     </el-tag>
                 </template>
             </el-table-column>
-            <el-table-column align="left" label="操作" width="200" class-name="action">
+            <el-table-column align="center" label="操作" width="200" class-name="action">
                 <template scope="scope">
                     <el-badge :value="scope.row.itemMaterialCount" class="item">
                         <el-button class="filter-item" style="" @click="handleMaterialList(scope.row)"
@@ -1843,7 +1843,10 @@
     }
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
-
+    .el-checkbox {
+        margin-left:0px;
+        margin-right: 15px;
+    }
     .item {
         /*margin-top: 12px;*/
         margin-right: 10px;
@@ -1868,7 +1871,7 @@
     .elRow {
         height: 50px;
     }
-    .action .cell {
+    tbody .action .cell {
         height: 50px;
         padding-top:10px;
     }
