@@ -43,11 +43,11 @@
                   row-class-name="elRow">
             <el-table-column type="selection" width="55"/>
             <!--<el-table-column align="center" label="序号" width="70">-->
-                <!--<template scope="scope">-->
-                    <!--<span>{{scope.row.id}}</span>-->
-                <!--</template>-->
+            <!--<template scope="scope">-->
+            <!--<span>{{scope.row.id}}</span>-->
+            <!--</template>-->
             <!--</el-table-column>-->
-            <el-table-column align="left" label="事项名称" prop="name" >
+            <el-table-column align="left" label="事项名称" prop="name">
                 <template scope="scope">
                     <el-tooltip class="item" effect="dark" :content="'点击编辑：' +scope.row.id " placement="right-start">
                         <span class="link-type" @click="handleItemUpdate(scope.row)">{{scope.row.name}}</span>
@@ -117,7 +117,8 @@
             </el-pagination>
         </div>
 
-        <el-dialog v-if="currentRow!=null" :title="'编辑事项，ID:' + currentRow.id" :visible.sync="dialogItemFormVisible" @open="initEditor"
+        <el-dialog v-if="currentRow!=null" :title="'编辑事项，ID:' + currentRow.id" :visible.sync="dialogItemFormVisible"
+                   @open="initEditor"
                    :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemForm">
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem" label-position="right"
                      label-width="134px"
@@ -537,9 +538,9 @@
                       style="width: 100%" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="40"/>
                 <!--<el-table-column align="center" label="序号" width="70">-->
-                    <!--<template scope="scope">-->
-                        <!--<span>{{scope.row.id}}</span>-->
-                    <!--</template>-->
+                <!--<template scope="scope">-->
+                <!--<span>{{scope.row.id}}</span>-->
+                <!--</template>-->
                 <!--</el-table-column>-->
                 <el-table-column prop="sortNo" align="center" label="排序" width="70">
                 </el-table-column>
@@ -639,8 +640,11 @@
                         <!--<el-button style="margin-left: 10px;" size="small" type="info" @click="showMaterialExample">
                             点击下载
                         </el-button>-->
-                        <a :href="zwfwItemMaterial.example" :download="downloadExample" :class="{disabled: !zwfwItemMaterial.example}">
-                            <el-button style="margin-left: 10px;" size="small" type="info" :disabled="!zwfwItemMaterial.example">点击下载</el-button>
+                        <a :href="zwfwItemMaterial.example" :download="downloadExample"
+                           :class="{disabled: !zwfwItemMaterial.example}">
+                            <el-button style="margin-left: 10px;" size="small" type="info"
+                                       :disabled="!zwfwItemMaterial.example">点击下载
+                            </el-button>
                         </a>
                     </el-upload>
                 </el-form-item>
@@ -663,8 +667,11 @@
                         <!--<el-button style="margin-left: 10px;" size="small" type="info" @click="showEformFile">
                             点击下载
                         </el-button>-->
-                        <a :href="zwfwItemMaterial.eform" :download="downloadEform" :class="{disabled: !zwfwItemMaterial.eform}">
-                            <el-button style="margin-left: 10px;" size="small" type="info" :disabled="!zwfwItemMaterial.eform">点击下载</el-button>
+                        <a :href="zwfwItemMaterial.eform" :download="downloadEform"
+                           :class="{disabled: !zwfwItemMaterial.eform}">
+                            <el-button style="margin-left: 10px;" size="small" type="info"
+                                       :disabled="!zwfwItemMaterial.eform">点击下载
+                            </el-button>
                         </a>
                     </el-upload>
                 </el-form-item>
@@ -1216,14 +1223,14 @@
                     this.resultExampleFileList.push({url: this.zwfwItem.resultExample, name: '结果样本'});
                 }
                 if (this.zwfwItem.handTypes) {
-                    if(typeof this.zwfwItem.handTypes == 'string') {
+                    if (typeof this.zwfwItem.handTypes == 'string') {
                         this.zwfwItem.handTypes = this.zwfwItem.handTypes.split(',');
                     }
                 } else {
                     this.zwfwItem.handTypes = []
                 }
                 if (this.zwfwItem.takeTypes) {
-                    if(typeof this.zwfwItem.takeTypes == 'string') {
+                    if (typeof this.zwfwItem.takeTypes == 'string') {
                         this.zwfwItem.takeTypes = this.zwfwItem.takeTypes.split(',');
                     }
                 } else {
@@ -1471,8 +1478,8 @@
                 })
             },
             submitItemConfig() {
-                if(this.zwfwItemConfig.ispreorder==1){
-                    if(this.zwfwItemConfig.preorderTimeArray==null || this.zwfwItemConfig.preorderTimeArray.length==0){
+                if (this.zwfwItemConfig.ispreorder == 1) {
+                    if (this.zwfwItemConfig.preorderTimeArray == null || this.zwfwItemConfig.preorderTimeArray.length == 0) {
                         this.$message.warning("请勾选预约时间");
                         return false;
                     }
@@ -1492,7 +1499,7 @@
                         this.zwfwItemConfig.preorderTimeArray = this.zwfwItemConfig.preorderTimeArray1;
                         this.zwfwItemConfig.opentime = this.zwfwItemConfig.opentime1;
                     }
-                }).catch(e=>{
+                }).catch(e => {
                     console.dir(e);
                     this.$message.error('事项预约配置失败');
                     this.zwfwItemConfig.preorderTimeArray = this.zwfwItemConfig.preorderTimeArray1;
@@ -1550,7 +1557,7 @@
                     });
                 }
             },
-            isExist(){
+            isExist() {
                 this.isMaterialExist = false;
                 for (let obj of this.zwfwItemMaterialList) {
                     if (obj.id === this.zwfwItemMaterial.id) {
@@ -1561,7 +1568,7 @@
             },
             relateMaterial() {
                 this.isExist();
-                if(this.isMaterialExist){
+                if (this.isMaterialExist) {
                     this.$message.warning('资料已存在');
                 }
                 this.$refs['zwfwMaterialForm'].validate(valid => {
@@ -1603,9 +1610,9 @@
                     }
                 })
             },
-            doUpdateAndRelate(){
+            doUpdateAndRelate() {
                 this.isExist();
-                if(this.isMaterialExist){
+                if (this.isMaterialExist) {
                     this.$message.warning('资料已存在');
                 }
                 this.$refs['zwfwMaterialForm'].validate(valid => {
@@ -1838,11 +1845,16 @@
         }
     }
 </script>
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style>
     .el-checkbox {
-        margin-left:0px;
+        margin-left: 0px;
         margin-right: 15px;
     }
+    .el-checkbox+.el-checkbox{
+        margin-left:0px;
+    }
+
+
     .item {
         /*margin-top: 12px;*/
         margin-right: 10px;
@@ -1851,38 +1863,46 @@
     .quill-editor {
         /*height: 218px;*/
         margin-bottom: 8px;
+    }
 
-    .ql-toolbar {
+    .quill-editor .ql-toolbar {
         line-height: 24px;
     }
 
     .ql-container {
-        height: 180px;
+        max-height: 180px;
+        overflow: scroll
     }
-
+    .ql-toolbar.ql-snow .ql-formats{
+        margin-right:0px;
     }
 </style>
 <style rel="stylesheet/scss" lang="scss">
-    .el-table th.action .cell{line-height:50px;}
+    .el-table th.action .cell {
+        line-height: 50px;
+    }
+
     .elRow {
         height: 50px;
     }
+
     tbody .action .cell {
         height: 50px;
-        padding-top:10px;
+        padding-top: 10px;
     }
+
     .card-header {
 
-    .card-item {
-        border: none;
-        margin: 0;
-        width: 80%;
-        float: left;
-    }
+        .card-item {
+            border: none;
+            margin: 0;
+            width: 80%;
+            float: left;
+        }
 
-    .el-button {
-        float: right;
-    }
+        .el-button {
+            float: right;
+        }
 
     }
 
@@ -1893,36 +1913,36 @@
         border: 1px solid #d0d0d0;
         height: 80px;
 
-    .el-radio {
-        height: 64px;
-        line-height: 64px;
-        text-align: center;
-        width: 10%;
-        float: left;
-    }
+        .el-radio {
+            height: 64px;
+            line-height: 64px;
+            text-align: center;
+            width: 10%;
+            float: left;
+        }
 
-    p {
-        margin: 0;
-        height: 32px;
-        line-height: 32px;
-        width: 88%;
-        float: left;
-    }
+        p {
+            margin: 0;
+            height: 32px;
+            line-height: 32px;
+            width: 88%;
+            float: left;
+        }
 
-    .p1 {
-        font-size: 16px;
-        font-weight: bold;
+        .p1 {
+            font-size: 16px;
+            font-weight: bold;
 
-    span {
-        padding: 3px 6px;
-        color: #dd1100;
-        font-size: 14px;
-        font-weight: normal;
-        border: 1px solid #dd1100;
-        border-radius: 3px;
-    }
+            span {
+                padding: 3px 6px;
+                color: #dd1100;
+                font-size: 14px;
+                font-weight: normal;
+                border: 1px solid #dd1100;
+                border-radius: 3px;
+            }
 
-    }
+        }
     }
 
     .clearfix:before, .clearfix:after {
@@ -1937,13 +1957,13 @@
     .box-card {
         width: 100%;
 
-    .el-card__body {
-        padding: 0;
-    }
+        .el-card__body {
+            padding: 0;
+        }
 
-    .card-body {
-        padding: 12px;
-    }
+        .card-body {
+            padding: 12px;
+        }
 
     }
 </style>
