@@ -47,48 +47,44 @@
                     <!--<span>{{scope.row.id}}</span>-->
                 <!--</template>-->
             <!--</el-table-column>-->
-            <el-table-column align="left" label="事项名称" prop="name" width="360">
+            <el-table-column align="left" label="事项名称" prop="name" >
                 <template scope="scope">
                     <el-tooltip class="item" effect="dark" :content="'点击编辑：' +scope.row.id " placement="right-start">
                         <span class="link-type" @click="handleItemUpdate(scope.row)">{{scope.row.name}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="基本编码" prop="basicCode">
+            <el-table-column align="center" label="基本编码" prop="basicCode" width="100">
                 <template scope="scope">
                     <span>{{scope.row.basicCode}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="事项类型" prop="type">
+            <el-table-column align="center" label="事项类型" prop="type" width="100">
                 <template scope="scope">
                     <span>{{scope.row.type | dics('sslx')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="办件类型" prop="processType">
+            <el-table-column align="center" label="办件类型" prop="processType" width="100">
                 <template scope="scope">
-                    <el-tag :type="scope.row.processType | dics('bjlx')">
-                        {{scope.row.processType | dics('bjlx')}}
-                    </el-tag>
+                    {{scope.row.processType | dics('bjlx')}}
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="承诺时限" prop="promiseEndTime">
+            <el-table-column align="center" label="承诺时限" prop="promiseEndTime" width="110">
                 <template scope="scope">
                     <span>{{scope.row.promiseEndTime}} 工作日</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="法定时限" prop="legalEndTime">
+            <el-table-column align="center" label="法定时限" prop="legalEndTime" width="110">
                 <template scope="scope">
                     <span>{{scope.row.legalEndTime}} 工作日</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="办理形式" prop="handleType">
+            <el-table-column align="center" label="办理形式" prop="handleType" width="100">
                 <template scope="scope">
-                    <el-tag :type="scope.row.handleType | dics('blxs')">
-                        {{scope.row.handleType | dics('blxs')}}
-                    </el-tag>
+                    {{scope.row.handleType | dics('blxs')}}
                 </template>
             </el-table-column>
-            <el-table-column prop="enable" class-name="status-col" label="状态">
+            <el-table-column prop="enable" class-name="status-col" label="状态" width="80">
                 <template scope="scope">
                     <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
                         {{scope.row.enable | enums('Enable')}}
@@ -121,7 +117,7 @@
             </el-pagination>
         </div>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogItemFormVisible" @open="initEditor"
+        <el-dialog v-if="currentRow!=null" :title="'编辑事项，ID:' + currentRow.id" :visible.sync="dialogItemFormVisible" @open="initEditor"
                    :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemForm">
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem" label-position="right"
                      label-width="134px"
@@ -1853,7 +1849,7 @@
     }
 
     .quill-editor {
-        height: 218px;
+        /*height: 218px;*/
         margin-bottom: 8px;
 
     .ql-toolbar {

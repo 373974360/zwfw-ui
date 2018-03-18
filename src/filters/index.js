@@ -69,6 +69,10 @@ export function expressTypeFilter(type) {
 }
 
 export function enums(value, type) {
+
+    if(type == 'Enable' && value==-1) {
+        return '已删除';
+    }
     var array = app.state.enums[type];
     if(!array) {
         console.warn('没有枚举类型' + type);
