@@ -41,7 +41,7 @@
         <el-table ref="zwfwItemTable" :data="zwfwItemList" v-loading.body="pageLoading" border fit highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection"
                   row-class-name="elRow">
-            <el-table-column type="selection" width="55"/>
+            <el-table-column type="selection"/>
             <!--<el-table-column align="center" label="序号" width="70">-->
             <!--<template scope="scope">-->
             <!--<span>{{scope.row.id}}</span>-->

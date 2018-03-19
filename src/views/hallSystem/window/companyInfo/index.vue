@@ -48,7 +48,7 @@
             <el-table-column type="expand">
                 <template scope="scope">
                     <!--<span>{{scope.row.jyfw}}</span>-->
-                   <el-table :data="historyList" v-loading.body="listLoading" border fit highlight-current-row style="width: 100%">
+                   <el-table :data="historyList[scope.row.gs_code]" v-loading.body="listLoading" border fit highlight-current-row style="width: 100%">
                         <el-table-column align="left" label="变更企业名称" width="300">
                             <template scope="scope">
                                 <span>{{scope.row.qymc}}</span>
@@ -368,7 +368,7 @@
 //                    vtype: ''
 
                 },
-                historyList: null
+                historyList: {}
             }
         },
         computed: {
@@ -527,8 +527,9 @@
                     this.listLoading = false;
                     if (response.httpCode === 200) {
                         const data2 = response.data;
-                        this.historyList = data2;
-                        console.log(this.historyList);
+                        this.$set(this.historyList,row.gs_code, data2);
+                        // this.historyList[row.gs_code] = data2;
+                        console.log(data2);
                     } else {
                         this.$message.error('数据加载失败')
                     }
