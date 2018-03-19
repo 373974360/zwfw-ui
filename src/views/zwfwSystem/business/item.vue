@@ -117,7 +117,7 @@
             </el-pagination>
         </div>
 
-        <el-dialog v-if="currentRow!=null" :title="'编辑事项，ID:' + currentRow.id" :visible.sync="dialogItemFormVisible"
+        <el-dialog  :title="zwfwItem.id?('编辑事项，ID:' + zwfwItem.id):'添加事项'" :visible.sync="dialogItemFormVisible"
                    @open="initEditor"
                    :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemForm">
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem" label-position="right"
