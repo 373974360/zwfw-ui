@@ -925,6 +925,9 @@
                     type: [
                         {required: true, message: '请输入事项类型'}
                     ],
+                    promiseEndTime: [
+                        {required: true, message: '请输入事项承诺办结日期'}
+                    ],
                     pretrialDays: [
                         {required: true, message: '请输入预审天数'}
                     ],
