@@ -4,11 +4,11 @@
             <el-date-picker style="top: -5px;" v-model="listQuery.selectDateTime" type="datetimerange"
                             placeholder="选择时间范围" format="yyyy-MM-dd HH:mm:ss" @change="changeDate">
             </el-date-picker>
-            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" placement="top-start">
-                <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
-                    搜索
-                </el-button>
-            </el-tooltip>
+            <el-input class="filter-item" style="width: 200px; " v-model="listQuery.personName" placeholder="按申请人搜索"></el-input>
+            <el-input class="filter-item" style="width: 200px; " v-model="listQuery.personPhone" placeholder="按联系电话搜索"></el-input>
+            <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
+                搜索
+            </el-button>
         </div>
 
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row style="width: 100%">
@@ -386,7 +386,9 @@
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     selectDateTime: undefined,
-                    inStatus: [3, 4].join(",")
+                    inStatus: [3, 4].join(","),
+                    personName: undefined,
+                    personPhone: undefined
                 },
                 tabName: 'materialListPanel',
                 itemNumber: [],
