@@ -66,6 +66,13 @@ service.interceptors.response.use(
                 duration: 5 * 1000
             });
         }
+        if (code === 500) {
+            Message({
+                message: response.data.msg,
+                type: 'error',
+                duration: 5 * 1000
+            });
+        }
         if (code === 40101) {
             Message({
                 message: "登录超时，请重新登录",
