@@ -74,9 +74,9 @@
                       highlight-current-row
                       style="width: 100%" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="40"/>
-                <el-table-column align="center" label="序号" width="80">
+                <el-table-column align="center" label="事项ID" width="80">
                     <template scope="scope">
-                        <span>{{scope.row.id}}</span>
+                        <span>{{scope.row.itemId}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="事项名称" prop="name">
