@@ -60,14 +60,36 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column align="left" label="申请人信息" min-width="260">
+            <el-table-column align="left" label="申请企业（个人）" min-width="260">
                 <template scope="scope">
-                    <span>
-                        <span v-if="scope.row.companyName!=null">
+
+                    <span v-if="scope.row.memberType == 1">
+                        姓名：{{scope.row.memberRealname}}<br>联系电话：{{scope.row.memberPhonenumber}}<br>
+                    </span>
+                    <span v-if="scope.row.memberType == 2 || scope.row.memberType == 3">
+                        <span v-if="scope.row.companyName">
                             公司：{{scope.row.companyName}}<br>
                         </span>
-                        申请人：{{scope.row.memberRealname}}<br>联系电话：{{scope.row.memberPhonenumber}}<br>
+                        法人姓名：{{scope.row.memberRealname}}<br>联系电话：{{scope.row.memberPhonenumber}}<br>
                     </span>
+                    <!--<span>-->
+                        <!--<span v-if="scope.row.companyName!=null">-->
+                            <!--公司：{{scope.row.companyName}}<br>-->
+                        <!--</span>-->
+                        <!--申请人：{{scope.row.memberRealname}}<br>联系电话：{{scope.row.memberPhonenumber}}<br>-->
+                    <!--</span>-->
+                </template>
+            </el-table-column>
+
+            <el-table-column align="left" label="办事员" width="200">
+                <template scope="scope">
+                    <span v-if="scope.row.memberType == 1">姓名：{{scope.row.memberRealname}}<br>
+                    联系电话：{{scope.row.memberPhonenumber}}</span>
+                    <span v-if="scope.row.memberType == 2">姓名：{{ scope.row.memberRealname}}<br>
+                    联系电话：{{scope.row.memberPhonenumber}}</span>
+                    <span v-if="scope.row.memberType == 3">
+                    姓名：{{ scope.row.clerkName}}<br>
+                    联系电话：{{scope.row.clerkPhone}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="办结时间" width="180">
