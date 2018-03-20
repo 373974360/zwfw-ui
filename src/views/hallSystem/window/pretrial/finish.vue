@@ -4,7 +4,8 @@
             <el-input @keyup.enter.native="handleFilter" style="width: 300px;" class="filter-item" placeholder="预审号"
                       v-model="listQuery.processNumber" no-match-text="没有找到哦">
             </el-input>
-            <el-button style="margin-left: 10px;" class="filter-item" type="primary" v-waves icon="search" @click="getList"
+            <el-button style="margin-left: 10px;" class="filter-item" type="primary" v-waves icon="search"
+                       @click="getList"
             >搜索
             </el-button>
         </div>
@@ -15,12 +16,47 @@
                     <span>{{scope.row.processNumber}}<br/>({{scope.row.itemName}})</span>
                 </template>
             </el-table-column>
-            <el-table-column width="250px" align="center" label="申请企业（个人）">
-            <template scope="scope">
-                <span v-if="scope.row.companyName != null">{{scope.row.companyName}}</span>
-                <span v-if="scope.row.memberName != null">{{scope.row.memberName}}</span>
-            </template>
-        </el-table-column>
+            <!--<el-table-column width="250px" align="center" label="申请企业（个人）">-->
+            <!--<template scope="scope">-->
+            <!--<span v-if="scope.row.companyName != null">{{scope.row.companyName}}</span>-->
+            <!--<span v-if="scope.row.memberName != null">{{scope.row.memberName}}</span>-->
+            <!--</template>-->
+            <!--</el-table-column>-->
+            <!--<el-table-column align="center" label="办事员">-->
+            <!--<template scope="scope">-->
+            <!--<span v-if="scope.row.clerkName != null && scope.row.memberType == 3">{{scope.row.clerkName}}</span>-->
+            <!--<span v-if="scope.row.memberName != null && scope.row.memberType == 1 || scope.row.memberType == 2">{{scope.row.memberName}}</span>-->
+            <!--</template>-->
+            <!--</el-table-column>-->
+
+
+            <el-table-column align="left" label="申请企业（个人）" min-width="200">
+                <template scope="scope">
+                    <span v-if="scope.row.memberType == 1">
+                        姓名：{{scope.row.memberName}}<br>联系电话：{{scope.row.memberPhone}}<br>
+                    </span>
+                    <span v-if="scope.row.memberType == 2 || scope.row.memberType == 3">
+                        <span v-if="scope.row.companyName">
+                            公司：{{scope.row.companyName}}<br>
+                        </span>
+                        法人姓名：{{scope.row.memberName}}<br>联系电话：{{scope.row.memberPhone}}<br>
+                    </span>
+                </template>
+            </el-table-column>
+            <el-table-column align="left" label="办事员信息" min-width="200">
+                <template scope="scope">
+                    <span v-if="scope.row.memberType == 3">
+                        <span>
+                            姓名：{{scope.row.clerkName}}<br>
+                        </span>联系电话：{{scope.row.clerkPhone}}<br>
+                    </span>
+                    <span v-if="scope.row.memberType == 1 || scope.row.memberType == 2">
+                        <span>
+                            姓名：{{scope.row.memberName}}<br>
+                        </span>联系电话：{{scope.row.memberPhone}}<br>
+                    </span>
+                </template>
+            </el-table-column>
             <el-table-column align="center" label="申请时间">
                 <template scope="scope">
                     <span>{{scope.row.applyTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
@@ -48,7 +84,7 @@
             </el-table-column>
             <el-table-column align="center" label="操作">
                 <template scope="scope">
-                    <el-button class="filter-item"  type="primary"
+                    <el-button class="filter-item" type="primary"
                                @click="editAudit(scope.row)">查 看
                     </el-button>
                 </template>
@@ -60,8 +96,9 @@
                            :page-size="listQuery.rows" layout="total, sizes, prev, pager, next, jumper" :total="total">
             </el-pagination>
         </div>
-        <el-dialog size="large" :close-on-click-modal="closeOnClickModal" :title="titleName" :visible.sync="dialogFormVisible"
-                   >
+        <el-dialog size="large" :close-on-click-modal="closeOnClickModal" :title="titleName"
+                   :visible.sync="dialogFormVisible"
+        >
             <div>
                 <div v-if="member.legalPerson != null">
                     <h2 class="h2-style-show">办事企业/机构信息:</h2>
@@ -85,7 +122,12 @@
                     </table>
                 </div>
                 <div v-if="member.naturePerson != null">
-                    <h2 class="h2-style-show">申请人信息:</h2>
+                    <span v-if="member.naturePerson != null && member.type == 1">
+                        <h2 class="h2-style-show">申请人信息:</h2>
+                    </span>
+                    <span v-if="member.naturePerson != null && member.type == 3">
+                        <h2 class="h2-style-show">办事员信息:</h2>
+                    </span>
                     <table class="table table-responsive table-bordered">
                         <tr>
                             <th width="140">姓名</th>
@@ -98,7 +140,7 @@
                             <th width="140">手机</th>
                             <td>{{member.naturePerson.phone}}</td>
                             <th width="140">地址</th>
-                            <td >{{member.naturePerson.address}}</td>
+                            <td>{{member.naturePerson.address}}</td>
                         </tr>
 
                     </table>
@@ -113,7 +155,7 @@
                             </tr>
                             <tr v-for="m in materialList">
                                 <td>{{m.itemMaterialName}}</td>
-                                <td  style="text-align: center;">
+                                <td style="text-align: center;">
                                     <template v-for="(file,index) in m.itemMaterialUrl.split('|')">
                                         <a v-if="index>0" target="_blank" :href="file">[{{index}}]</a>
                                     </template>
@@ -160,7 +202,11 @@
     </div>
 </template>
 <script>
-    import {getZwfwItemPretrialList, getPretrialDetail, submitReview} from 'api/hallSystem/window/pretrial/itemPretrial';
+    import {
+        getZwfwItemPretrialList,
+        getPretrialDetail,
+        submitReview
+    } from 'api/hallSystem/window/pretrial/itemPretrial';
     import {mapGetters} from 'vuex';
     import {copyProperties} from 'utils';
 
@@ -310,6 +356,7 @@
         font-size: 20px;
         font-weight: 500;
     }
+
     .h2-style-show {
         font-weight: 100;
         font-size: 24px;

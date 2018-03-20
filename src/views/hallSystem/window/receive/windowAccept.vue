@@ -417,31 +417,39 @@
                                         <!--<td style="color:red"><strong class="font-size:5rem">{{itemNumber.type | enum-->
                                         <!--'ItemWindowSupport'}}</strong></td>-->
                                         <!--</tr>-->
-                                        <tr v-if="member!=null && member.naturePerson!=null">
-                                            <th>姓名:</th>
+                                        <tr v-if="member.type == 1 && member!=null && member.naturePerson!=null">
+                                            <th>(个人)姓名:</th>
                                             <td>{{member.naturePerson.name}}</td>
+                                        </tr>
+                                        <tr v-if="member.type == 1 && member!=null && member.naturePerson!=null">
+                                            <th>自然人手机号:</th>
+                                            <td>{{member.naturePerson.phone}}</td>
+                                        </tr>
+                                        <tr v-if="member.type == 3 && member!=null && member.naturePerson!=null">
+                                            <th>(授权)办事员:</th>
+                                            <td>{{member.naturePerson.name}}</td>
+                                        </tr>
+                                        <tr v-if="member.type == 3 && member!=null && member.naturePerson!=null">
+                                            <th>(授权)办事员手机号:</th>
+                                            <td>{{member.naturePerson.phone}}</td>
                                         </tr>
                                         <tr v-if="itemNumber!=null && itemNumber.personPhone!=null">
                                             <th>办事员电话:</th>
                                             <td>{{itemNumber.personPhone}}</td>
                                         </tr>
-                                        <tr v-if="member!=null && member.naturePerson!=null">
-                                            <th>自然人手机号:</th>
-                                            <td>{{member.naturePerson.phone}}</td>
-                                        </tr>
-                                        <tr v-if="member!=null && member.legalPerson!=null">
+                                        <tr v-if="member.type != 1 && member!=null && member.legalPerson!=null">
                                             <th>企业法人:</th>
                                             <td>{{member.legalPerson.legalPerson}}</td>
                                         </tr>
-                                        <tr v-if="member!=null && member.legalPerson!=null">
+                                        <tr v-if="member.type != 1 && member!=null && member.legalPerson!=null">
                                             <th>法人电话:</th>
                                             <td>{{member.legalPerson.phone}}</td>
                                         </tr>
-                                        <tr v-if="member!=null && member.legalPerson!=null">
+                                        <tr v-if="member.type != 1 &&member!=null && member.legalPerson!=null">
                                             <th>企业名称:</th>
                                             <td>{{member.legalPerson.companyName}}</td>
                                         </tr>
-                                        <tr v-if="member!=null && member.legalPerson!=null">
+                                        <tr v-if="member.type != 1 &&member!=null && member.legalPerson!=null">
                                             <th>社会统一信用代码:</th>
                                             <td>{{member.legalPerson.companyCode}}</td>
                                         </tr>
@@ -973,7 +981,7 @@
         checkNatureMemberExist,
         fastRegMember,
         queryPendingFromBoxList
-    } from 'api/hallSystem/window/receive/windowAccept';
+    } from '../../../../api/hallSystem/window/receive/windowAccept';
     import {getAllByNameOrbasicCode} from 'api/zwfwSystem/business/item';
     import {getCategoryCascader} from 'api/zwfwSystem/business/category';
     import {getAllMailbox} from 'api/hallSystem/window/mailbox';
@@ -1514,6 +1522,7 @@
                             }
                             if (!this.memberPhone) {
                                 this.memberPhone = this.member.mobilephone;
+                                this.contactsPhone = this.member.mobilephone;
                             }
                             if (!this.memberCode) {
                                 this.memberCode = this.member.memberCode;
