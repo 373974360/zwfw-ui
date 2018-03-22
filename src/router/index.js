@@ -24,6 +24,9 @@ const BaseSystem = () => import('../views/baseSystem/index');
 const Dept = () => import('../views/baseSystem/org/dept');
 const User = () => import('../views/baseSystem/org/user');
 const Menu = () => import('../views/baseSystem/org/menu');
+/*  ym test start */
+//const Test = () => import('../views/baseSystem/org/test');
+/* ym test end */
 const Role = () => import('../views/baseSystem/org/role');
 /* 数据管理 */
 const MessageFiled = () => import('../views/baseSystem/data/messageFiled');
@@ -49,6 +52,8 @@ const NumberScope = () => import('../views/hallSystem/lobby/numberScope');
 const LegalPersonExamined = () => import('../views/hallSystem/member/legalPersonExamined');
 const NaturePerson = () => import('../views/hallSystem/member/naturePerson');
 const LegalPerson = () => import('../views/hallSystem/member/legalPerson');
+const Identification = () => import('../views/hallSystem/member/identification');
+
 /* 综合窗口 */
 /* 窗口收件*/
 const WindowAccept = () => import('../views/hallSystem/window/receive/windowAccept');
@@ -91,7 +96,6 @@ const ProcessDefinition = () => import('../views/zwfwSystem/business/processDefi
 const TaskSetting = () => import('../views/zwfwSystem/business/taskSetting');
 const EnterpriseInfoGet = () => import('../views/zwfwSystem/business/enterpriseInfoGet');
 const EnterpriseInfoUp = () => import('../views/zwfwSystem/business/enterpriseInfoUp');
-
 const FormEditor = () => import('../views/zwfwSystem/business/formEditor');
 /* 统计分析 */
 const CallCount = () => import('../views/hallSystem/count/callCount');
@@ -345,6 +349,11 @@ export const asyncRouterMap = [
                 component: LegalPerson,
                 name: '法人管理',
                 meta: {permission: 'hallSystem:member:legalPerson:list'}
+            },
+            {
+                path: 'identification',
+                component: Identification,
+                name: '身份识别认证'
             }
         ]
     },
@@ -542,6 +551,42 @@ export const asyncRouterMap = [
             // }
         ]
     },
+    //ym test 广告管理
+    /*{
+        path: '/advert',
+        redirect: 'noredirect',
+        name: '广告管理',
+        meta: {permission: 'zwfwSystem:advert:admin'},
+        icon: 'advert',
+        component: Layout,
+        children: [
+            {
+                path: 'advertset',
+                component: AdvertSet,
+                name: '广告管理 ',
+                meta: {permission: 'zwfwSystem:advert:advertset:list'}
+            },
+            {
+                path: 'adcategory',
+                component: AdCategory,
+                name: '广告分类管理 ',
+                meta: {permission: 'zwfwSystem:advert:adcategory:list'}
+            },
+            {
+                path: 'adcategory1',
+                component: AdCategory1,
+                name: '广告分类管理 ',
+                meta: {permission: 'zwfwSystem:advert:adcategory:list'}
+            },
+            {
+                path: 'adcategory2',
+                component: AdCategory2,
+                name: '获取token ',
+                meta: {permission: 'zwfwSystem:advert:adcategory:list'}
+            }
+
+        ]
+    },*/
     /************************政务业务办理系统************************/
     {
         path: '/pretrial',
