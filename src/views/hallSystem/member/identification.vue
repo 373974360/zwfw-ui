@@ -103,7 +103,7 @@
 
 <script>
     import resetForm from 'utils';
-    import  {gettoken,refreshtoken,gettingcerttoken,certtokenresult} from   '../../../api/hallSystem/member/identification';
+    import  {gettoken,refreshtoken,gettingcerttoken,certtokenresult} from '../../../api/hallSystem/member/identification';
     import {isIdCardNo} from 'utils/validate';
     import SplitPane from "../../../components/SplitPane/index.vue";
     import Authredirect from "../../common/login/authredirect.vue";
