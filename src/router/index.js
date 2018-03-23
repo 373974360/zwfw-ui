@@ -353,7 +353,8 @@ export const asyncRouterMap = [
             {
                 path: 'identification',
                 component: Identification,
-                name: '身份识别认证'
+                name: '身份识别认证',
+                meta: {permission: 'hallSystem:member:identification:list'}
             }
         ]
     },
