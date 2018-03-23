@@ -45,7 +45,7 @@
         <div style="margin-top: 50px;">
 
             <el-row :gutter="10">
-                <el-col :span="6"> <div class="grid-content bg-purple" >第一步：请求认证，获取二维码;若失效，请重新认证</div></el-col>
+                <el-col :span="9"> <div class="grid-content bg-purple" >第一步：请求认证，获取二维码;若失效，请重新认证</div></el-col>
 
                 <el-col :span="4">
                     <div class="grid-content " >
@@ -73,7 +73,7 @@
 
 
             <el-row :gutter="10">
-                <el-col :span="6"><div class="grid-content bg-purple" style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第二步：查看认证结果</div></el-col>
+                <el-col :span="9"><div class="grid-content bg-purple" style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第二步：查看认证结果</div></el-col>
 
                 <!--   <el-col :span="6"><div class="grid-content ">
                        <el-button  type="primary" style="font-size: medium;"   @click="getcerttoken()">提交信息</el-button>
@@ -103,7 +103,7 @@
 
 <script>
     import resetForm from 'utils';
-    import  {gettoken,refreshtoken,gettingcerttoken,certtokenresult} from   '../../../api/hallSystem/member/identification';
+    import  {gettoken,refreshtoken,gettingcerttoken,certtokenresult} from '../../../api/hallSystem/member/identification';
     import {isIdCardNo,} from 'utils/validate';
     import SplitPane from "../../../components/SplitPane/index.vue";
     import Authredirect from "../../common/login/authredirect.vue";
