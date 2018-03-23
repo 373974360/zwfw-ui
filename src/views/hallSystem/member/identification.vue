@@ -13,13 +13,35 @@
             <hr>
 
         </div>
-        <br><br>
         <div>
-            <span> 1.点击&nbsp;<el-button type="text" style="font-size: medium;"   @click="getaccesstoken()">请求认证</el-button> 按钮，认证身份信息<span style="color: red">(需要注意每次提交认证，身份信息的有效期为2小时，请在2小时内完成所有验证 ,如果身份信息过期，请重新&nbsp;<el-button   style="font-size: medium;" type="text" @click="refreshaccesstoken()">请求认证</el-button>）。</span></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br><br>
-            <!-- <span>2.完成第一步操作后，请点击 <el-button  type="text" style="font-size: medium;"   @click="getcerttoken()">提交身份信息</el-button> </span>&nbsp;&nbsp;&nbsp;&nbsp; <br><br>-->
-            <span>2.请使用微警APP或微信小程序“网证CTID”扫描页面生成的二维码。若二维码失效，请重新 <el-button  type="text" style="font-size: medium;"   @click="getcerttokencopy()">获取二维码</el-button></span><br><br>
-            <span>3.完成所有认证操作后，可点击<el-button  type="text" style="font-size: medium;"   @click="getcertresult()">认证结果</el-button>来确认认证是否成功</span>
+            <span> 1.请填写身份信息，确定正确后 点击请求认证按钮 <span style="color: red">(需要注意每次提交认证，身份信息的有效期为2小时，请在2小时内完成所有验证 ,如果身份信息过期，请重新&nbsp;请求认证&nbsp;）。</span></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br><br>
+            <span>2.请使用微警APP或微信小程序“网证CTID”扫描页面生成的二维码。若二维码失效，请重新 请求认证</span><br><br>
+            <span>3.完成所有认证操作后，可点击 认证结果 来确认认证是否成功</span>
         </div>
+        <div>
+            <br><br>
+
+            <el-form  id="checkboxTable" class="small-space"  label-position="right"
+                      label-width="100px" ref="zwfwidentificationForm" :model="listQuery3" :rules="certtokenrules"
+                       >
+                <el-form-item label="姓名" prop="full_name">
+                    <el-input style="width: 310px;" v-model="listQuery3.full_name"></el-input>
+                </el-form-item>
+                <el-form-item label="身份证号" prop="id_num">
+                    <el-input   style="width: 310px;"  v-model="listQuery3.id_num"></el-input>
+                </el-form-item>
+               <!-- <el-form-item label="身份证起始日期（yyyymmdd)：" prop="id_start_date">
+                    <el-input  style="width: 320px;" v-model="listQuery3.id_start_date"></el-input>
+                </el-form-item>
+                <el-form-item label="身份证结束日期（yyyymmdd)：" prop="id_end_date">
+                    <el-input  style="width: 320px;"  v-model="listQuery3.id_end_date"></el-input>
+                </el-form-item>-->
+
+            </el-form>
+        </div>
+
+
+
         <div style="margin-top: 50px;">
 
             <el-row :gutter="10">
@@ -76,46 +98,13 @@
 
 
 
-
-        <!-- <el-dialog
-                 title="查看认证结果"
-                 :visible.sync="dialogVisible"
-                 width="30%"
-         >
-
-
-             <el-form  id="checkboxTable" class="small-space"  label-position="right"
-                       label-width="100px" ref="zwfwidentificationForm" :model="certtokenresult"
-                       style='width: 80%; margin-left:10%;' >
-
-                 <hr><br>
-                 <el-form-item label="返回码：" prop="ret_code">
-                     <el-input  v-model="certtokenresult.ret_code"></el-input>
-                 </el-form-item>
-                 <el-form-item label="认证信息：" prop="error_msg">
-                     <el-input  type="texteare" v-model="certtokenresult.error_msg"></el-input>
-                 </el-form-item>
-
-             </el-form>
-
-             &lt;!&ndash; <span>返回码说明</span><br> &ndash;&gt;
-
-
-             <div slot="footer" class="dialog-footer">
-                 <el-button icon="circle-cross"  @click="dialogVisible = false">确 定</el-button>
-
-             </div>
-
-         </el-dialog>-->
-
-
     </div>
 </template>
 
 <script>
     import resetForm from 'utils';
-    import  {gettoken,refreshtoken,gettingcerttoken,certtokenresult} from   'api/hallSystem/member/identification';
-    import 'utils/validate';
+    import  {gettoken,refreshtoken,gettingcerttoken,certtokenresult} from   '../../../api/hallSystem/member/identification';
+    import {isIdCardNo,} from 'utils/validate';
     import SplitPane from "../../../components/SplitPane/index.vue";
     import Authredirect from "../../common/login/authredirect.vue";
     import ErrLog from "../../../components/ErrLog/index.vue";
@@ -128,6 +117,13 @@
             SplitPane
         },
         data() {
+            const validateIdcard = (rule, value, callback) => {
+                if (!isIdCardNo(value)) {
+                    callback(new Error('身份证号格式不正确，请重新输入'));
+                } else {
+                    callback();
+                }
+            };
             return {
                 dialogVisible: false,
                 innerVisible:false,
@@ -163,6 +159,21 @@
                     notification:'1'
 
                 },
+                certtokenrules: {
+                    full_name: [
+                        {required: true, message: '请填写姓名', trigger: 'blur'},
+                    ],
+                    id_num: [
+                        {required: true, message: '请填写身份证号码', trigger: 'blur'},
+                        {validator: validateIdcard, trigger: 'blur'},
+                    ],
+                  /*  id_start_date: [
+                        {required: true, message: '请填写证件有效开始时间', trigger: 'blur'},
+                    ],
+                    id_end_date: [
+                        {required: true, message: '请填写证件有效结束时间', trigger: 'blur'},
+                    ],*/
+                },
                 certtokeninfo: {
                     message: '',
                     qrcode_content: '',
@@ -184,10 +195,10 @@
                 copycertoken: {
                     access_token: '',
                     with_id_info: '1',
-                    full_name: '',
-                    id_num: '',
-                    id_start_date: '',
-                    id_end_date: '',
+                    full_name: '窦康',
+                    id_num: '342601199311014355',
+                    id_start_date: '20141006',
+                    id_end_date: '20241006',
                     mode: '0X42',
                     notification:'1'
                 }
@@ -205,6 +216,10 @@
                     });
             },
             getaccesstoken() {
+
+                this.$refs['zwfwidentificationForm'].validate(valid => {
+                    if (valid) {
+
                 document.getElementById("qrcode").innerHTML="";
                 gettoken(this.listQuery).then(response => {
 
@@ -240,6 +255,10 @@
                         this.$message.error('获取身份认证失败，请稍后重试..')
                     }
                 })
+                    }else {
+                        return false;
+                    }
+                });
             },
             refreshaccesstoken() {
                 document.getElementById("qrcode").innerHTML="";
@@ -327,7 +346,10 @@
                             this.certtokenresult.ret_code=JSON.parse(response.data).ret_code;
                             this.certtokenresult.error_msg=JSON.parse(response.data).error_msg;
 
+                           // alert(this.certtokenresult.message);
                             if(this.certtokenresult.ret_code !=0){
+                                this.$message.warning("认证失败"+ this.certtokenresult.error_msg);
+                            }else if(this.certtokenresult.error_msg !="成功"){
                                 this.$message.warning(this.certtokenresult.error_msg);
                             }else{
                                 this.$message.success('认证成功');
