@@ -495,7 +495,7 @@
                             <span style="font-weight:normal;">启用</span>
                         </el-radio>
                         <el-radio :label="0">
-                            <span style="font-weight:normal;">禁用</span>
+                            <span style="font-weight:normal;">停用</span>
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
@@ -789,7 +789,7 @@
                     label: '启用'
                 }, {
                     value: '0',
-                    label: '禁用'
+                    label: '停用'
                 }],
                 changeMaterialInfo: false,
                 zwfwItemList: [],
