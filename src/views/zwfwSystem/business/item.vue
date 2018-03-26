@@ -1137,6 +1137,9 @@
                         this.$message.error(response.msg || '事项列表查询失败');
                     }
                     this.pageLoading = false;
+                }).catch(e=>{
+                    this.$message.error('事项列表查询失败');
+                    console.error(e);
                 });
             },
             getDeptTree() {
