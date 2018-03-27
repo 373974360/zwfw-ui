@@ -1566,7 +1566,7 @@
                             if (!this.memberCode) {
                                 this.memberCode = this.member.memberCode;
                             }
-                            if (this.member.type == 2 && this.member.legalPerson) {
+                            if (this.member && this.member.type == 2 && this.member.legalPerson) {
                                 if (!this.companyName) {
                                     this.companyName = this.member.legalPerson.companyName;
                                 }
