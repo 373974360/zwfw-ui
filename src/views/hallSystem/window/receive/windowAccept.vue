@@ -151,9 +151,10 @@
                                                         </el-row>
                                                         <el-row :gutter="10">
                                                             <el-col :span="12">
-                                                                <el-tooltip content="如果只有15位注册号，使用000作为前缀后面跟入15位注册号，可用于注册查询"
-                                                                            placement="bottom"
-                                                                            effect="light">
+                                                                <el-tooltip
+                                                                        content="如果只有15位注册号，使用000作为前缀后面跟入15位注册号，可用于注册查询"
+                                                                        placement="bottom"
+                                                                        effect="light">
                                                                     <el-input v-model="companyCode"
                                                                               placeholder="社会统一信用代码"
                                                                               @keyup.native="toUpperCase">
@@ -177,7 +178,8 @@
                                                                         effect="light">
                                                                     <el-button type="primary"
                                                                                @click="checkLegalMemberExist()"
-                                                                               :disabled="!companyCode && !memberCode">注册查询
+                                                                               :disabled="!companyCode && !memberCode">
+                                                                        注册查询
                                                                     </el-button>
                                                                 </el-tooltip>
                                                             </el-col>
@@ -354,7 +356,7 @@
                                                     v-model="selectedItem"
                                                     placeholder="选择分类下的事项"
                                                     filterable
-                                                    @change="changeItem" :loading="loadingItem" style="width:100%" >
+                                                    @change="changeItem" :loading="loadingItem" style="width:100%">
                                                 <el-option
                                                         v-for="item in optionsName"
                                                         :key="item.id"
@@ -417,19 +419,19 @@
                                         <!--<td style="color:red"><strong class="font-size:5rem">{{itemNumber.type | enum-->
                                         <!--'ItemWindowSupport'}}</strong></td>-->
                                         <!--</tr>-->
-                                        <tr v-if="member.type == 1 && member!=null && member.naturePerson!=null">
+                                        <tr v-if="member!=null &&member.type == 1 &&  member.naturePerson!=null">
                                             <th>(个人)姓名:</th>
                                             <td>{{member.naturePerson.name}}</td>
                                         </tr>
-                                        <tr v-if="member.type == 1 && member!=null && member.naturePerson!=null">
+                                        <tr v-if="member!=null &&member.type == 1 && member.naturePerson!=null">
                                             <th>自然人手机号:</th>
                                             <td>{{member.naturePerson.phone}}</td>
                                         </tr>
-                                        <tr v-if="member.type == 3 && member!=null && member.naturePerson!=null">
+                                        <tr v-if="member!=null &&member.type == 3 && member.naturePerson!=null">
                                             <th>(授权)办事员:</th>
                                             <td>{{member.naturePerson.name}}</td>
                                         </tr>
-                                        <tr v-if="member.type == 3 && member!=null && member.naturePerson!=null">
+                                        <tr v-if="member!=null &&member.type == 3 && member.naturePerson!=null">
                                             <th>(授权)办事员手机号:</th>
                                             <td>{{member.naturePerson.phone}}</td>
                                         </tr>
@@ -437,19 +439,19 @@
                                             <th>办事员电话:</th>
                                             <td>{{itemNumber.personPhone}}</td>
                                         </tr>
-                                        <tr v-if="member.type != 1 && member!=null && member.legalPerson!=null">
+                                        <tr v-if="member!=null &&member.type != 1 && member.legalPerson!=null">
                                             <th>企业法人:</th>
                                             <td>{{member.legalPerson.legalPerson}}</td>
                                         </tr>
-                                        <tr v-if="member.type != 1 && member!=null && member.legalPerson!=null">
+                                        <tr v-if="member!=null &&member.type != 1 && member.legalPerson!=null">
                                             <th>法人电话:</th>
                                             <td>{{member.legalPerson.phone}}</td>
                                         </tr>
-                                        <tr v-if="member.type != 1 &&member!=null && member.legalPerson!=null">
+                                        <tr v-if="member!=null &&member.type != 1 && member.legalPerson!=null">
                                             <th>企业名称:</th>
                                             <td>{{member.legalPerson.companyName}}</td>
                                         </tr>
-                                        <tr v-if="member.type != 1 &&member!=null && member.legalPerson!=null">
+                                        <tr v-if="member!=null &&member.type != 1 && member.legalPerson!=null">
                                             <th>社会统一信用代码:</th>
                                             <td>{{member.legalPerson.companyCode}}</td>
                                         </tr>
@@ -759,10 +761,10 @@
 
                             <template v-if="itemNumber.status!=3">
                                 <el-input v-if="itemNumber.status!=4"
-                                        type="textarea"
-                                        :autosize="{ minRows: 2, maxRows: 4}"
-                                        placeholder="填写备注"
-                                        v-model="remark">
+                                          type="textarea"
+                                          :autosize="{ minRows: 2, maxRows: 4}"
+                                          placeholder="填写备注"
+                                          v-model="remark">
                                 </el-input>
                                 <div style="margin-top:10px;" v-if="itemNumber.status!=4">
 
@@ -1544,7 +1546,7 @@
                 }
                 checkLegalMemberExist({
                     companyCode: this.companyCode,
-                    memberCode:this.memberCode
+                    memberCode: this.memberCode
                 }).then(response => {
                     if (response.httpCode === 200) {
                         if (response.data == null) {
@@ -1981,7 +1983,7 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    if (!this.itemNumber.id) {
+                    if (!this.itemNumber || !this.itemNumber.id || !this.itemNumber.flagPretrial) { //非预审的号
                         this.submiting = true;
                         submitNoPretrial({
                             memberType: this.memberType,
@@ -2163,7 +2165,7 @@
                         }).catch(e => {
                             this.submiting = false;
                         });
-                    }else{
+                    } else {
                         this.submiting = true;
                         submitWork({
                             numberId: _itemNumber.id,
