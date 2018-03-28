@@ -41,74 +41,71 @@
         <el-table ref="zwfwItemTable" :data="zwfwItemList" v-loading.body="pageLoading" border fit highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection"
                   row-class-name="elRow">
-            <el-table-column type="selection" width="55"/>
-            <el-table-column align="center" label="序号" width="70">
+            <el-table-column type="selection"/>
+            <!--<el-table-column align="center" label="序号" width="70">-->
+            <!--<template scope="scope">-->
+            <!--<span>{{scope.row.id}}</span>-->
+            <!--</template>-->
+            <!--</el-table-column>-->
+            <el-table-column align="left" label="事项名称" prop="name">
                 <template scope="scope">
-                    <span>{{scope.row.id}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="left" label="事项名称" prop="name" width="300">
-                <template scope="scope">
-                    <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
+                    <el-tooltip class="item" effect="dark" :content="'点击编辑：' +scope.row.id " placement="right-start">
                         <span class="link-type" @click="handleItemUpdate(scope.row)">{{scope.row.name}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="基本编码" prop="basicCode">
+            <el-table-column align="center" label="基本编码" prop="basicCode" width="100">
                 <template scope="scope">
                     <span>{{scope.row.basicCode}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="事项类型" prop="type">
+            <el-table-column align="center" label="事项类型" prop="type" width="100">
                 <template scope="scope">
                     <span>{{scope.row.type | dics('sslx')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="办件类型" prop="processType">
+            <el-table-column align="center" label="办件类型" prop="processType" width="100">
                 <template scope="scope">
-                    <el-tag :type="scope.row.processType | dics('bjlx')">
-                        {{scope.row.processType | dics('bjlx')}}
-                    </el-tag>
+                    {{scope.row.processType | dics('bjlx')}}
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="承诺时限" prop="promiseEndTime">
+            <el-table-column align="center" label="承诺时限" prop="promiseEndTime" width="110">
                 <template scope="scope">
                     <span>{{scope.row.promiseEndTime}} 工作日</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="法定时限" prop="legalEndTime">
+            <el-table-column align="center" label="法定时限" prop="legalEndTime" width="110">
                 <template scope="scope">
                     <span>{{scope.row.legalEndTime}} 工作日</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="办理形式" prop="handleType">
+            <el-table-column align="center" label="办理形式" prop="handleType" width="100">
                 <template scope="scope">
-                    <el-tag :type="scope.row.handleType | dics('blxs')">
-                        {{scope.row.handleType | dics('blxs')}}
-                    </el-tag>
+                    {{scope.row.handleType | dics('blxs')}}
                 </template>
             </el-table-column>
-            <el-table-column prop="enable" class-name="status-col" label="状态">
+            <el-table-column prop="enable" class-name="status-col" label="状态" width="80">
                 <template scope="scope">
                     <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
                         {{scope.row.enable | enums('Enable')}}
                     </el-tag>
                 </template>
             </el-table-column>
-            <el-table-column align="left" label="操作" width="200" class-name="action">
+            <el-table-column align="center" label="操作" width="200" class-name="action">
                 <template scope="scope">
                     <el-badge :value="scope.row.itemMaterialCount" class="item">
                         <el-button class="filter-item" style="" @click="handleMaterialList(scope.row)"
                                    type="primary" size="small">
                             办件材料
                         </el-button>
-                        <br />
                         <!--<br />-->
-                        <!--<el-button class="filter-item" style="" @click="handleItemConfig(scope.row)"-->
-                                   <!--type="primary" size="small">-->
-                            <!--预约配置-->
-                        <!--</el-button>-->
+                        <!--<br />-->
+
                     </el-badge>
+                    <el-button class="filter-item" style="" @click="handleItemConfig(scope.row)"
+                               type="primary" size="small">
+                        预约配置
+                    </el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -120,7 +117,8 @@
             </el-pagination>
         </div>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogItemFormVisible" @open="initEditor"
+        <el-dialog  :title="zwfwItem.id?('编辑事项，ID:' + zwfwItem.id):'添加事项'" :visible.sync="dialogItemFormVisible"
+                   @open="initEditor"
                    :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemForm">
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem" label-position="right"
                      label-width="134px"
@@ -540,9 +538,9 @@
                       style="width: 100%" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="40"/>
                 <!--<el-table-column align="center" label="序号" width="70">-->
-                    <!--<template scope="scope">-->
-                        <!--<span>{{scope.row.id}}</span>-->
-                    <!--</template>-->
+                <!--<template scope="scope">-->
+                <!--<span>{{scope.row.id}}</span>-->
+                <!--</template>-->
                 <!--</el-table-column>-->
                 <el-table-column prop="sortNo" align="center" label="排序" width="70">
                 </el-table-column>
@@ -642,8 +640,11 @@
                         <!--<el-button style="margin-left: 10px;" size="small" type="info" @click="showMaterialExample">
                             点击下载
                         </el-button>-->
-                        <a :href="zwfwItemMaterial.example" :download="downloadExample" :class="{disabled: !zwfwItemMaterial.example}">
-                            <el-button style="margin-left: 10px;" size="small" type="info" :disabled="!zwfwItemMaterial.example">点击下载</el-button>
+                        <a :href="zwfwItemMaterial.example" :download="downloadExample"
+                           :class="{disabled: !zwfwItemMaterial.example}">
+                            <el-button style="margin-left: 10px;" size="small" type="info"
+                                       :disabled="!zwfwItemMaterial.example">点击下载
+                            </el-button>
                         </a>
                     </el-upload>
                 </el-form-item>
@@ -666,8 +667,11 @@
                         <!--<el-button style="margin-left: 10px;" size="small" type="info" @click="showEformFile">
                             点击下载
                         </el-button>-->
-                        <a :href="zwfwItemMaterial.eform" :download="downloadEform" :class="{disabled: !zwfwItemMaterial.eform}">
-                            <el-button style="margin-left: 10px;" size="small" type="info" :disabled="!zwfwItemMaterial.eform">点击下载</el-button>
+                        <a :href="zwfwItemMaterial.eform" :download="downloadEform"
+                           :class="{disabled: !zwfwItemMaterial.eform}">
+                            <el-button style="margin-left: 10px;" size="small" type="info"
+                                       :disabled="!zwfwItemMaterial.eform">点击下载
+                            </el-button>
                         </a>
                     </el-upload>
                 </el-form-item>
@@ -703,23 +707,23 @@
                      :rules="zwfwItemConfigFormRules">
                 <el-form-item label="是否支持预约" prop="ispreorder">
                     <el-radio-group v-model="zwfwItemConfig.ispreorder">
-                        <el-radio :label="1">
+                        <el-radio :label="true">
                             <span style="font-weight:normal;">是</span>
                         </el-radio>
-                        <el-radio :label="0">
+                        <el-radio :label="false">
                             <span style="font-weight:normal;">否</span>
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <div v-if="zwfwItemConfig.ispreorder==1">
+                <div v-if="zwfwItemConfig.ispreorder">
                     <el-form-item label="预约时间" prop="preorderTimeArray">
-                        <el-checkbox-group v-model="zwfwItemConfig.preorderTimeArray" @change="preorderChange">
+                        <el-checkbox-group v-model="zwfwItemConfig.preorderTimeArray">
                             <el-checkbox v-for="item in zwfwItemConfig.opentime" :key="item"
                                          :label="item"></el-checkbox>
                         </el-checkbox-group>
                     </el-form-item>
 
-                    <el-form-item label="预约人数" prop="preordernum">
+                    <el-form-item label="每个时段预约人数" prop="preordernum">
                         <el-input-number v-model="zwfwItemConfig.preordernum" :min="1" label="预约人数"></el-input-number>
                     </el-form-item>
                 </div>
@@ -884,7 +888,7 @@
                 },
                 isMaterialExist: false,
                 zwfwItemConfig: {
-                    ispreorder: 1,
+                    ispreorder: true,
                     preorderTimeArray: [],
                     preordernum: '',
                     opentime: [],
@@ -920,6 +924,9 @@
                     ],
                     type: [
                         {required: true, message: '请输入事项类型'}
+                    ],
+                    promiseEndTime: [
+                        {required: true, message: '请输入事项承诺办结日期'}
                     ],
                     pretrialDays: [
                         {required: true, message: '请输入预审天数'}
@@ -1071,9 +1078,6 @@
 
         },
         methods: {
-            preorderChange(value) {
-                console.log(value);
-            },
             initEditor() {
                 this.$nextTick(() => {
                     this.$refs.conditionEditor.quill.getModule('toolbar').addHandler('image', this.imgHandlerCondition);
@@ -1130,6 +1134,9 @@
                         this.$message.error(response.msg || '事项列表查询失败');
                     }
                     this.pageLoading = false;
+                }).catch(e=>{
+                    this.$message.error('事项列表查询失败');
+                    console.error(e);
                 });
             },
             getDeptTree() {
@@ -1219,14 +1226,14 @@
                     this.resultExampleFileList.push({url: this.zwfwItem.resultExample, name: '结果样本'});
                 }
                 if (this.zwfwItem.handTypes) {
-                    if(typeof this.zwfwItem.handTypes == 'string') {
+                    if (typeof this.zwfwItem.handTypes == 'string') {
                         this.zwfwItem.handTypes = this.zwfwItem.handTypes.split(',');
                     }
                 } else {
                     this.zwfwItem.handTypes = []
                 }
                 if (this.zwfwItem.takeTypes) {
-                    if(typeof this.zwfwItem.takeTypes == 'string') {
+                    if (typeof this.zwfwItem.takeTypes == 'string') {
                         this.zwfwItem.takeTypes = this.zwfwItem.takeTypes.split(',');
                     }
                 } else {
@@ -1460,7 +1467,6 @@
                 this.itemId = item.id;
                 this.dialogStatus = 'itemConfigUpdate';
                 this.getItemConfig();
-                this.resetMaterialTemp();
                 this.dialogItemConfigFormVisible = true;
             },
             getItemConfig() {
@@ -1474,8 +1480,8 @@
                 })
             },
             submitItemConfig() {
-                if(this.zwfwItemConfig.ispreorder==1){
-                    if(this.zwfwItemConfig.preorderTimeArray==null || this.zwfwItemConfig.preorderTimeArray.length==0){
+                if (this.zwfwItemConfig.ispreorder) {
+                    if (this.zwfwItemConfig.preorderTimeArray == null || this.zwfwItemConfig.preorderTimeArray.length == 0) {
                         this.$message.warning("请勾选预约时间");
                         return false;
                     }
@@ -1495,8 +1501,8 @@
                         this.zwfwItemConfig.preorderTimeArray = this.zwfwItemConfig.preorderTimeArray1;
                         this.zwfwItemConfig.opentime = this.zwfwItemConfig.opentime1;
                     }
-                }).catch(e=>{
-                    // console.dir(e);
+                }).catch(e => {
+                    console.dir(e);
                     this.$message.error('事项预约配置失败');
                     this.zwfwItemConfig.preorderTimeArray = this.zwfwItemConfig.preorderTimeArray1;
                     this.zwfwItemConfig.opentime = this.zwfwItemConfig.opentime1;
@@ -1553,7 +1559,7 @@
                     });
                 }
             },
-            isExist(){
+            isExist() {
                 this.isMaterialExist = false;
                 for (let obj of this.zwfwItemMaterialList) {
                     if (obj.id === this.zwfwItemMaterial.id) {
@@ -1564,7 +1570,7 @@
             },
             relateMaterial() {
                 this.isExist();
-                if(this.isMaterialExist){
+                if (this.isMaterialExist) {
                     this.$message.warning('资料已存在');
                 }
                 this.$refs['zwfwMaterialForm'].validate(valid => {
@@ -1606,9 +1612,9 @@
                     }
                 })
             },
-            doUpdateAndRelate(){
+            doUpdateAndRelate() {
                 this.isExist();
-                if(this.isMaterialExist){
+                if (this.isMaterialExist) {
                     this.$message.warning('资料已存在');
                 }
                 this.$refs['zwfwMaterialForm'].validate(valid => {
@@ -1735,7 +1741,7 @@
             },
             closeZwfwItemConfigForm() {
                 this.dialogItemConfigFormVisible = false;
-                this.resetZwfwMaterialForm();
+                // this.resetZwfwMaterialForm();
             },
             resetZwfwMaterialForm() {
                 this.changeMaterialInfo = false;
@@ -1841,47 +1847,64 @@
         }
     }
 </script>
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style>
+    .el-checkbox {
+        margin-left: 0px;
+        margin-right: 15px;
+    }
+    .el-checkbox+.el-checkbox{
+        margin-left:0px;
+    }
+
 
     .item {
-        margin-top: 12px;
+        /*margin-top: 12px;*/
         margin-right: 10px;
     }
 
     .quill-editor {
-        height: 218px;
+        /*height: 218px;*/
         margin-bottom: 8px;
+    }
 
-    .ql-toolbar {
+    .quill-editor .ql-toolbar {
         line-height: 24px;
     }
 
     .ql-container {
-        height: 180px;
+        max-height: 180px;
+        overflow: scroll
     }
-
+    .ql-toolbar.ql-snow .ql-formats{
+        margin-right:0px;
     }
 </style>
 <style rel="stylesheet/scss" lang="scss">
-    .el-table th.action .cell{line-height:50px;}
+    .el-table th.action .cell {
+        line-height: 50px;
+    }
+
     .elRow {
         height: 50px;
     }
-    .action .cell {
+
+    tbody .action .cell {
         height: 50px;
+        padding-top: 10px;
     }
+
     .card-header {
 
-    .card-item {
-        border: none;
-        margin: 0;
-        width: 80%;
-        float: left;
-    }
+        .card-item {
+            border: none;
+            margin: 0;
+            width: 80%;
+            float: left;
+        }
 
-    .el-button {
-        float: right;
-    }
+        .el-button {
+            float: right;
+        }
 
     }
 
@@ -1892,36 +1915,36 @@
         border: 1px solid #d0d0d0;
         height: 80px;
 
-    .el-radio {
-        height: 64px;
-        line-height: 64px;
-        text-align: center;
-        width: 10%;
-        float: left;
-    }
+        .el-radio {
+            height: 64px;
+            line-height: 64px;
+            text-align: center;
+            width: 10%;
+            float: left;
+        }
 
-    p {
-        margin: 0;
-        height: 32px;
-        line-height: 32px;
-        width: 88%;
-        float: left;
-    }
+        p {
+            margin: 0;
+            height: 32px;
+            line-height: 32px;
+            width: 88%;
+            float: left;
+        }
 
-    .p1 {
-        font-size: 16px;
-        font-weight: bold;
+        .p1 {
+            font-size: 16px;
+            font-weight: bold;
 
-    span {
-        padding: 3px 6px;
-        color: #dd1100;
-        font-size: 14px;
-        font-weight: normal;
-        border: 1px solid #dd1100;
-        border-radius: 3px;
-    }
+            span {
+                padding: 3px 6px;
+                color: #dd1100;
+                font-size: 14px;
+                font-weight: normal;
+                border: 1px solid #dd1100;
+                border-radius: 3px;
+            }
 
-    }
+        }
     }
 
     .clearfix:before, .clearfix:after {
@@ -1936,13 +1959,13 @@
     .box-card {
         width: 100%;
 
-    .el-card__body {
-        padding: 0;
-    }
+        .el-card__body {
+            padding: 0;
+        }
 
-    .card-body {
-        padding: 12px;
-    }
+        .card-body {
+            padding: 12px;
+        }
 
     }
 </style>
