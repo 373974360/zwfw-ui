@@ -267,7 +267,8 @@
                         this.dialogFormVisible = false;
                         verify({
                             id: this.legalPersonVerify.id,
-                            verifyStatus: this.legalPersonVerify.verifyStatus
+                            verifyStatus: this.legalPersonVerify.verifyStatus,
+                            verifyResult: this.legalPersonVerify.verifyResult
                         }).then(response => {
                             if (response.httpCode === 200) {
                                 this.$message.success('审核成功！');
