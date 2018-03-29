@@ -1279,8 +1279,12 @@
                             } else {
                                 this.$message.error(response.msg || '创建失败');
                             }
-                        })
+                        }).catch(e=>{
+                            console.log(e);
+                            this.$message.error('创建失败');
+                        });
                     } else {
+                        this.$message.error('请检查表单各项是否填写正确或遗漏');
                         return false;
                     }
                 });
@@ -1302,8 +1306,12 @@
                             } else {
                                 this.$message.error(response.msg || '更新失败');
                             }
-                        });
+                        }).catch(e=>{
+                            console.log(e);
+                            this.$message.error('更新失败');
+                        });;
                     } else {
+                        this.$message.error('请检查表单各项是否填写完整正确或遗漏');
                         return false;
                     }
                 });

@@ -8,7 +8,7 @@
             <el-select
                     remote
                     style="width: 400px;" class="filter-item" placeholder="公司名称"
-                    v-model="listQuery.companyId"
+                    v-model="listQuery.ownerPersonId"
                     filterable clearable
                     :remote-method="queryCompanySearch"
                     @change="handleCompanySelect">
@@ -433,7 +433,7 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
-                    companyId: undefined,
+                    ownerPersonId: undefined,
                     processNumber: null
                 },
                 zwfwDeptWorkQuery: {
@@ -553,7 +553,7 @@
                 this.dialogFormVisible = false;
             },
             handleCompanySelect(code) {
-                this.listQuery.companyId = code;
+                this.listQuery.ownerPersonId = code;
                 this.getList();
             },
             queryCompanySearch(queryString) {
