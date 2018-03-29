@@ -46,9 +46,9 @@
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row
                   style="width: 100%">
             <!--<el-table-column align="center" label="办件号" width="100">-->
-                <!--<template scope="scope">-->
-                    <!--<span>{{scope.row.processNumber}}</span>-->
-                <!--</template>-->
+            <!--<template scope="scope">-->
+            <!--<span>{{scope.row.processNumber}}</span>-->
+            <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column align="left" label="事项名称" min-width="300">
                 <template scope="scope">
@@ -73,10 +73,10 @@
                         法人姓名：{{scope.row.memberRealname}}<br>联系电话：{{scope.row.memberPhonenumber}}<br>
                     </span>
                     <!--<span>-->
-                        <!--<span v-if="scope.row.companyName!=null">-->
-                            <!--公司：{{scope.row.companyName}}<br>-->
-                        <!--</span>-->
-                        <!--申请人：{{scope.row.memberRealname}}<br>联系电话：{{scope.row.memberPhonenumber}}<br>-->
+                    <!--<span v-if="scope.row.companyName!=null">-->
+                    <!--公司：{{scope.row.companyName}}<br>-->
+                    <!--</span>-->
+                    <!--申请人：{{scope.row.memberRealname}}<br>联系电话：{{scope.row.memberPhonenumber}}<br>-->
                     <!--</span>-->
                 </template>
             </el-table-column>
@@ -396,12 +396,12 @@
                 </el-form-item>
             </el-form>
             <el-form ref="memberInfoForm" :model="memberInfo" :rules="memberInfoRules"
-                      v-show="!processOfflineInfo.hasMemberId || offlineReadonly"
-                      label-width="100px" class="small-space" label-position="right"
-                      style="width: 80%; margin-left:10%;" v-loading="dialogLoading">
+                     v-show="!processOfflineInfo.hasMemberId || offlineReadonly"
+                     label-width="100px" class="small-space" label-position="right"
+                     style="width: 80%; margin-left:10%;" v-loading="dialogLoading">
                 <el-form-item label="用户类型" v-show="!offlineReadonly">
                     <el-radio-group v-model="memberInfo.type">
-                        <el-radio v-for="item in enums['MemberType']" :key="item.code" :label="item.code">{{item.value}}</el-radio>
+                        <el-radio v-for="item in enums['MemberType']" v-if="item.code != 3" :key="item.code" :label="item.code">{{item.value}}</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="姓名" prop="naturePerson.name" v-show="memberInfo.type == 1"
@@ -411,13 +411,13 @@
                 </el-form-item>
                 <el-form-item label="身份证号" prop="naturePerson.idcard" v-show="memberInfo.type == 1"
                               :rules="natureRequired ? memberInfoRules.idcard : []">
-                    <el-input v-model="memberInfo.naturePerson.idcard" :disabled="offlineReadonly"
+                    <el-input v-model="memberInfo.naturePerson.idcard" :disabled="offlineReadonly || updateFlag"
                               @blur="validateField('memberInfoForm', 'naturePerson.idcard')"></el-input>
                 </el-form-item>
-                <el-form-item label="手机号" prop="naturePerson.phone" v-show="memberInfo.type == 1 && (offlineReadonly ? memberInfo.naturePerson.phone : true)">
-                    <!--:rules="natureRequired ? memberInfoRules.phone : []"-->
-                    <el-input v-model="memberInfo.naturePerson.phone" :disabled="offlineReadonly"></el-input>
-                    <!--@blur="validateField('memberInfoForm', 'naturePerson.phone')"-->
+                <el-form-item label="手机号" prop="naturePerson.phone" v-show="memberInfo.type == 1 && (offlineReadonly ? memberInfo.naturePerson.phone : true)"
+                              :rules="natureRequired ? memberInfoRules.phone : []">
+                    <el-input v-model="memberInfo.naturePerson.phone" :disabled="offlineReadonly"
+                              @blur="validateField('memberInfoForm', 'naturePerson.phone')"></el-input>
                 </el-form-item>
                 <el-form-item label="公司名称" prop="legalPerson.companyName" v-show="memberInfo.type == 2"
                               :rules="legalRequired ? memberInfoRules.companyName : []">
@@ -426,23 +426,23 @@
                 </el-form-item>
                 <el-form-item label="统一社会信用代码" prop="legalPerson.companyCode" v-show="memberInfo.type == 2"
                               :rules="legalRequired ? memberInfoRules.companyCode : []">
-                    <el-input v-model="memberInfo.legalPerson.companyCode" :disabled="offlineReadonly"
+                    <el-input v-model="memberInfo.legalPerson.companyCode" :disabled="offlineReadonly || updateFlag"
                               @blur="validateField('memberInfoForm', 'legalPerson.companyCode')"></el-input>
                 </el-form-item>
                 <el-form-item label="法人姓名" prop="legalPerson.legalPerson" v-show="memberInfo.type == 2 && (offlineReadonly ? memberInfo.legalPerson.legalPerson : true)">
-                              <!--:rules="legalRequired ? memberInfoRules.legalPerson : []"-->
+                    <!--:rules="legalRequired ? memberInfoRules.legalPerson : []"-->
                     <el-input v-model="memberInfo.legalPerson.legalPerson" :disabled="offlineReadonly"></el-input>
                     <!--@blur="validateField('memberInfoForm', 'legalPerson.legalPerson')"-->
                 </el-form-item>
-                <el-form-item label="法人身份证号" prop="legalPerson.idcard" v-show="memberInfo.type == 2 && (offlineReadonly ? memberInfo.legalPerson.idcard : true)">
-                              <!--:rules="legalRequired ? memberInfoRules.legalPersonCard : []"-->
-                    <el-input v-model="memberInfo.legalPerson.idcard" :disabled="offlineReadonly"></el-input>
-                    <!--@blur="validateField('memberInfoForm', 'legalPerson.idcard')"-->
+                <el-form-item label="法人身份证号" prop="legalPerson.idcard" v-show="memberInfo.type == 2 && (offlineReadonly ? memberInfo.legalPerson.idcard : true)"
+                              :rules="legalRequired ? memberInfoRules.legalPersonCard : []">
+                    <el-input v-model="memberInfo.legalPerson.idcard" :disabled="offlineReadonly"
+                              @blur="validateField('memberInfoForm', 'legalPerson.idcard')"></el-input>
                 </el-form-item>
-                <el-form-item label="联系电话" prop="legalPerson.phone" v-show="memberInfo.type == 2 && (offlineReadonly ? memberInfo.legalPerson.phone : true)">
-                              <!--:rules="legalRequired ? memberInfoRules.legalPersonPhone : []"-->
-                    <el-input v-model="memberInfo.legalPerson.phone" :disabled="offlineReadonly"></el-input>
-                    <!--@blur="validateField('memberInfoForm', 'legalPerson.phone')"-->
+                <el-form-item label="联系电话" prop="legalPerson.phone" v-show="memberInfo.type == 2 && (offlineReadonly ? memberInfo.legalPerson.phone : true)"
+                              :rules="legalRequired ? memberInfoRules.legalPersonPhone : []">
+                    <el-input v-model="memberInfo.legalPerson.phone" :disabled="offlineReadonly"
+                              @blur="validateField('memberInfoForm', 'legalPerson.phone')"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -503,6 +503,9 @@
         name: 'table_demo',
         data() {
             const validateIdcard = (rule, value, callback) => {
+                if (this.updateFlag) {
+                    return callback();
+                }
                 if (!isIdCardNo(value)) {
                     callback(new Error('身份证号格式不正确，请重新输入'));
                 } else {
@@ -520,12 +523,15 @@
                 }
             };
             const validateMobiles = (rule, value, callback) => {
-                if (!validatMobiles(value)) {
+                if (value && !validatMobiles(value)) {
                     callback(new Error('手机号码格式不正确'));
                 }
                 callback();
             };
             const validateCompanyCode = (rule, value, callback) => {
+                if (this.updateFlag) {
+                    return callback();
+                }
                 if (!checkSocialCreditCode(value)) {
                     callback(new Error('不是有效的统一社会信用代码，请重新输入'));
                 } else {
@@ -541,6 +547,14 @@
                         }
                     })
                 }
+            };
+            const validateLegalIdCard = (rule, value, callback) => {
+                if (value) {
+                    if (!isIdCardNo(value)) {
+                        callback(new Error('身份证号格式不正确，请重新输入'));
+                    }
+                }
+                callback();
             };
             return {
                 list: null,
@@ -572,6 +586,7 @@
                 offlineCardItemVisible: false,
                 logisticsVisible: false,
                 deliveryVisible: false,
+                updateFlag: false,
                 offlineCardHeader: {
                     name: '',
                     phone: '',
@@ -671,7 +686,7 @@
                         {validator: validateIdcard, trigger: 'blur'}
                     ],
                     phone: [
-                        {required: true, message: '手机号不能为空', trigger: 'blur'},
+//                        {required: true, message: '手机号不能为空', trigger: 'blur'},
                         {validator: validateMobiles, trigger: 'blur'}
                     ],
                     companyName: [
@@ -685,11 +700,11 @@
                         {required: true, message: '法人姓名不能为空', trigger: 'blur'}
                     ],
                     legalPersonCard: [
-                        {required: true, message: '法人身份证号不能为空', trigger: 'blur'},
-                        {validator: validateIdcard, trigger: 'blur'}
+//                        {required: true, message: '法人身份证号不能为空', trigger: 'blur'},
+                        {validator: validateLegalIdCard, trigger: 'blur'}
                     ],
                     legalPersonPhone: [
-                        {required: true, message: '联系电话不能为空', trigger: 'blur'},
+//                        {required: true, message: '联系电话不能为空', trigger: 'blur'},
                         {validator: validateMobiles, trigger: 'blur'}
                     ]
                 },
@@ -936,6 +951,7 @@
                 });
             },
             createProcessOffline() {
+                this.updateFlag = false;
                 this.offlineReadonly = false;
                 this.processOfflineVisible = true;
             },
@@ -1318,6 +1334,7 @@
                 if (this.memberInfo.enable !== 1) {
                     this.processOfflineInfo.hasMemberId = false;
                 }
+                this.updateFlag = true;
                 this.offlineReadonly = false;
             },
             handleDeleteProcessOffline() {
