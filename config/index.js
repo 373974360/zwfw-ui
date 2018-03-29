@@ -37,6 +37,15 @@ module.exports = {
                 pathRewrite: {
                     '^/api': '/api'
                 },
+            },
+            '/wiiauth': {
+                target: 'https://rz.weijing.gov.cn',
+                changeOrigin: true,
+                secure: false,
+                headers: {
+                    Referer: 'https://rz.weijing.gov.cn'
+                }
+
             }
         },
         // CSS Sourcemaps off by default because relative paths are "buggy"

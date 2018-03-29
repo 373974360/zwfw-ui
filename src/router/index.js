@@ -52,7 +52,7 @@ const NumberScope = () => import('../views/hallSystem/lobby/numberScope');
 const LegalPersonExamined = () => import('../views/hallSystem/member/legalPersonExamined');
 const NaturePerson = () => import('../views/hallSystem/member/naturePerson');
 const LegalPerson = () => import('../views/hallSystem/member/legalPerson');
-const Identification = () => import('../views/hallSystem/member/identification');
+
 
 /* 综合窗口 */
 /* 窗口收件*/
@@ -83,6 +83,8 @@ const NoAccept = () => import('../views/hallSystem/window/pretrial/noAccept');
 const WindowWork = () => import('../views/hallSystem/window/street/windowWork');
 /* 街办查询 */
 const WindowHistory = () => import('../views/hallSystem/window/street/windowHistory');
+/* 微警认证 */
+const Identification = () => import('../views/hallSystem/window/identification');
 
 /************************政务服务管理系统************************/
 /* index */
@@ -349,12 +351,6 @@ export const asyncRouterMap = [
                 component: LegalPerson,
                 name: '法人管理',
                 meta: {permission: 'hallSystem:member:legalPerson:list'}
-            },
-            {
-                path: 'identification',
-                component: Identification,
-                name: '身份识别认证',
-                meta: {permission: 'hallSystem:member:identification:list'}
             }
         ]
     },
@@ -415,6 +411,12 @@ export const asyncRouterMap = [
                 component: CompanyInfo,
                 name: '企业信息',
                 meta: {permission: 'hallSystem:window:companyInfo:list'}
+            },
+            {
+                path: 'identification',
+                component: Identification,
+                name: '微警认证',
+                meta: {permission: 'hallSystem:window:identification:list'}
             }
             // {path: 'windowWork', component: WindowWork, name: '街办收件'},
             // {path: 'windowHistory', component: WindowHistory, name: '办件查询'}
