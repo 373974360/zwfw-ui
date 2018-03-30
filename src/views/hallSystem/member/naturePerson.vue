@@ -230,13 +230,15 @@
                 listLoading: true,
                 uploadUrl: this.$store.state.app.uploadUrl,
                 acceptTypes: this.$store.state.app.imageAccepts,
+                statusList: [0, 1],
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     name: undefined,
-                    gender: "",
+                    gender: '',
                     idcard: undefined,
-                    phone: undefined
+                    phone: undefined,
+                    inStatus: undefined
                 },
                 zwfwNaturePerson: {
                     id: undefined,
@@ -304,6 +306,7 @@
         methods: {
             getList() {
                 this.listLoading = true;
+                this.listQuery.inStatus = this.statusList.join();
                 getZwfwNaturePersonList(this.listQuery).then(response => {
                     this.listLoading = false;
                     if (response.httpCode === 200) {
