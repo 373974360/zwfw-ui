@@ -551,12 +551,12 @@
                         </el-tooltip>
                     </template>
                 </el-table-column>
-                <el-table-column prop="type" align="center" label="材料类型" width="100">
+                <el-table-column prop="type" align="center" label="材料类型" width="130">
                     <template scope="scope">
                         <span>{{scope.row.type | dics('cllx')}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column v-once prop="source" align="center" label="来源渠道" width="100">
+                <el-table-column v-once prop="source" align="center" label="来源渠道" width="130">
                     <template scope="scope">
                         <span>{{scope.row.source | dics('sxsqclly')}}</span>
                     </template>
