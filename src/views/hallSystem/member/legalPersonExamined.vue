@@ -158,6 +158,14 @@
                                 <th width="140">审核结果说明</th>
                                 <td>{{legalPersonVerify.verifyResult}}</td>
                             </tr>
+                            <tr width="140">
+                                <th>审核人员</th>
+                                <td>{{legalPersonVerify.updateByName}}</td>
+                            </tr>
+                            <tr width="140">
+                                <th>审核时间</th>
+                                <td>{{legalPersonVerify.updateTime | date('YYYY-MM-DD HH:mm:ss')}}</td>
+                            </tr>
                         </table>
                     </div>
                 </div>
@@ -208,7 +216,9 @@
                     registerPlace: undefined,
                     registerDate: undefined,
                     verifyStatus: undefined,
-                    verifyResult: undefined
+                    verifyResult: undefined,
+                    updateByName: undefined,
+                    updateTime: undefined
                 },
                 legalPersonVerifyRules: {
                     verifyStatus: [{required: true, message: '请选择审核结果', trigger: 'blur'}]
@@ -295,7 +305,9 @@
                     registerPlace: undefined,
                     registerDate: undefined,
                     verifyStatus: undefined,
-                    verifyResult: undefined
+                    verifyResult: undefined,
+                    updateByName: undefined,
+                    updateTime: undefined
                 }
             },
             handleSizeChange(val) {
