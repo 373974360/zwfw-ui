@@ -17,15 +17,18 @@
                            :label="item.value"></el-option>
             </el-select>
             <el-select class="filter-item" v-model="listQuery.enable" clearable placeholder="事项状态">
-                <el-option label="全部" value="2">
-
-                </el-option>
+                <el-option label="全部" value="2"></el-option>
                 <el-option
                         v-for="item in options"
                         :key="item.value"
                         :label="item.label"
                         :value="item.value">
                 </el-option>
+            </el-select>
+            <el-select class="filter-item" v-model="listQuery.orderable" clearable placeholder="预约筛选">
+                <el-option label="预约和不可预约" value=""></el-option>
+                <el-option label="支持预约" value="true"></el-option>
+                <el-option label="不可预约" value="false"></el-option>
             </el-select>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getItemList">搜索</el-button>
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleItemCreate" type="primary"
@@ -54,12 +57,12 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="基本编码" prop="basicCode" width="100">
+            <el-table-column align="center" label="基本编码" prop="basicCode" width="160">
                 <template scope="scope">
                     <span>{{scope.row.basicCode}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="事项类型" prop="type" width="100">
+            <el-table-column align="center" label="事项类型" prop="type" width="180">
                 <template scope="scope">
                     <span>{{scope.row.type | dics('sslx')}}</span>
                 </template>
@@ -495,7 +498,7 @@
                             <span style="font-weight:normal;">启用</span>
                         </el-radio>
                         <el-radio :label="0">
-                            <span style="font-weight:normal;">停用</span>
+                            <span style="font-weight:normal;">禁用</span>
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
@@ -551,12 +554,12 @@
                         </el-tooltip>
                     </template>
                 </el-table-column>
-                <el-table-column prop="type" align="center" label="材料类型" width="100">
+                <el-table-column prop="type" align="center" label="材料类型" width="130">
                     <template scope="scope">
                         <span>{{scope.row.type | dics('cllx')}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column v-once prop="source" align="center" label="来源渠道" width="100">
+                <el-table-column v-once prop="source" align="center" label="来源渠道" width="130">
                     <template scope="scope">
                         <span>{{scope.row.source | dics('sxsqclly')}}</span>
                     </template>
@@ -789,7 +792,7 @@
                     label: '启用'
                 }, {
                     value: '0',
-                    label: '停用'
+                    label: '禁用'
                 }],
                 changeMaterialInfo: false,
                 zwfwItemList: [],
@@ -810,7 +813,8 @@
                     departmentId: undefined,
                     processType: undefined,
                     handleType: undefined,
-                    enable: '1'
+                    enable: '1',
+                    orderable:''
                 },
                 activeName: 'first',
                 zwfwItem: {
@@ -1078,6 +1082,9 @@
 
         },
         methods: {
+            preorderChange(value) {
+                console.log(value);
+            },
             initEditor() {
                 this.$nextTick(() => {
                     this.$refs.conditionEditor.quill.getModule('toolbar').addHandler('image', this.imgHandlerCondition);
@@ -1475,6 +1482,7 @@
                 this.itemId = item.id;
                 this.dialogStatus = 'itemConfigUpdate';
                 this.getItemConfig();
+                this.resetMaterialTemp();
                 this.dialogItemConfigFormVisible = true;
             },
             getItemConfig() {
@@ -1888,6 +1896,9 @@
     }
 </style>
 <style rel="stylesheet/scss" lang="scss">
+    .el-table .el-table-column--selection .cell{
+        text-overflow: clip;
+    }
     .el-table th.action .cell {
         line-height: 50px;
     }
