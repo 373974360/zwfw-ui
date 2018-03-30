@@ -495,7 +495,7 @@
                             <span style="font-weight:normal;">启用</span>
                         </el-radio>
                         <el-radio :label="0">
-                            <span style="font-weight:normal;">停用</span>
+                            <span style="font-weight:normal;">禁用</span>
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
@@ -707,17 +707,17 @@
                      :rules="zwfwItemConfigFormRules">
                 <el-form-item label="是否支持预约" prop="ispreorder">
                     <el-radio-group v-model="zwfwItemConfig.ispreorder">
-                        <el-radio :label="true">
+                        <el-radio :label="1">
                             <span style="font-weight:normal;">是</span>
                         </el-radio>
-                        <el-radio :label="false">
+                        <el-radio :label="0">
                             <span style="font-weight:normal;">否</span>
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <div v-if="zwfwItemConfig.ispreorder">
+                <div v-if="zwfwItemConfig.ispreorder==1">
                     <el-form-item label="预约时间" prop="preorderTimeArray">
-                        <el-checkbox-group v-model="zwfwItemConfig.preorderTimeArray">
+                        <el-checkbox-group v-model="zwfwItemConfig.preorderTimeArray" @change="preorderChange">
                             <el-checkbox v-for="item in zwfwItemConfig.opentime" :key="item"
                                          :label="item"></el-checkbox>
                         </el-checkbox-group>
@@ -789,7 +789,7 @@
                     label: '启用'
                 }, {
                     value: '0',
-                    label: '停用'
+                    label: '禁用'
                 }],
                 changeMaterialInfo: false,
                 zwfwItemList: [],
@@ -888,7 +888,7 @@
                 },
                 isMaterialExist: false,
                 zwfwItemConfig: {
-                    ispreorder: true,
+                    ispreorder: 1,
                     preorderTimeArray: [],
                     preordernum: '',
                     opentime: [],
@@ -1078,6 +1078,9 @@
 
         },
         methods: {
+            preorderChange(value) {
+                console.log(value);
+            },
             initEditor() {
                 this.$nextTick(() => {
                     this.$refs.conditionEditor.quill.getModule('toolbar').addHandler('image', this.imgHandlerCondition);
@@ -1134,9 +1137,6 @@
                         this.$message.error(response.msg || '事项列表查询失败');
                     }
                     this.pageLoading = false;
-                }).catch(e=>{
-                    this.$message.error('事项列表查询失败');
-                    console.error(e);
                 });
             },
             getDeptTree() {
@@ -1467,6 +1467,7 @@
                 this.itemId = item.id;
                 this.dialogStatus = 'itemConfigUpdate';
                 this.getItemConfig();
+                this.resetMaterialTemp();
                 this.dialogItemConfigFormVisible = true;
             },
             getItemConfig() {
@@ -1480,7 +1481,7 @@
                 })
             },
             submitItemConfig() {
-                if (this.zwfwItemConfig.ispreorder) {
+                if (this.zwfwItemConfig.ispreorder == 1) {
                     if (this.zwfwItemConfig.preorderTimeArray == null || this.zwfwItemConfig.preorderTimeArray.length == 0) {
                         this.$message.warning("请勾选预约时间");
                         return false;

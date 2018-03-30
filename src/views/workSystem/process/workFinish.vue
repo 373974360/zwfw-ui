@@ -291,6 +291,7 @@
                             </table>
                         </el-tab-pane>
                         <el-tab-pane label="办件材料" name="fifth">
+                            <el-button @click="downloadMaterialFiles()" type="primary">一键下载材料</el-button><br><br>
                             <table class="table table-bordered table-responsive">
                                 <tr>
                                     <th>序号</th>
@@ -563,6 +564,10 @@
                         this.companyInfo = {};
                     }
                 })
+            },
+            downloadMaterialFiles() {
+                // console.log(this.itemProcessVo);
+                window.open('/api/common/downloadMaterialFiles?processNumber='+this.itemProcessVo.processNumber+'&taskId='+this.itemProcessVo.taskId);
             },
             print_ycxgzd(processNumber) {
                 if (processNumber != null) {

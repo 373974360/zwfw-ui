@@ -238,7 +238,7 @@
                     <el-tabs v-model="tabPaneShow" type="card">
                         <el-tab-pane label="申请企业/个人" name="first">
                             <div>
-                                <div v-if="member.legalPerson!=null">
+                                <div v-if="member && member.legalPerson!=null">
                                     <table class="table table-responsive table-bordered">
                                         <tr>
                                             <th width="140">办事企业/机构</th>
@@ -297,7 +297,7 @@
                                 <div v-if="member.naturePerson!=null && member.type == 3">
                                     <h3>授权办事员信息：</h3>
                                 </div>
-                                <div v-if="member.naturePerson!=null">
+                                <div v-if="member && member.naturePerson!=null">
                                     <table class="table table-responsive table-bordered">
                                         <tr>
                                             <th width="140">姓名</th>
@@ -361,6 +361,10 @@
                                         </td>
                                     </tr>
                                 </table>
+                                <div style="text-align: center;">
+                                    <img :src="'/api/workSystem/itemProcessWork/showDiagram?processNumber=' + itemProcessVo.processNumber"
+                                         style="max-width:100%"/>
+                                </div>
                             </div>
                             <div v-if="itemProcessVo.status==15">
                                 已办结
@@ -420,6 +424,7 @@
                             </table>
                         </el-tab-pane>
                         <el-tab-pane label="办件材料" name="fifth">
+                            <el-button @click="downloadMaterialFiles()" type="primary">一键下载材料</el-button><br><br>
                             <table class="table table-bordered table-responsive">
                                 <tr>
                                     <th>序号</th>
@@ -596,7 +601,8 @@
                     }
                 }).catch(e=>{
                     this.listLoading = false;
-                    this.$message.error(response.msg || '加载超时');
+                    console.error(e);
+                    this.$message.error('加载超时');
                 })
             },
             /**
@@ -643,19 +649,25 @@
                                 taskId: itemProcessAttachmentList[o].taskId}
                             );
                         }
-                        this.queryCompanyInfo(this.member);
+                        if(this.member) {
+                            this.queryCompanyInfo(this.member);
+                        }
                     } else {
                     }
 
                 }).catch(e => {
                     this.dialogLoading = false;
-                    this.$message.error(response.msg || '加载超时');
+                    console.error(e);
+                    this.$message.error('加载超时');
                 });
             },
             /**
              * 查询企业信息
              */
             queryCompanyInfo(memberInfo) {
+                if(!memberInfo){
+                    return;
+                }
                 this.companyInfo = {};
                 if (memberInfo.memberCode == '' || memberInfo.memberCode.length != 18) {
                     this.companyInfo = {};
@@ -812,6 +824,11 @@
                     window.open('/admin/print/ycxgzd.html?processNumber=' + processNumber);
                     // window.open('/api/hallSystem/hallCompositeWindow/downloadYcxgzd?processNumber=' + processNumber);
                 }
+            },
+
+            downloadMaterialFiles() {
+                // console.log(this.itemProcessVo);
+                window.open('/api/common/downloadMaterialFiles?processNumber='+this.itemProcessVo.processNumber+'&taskId='+this.itemProcessVo.taskId);
             },
 
             /**

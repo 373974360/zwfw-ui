@@ -2,24 +2,16 @@ import fetch from 'utils/fetch';
 
 export function  getAccessToken(clientInfo) {
     return fetch({
-        url: '/wiiauth/getaccesstoken',
+        url: '/api/hallSystem/window/identification/getAccessToken',
         method: 'get',
         params: clientInfo
     })
 
 }
 
-export function refreshAccessToken(access_token) {
-    return fetch({
-        url: '/wiiauth/refreshaccesstoken',
-        method: 'get',
-        params: {access_token}
-    })
-}
-
 export function getCertToken(query) {
     return fetch({
-        url: '/wiiauth/getcerttoken',
+        url: '/api/hallSystem/window/identification/getCertToken',
         method: 'get',
         params:query
     })
@@ -27,19 +19,8 @@ export function getCertToken(query) {
 
 export function getCertResult(query) {
     return fetch({
-        url: '/wiiauth/getcertresult',
+        url: '/api/hallSystem/window/identification/getCertResult',
         method: 'get',
         params: query
-    })
-}
-
-
-export function pushcertres(identificresult) {
-
-  const data = identificresult;
-    return fetch({
-        url: '/api/hallSystem/identification/callback/resvResult',
-        method: 'post',
-        data
     })
 }

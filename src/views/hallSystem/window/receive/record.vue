@@ -37,18 +37,17 @@
                 <el-checkbox :label="3">成功受理</el-checkbox>
                 <el-checkbox :label="4">不予受理</el-checkbox>
             </el-checkbox-group>
-            <br>
-            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" placement="top-start">
-                <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
-                    搜索
-                </el-button>
-            </el-tooltip>
+            <!--<br>-->
+            <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
+                搜索
+            </el-button>
+
         </div>
 
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row style="width: 100%">
-            <el-table-column align="center" label="编号" width="140">
+            <el-table-column align="center" label="编号" width="170">
                 <template scope="scope">
-                    {{scope.row.id}} <br>
+                    {{scope.row.fullOrderNo}} <br>
                     【{{scope.row.orderNo}}】
                 </template>
             </el-table-column>
