@@ -649,7 +649,7 @@
                 window.open(file.url);
             },
             downloadMaterialFiles() {
-                console.log(this.itemProcessVo);
+                // console.log(this.itemProcessVo);
                 window.open('/api/common/downloadMaterialFiles?processNumber='+this.itemProcessVo.processNumber+'&taskId='+this.itemProcessVo.taskId);
             },
             printMaterialFiles() {

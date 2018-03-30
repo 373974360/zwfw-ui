@@ -284,7 +284,7 @@ s                     v-loading="dialogLoading">
                     ty_code: undefined,
                     fr: undefined,
                     lxdh: undefined,
-                    diff: undefined
+                    diff: 'gwq'
                 },
                 dialogFormVisible: false,
                 dialogLoading: false,
