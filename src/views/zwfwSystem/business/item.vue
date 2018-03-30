@@ -54,12 +54,12 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="基本编码" prop="basicCode" width="100">
+            <el-table-column align="center" label="基本编码" prop="basicCode" width="160">
                 <template scope="scope">
                     <span>{{scope.row.basicCode}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="事项类型" prop="type" width="100">
+            <el-table-column align="center" label="事项类型" prop="type" width="180">
                 <template scope="scope">
                     <span>{{scope.row.type | dics('sslx')}}</span>
                 </template>
@@ -1880,6 +1880,9 @@
     }
 </style>
 <style rel="stylesheet/scss" lang="scss">
+    .el-table .el-table-column--selection .cell{
+        text-overflow: clip;
+    }
     .el-table th.action .cell {
         line-height: 50px;
     }
