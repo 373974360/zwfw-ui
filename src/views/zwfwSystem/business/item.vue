@@ -17,15 +17,18 @@
                            :label="item.value"></el-option>
             </el-select>
             <el-select class="filter-item" v-model="listQuery.enable" clearable placeholder="事项状态">
-                <el-option label="全部" value="2">
-
-                </el-option>
+                <el-option label="全部" value="2"></el-option>
                 <el-option
                         v-for="item in options"
                         :key="item.value"
                         :label="item.label"
                         :value="item.value">
                 </el-option>
+            </el-select>
+            <el-select class="filter-item" v-model="listQuery.orderable" clearable placeholder="预约筛选">
+                <el-option label="预约和不可预约" value=""></el-option>
+                <el-option label="支持预约" value="true"></el-option>
+                <el-option label="不可预约" value="false"></el-option>
             </el-select>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getItemList">搜索</el-button>
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleItemCreate" type="primary"
@@ -810,7 +813,8 @@
                     departmentId: undefined,
                     processType: undefined,
                     handleType: undefined,
-                    enable: '1'
+                    enable: '1',
+                    orderable:''
                 },
                 activeName: 'first',
                 zwfwItem: {
