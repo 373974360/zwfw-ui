@@ -106,6 +106,12 @@ const StaffSatisfaction = () => import('../views/hallSystem/count/operation/staf
 const DeptSatisfaction = () => import('../views/hallSystem/count/operation/deptSatisfaction');
 const Business = () => import('../views/hallSystem/count/approval/business');
 
+/* 数据可视化模块 */
+/* 业务审批数据可视化模块 */
+const BusinessApprove = () => import('../views/hallSystem/visualization/businessApprove.vue');
+/* 实时受理数据可视化模块 */
+const RealTimeAccept = () => import('../views/hallSystem/visualization/realTimeAccept.vue');
+
 /************************政务服务办理系统************************/
 /* index */
 const WorkSystem = () => import('../views/workSystem/index');
@@ -195,6 +201,7 @@ export default new Router({
     scrollBehavior: () => ({y: 0}),
     routes: constantRouterMap
 });
+
 
 export const asyncRouterMap = [
 
@@ -483,6 +490,27 @@ export const asyncRouterMap = [
                 component: CallCount,
                 name: '叫号统计 ',
                 meta: {permission: 'hallSystem:count:callCount:list'}
+            }
+        ]
+    },
+    {redirect: 'noredirect',
+        name: '数据可视化',
+        path:'/visualization',
+        meta: {permission: 'hallSystem:visualization:admin'},
+        icon: 'keshihuashuju',
+        component: Layout,
+        children: [
+            {
+                path: 'realTimeAccept',
+                component: RealTimeAccept,
+                name: '实时受理数据可视化',
+                meta: {permission: 'hallSystem:visualization:realTimeAccept:list'}
+            },
+            {
+                path: 'businessApprove',
+                component: BusinessApprove,
+                name: '业务审批数据可视化',
+                meta: {permission: 'hallSystem:visualization:businessApprove:list'}
             }
         ]
     },
