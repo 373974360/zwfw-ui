@@ -33,6 +33,8 @@
     "simplemde": "1.11.2",
     "sortablejs": "1.5.1",
     "vue": "2.3.3",
+    "lodash": "^4.17.4",
+    "vue-resize-directive": "^1.0.0",
     "vue-count-to": "1.0.5",
     "vue-multiselect": "2.0.0-beta.15",
     "vue-quill-editor": "^2.3.3",
