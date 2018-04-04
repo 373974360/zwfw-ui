@@ -95,8 +95,13 @@
         }
 
         #window-accept-table .item-value {
-            font-size: 0.8em;
-            line-height: 2.3em;
+            font-size: 1em;
+            line-height: 2em;
+        }
+        th .item-title{
+            margin-top:1em;
+            color:#aaa;
+            margin-bottom:0.7em;
         }
     </style>
 </head>
@@ -198,13 +203,13 @@
                                             <div class="item-value">{{list.callTime}}</div>
                                         </td>
                                         <td>
-                                            <div class="item-value"  style="font-size: 0.6em;">{{list.personName}}</div>
+                                            <div class="item-value"  >{{list.personName}}</div>
                                         </td>
                                         <td>
-                                            <div class="item-value" style="font-size: 0.6em;">{{list.personIdcard}}</div>
+                                            <div class="item-value" >{{list.personIdcard}}</div>
                                         </td>
                                         <td>
-                                            <div class="item-value" style="font-size: 0.6em;">{{list.itemName}}</div>
+                                            <div class="item-value" >{{list.itemName}}</div>
                                         </td>
                                     </tr>
                                 </table>
@@ -335,7 +340,7 @@
                                 e.setOption({
                                     title: {
                                         x: 'center',
-                                        y: 'top',
+                                        y: 20,
                                         textAlign: 'center',
                                         text: '各窗口业务受理量',
                                         textStyle: {
@@ -432,7 +437,7 @@
                                 e.setOption({
                                     title: {
                                         x: 'center',
-                                        y: 'top',
+                                        y: 20,
                                         textAlign: 'center',
                                         text: '各时段业务量统计',
                                         textStyle: {
@@ -546,9 +551,9 @@
                                 e.setOption({
                                     title: {
                                         x: 'center',
-                                        y: 'top',
+                                        y: 20,
                                         textAlign: 'center',
-                                        text: '本周热门业Top5',
+                                        text: '本周热门业务 Top5',
                                         textStyle: {
                                             color: '#fff'
                                         }
@@ -556,7 +561,7 @@
                                     legend: {
                                         orient: 'vertical',
                                         x: 'left',
-                                        y:30,
+                                        y:40,
                                         data:itemName,
                                         textStyle:{
                                             color:'#fff'
@@ -622,9 +627,9 @@
                                 e.setOption({
                                     title: {
                                         x: 'center',
-                                        y: 'top',
+                                        y: 20,
                                         textAlign: 'center',
-                                        text: '本月热门业Top5',
+                                        text: '本月热门业务 Top5',
                                         textStyle: {
                                             color: '#fff'
                                         }
@@ -633,7 +638,7 @@
                                     legend: {
                                         orient: 'vertical',
                                         x: 'left',
-                                        y:30,
+                                        y:40,
                                         data:itemName,
                                         textStyle:{
                                             color:'#fff'
@@ -696,7 +701,7 @@
 
                                 title: {
                                     x: 'center',
-                                    y: 'top',
+                                    y: 20,
                                     textAlign: 'center',
                                     text: '各业务窗口实时等待情况',
                                     textStyle: {
@@ -712,7 +717,7 @@
                                 },
                                 grid: {
                                     x:30,
-                                    y:60,
+                                    y:70,
                                     x2:20,
                                     y2:20,
                                     // left: 0,

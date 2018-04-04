@@ -49,7 +49,7 @@
 
         .item-title {
             font-size: 1.2em;
-            margin-top: 2em;
+            margin-top: 1.5em;
             text-align: center;
             font-weight: bold;
         }
@@ -91,14 +91,27 @@
         #window-accept-table tr:nth-child(3n+1) td {
             border-bottom: dashed 1px #fff;
         }
+        
+        th .item-title{
+            color: #aaa;
+            margin-top:1em;
+        }
 
 
         #window-accept-table .item-value,#satisfactionRateTop10 .item-value,#hotItemFinishTop10 .item-value {
-            font-size: 0.8em;
-            line-height: 2.3em;
+            font-size: 0.9em;
+            line-height: 1.2em;
+        }
+        #window-accept-table .item-value{
+            font-size: 1em;
+            line-height: 3em;
         }
         #window-accept-table .item-title,#satisfactionRateTop10 .item-title,#hotItemFinishTop10 .item-title {
-            font-size: 0.9em;
+            font-size: 1em;
+            margin-bottom:0.7em;
+        }
+        #window-accept-table .item-title{
+            line-height: 2em;
         }
     </style>
 </head>
@@ -135,7 +148,7 @@
                         <div class="flex-item"
                              style="flex:5;background: none;border: none;margin: 0px;">
                             <div class="item-title">实时审批进度</div>
-                            <div style="margin: 2em 20px">
+                            <div style="margin: 0em 20px">
                                 <table id="window-accept-table" border="0" cellpadding="0" cellspacing="0"
                                        style="width: 100%;">
                                     <tr>
@@ -387,7 +400,7 @@
                                 e.setOption({
                                     title: {
                                         x: 'center',
-                                        y: 'top',
+                                        y: 20,
                                         textAlign: 'center',
                                         text: '窗口业务受理量',
                                         textStyle: {
