@@ -1,5 +1,8 @@
 <template>
     <div class="app-container order-line-msg">
+
+        <el-button type="primary" @click="showAll">全屏</el-button>
+
         <div class="top-center-title">
             <h1>业务审批数据可视化</h1>
         </div>
@@ -48,7 +51,7 @@
                         <span>{{scope.row.itemName}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column  align="center" label="当前状态">
+                <el-table-column align="center" label="当前状态">
                     <template scope="scope">
                         <span v-if="scope.row.status == 15">已办结</span>
                         <span v-if="scope.row.status == 10">办理中</span>
@@ -186,6 +189,9 @@
             this.dataPlotByWindow();
         },
         methods: {
+            showAll() {
+                window.open('/static/keshihuadaping/businessApprove.html')
+            },
             getSatisfactionTop10() {
                 this.windowSatisfactionLoading = true;
                 getSatisfactionTop10().then(response => {
@@ -403,8 +409,8 @@
     }
 
     #container {
-    margin: 0 auto 20px auto;
-    width: 100%;
+        margin: 0 auto 20px auto;
+        width: 100%;
     }
 
     #container .title {

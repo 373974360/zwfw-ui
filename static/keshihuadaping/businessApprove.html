@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>布局页面</title>
+    <style>
+        html,body{
+            width:100%;
+            height:100%
+        }
+        body {
+            height:100%;
+            width: 100%;
+            margin: 0px;
+            padding: 0px;
+            background: url("img/beijingtu.jpg") no-repeat ;
+            background-size: 100% 100%;
+        }
+
+        .title {
+            font-size: 3em;
+            color: #fff;
+            text-align: center;
+            line-height: 1.8em;
+        }
+
+        #app {
+            height: 85%;
+            width: 100%;
+            position: absolute;
+            top: 10%;
+            bottom: 5%;
+            z-index: 0;
+            overflow: hidden;
+            word-break: break-all;
+        }
+
+        .flex-item {
+            background: rgba(255, 255, 255, .1);
+            border: solid 1px #117084;
+            -webkit-border-radius: 20px;
+            -moz-border-radius: 20px;
+            border-radius: 10px;
+            margin: 8px;
+            color: #fff;
+            overflow: hidden;
+        }
+
+
+        .item-title {
+            font-size: 1.2em;
+            margin-top: 2em;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .item-value {
+            text-align: center;
+            margin: 0.4em 0px;
+            font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+        }
+        .item-value span {
+            font-weight: bold;
+        }
+        .flex-item.base {
+            background: none;
+            border: none;
+            margin: 0px;
+            color: transparent;
+        }
+
+        .flex-container {
+            display: flex;
+            height: 100%;
+        }
+
+        .flex-column {
+            justify-content: space-evenly;
+            flex-direction: column;
+
+        }
+
+        .flex-row {
+            flex-direction: row;
+        }
+
+        .flex-column .flex-item {
+
+        }
+
+        #window-accept-table tr:nth-child(3n+1) td {
+            border-bottom: dashed 1px #fff;
+        }
+
+
+        #window-accept-table .item-value,#satisfactionRateTop10 .item-value,#hotItemFinishTop10 .item-value {
+            font-size: 0.8em;
+            line-height: 2.3em;
+        }
+        #window-accept-table .item-title,#satisfactionRateTop10 .item-title,#hotItemFinishTop10 .item-title {
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+<div class="title">业务审批数据可视化</div>
+<div id="app">
+    <div class="flex-container flex-row" style="margin: 0px 20px;">
+        <div class="flex-item base" style="flex:5">
+            <div class="flex-container flex-column">
+                <div class="flex-item base" style="flex:1">
+
+                    <div class="flex-container flex-row">
+                        <div class="flex-item" style="flex:1;background:-webkit-gradient(linear, 0 0, 0 bottom, from(#b35950), to(#8f3a33));">
+                            <div class="item-title">本月审批量</div>
+                            <div class="item-value" style="font-size: 3em;">{{itemAcceptount.pendingTotal}}
+                            </div>
+                        </div>
+                        <div class="flex-item " style="flex:1;background:-webkit-gradient(linear, 0 0, 0 bottom, from(#ab8d4d), to(#a2792a));">
+                            <div class="item-title">办理中事项</div>
+                            <div class="item-value" style="font-size: 3em;">{{itemAcceptount.handleTotal}}
+                            </div>
+                        </div>
+                        <div class="flex-item " style="flex:1;background:-webkit-gradient(linear, 0 0, 0 bottom, from(#5390ad), to(#31658d));">
+                            <div class="item-title">本月办结事项</div>
+                            <div class="item-value" style="font-size: 3em;">{{itemAcceptount.finishTotal}}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="flex-item" style="flex:4">
+                    <div class="flex-container flex-row">
+
+                        <div class="flex-item"
+                             style="flex:5;background: none;border: none;margin: 0px;">
+                            <div class="item-title">实时审批进度</div>
+                            <div style="margin: 2em 20px">
+                                <table id="window-accept-table" border="0" cellpadding="0" cellspacing="0"
+                                       style="width: 100%;">
+                                    <tr>
+                                        <th>
+                                            <div class="item-title" style="text-align: left">事项名称</div>
+                                        </th>
+                                        <th>
+                                            <div class="item-title" style="text-align: left">当前环节</div>
+                                        </th>
+                                        <th style="width: 5em;">
+                                            <div class="item-title">当前状态</div>
+                                        </th>
+                                        <th style="width: 6em;">
+                                            <div class="item-title">预计办结时长</div>
+                                        </th>
+                                    </tr>
+                                    <tr v-for="list in RealTimeAceeptList">
+                                        <td>
+                                            <div class="item-value" style="text-align: left">{{list.itemName}}</div>
+                                        </td>
+                                        <td>
+                                            <div class="item-value" v-if="list.status == 10" style="text-align: left">{{list.currentLine}}</div>
+                                            <div class="item-value" v-if="list.status == 15" style="text-align: left">已办结</div>
+                                        </td>
+                                        <td>
+                                            <div class="item-value" v-if="list.status == 10">办理中</div>
+                                            <div class="item-value" v-if="list.status == 15">已办结</div>
+                                        </td>
+                                        <td>
+                                            <div class="item-value" v-if="list.status == 10">{{list.expectTime>0?list.expectTime+'天':'延期'}}</div>
+                                            <div class="item-value" v-if="list.status == 15">/</div>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex-item base" style="flex:5">
+
+            <div class="flex-container flex-column">
+
+
+                <div class="flex-item base" style="flex:1">
+
+                    <div class="flex-container flex-row">
+                        <div class="flex-item" style="flex:1">
+                            <div class="item-title">窗口满意度Top10</div>
+                            <div style="margin: 0px 20px">
+                                <table id="satisfactionRateTop10" border="0" cellpadding="0" cellspacing="0"
+                                       style="width: 100%;">
+                                    <tr>
+                                        <th>
+                                            <div class="item-title">窗口</div>
+                                        </th>
+                                        <th>
+                                            <div class="item-title">参评率</div>
+                                        </th>
+                                        <th>
+                                            <div class="item-title">满意率</div>
+                                        </th>
+                                    </tr>
+                                    <tr v-for="list in windowSactisfactionList">
+                                        <td>
+                                            <div class="item-value">{{list.windowName}}</div>
+                                        </td>
+                                        <td>
+                                            <div class="item-value">{{list.joincommentRate}}%</div>
+                                        </td>
+                                        <td>
+                                            <div class="item-value">{{list.satisfactionRate}}%</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="flex-item" style="flex:1">
+
+                            <div class="item-title">热门事项正常办结率</div>
+                            <div style="margin: 0px 20px">
+                                <table id="hotItemFinishTop10" border="0" cellpadding="0" cellspacing="0"
+                                       style="width: 100%;">
+                                    <tr>
+                                        <th>
+                                            <div class="item-title">部门</div>
+                                        </th>
+                                        <th>
+                                            <div class="item-title">业务量</div>
+                                        </th>
+                                        <th>
+                                            <div class="item-title">超期率</div>
+                                        </th>
+                                        <th>
+                                            <div class="item-title">正常办结率</div>
+                                        </th>
+                                    </tr>
+                                    <tr v-for="list in hotItemFinishList">
+                                        <td>
+                                            <div class="item-value">{{list.deptName}}</div>
+                                        </td>
+                                        <td>
+                                            <div class="item-value">{{list.total}}</div>
+                                        </td>
+                                        <td>
+                                            <div class="item-value">{{list.timeOutRate}}%</div>
+                                        </td>
+                                        <td>
+                                            <div class="item-value">{{list.untimeOutRate}}%</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="flex-item" style="flex:1">
+
+                    <div style="width: 100%;height: 100%" ref="windowAcceptHandle"></div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<script src="../vue.min.js"></script>
+<script src="../jquery.min.js"></script>
+<script src="../echarts-all.js"></script>
+<script type="text/javascript">
+    var interfaceUrl = 'http://localhost:8765';
+    $('head').append(decodeURIComponent('%3Cscript%20src%3D' + interfaceUrl + "%2Fapi%2Fcommon%2Fdicsjs'%3E%3C%2Fscript%3E"))
+        .append(decodeURIComponent('%3Cscript%20src%3D' + interfaceUrl + "%2Fapi%2Fcommon%2Fenumsjs'%3E%3C%2Fscript%3E"));
+</script>
+<script type="text/javascript">
+    var app = new Vue({
+        el: '#app',
+        data: {
+            itemAcceptount: {},
+            RealTimeAceeptList: [],
+            windowSactisfactionList: [],
+            hotItemFinishList: [],
+            dataPlotByWindowChart: null
+        },
+        methods: {
+            getItemAcceptCount: function () {
+                var _this = this;
+                $.ajax({
+                    url: interfaceUrl + '/api/hallSystem/count/statistics/getItemAcceptCount',
+                    dataType: 'jsonp',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: function (result) {
+                        console.log(result);
+                        if (result.httpCode == 200) {
+                            // console.log('222');
+                            _this.itemAcceptount = result.data;
+                            console.log(_this.itemAcceptount);
+                        }
+                    }
+                })
+            },
+            getRealTimeApproveSchedule: function () {
+                var _this = this;
+                $.ajax({
+                    url: interfaceUrl + "/api/hallSystem/count/statistics/getRealTimeApproveSchedule",
+                    dataType: 'jsonp',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: function (result) {
+                        console.log(result);
+                        if (result.httpCode == 200) {
+                            _this.RealTimeAceeptList = result.data;
+                            console.log(_this.RealTimeAceeptList);
+                        }
+                    }
+                })
+            },
+            getSatisfactionTop10: function () {
+                var _this = this;
+                $.ajax({
+                    url: interfaceUrl + "/api/hallSystem/count/statistics/getSatisfactionTop10",
+                    dataType: 'jsonp',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: function (result) {
+                        console.log(result);
+                        if (result.httpCode == 200) {
+                            _this.windowSactisfactionList = result.data;
+                            console.log(_this.windowSactisfactionList);
+                        }
+                    }
+                })
+            },
+            getTopItemFinishRate: function () {
+                var _this = this;
+                $.ajax({
+                    url: interfaceUrl + "/api/hallSystem/count/statistics/getTopItemFinishRate",
+                    dataType: 'jsonp',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: function (result) {
+                        console.log(result);
+                        if (result.httpCode == 200) {
+                            _this.hotItemFinishList = result.data;
+                            console.log(_this.hotItemFinishList);
+                        }
+                    }
+                })
+            },
+            dataPlotByWindow: function () {
+                var _this = this;
+                $.ajax({
+                    url: interfaceUrl + "/api/hallSystem/count/statistics/dataPlotByWindow",
+                    dataType: 'jsonp',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: function (result) {
+                        console.log(result);
+                        if (result.httpCode == 200) {
+                            const handleData = result.data;
+                            var handleWindowName = [];
+                            var handleNum = [];
+                            for (let handle of handleData) {
+                                handleWindowName.push(handle.windowName);
+                                handleNum.push(handle.total);
+                            }
+                            setTimeout(function () {
+                                if (_this.dataPlotByWindowChart == null) {
+                                    _this.dataPlotByWindowChart = echarts.init(_this.$refs.windowAcceptHandle)
+                                }
+                                const e = _this.dataPlotByWindowChart;
+                                e.setOption({
+                                    title: {
+                                        x: 'center',
+                                        y: 'top',
+                                        textAlign: 'center',
+                                        text: '窗口业务受理量',
+                                        textStyle: {
+                                            color: '#fff'
+                                        }
+                                    },
+                                    color: ['#3398DB'],
+                                    tooltip: {
+                                        trigger: 'axis'
+                                    },
+                                    xAxis: [
+                                        {
+                                            type: 'category',
+                                            data: handleWindowName,
+                                            axisLabel: {
+                                                show: true,
+                                                textStyle: {
+                                                    color: '#fff'
+                                                }
+                                            },
+                                            splitLine: {
+                                                show: false
+                                            }
+                                        }
+                                    ],
+                                    yAxis: [
+                                        {
+                                            type: 'value',
+                                            name: '单位：件',
+                                            axisLabel: {
+                                                formatter: '{value}',
+                                                textStyle: {
+                                                    color: '#fff'
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    series: [
+                                        {
+                                            name: '受理量',
+                                            type: 'bar',
+                                            data: handleNum,
+                                        }
+                                    ]
+                                })
+
+                            }, 1000);
+                        }
+                    }
+                })
+            }
+
+        },
+
+        mounted: function () {
+            this.$nextTick(function () {
+                // 本月预审量、办理中事项、本月办结量
+                this.getItemAcceptCount();
+                // 实时审批进度
+                this.getRealTimeApproveSchedule();
+                // 窗口满意度Top10
+                this.getSatisfactionTop10();
+                // 热门事项正常办结率Top10
+                this.getTopItemFinishRate();
+                // 窗口业务受理量
+                this.dataPlotByWindow();
+            })
+            // setInterval(this.getItemAcceptCount, 5000);
+            // setInterval(this.getRealTimeApproveSchedule, 5000);
+            // setInterval(this.getSatisfactionTop10, 5000);
+            // setInterval(this.getTopItemFinishRate, 5000);
+            // setInterval(this.dataPlotByWindow, 5000);
+        }
+
+    });
+
+
+</script>
+</body>
+</html>
