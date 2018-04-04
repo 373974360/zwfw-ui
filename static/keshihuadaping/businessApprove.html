@@ -272,9 +272,9 @@
 <script src="../jquery.min.js"></script>
 <script src="../echarts-all.js"></script>
 <script type="text/javascript">
-    var interfaceUrl = 'http://localhost:8765';
-    $('head').append(decodeURIComponent('%3Cscript%20src%3D' + interfaceUrl + "%2Fapi%2Fcommon%2Fdicsjs'%3E%3C%2Fscript%3E"))
-        .append(decodeURIComponent('%3Cscript%20src%3D' + interfaceUrl + "%2Fapi%2Fcommon%2Fenumsjs'%3E%3C%2Fscript%3E"));
+    var interfaceUrl = '';
+    // $('head').append(decodeURIComponent('%3Cscript%20src%3D' + interfaceUrl + "%2Fapi%2Fcommon%2Fdicsjs'%3E%3C%2Fscript%3E"))
+    //     .append(decodeURIComponent('%3Cscript%20src%3D' + interfaceUrl + "%2Fapi%2Fcommon%2Fenumsjs'%3E%3C%2Fscript%3E"));
 </script>
 <script type="text/javascript">
     var app = new Vue({
@@ -291,7 +291,7 @@
                 var _this = this;
                 $.ajax({
                     url: interfaceUrl + '/api/hallSystem/count/statistics/getItemAcceptCount',
-                    dataType: 'jsonp',
+                    //dataType: 'jsonp',
                     xhrFields: {
                         withCredentials: true
                     },

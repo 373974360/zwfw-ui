@@ -146,13 +146,13 @@
                                         <tr>
                                             <td>
                                                 <div class="item-title">当前等待人数</div>
-                                                <div class="item-value" style="font-size: 4em;">
+                                                <div v-if="today.currentWait" class="item-value" style="font-size: 4em;">
                                                     {{today.currentWait.total}}<span style="font-size: 0.3em;">人</span>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="item-title">平均等待时长</div>
-                                                <div class="item-value" style="font-size: 4em;">
+                                                <div v-if="today.currentWait" class="item-value" style="font-size: 4em;">
                                                     {{today.avgWaitTime.total}}<span style="font-size: 0.3em;">分钟</span>
                                                 </div>
                                             </td>
@@ -161,7 +161,7 @@
                                 </div>
                                 <div class="flex-item" style="flex:1;background:-webkit-gradient(linear, 0 0, 0 bottom, from(#5390ad), to(#31658d));">
                                     <div class="item-title">历史累计总受理量</div>
-                                    <div class="item-value" style="font-size: 4em;">{{today.acceptCount.historyTotal}}
+                                    <div v-if="today.acceptCount" class="item-value" style="font-size: 4em;">{{today.acceptCount.historyTotal}}
                                     </div>
                                 </div>
                             </div>
@@ -257,9 +257,9 @@
 <script src="../jquery.min.js"></script>
 <script src="../echarts-all.js"></script>
 <script type="text/javascript">
-    var interfaceUrl = 'http://localhost:8765';
-    $('head').append(decodeURIComponent('%3Cscript%20src%3D' + interfaceUrl + "%2Fapi%2Fcommon%2Fdicsjs'%3E%3C%2Fscript%3E"))
-        .append(decodeURIComponent('%3Cscript%20src%3D' + interfaceUrl + "%2Fapi%2Fcommon%2Fenumsjs'%3E%3C%2Fscript%3E"));
+    var interfaceUrl = '';
+    // $('head').append(decodeURIComponent('%3Cscript%20src%3D' + interfaceUrl + "%2Fapi%2Fcommon%2Fdicsjs'%3E%3C%2Fscript%3E"))
+    //     .append(decodeURIComponent('%3Cscript%20src%3D' + interfaceUrl + "%2Fapi%2Fcommon%2Fenumsjs'%3E%3C%2Fscript%3E"));
 </script>
 <script type="text/javascript">
     var app = new Vue({
@@ -278,7 +278,7 @@
                 var _this = this;
                 $.ajax({
                     url: interfaceUrl + "/api/hallSystem/count/statistics/getAcceptCount",
-                    dataType: 'jsonp',
+                    //dataType: 'jsonp',
                     xhrFields: {
                         withCredentials: true
                     },
@@ -294,7 +294,7 @@
                 var _this = this;
                 $.ajax({
                     url: interfaceUrl + "/api/hallSystem/count/statistics/getWindowsRealTimeAccept",
-                    dataType: 'jsonp',
+                    //dataType: 'jsonp',
                     xhrFields: {
                         withCredentials: true
                     },
@@ -312,7 +312,7 @@
                 var _this = this;
                 $.ajax({
                     url: interfaceUrl + "/api/hallSystem/count/statistics/getRealTimeAcceptCountByWindow",
-                    dataType: 'jsonp',
+                    //dataType: 'jsonp',
                     xhrFields: {
                         withCredentials: true
                     },
@@ -391,7 +391,7 @@
                 var _this = this;
                 $.ajax({
                     url: interfaceUrl + "/api/hallSystem/count/statistics/getAdmissibilityAndWaitTimeAtHours",
-                    dataType: 'jsonp',
+                    //dataType: 'jsonp',
                     xhrFields: {
                         withCredentials: true
                     },
@@ -517,7 +517,7 @@
                 var _this = this;
                 $.ajax({
                     url: interfaceUrl + "/api/hallSystem/count/statistics/getThisWeekHotBusiness",
-                    dataType: 'jsonp',
+                    //dataType: 'jsonp',
                     xhrFields: {
                         withCredentials: true
                     },
@@ -594,7 +594,7 @@
                 var _this = this;
                 $.ajax({
                     url: interfaceUrl + "/api/hallSystem/count/statistics/getThisMonthHotBusiness",
-                    dataType: 'jsonp',
+                    //dataType: 'jsonp',
                     xhrFields: {
                         withCredentials: true
                     },
@@ -671,7 +671,7 @@
                 var _this = this;
                 $.ajax({
                     url: interfaceUrl + "/api/hallSystem/count/statistics/getRealWaitTimeByWindow",
-                    dataType: 'jsonp',
+                    //dataType: 'jsonp',
                     xhrFields: {
                         withCredentials: true
                     },

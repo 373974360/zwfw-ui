@@ -190,7 +190,7 @@
         },
         methods: {
             showAll() {
-                window.open('/static/keshihuadaping/businessApprove.html')
+                window.open('keshihuadaping/businessApprove.html')
             },
             getSatisfactionTop10() {
                 this.windowSatisfactionLoading = true;

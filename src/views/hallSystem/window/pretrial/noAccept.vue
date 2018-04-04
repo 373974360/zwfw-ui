@@ -290,7 +290,7 @@
             print_ycxgzd() {
                 if (this.itemPretrial != null) {
                     // window.open('/api/hallSystem/hallCompositeWindow/downloadYcxgzd?processNumber=' + this.itemPretrial.processNumber);
-                    window.open('/admin/print/ycxgzd.html?processNumber=' + this.itemPretrial.processNumber);
+                    window.open('print/ycxgzd.html?processNumber=' + this.itemPretrial.processNumber);
 
                 }
             },

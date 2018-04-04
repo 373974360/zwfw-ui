@@ -136,7 +136,7 @@
         },
         methods: {
             showAll() {
-                window.open('/static/keshihuadaping/realTimeAccept.html')
+                window.open('keshihuadaping/realTimeAccept.html')
             },
             getWindowsRealTimeAccept() {
                 this.pageLoading = true;
