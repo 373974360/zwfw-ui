@@ -455,11 +455,11 @@
                 // 窗口业务受理量
                 this.dataPlotByWindow();
             })
-            // setInterval(this.getItemAcceptCount, 5000);
-            // setInterval(this.getRealTimeApproveSchedule, 5000);
-            // setInterval(this.getSatisfactionTop10, 5000);
-            // setInterval(this.getTopItemFinishRate, 5000);
-            // setInterval(this.dataPlotByWindow, 5000);
+            setInterval(this.getItemAcceptCount, 30000);
+            setInterval(this.getRealTimeApproveSchedule, 30000);
+            setInterval(this.getSatisfactionTop10, 30000);
+            setInterval(this.getTopItemFinishRate, 30000);
+            setInterval(this.dataPlotByWindow, 30000);
         }
 
     });
