@@ -4,16 +4,17 @@
     <meta charset="UTF-8">
     <title>布局页面</title>
     <style>
-        html,body{
-            width:100%;
-            height:100%
+        html, body {
+            width: 100%;
+            height: 100%
         }
+
         body {
-            height:100%;
+            height: 100%;
             width: 100%;
             margin: 0px;
             padding: 0px;
-            background: url("img/beijingtu.jpg") no-repeat ;
+            background: url("img/beijingtu.jpg") no-repeat;
             background-size: 100% 100%;
         }
 
@@ -90,19 +91,20 @@
 
         }
 
-        #window-accept-table tr:nth-child(3n+1) td {
-            border-bottom: dashed 1px #fff;
-        }
+        /*#window-accept-table tr:nth-child(3n+1) td {*/
+            /*border-bottom: dashed 1px #fff;*/
+        /*}*/
 
         #window-accept-table .item-value {
             font-size: 1em;
             line-height: 2em;
 
         }
-        th .item-title{
-            margin-top:1em;
-            color:#aaa;
-            margin-bottom:0.7em;
+
+        th .item-title {
+            margin-top: 1em;
+            color: #aaa;
+            margin-bottom: 0.7em;
         }
     </style>
 </head>
@@ -124,7 +126,7 @@
                                 <div class="item-value">比上个工作日 {{today.acceptCount.rate<0?'降低':'增长'}} <span>{{Math.abs(today.acceptCount.rate)}}</span>
                                     %<span style="font-size: 1em;margin-left: 1em;">{{today.acceptCount.rate<0?'↓':'↑'}}</span>
                                 </div>
-                                <table  border="0" cellpadding="0" cellspacing="0" style="width: 100%;">
+                                <table border="0" cellpadding="0" cellspacing="0" style="width: 100%;">
                                     <tr>
                                         <td>
                                             <div class="item-value" style="font-size: 0.9em;">快件箱 交件/取件数</div>
@@ -147,27 +149,32 @@
 
                             <div class="flex-container flex-column">
 
-                                <div class="flex-item" style="flex:1;background:-webkit-gradient(linear, 0 0, 0 bottom, from(#ab8d4d), to(#a2792a));">
+                                <div class="flex-item"
+                                     style="flex:1;background:-webkit-gradient(linear, 0 0, 0 bottom, from(#ab8d4d), to(#a2792a));">
                                     <table border="0" cellpadding="0" cellspacing="0" style="width: 100%;">
                                         <tr>
                                             <td>
                                                 <div class="item-title">当前等待人数</div>
-                                                <div v-if="today.currentWait" class="item-value" style="font-size: 4em;">
+                                                <div v-if="today.currentWait" class="item-value"
+                                                     style="font-size: 4em;">
                                                     {{today.currentWait.total}}<span style="font-size: 0.3em;">人</span>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="item-title">平均等待时长</div>
-                                                <div v-if="today.currentWait" class="item-value" style="font-size: 4em;">
+                                                <div v-if="today.currentWait" class="item-value"
+                                                     style="font-size: 4em;">
                                                     {{today.avgWaitTime.total}}<span style="font-size: 0.3em;">分钟</span>
                                                 </div>
                                             </td>
                                         </tr>
                                     </table>
                                 </div>
-                                <div class="flex-item" style="flex:1;background:-webkit-gradient(linear, 0 0, 0 bottom, from(#5390ad), to(#31658d));">
+                                <div class="flex-item"
+                                     style="flex:1;background:-webkit-gradient(linear, 0 0, 0 bottom, from(#5390ad), to(#31658d));">
                                     <div class="item-title">历史累计总受理量</div>
-                                    <div v-if="today.acceptCount" class="item-value" style="font-size: 4em;">{{today.acceptCount.historyTotal}}
+                                    <div v-if="today.acceptCount" class="item-value" style="font-size: 4em;">
+                                        {{today.acceptCount.historyTotal}}
                                     </div>
                                 </div>
                             </div>
@@ -204,13 +211,13 @@
                                             <div class="item-value">{{list.callTime}}</div>
                                         </td>
                                         <td>
-                                            <div class="item-value"  >{{list.personName}}</div>
+                                            <div class="item-value">{{list.personName}}</div>
                                         </td>
                                         <td>
-                                            <div class="item-value" >{{list.personIdcard}}</div>
+                                            <div class="item-value">{{list.personIdcard | idcard }}</div>
                                         </td>
                                         <td>
-                                            <div class="item-value" >{{list.itemName}}</div>
+                                            <div class="item-value">{{list.itemName}}</div>
                                         </td>
                                     </tr>
                                 </table>
@@ -278,6 +285,13 @@
             weekHotBusinessTop5Chart: null,
             monthHotBusinessTop5Chart: null,
             businessWindowRealTimeWaitChart: null
+        },
+        filters: {
+            idcard: function (str) {
+                let start = str.slice(0, 6);
+                let end = str.slice(-4);
+                return start + '****' + end;
+            }
         },
         methods: {
             getAcceptCount: function () {
@@ -562,10 +576,10 @@
                                     legend: {
                                         orient: 'vertical',
                                         x: 'left',
-                                        y:40,
-                                        data:itemName,
-                                        textStyle:{
-                                            color:'#fff'
+                                        y: 40,
+                                        data: itemName,
+                                        textStyle: {
+                                            color: '#fff'
                                         }
                                     },
                                     series: [
@@ -583,9 +597,9 @@
                                                 normal: {
                                                     label: {
                                                         show: true,
-                                                        formatter:'{d}%'
+                                                        formatter: '{d}%'
                                                     },
-                                                    labelLine: {show: false,length:0}
+                                                    labelLine: {show: false, length: 0}
                                                 }
                                             }
                                         }
@@ -639,10 +653,10 @@
                                     legend: {
                                         orient: 'vertical',
                                         x: 'left',
-                                        y:40,
-                                        data:itemName,
-                                        textStyle:{
-                                            color:'#fff'
+                                        y: 40,
+                                        data: itemName,
+                                        textStyle: {
+                                            color: '#fff'
                                         }
                                     },
                                     series: [
@@ -660,9 +674,9 @@
                                                 normal: {
                                                     label: {
                                                         show: true,
-                                                        formatter:'{d}%'
+                                                        formatter: '{d}%'
                                                     },
-                                                    labelLine: {show: false,length:0}
+                                                    labelLine: {show: false, length: 0}
                                                 }
                                             }
                                         }
@@ -717,10 +731,10 @@
                                     }
                                 },
                                 grid: {
-                                    x:30,
-                                    y:70,
-                                    x2:20,
-                                    y2:20,
+                                    x: 30,
+                                    y: 70,
+                                    x2: 20,
+                                    y2: 20,
                                     // left: 0,
                                     // right: 0,
                                     // bottom: 0,
