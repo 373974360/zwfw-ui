@@ -110,7 +110,7 @@ const Business = () => import('../views/hallSystem/count/approval/business');
 
 /* 数据可视化模块 */
 /* 业务审批数据可视化模块 */
-const BusinessApprove = () => import('../views/hallSystem/visualization/businessApprove1.vue');
+const BusinessApprove = () => import('../views/hallSystem/visualization/businessApprove.vue');
 /* 实时受理数据可视化模块 */
 const RealTimeAccept = () => import('../views/hallSystem/visualization/realTimeAccept.vue');
 
