@@ -88,9 +88,9 @@
 
         }
 
-        #window-accept-table tr:nth-child(3n+1) td {
-            border-bottom: dashed 1px #fff;
-        }
+        /*#window-accept-table tr:nth-child(3n+1) td {*/
+            /*border-bottom: dashed 1px #fff;*/
+        /*}*/
         
         th .item-title{
             color: #aaa;
@@ -104,7 +104,8 @@
         }
         #window-accept-table .item-value{
             font-size: 1em;
-            line-height: 3em;
+            /*margin-right:2em;*/
+            height: 3.2em;
         }
         #window-accept-table .item-title,#satisfactionRateTop10 .item-title,#hotItemFinishTop10 .item-title {
             font-size: 1em;
@@ -159,10 +160,10 @@
                                             <div class="item-title" style="text-align: left">当前环节</div>
                                         </th>
                                         <th style="width: 5em;">
-                                            <div class="item-title">当前状态</div>
+                                            <div class="item-title" >当前状态</div>
                                         </th>
                                         <th style="width: 6em;">
-                                            <div class="item-title">预计办结时长</div>
+                                            <div class="item-title" >预计办结时长</div>
                                         </th>
                                     </tr>
                                     <tr v-for="list in RealTimeAceeptList">
