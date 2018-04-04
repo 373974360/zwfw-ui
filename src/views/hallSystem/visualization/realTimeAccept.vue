@@ -1,5 +1,7 @@
 <template>
     <div class="app-container order-line-msg">
+        <el-button type="primary" @click="showAll">全屏</el-button>
+
         <div class="top-center-title">
             <h1>实时受理数据可视化</h1>
         </div>
@@ -133,6 +135,9 @@
             this.getThisMonthHotBusiness(); // 本月热门业务Top5
         },
         methods: {
+            showAll() {
+                window.open('/static/keshihuadaping/realTimeAccept.html')
+            },
             getWindowsRealTimeAccept() {
                 this.pageLoading = true;
                 getWindowsRealTimeAccept().then(response => {
@@ -423,7 +428,7 @@
                                             },
                                             labelLine: {show: true}
                                         }
-                                    },
+                                    }
                                 }
                             ]
                         })
