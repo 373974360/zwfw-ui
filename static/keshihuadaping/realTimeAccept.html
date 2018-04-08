@@ -4,16 +4,17 @@
     <meta charset="UTF-8">
     <title>西安国际港务区 —— 政务服务管理系统</title>
     <style>
-        html,body{
-            width:100%;
-            height:100%
+        html, body {
+            width: 100%;
+            height: 100%
         }
+
         body {
-            height:100%;
+            height: 100%;
             width: 100%;
             margin: 0px;
             padding: 0px;
-            background: url("img/beijingtu.jpg") no-repeat ;
+            background: url("img/beijingtu.jpg") no-repeat;
             background-size: 100% 100%;
         }
 
@@ -90,9 +91,9 @@
 
         }
 
-        #window-accept-table tr:nth-child(3n+1) td {
-            border-bottom: dashed 1px #fff;
-        }
+        /*#window-accept-table tr:nth-child(3n+1) td {*/
+        /*border-bottom: dashed 1px #fff;*/
+        /*}*/
 
         #window-accept-table .item-value {
             font-size: 0.8em;
@@ -118,7 +119,7 @@
                                 <div class="item-value">比上个工作日 {{today.acceptCount.rate<0?'降低':'增长'}} <span>{{Math.abs(today.acceptCount.rate)}}</span>
                                     %<span style="font-size: 1em;margin-left: 1em;">{{today.acceptCount.rate<0?'↓':'↑'}}</span>
                                 </div>
-                                <table  border="0" cellpadding="0" cellspacing="0" style="width: 100%;">
+                                <table border="0" cellpadding="0" cellspacing="0" style="width: 100%;">
                                     <tr>
                                         <td>
                                             <div class="item-value" style="font-size: 0.9em;">快件箱 交件/取件数</div>
@@ -141,27 +142,32 @@
 
                             <div class="flex-container flex-column">
 
-                                <div class="flex-item" style="flex:1;background:-webkit-gradient(linear, 0 0, 0 bottom, from(#ab8d4d), to(#a2792a));">
+                                <div class="flex-item"
+                                     style="flex:1;background:-webkit-gradient(linear, 0 0, 0 bottom, from(#ab8d4d), to(#a2792a));">
                                     <table border="0" cellpadding="0" cellspacing="0" style="width: 100%;">
                                         <tr>
                                             <td>
                                                 <div class="item-title">当前等待人数</div>
-                                                <div v-if="today.currentWait" class="item-value" style="font-size: 4em;">
+                                                <div v-if="today.currentWait" class="item-value"
+                                                     style="font-size: 4em;">
                                                     {{today.currentWait.total}}<span style="font-size: 0.3em;">人</span>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="item-title">平均等待时长</div>
-                                                <div v-if="today.currentWait" class="item-value" style="font-size: 4em;">
+                                                <div v-if="today.currentWait" class="item-value"
+                                                     style="font-size: 4em;">
                                                     {{today.avgWaitTime.total}}<span style="font-size: 0.3em;">分钟</span>
                                                 </div>
                                             </td>
                                         </tr>
                                     </table>
                                 </div>
-                                <div class="flex-item" style="flex:1;background:-webkit-gradient(linear, 0 0, 0 bottom, from(#5390ad), to(#31658d));">
+                                <div class="flex-item"
+                                     style="flex:1;background:-webkit-gradient(linear, 0 0, 0 bottom, from(#5390ad), to(#31658d));">
                                     <div class="item-title">历史累计总受理量</div>
-                                    <div v-if="today.acceptCount" class="item-value" style="font-size: 4em;">{{today.acceptCount.historyTotal}}
+                                    <div v-if="today.acceptCount" class="item-value" style="font-size: 4em;">
+                                        {{today.acceptCount.historyTotal}}
                                     </div>
                                 </div>
                             </div>
@@ -179,6 +185,7 @@
                             <div style="margin: 0px 20px">
                                 <table id="window-accept-table" border="0" cellpadding="0" cellspacing="0"
                                        style="width: 100%;">
+                                    <thead>
                                     <tr>
                                         <th>
                                             <div class="item-title">时间</div>
@@ -193,20 +200,24 @@
                                             <div class="item-title">事项</div>
                                         </th>
                                     </tr>
+                                    </thead>
+                                    <tbody id="test">
                                     <tr v-for="list in windowRealTimeAceeptList">
                                         <td>
                                             <div class="item-value">{{list.callTime}}</div>
                                         </td>
                                         <td>
-                                            <div class="item-value"  style="font-size: 0.6em;">{{list.personName}}</div>
+                                            <div class="item-value" style="font-size: 0.6em;">{{list.personName}}</div>
                                         </td>
                                         <td>
-                                            <div class="item-value" style="font-size: 0.6em;">{{list.personIdcard}}</div>
+                                            <div class="item-value" style="font-size: 0.6em;">{{list.personIdcard}}
+                                            </div>
                                         </td>
                                         <td>
                                             <div class="item-value" style="font-size: 0.6em;">{{list.itemName}}</div>
                                         </td>
                                     </tr>
+                                    </tbody>
                                 </table>
 
                             </div>
@@ -263,110 +274,487 @@
 </script>
 <script type="text/javascript">
     var app = new Vue({
-        el: '#app',
-        data: {
-            today: {},
-            windowRealTimeAceeptList: [],
-            windowHandleChart: null,
-            hourAcceptCountHandleChart: null,
-            weekHotBusinessTop5Chart: null,
-            monthHotBusinessTop5Chart: null,
-            businessWindowRealTimeWaitChart: null
-        },
-        methods: {
-            getAcceptCount: function () {
-                var _this = this;
-                $.ajax({
-                    url: interfaceUrl + "/api/hallSystem/count/statistics/getAcceptCount",
-                    //dataType: 'jsonp',
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    crossDomain: true,
-                    success: function (result) {
-                        if (result.httpCode == 200) {
-                            _this.today = result.data;
-                        }
-                    }
-                })
+            el: '#app',
+            data: {
+                today: {},
+                windowRealTimeAceeptList: [],
+                windowHandleChart: null,
+                hourAcceptCountHandleChart: null,
+                weekHotBusinessTop5Chart: null,
+                monthHotBusinessTop5Chart: null,
+                businessWindowRealTimeWaitChart: null
             },
-            getWindowsRealTimeAccept: function () {
-                var _this = this;
-                $.ajax({
-                    url: interfaceUrl + "/api/hallSystem/count/statistics/getWindowsRealTimeAccept",
-                    //dataType: 'jsonp',
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    crossDomain: true,
-                    success: function (result) {
-                        console.log(result);
-                        if (result.httpCode == 200) {
-                            _this.windowRealTimeAceeptList = result.data;
-                            console.log(_this.windowRealTimeAceeptList);
+            methods: {
+                getAcceptCount: function () {
+                    var _this = this;
+                    $.ajax({
+                        url: interfaceUrl + "/api/hallSystem/count/statistics/getAcceptCount",
+                        //dataType: 'jsonp',
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        crossDomain: true,
+                        success: function (result) {
+                            if (result.httpCode == 200) {
+                                _this.today = result.data;
+                            }
                         }
-                    }
-                })
-            },
-            getRealTimeAcceptCountByWindow: function () {
-                var _this = this;
-                $.ajax({
-                    url: interfaceUrl + "/api/hallSystem/count/statistics/getRealTimeAcceptCountByWindow",
-                    //dataType: 'jsonp',
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    crossDomain: true,
-                    success: function (result) {
-                        console.log(result);
-                        if (result.httpCode == 200) {
-                            const handleData = result.data;
-                            var handleWindowName = [];
-                            var handleNum = [];
-                            for (let handle of handleData) {
-                                handleWindowName.push(handle.windowName);
-                                handleNum.push(handle.total);
+                    })
+                },
+                getWindowsRealTimeAccept: function () {
+                    var _this = this;
+                    $.ajax({
+                        url: interfaceUrl + "/api/hallSystem/count/statistics/getWindowsRealTimeAccept",
+                        //dataType: 'jsonp',
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        crossDomain: true,
+                        success: function (result) {
+                            console.log(result);
+                            if (result.httpCode == 200) {
+                                _this.windowRealTimeAceeptList = result.data;
+                                console.log(_this.windowRealTimeAceeptList);
+                            }
+                        }
+                    })
+                },
+                getRealTimeAcceptCountByWindow: function () {
+                    var _this = this;
+                    $.ajax({
+                        url: interfaceUrl + "/api/hallSystem/count/statistics/getRealTimeAcceptCountByWindow",
+                        //dataType: 'jsonp',
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        crossDomain: true,
+                        success: function (result) {
+                            console.log(result);
+                            if (result.httpCode == 200) {
+                                const handleData = result.data;
+                                var handleWindowName = [];
+                                var handleNum = [];
+                                for (let handle of handleData) {
+                                    handleWindowName.push(handle.windowName);
+                                    handleNum.push(handle.total);
+                                }
+                                setTimeout(function () {
+                                    if (_this.windowHandleChart == null) {
+                                        _this.windowHandleChart = echarts.init(_this.$refs.windowHandle)
+                                    }
+                                    const e = _this.windowHandleChart;
+                                    e.setOption({
+                                        title: {
+                                            x: 'center',
+                                            y: 'top',
+                                            textAlign: 'center',
+                                            text: '各窗口业务受理量',
+                                            textStyle: {
+                                                color: '#fff'
+                                            }
+                                        },
+                                        color: ['#3398DB'],
+                                        tooltip: {
+                                            trigger: 'axis'
+                                        },
+                                        xAxis: [
+                                            {
+                                                type: 'category',
+                                                data: handleWindowName,
+                                                axisLabel: {
+                                                    show: true,
+                                                    textStyle: {
+                                                        color: '#fff'
+                                                    }
+                                                },
+                                                splitLine: {
+                                                    show: false
+                                                }
+                                            }
+                                        ],
+                                        yAxis: [
+                                            {
+                                                type: 'value',
+                                                name: '单位：件',
+                                                axisLabel: {
+                                                    formatter: '{value}',
+                                                    textStyle: {
+                                                        color: '#fff'
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        series: [
+                                            {
+                                                name: '受理量',
+                                                type: 'bar',
+                                                data: handleNum,
+                                            }
+                                        ]
+                                    })
+
+                                }, 1000);
+                            }
+                        }
+                    })
+                },
+                getAdmissibilityAndWaitTimeAtHours: function () {
+                    var _this = this;
+                    $.ajax({
+                        url: interfaceUrl + "/api/hallSystem/count/statistics/getAdmissibilityAndWaitTimeAtHours",
+                        //dataType: 'jsonp',
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        crossDomain: true,
+                        success: function (result) {
+                            console.log(result);
+                            if (result.httpCode == 200) {
+                                const lineWaitData = result.data;
+                                var lineNum = [];
+                                var waitTime = [];
+                                lineNum.push(
+                                    lineWaitData.count_wait_hour_8,
+                                    lineWaitData.count_wait_hour_9,
+                                    lineWaitData.count_wait_hour_10,
+                                    lineWaitData.count_wait_hour_11,
+                                    lineWaitData.count_wait_hour_12,
+                                    lineWaitData.count_wait_hour_13,
+                                    lineWaitData.count_wait_hour_14,
+                                    lineWaitData.count_wait_hour_15,
+                                    lineWaitData.count_wait_hour_16,
+                                    lineWaitData.count_wait_hour_17);
+                                waitTime.push(
+                                    lineWaitData.avg_wait_hour_8,
+                                    lineWaitData.avg_wait_hour_9,
+                                    lineWaitData.avg_wait_hour_10,
+                                    lineWaitData.avg_wait_hour_11,
+                                    lineWaitData.avg_wait_hour_12,
+                                    lineWaitData.avg_wait_hour_13,
+                                    lineWaitData.avg_wait_hour_14,
+                                    lineWaitData.avg_wait_hour_15,
+                                    lineWaitData.avg_wait_hour_16,
+                                    lineWaitData.avg_wait_hour_17);
+                                setTimeout(function () {
+                                    if (_this.hourAcceptCountHandleChart == null) {
+                                        _this.hourAcceptCountHandleChart = echarts.init(_this.$refs.hourAcceptCountHandle)
+                                    }
+                                    const e = _this.hourAcceptCountHandleChart;
+                                    e.setOption({
+                                        title: {
+                                            x: 'center',
+                                            y: 'top',
+                                            textAlign: 'center',
+                                            text: '各时段业务量统计',
+                                            textStyle: {
+                                                color: '#fff'
+                                            }
+                                        },
+                                        tooltip: {
+                                            trigger: 'axis'
+                                        },
+                                        calculable: true,
+                                        xAxis: [
+                                            {
+                                                type: 'category',
+                                                data: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'],
+                                                axisLabel: {
+                                                    show: true,
+                                                    textStyle: {
+                                                        color: '#fff'
+                                                    }
+                                                },
+                                                splitLine: {
+                                                    show: false
+                                                }
+                                            }
+                                        ],
+                                        yAxis: [
+                                            {
+                                                type: 'value',
+                                                name: '件',
+                                                axisLabel: {
+                                                    formatter: '{value}',
+                                                    textStyle: {
+                                                        color: '#fff'
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                type: 'value',
+                                                name: '分钟',
+                                                axisLabel: {
+                                                    formatter: '{value}',
+                                                    textStyle: {
+                                                        color: '#fff'
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        series: [
+                                            {
+                                                name: '业务量',
+                                                type: 'line',
+                                                data: lineNum
+                                                // itemStyle : {
+                                                //     normal : {
+                                                //         lineStyle:{
+                                                //             color:'#00FF00'
+                                                //         }
+                                                //     }
+                                                // },
+                                            },
+                                            {
+                                                name: '等待时长',
+                                                type: 'line',
+                                                yAxisIndex: 1,
+                                                data: waitTime
+                                                // itemStyle : {
+                                                //     normal : {
+                                                //         lineStyle:{
+                                                //             color:'#00FF00'
+                                                //         }
+                                                //     }
+                                                // },
+                                            }
+                                        ]
+                                    })
+                                }, 1000);
+                            }
+                        }
+                    })
+                },
+                getThisWeekHotBusiness: function () {
+                    var _this = this;
+                    $.ajax({
+                        url: interfaceUrl + "/api/hallSystem/count/statistics/getThisWeekHotBusiness",
+                        //dataType: 'jsonp',
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        crossDomain: true,
+                        success: function (result) {
+                            console.log(result);
+                            if (result.httpCode == 200) {
+                                const list = result.data;
+                                var itemName = [];
+                                var total = [];
+                                var all = 0;
+                                for (let i = 0; i < list.length; i++) {
+                                    itemName.push(list[i].itemName);
+                                    const map = {};
+                                    map.name = list[i].itemName;
+                                    map.value = list[i].total;
+                                    all += list[i].total;
+                                    total.push(map);
+                                }
+                                setTimeout(function () {
+
+                                    if (_this.weekHotBusinessTop5Chart == null) {
+                                        _this.weekHotBusinessTop5Chart = echarts.init(_this.$refs.weekHotBusinessTop5)
+                                    }
+                                    const e = _this.weekHotBusinessTop5Chart;
+                                    e.setOption({
+                                        title: {
+                                            x: 'center',
+                                            y: 'top',
+                                            textAlign: 'center',
+                                            text: '本周热门业Top5',
+                                            textStyle: {
+                                                color: '#fff'
+                                            }
+                                        },
+                                        legend: {
+                                            orient: 'vertical',
+                                            x: 'left',
+                                            y: 30,
+                                            data: itemName,
+                                            textStyle: {
+                                                color: '#fff'
+                                            }
+                                        },
+                                        series: [
+                                            {
+                                                type: 'pie',
+                                                radius: '40%',
+                                                center: ['70%', '70%'],
+                                                data: total,
+                                                itemStyle: {
+                                                    emphasis: {
+                                                        shadowBlur: 10,
+                                                        shadowOffsetX: 0,
+                                                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                                    },
+                                                    normal: {
+                                                        label: {
+                                                            show: true,
+                                                            formatter: '{d}%'
+                                                        },
+                                                        labelLine: {show: false, length: 0}
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    })
+                                }, 1000);
+                            }
+                        }
+                    })
+                },
+                getThisMonthHotBusiness: function () {
+                    var _this = this;
+                    $.ajax({
+                        url: interfaceUrl + "/api/hallSystem/count/statistics/getThisMonthHotBusiness",
+                        //dataType: 'jsonp',
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        crossDomain: true,
+                        success: function (result) {
+                            console.log(result);
+                            if (result.httpCode == 200) {
+                                const list = result.data;
+                                var itemName = [];
+                                var total = [];
+                                var all = 0;
+                                for (let i = 0; i < list.length; i++) {
+                                    itemName.push(list[i].itemName);
+                                    const map = {};
+                                    map.name = list[i].itemName;
+                                    map.value = list[i].total;
+                                    all += list[i].total;
+                                    total.push(map);
+                                }
+                                setTimeout(function () {
+                                    if (_this.monthHotBusinessTop5Chart == null) {
+                                        _this.monthHotBusinessTop5Chart = echarts.init(_this.$refs.monthHotBusinessTop5)
+                                    }
+                                    const e = _this.monthHotBusinessTop5Chart;
+                                    e.setOption({
+                                        title: {
+                                            x: 'center',
+                                            y: 'top',
+                                            textAlign: 'center',
+                                            text: '本月热门业Top5',
+                                            textStyle: {
+                                                color: '#fff'
+                                            }
+                                        },
+
+                                        legend: {
+                                            orient: 'vertical',
+                                            x: 'left',
+                                            y: 30,
+                                            data: itemName,
+                                            textStyle: {
+                                                color: '#fff'
+                                            }
+                                        },
+                                        series: [
+                                            {
+                                                type: 'pie',
+                                                radius: '40%',
+                                                center: ['70%', '70%'],
+                                                data: total,
+                                                itemStyle: {
+                                                    emphasis: {
+                                                        shadowBlur: 10,
+                                                        shadowOffsetX: 0,
+                                                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                                    },
+                                                    normal: {
+                                                        label: {
+                                                            show: true,
+                                                            formatter: '{d}%'
+                                                        },
+                                                        labelLine: {show: false, length: 0}
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    })
+                                }, 1000);
+                            }
+                        }
+                    })
+                },
+                getRealWaitTimeByWindow: function () {
+                    var _this = this;
+                    $.ajax({
+                        url: interfaceUrl + "/api/hallSystem/count/statistics/getRealWaitTimeByWindow",
+                        //dataType: 'jsonp',
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        crossDomain: true,
+                        success: function (result) {
+                            console.log(result);
+                            if (result.httpCode == 200) {
+                                const handleData = result.data;
+                                _this.handleWindowName = [];
+                                _this.handleNum = [];
+                                for (let handle of handleData) {
+                                    _this.handleWindowName.push(handle.windowName);
+                                    _this.handleNum.push(handle.avgtime);
+                                }
                             }
                             setTimeout(function () {
-                                if (_this.windowHandleChart == null) {
-                                    _this.windowHandleChart = echarts.init(_this.$refs.windowHandle)
+                                if (_this.businessWindowRealTimeWaitChart == null) {
+                                    _this.businessWindowRealTimeWaitChart = echarts.init(_this.$refs.businessWindowRealTimeWait)
                                 }
-                                const e = _this.windowHandleChart;
+                                const e = _this.businessWindowRealTimeWaitChart;
                                 e.setOption({
+
                                     title: {
                                         x: 'center',
                                         y: 'top',
                                         textAlign: 'center',
-                                        text: '各窗口业务受理量',
+                                        text: '各业务窗口实时等待情况',
                                         textStyle: {
                                             color: '#fff'
                                         }
                                     },
                                     color: ['#3398DB'],
                                     tooltip: {
-                                        trigger: 'axis'
+                                        trigger: 'axis',
+                                        axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                                            type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                                        }
                                     },
-                                    xAxis: [
+                                    grid: {
+                                        x: 30,
+                                        y: 60,
+                                        x2: 20,
+                                        y2: 20,
+                                        // left: 0,
+                                        // right: 0,
+                                        // bottom: 0,
+                                        containLabel: false
+                                    },
+                                    yAxis: [
                                         {
                                             type: 'category',
-                                            data: handleWindowName,
+                                            data: _this.handleWindowName,
                                             axisLabel: {
                                                 show: true,
                                                 textStyle: {
                                                     color: '#fff'
                                                 }
                                             },
+                                            axisTick: {
+                                                alignWithLabel: true
+                                            },
                                             splitLine: {
                                                 show: false
                                             }
                                         }
                                     ],
-                                    yAxis: [
+                                    xAxis: [
                                         {
                                             type: 'value',
-                                            name: '单位：件',
+                                            position: 'top',
                                             axisLabel: {
-                                                formatter: '{value}',
+                                                show: true,
                                                 textStyle: {
                                                     color: '#fff'
                                                 }
@@ -375,415 +763,54 @@
                                     ],
                                     series: [
                                         {
-                                            name: '受理量',
                                             type: 'bar',
-                                            data: handleNum,
-                                        }
-                                    ]
-                                })
-
-                            }, 1000);
-                        }
-                    }
-                })
-            },
-            getAdmissibilityAndWaitTimeAtHours: function () {
-                var _this = this;
-                $.ajax({
-                    url: interfaceUrl + "/api/hallSystem/count/statistics/getAdmissibilityAndWaitTimeAtHours",
-                    //dataType: 'jsonp',
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    crossDomain: true,
-                    success: function (result) {
-                        console.log(result);
-                        if (result.httpCode == 200) {
-                            const lineWaitData = result.data;
-                            var lineNum = [];
-                            var waitTime = [];
-                            lineNum.push(
-                                lineWaitData.count_wait_hour_8,
-                                lineWaitData.count_wait_hour_9,
-                                lineWaitData.count_wait_hour_10,
-                                lineWaitData.count_wait_hour_11,
-                                lineWaitData.count_wait_hour_12,
-                                lineWaitData.count_wait_hour_13,
-                                lineWaitData.count_wait_hour_14,
-                                lineWaitData.count_wait_hour_15,
-                                lineWaitData.count_wait_hour_16,
-                                lineWaitData.count_wait_hour_17);
-                            waitTime.push(
-                                lineWaitData.avg_wait_hour_8,
-                                lineWaitData.avg_wait_hour_9,
-                                lineWaitData.avg_wait_hour_10,
-                                lineWaitData.avg_wait_hour_11,
-                                lineWaitData.avg_wait_hour_12,
-                                lineWaitData.avg_wait_hour_13,
-                                lineWaitData.avg_wait_hour_14,
-                                lineWaitData.avg_wait_hour_15,
-                                lineWaitData.avg_wait_hour_16,
-                                lineWaitData.avg_wait_hour_17);
-                            setTimeout(function () {
-                                if (_this.hourAcceptCountHandleChart == null) {
-                                    _this.hourAcceptCountHandleChart = echarts.init(_this.$refs.hourAcceptCountHandle)
-                                }
-                                const e = _this.hourAcceptCountHandleChart;
-                                e.setOption({
-                                    title: {
-                                        x: 'center',
-                                        y: 'top',
-                                        textAlign: 'center',
-                                        text: '各时段业务量统计',
-                                        textStyle: {
-                                            color: '#fff'
-                                        }
-                                    },
-                                    tooltip: {
-                                        trigger: 'axis'
-                                    },
-                                    calculable: true,
-                                    xAxis: [
-                                        {
-                                            type: 'category',
-                                            data: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'],
-                                            axisLabel: {
-                                                show: true,
-                                                textStyle: {
-                                                    color: '#fff'
-                                                }
-                                            },
-                                            splitLine: {
-                                                show: false
-                                            }
-                                        }
-                                    ],
-                                    yAxis: [
-                                        {
-                                            type: 'value',
-                                            name: '件',
-                                            axisLabel: {
-                                                formatter: '{value}',
-                                                textStyle: {
-                                                    color: '#fff'
-                                                }
-                                            }
-                                        },
-                                        {
-                                            type: 'value',
-                                            name: '分钟',
-                                            axisLabel: {
-                                                formatter: '{value}',
-                                                textStyle: {
-                                                    color: '#fff'
-                                                }
-                                            }
-                                        }
-                                    ],
-                                    series: [
-                                        {
-                                            name: '业务量',
-                                            type: 'line',
-                                            data: lineNum
-                                            // itemStyle : {
-                                            //     normal : {
-                                            //         lineStyle:{
-                                            //             color:'#00FF00'
-                                            //         }
-                                            //     }
-                                            // },
-                                        },
-                                        {
-                                            name: '等待时长',
-                                            type: 'line',
-                                            yAxisIndex: 1,
-                                            data: waitTime
-                                            // itemStyle : {
-                                            //     normal : {
-                                            //         lineStyle:{
-                                            //             color:'#00FF00'
-                                            //         }
-                                            //     }
-                                            // },
+                                            data: _this.handleNum,
                                         }
                                     ]
                                 })
                             }, 1000);
                         }
+                    })
+                },
+                //先在table的最后增加一行，然后再把第一行中的数据填充到新增加的行中，最后再删除table的第一行
+                tableInterval: function () {
+                    var table = document.getElementById("test");//获得表格
+                    var row = table.insertRow(table.rows.length);//在table的最后增加一行,table.rows.length是表格的总行数
+                    for (j = 0; j < table.rows[1].cells.length; j++) {//循环第一行的所有单元格的数据，让其加到最后新加的一行数据中（注意下标是从0开始的）
+                        var cell = row.insertCell(j);//给新插入的行中添加单元格
+                        cell.height = "2.3em";//一个单元格的高度，跟css样式中的line-height高度一样
+                        cell.innerHTML = table.rows[1].cells[j].innerHTML;//设置新单元格的内容，这个根据需要，自己设置
                     }
-                })
-            },
-            getThisWeekHotBusiness: function () {
-                var _this = this;
-                $.ajax({
-                    url: interfaceUrl + "/api/hallSystem/count/statistics/getThisWeekHotBusiness",
-                    //dataType: 'jsonp',
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    crossDomain: true,
-                    success: function (result) {
-                        console.log(result);
-                        if (result.httpCode == 200) {
-                            const list = result.data;
-                            var itemName = [];
-                            var total = [];
-                            var all = 0;
-                            for (let i = 0; i < list.length; i++) {
-                                itemName.push(list[i].itemName);
-                                const map = {};
-                                map.name = list[i].itemName;
-                                map.value = list[i].total;
-                                all += list[i].total;
-                                total.push(map);
-                            }
-                            setTimeout(function () {
+                    table.deleteRow(1);//删除table的第一行
+                }
 
-                                if (_this.weekHotBusinessTop5Chart == null) {
-                                    _this.weekHotBusinessTop5Chart = echarts.init(_this.$refs.weekHotBusinessTop5)
-                                }
-                                const e = _this.weekHotBusinessTop5Chart;
-                                e.setOption({
-                                    title: {
-                                        x: 'center',
-                                        y: 'top',
-                                        textAlign: 'center',
-                                        text: '本周热门业Top5',
-                                        textStyle: {
-                                            color: '#fff'
-                                        }
-                                    },
-                                    legend: {
-                                        orient: 'vertical',
-                                        x: 'left',
-                                        y:30,
-                                        data:itemName,
-                                        textStyle:{
-                                            color:'#fff'
-                                        }
-                                    },
-                                    series: [
-                                        {
-                                            type: 'pie',
-                                            radius: '40%',
-                                            center: ['70%', '70%'],
-                                            data: total,
-                                            itemStyle: {
-                                                emphasis: {
-                                                    shadowBlur: 10,
-                                                    shadowOffsetX: 0,
-                                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                                                },
-                                                normal: {
-                                                    label: {
-                                                        show: true,
-                                                        formatter:'{d}%'
-                                                    },
-                                                    labelLine: {show: false,length:0}
-                                                }
-                                            }
-                                        }
-                                    ]
-                                })
-                            }, 1000);
-                        }
-                    }
-                })
-            },
-            getThisMonthHotBusiness: function () {
-                var _this = this;
-                $.ajax({
-                    url: interfaceUrl + "/api/hallSystem/count/statistics/getThisMonthHotBusiness",
-                    //dataType: 'jsonp',
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    crossDomain: true,
-                    success: function (result) {
-                        console.log(result);
-                        if (result.httpCode == 200) {
-                            const list = result.data;
-                            var itemName = [];
-                            var total = [];
-                            var all = 0;
-                            for (let i = 0; i < list.length; i++) {
-                                itemName.push(list[i].itemName);
-                                const map = {};
-                                map.name = list[i].itemName;
-                                map.value = list[i].total;
-                                all += list[i].total;
-                                total.push(map);
-                            }
-                            setTimeout(function () {
-                                if (_this.monthHotBusinessTop5Chart == null) {
-                                    _this.monthHotBusinessTop5Chart = echarts.init(_this.$refs.monthHotBusinessTop5)
-                                }
-                                const e = _this.monthHotBusinessTop5Chart;
-                                e.setOption({
-                                    title: {
-                                        x: 'center',
-                                        y: 'top',
-                                        textAlign: 'center',
-                                        text: '本月热门业Top5',
-                                        textStyle: {
-                                            color: '#fff'
-                                        }
-                                    },
 
-                                    legend: {
-                                        orient: 'vertical',
-                                        x: 'left',
-                                        y:30,
-                                        data:itemName,
-                                        textStyle:{
-                                            color:'#fff'
-                                        }
-                                    },
-                                    series: [
-                                        {
-                                            type: 'pie',
-                                            radius: '40%',
-                                            center: ['70%', '70%'],
-                                            data: total,
-                                            itemStyle: {
-                                                emphasis: {
-                                                    shadowBlur: 10,
-                                                    shadowOffsetX: 0,
-                                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                                                },
-                                                normal: {
-                                                    label: {
-                                                        show: true,
-                                                        formatter:'{d}%'
-                                                    },
-                                                    labelLine: {show: false,length:0}
-                                                }
-                                            }
-                                        }
-                                    ]
-                                })
-                            }, 1000);
-                        }
-                    }
-                })
-            },
-            getRealWaitTimeByWindow: function () {
-                var _this = this;
-                $.ajax({
-                    url: interfaceUrl + "/api/hallSystem/count/statistics/getRealWaitTimeByWindow",
-                    //dataType: 'jsonp',
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    crossDomain: true,
-                    success: function (result) {
-                        console.log(result);
-                        if (result.httpCode == 200) {
-                            const handleData = result.data;
-                            _this.handleWindowName = [];
-                            _this.handleNum = [];
-                            for (let handle of handleData) {
-                                _this.handleWindowName.push(handle.windowName);
-                                _this.handleNum.push(handle.avgtime);
-                            }
-                        }
-                        setTimeout(function () {
-                            if (_this.businessWindowRealTimeWaitChart == null) {
-                                _this.businessWindowRealTimeWaitChart = echarts.init(_this.$refs.businessWindowRealTimeWait)
-                            }
-                            const e = _this.businessWindowRealTimeWaitChart;
-                            e.setOption({
-
-                                title: {
-                                    x: 'center',
-                                    y: 'top',
-                                    textAlign: 'center',
-                                    text: '各业务窗口实时等待情况',
-                                    textStyle: {
-                                        color: '#fff'
-                                    }
-                                },
-                                color: ['#3398DB'],
-                                tooltip: {
-                                    trigger: 'axis',
-                                    axisPointer: {            // 坐标轴指示器，坐标轴触发有效
-                                        type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-                                    }
-                                },
-                                grid: {
-                                    x:30,
-                                    y:60,
-                                    x2:20,
-                                    y2:20,
-                                    // left: 0,
-                                    // right: 0,
-                                    // bottom: 0,
-                                    containLabel: false
-                                },
-                                yAxis: [
-                                    {
-                                        type: 'category',
-                                        data: _this.handleWindowName,
-                                        axisLabel: {
-                                            show: true,
-                                            textStyle: {
-                                                color: '#fff'
-                                            }
-                                        },
-                                        axisTick: {
-                                            alignWithLabel: true
-                                        },
-                                        splitLine: {
-                                            show: false
-                                        }
-                                    }
-                                ],
-                                xAxis: [
-                                    {
-                                        type: 'value',
-                                        position: 'top',
-                                        axisLabel: {
-                                            show: true,
-                                            textStyle: {
-                                                color: '#fff'
-                                            }
-                                        }
-                                    }
-                                ],
-                                series: [
-                                    {
-                                        type: 'bar',
-                                        data: _this.handleNum,
-                                    }
-                                ]
-                            })
-                        }, 1000);
-                    }
-                })
             },
 
-        },
+            mounted: function () {
+                this.$nextTick(function () {
+                    this.getAcceptCount(); // 今日、历史累计受理量、比上一工作日增长/下降百分比、等待时长、等待人数、交件、取件数
+                    this.getWindowsRealTimeAccept(); // 窗口受理情况
+                    this.getRealTimeAcceptCountByWindow(); // 各窗口业务受理量
+                    this.getAdmissibilityAndWaitTimeAtHours(); // 工作时间段内受理量和等待时长
+                    this.getThisWeekHotBusiness(); // 本周热门业务Top5
+                    this.getThisMonthHotBusiness(); // 本月热门业务Top5
+                    this.getRealWaitTimeByWindow(); // 各业务窗口实时等待情况
+                    this.tableInterval();
+                })
+                setInterval(this.getAcceptCount, 30000);
+                setInterval(this.getWindowsRealTimeAccept, 30000);
+                setInterval(this.getRealTimeAcceptCountByWindow, 30000);
+                setInterval(this.getAdmissibilityAndWaitTimeAtHours, 30000);
+                setInterval(this.getThisWeekHotBusiness, 30000);
+                setInterval(this.getThisMonthHotBusiness, 30000);
+                setInterval(this.getRealWaitTimeByWindow, 30000);
+                setInterval(this.tableInterval, 3000);//每隔2秒执行一次change函数，相当于table在向上滚动一样
+            }
 
-        mounted: function () {
-            this.$nextTick(function () {
-                this.getAcceptCount(); // 今日、历史累计受理量、比上一工作日增长/下降百分比、等待时长、等待人数、交件、取件数
-                this.getWindowsRealTimeAccept(); // 窗口受理情况
-                this.getRealTimeAcceptCountByWindow(); // 各窗口业务受理量
-                this.getAdmissibilityAndWaitTimeAtHours(); // 工作时间段内受理量和等待时长
-                this.getThisWeekHotBusiness(); // 本周热门业务Top5
-                this.getThisMonthHotBusiness(); // 本月热门业务Top5
-                this.getRealWaitTimeByWindow(); // 各业务窗口实时等待情况
-            })
-            setInterval(this.getAcceptCount, 30000);
-            setInterval(this.getWindowsRealTimeAccept, 30000);
-            setInterval(this.getRealTimeAcceptCountByWindow, 30000);
-            setInterval(this.getAdmissibilityAndWaitTimeAtHours, 30000);
-            setInterval(this.getThisWeekHotBusiness, 30000);
-            setInterval(this.getThisMonthHotBusiness, 30000);
-            setInterval(this.getRealWaitTimeByWindow, 30000);
-        }
 
-    });
+        })
+    ;
 
 
 </script>
