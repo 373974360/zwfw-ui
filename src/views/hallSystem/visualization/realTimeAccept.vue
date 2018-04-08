@@ -136,7 +136,7 @@
         },
         methods: {
             showAll() {
-                window.open('keshihuadaping/realTimeAccept.html')
+                window.open('keshihuadaping/lunbo.html')
             },
             getWindowsRealTimeAccept() {
                 this.pageLoading = true;
