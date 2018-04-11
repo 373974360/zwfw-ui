@@ -4,16 +4,17 @@
     <meta charset="UTF-8">
     <title>西安国际港务区 —— 政务服务管理系统</title>
     <style>
-        html,body{
-            width:100%;
-            height:100%
+        html, body {
+            width: 100%;
+            height: 100%
         }
+
         body {
-            height:100%;
+            height: 100%;
             width: 100%;
             margin: 0px;
             padding: 0px;
-            background: url("img/beijingtu.jpg") no-repeat ;
+            background: url("img/beijingtu.jpg") no-repeat;
             background-size: 100% 100%;
         }
 
@@ -46,7 +47,6 @@
             overflow: hidden;
         }
 
-
         .item-title {
             font-size: 1.2em;
             margin-top: 2em;
@@ -59,9 +59,11 @@
             margin: 0.4em 0px;
             font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
         }
+
         .item-value span {
             font-weight: bold;
         }
+
         .flex-item.base {
             background: none;
             border: none;
@@ -92,15 +94,122 @@
             border-bottom: dashed 1px #fff;
         }
 
-
-        #window-accept-table .item-value,#satisfactionRateTop10 .item-value,#hotItemFinishTop10 .item-value {
+        #window-accept-table .item-value, #satisfactionRateTop10 .item-value, #hotItemFinishTop10 .item-value {
             font-size: 0.8em;
             line-height: 2.3em;
         }
-        #window-accept-table .item-title,#satisfactionRateTop10 .item-title,#hotItemFinishTop10 .item-title {
+
+        #window-accept-table .item-title, #satisfactionRateTop10 .item-title, #hotItemFinishTop10 .item-title {
             font-size: 0.9em;
         }
+
+        .roll-p3 {
+            width: 100%;
+            height: 530px;
+            margin: 1.5em auto;
+            position: relative;
+            bottom: 0;
+        }
+        .roll-p2 , .roll-p{
+            width: 100%;
+            height: 280px;
+            margin: 1.5em auto;
+            position: relative;
+            bottom: 0;
+        }
+
+        .roll-p ul li, .roll-p2 ul li, .roll-p3 ul li {
+            line-height: 2.3em;
+            overflow: hidden;
+            font-size: 0.8em;
+            height: auto;
+        }
+
+        .roll-p3 ul li {
+            line-height: 3em;
+            overflow: hidden;
+            font-size: 0.8em;
+            height: auto;
+        }
+        .roll-p3 ul{
+             padding: 0px;
+             overflow: hidden;
+             line-height: 32px;
+             margin: 0px;
+         }
+       .roll-p2 ul{
+            padding: 5px;
+            overflow: hidden;
+            line-height: 32px;
+            margin: 0px;
+        }
+        .roll-p ul{
+            padding: 15px;
+            overflow: hidden;
+            line-height: 32px;
+            margin: 0px;
+        }
+        .roll-p ul li span, .roll-p2 ul li span, .roll-p3 ul li span {
+            float: left;
+            line-height: 1.0em;
+            height: auto;
+            text-align: center;
+            display: block;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .roll-p ul li span.td1 {
+            width: 5em;
+            text-align: left
+        }
+
+        .roll-p ul li span.td2 {
+            width: 5em;
+        }
+
+        .roll-p ul li span.td3 {
+            width: 11.5em;
+        }
+
+        .roll-p ul li span.td4 {
+            width: 10em;
+        }
+
+        .roll-p2 ul li span.td1 {
+            width: 8.5em;
+        }
+
+        .roll-p2 ul li span.td2 {
+            width: 14em;
+        }
+
+        .roll-p2 ul li span.td3 {
+            width: 10em;
+        }
+
+        .roll-p3 ul li span.td1 {
+            width: 33.7em;
+            text-align: left
+        }
+
+        .roll-p3 ul li span.td2 {
+            width: 23em;
+            text-align: left
+        }
+
+        .roll-p3 ul li span.td3 {
+            width: 7em;
+        }
+
+        .roll-p3 ul li span.td4 {
+            width: 6em;
+        }
+
+
     </style>
+    <link rel="stylesheet" href="css/liMarquee.css">
 </head>
 <body>
 <div class="title">业务审批数据可视化</div>
@@ -111,17 +220,20 @@
                 <div class="flex-item base" style="flex:1">
 
                     <div class="flex-container flex-row">
-                        <div class="flex-item" style="flex:1;background:-webkit-gradient(linear, 0 0, 0 bottom, from(#b35950), to(#8f3a33));">
+                        <div class="flex-item"
+                             style="flex:1;background:-webkit-gradient(linear, 0 0, 0 bottom, from(#b35950), to(#8f3a33));">
                             <div class="item-title">本月审批量</div>
                             <div class="item-value" style="font-size: 3em;">{{itemAcceptount.pendingTotal}}
                             </div>
                         </div>
-                        <div class="flex-item " style="flex:1;background:-webkit-gradient(linear, 0 0, 0 bottom, from(#ab8d4d), to(#a2792a));">
+                        <div class="flex-item "
+                             style="flex:1;background:-webkit-gradient(linear, 0 0, 0 bottom, from(#ab8d4d), to(#a2792a));">
                             <div class="item-title">办理中事项</div>
                             <div class="item-value" style="font-size: 3em;">{{itemAcceptount.handleTotal}}
                             </div>
                         </div>
-                        <div class="flex-item " style="flex:1;background:-webkit-gradient(linear, 0 0, 0 bottom, from(#5390ad), to(#31658d));">
+                        <div class="flex-item "
+                             style="flex:1;background:-webkit-gradient(linear, 0 0, 0 bottom, from(#5390ad), to(#31658d));">
                             <div class="item-title">本月办结事项</div>
                             <div class="item-value" style="font-size: 3em;">{{itemAcceptount.finishTotal}}
                             </div>
@@ -135,14 +247,15 @@
                         <div class="flex-item"
                              style="flex:5;background: none;border: none;margin: 0px;">
                             <div class="item-title">实时审批进度</div>
-                            <div style="margin: 2em 20px">
+                            <div style="margin: 2em 30px">
+
                                 <table id="window-accept-table" border="0" cellpadding="0" cellspacing="0"
                                        style="width: 100%;">
                                     <tr>
                                         <th>
                                             <div class="item-title" style="text-align: left">事项名称</div>
                                         </th>
-                                        <th>
+                                        <th style="width: 17.5em;">
                                             <div class="item-title" style="text-align: left">当前环节</div>
                                         </th>
                                         <th style="width: 5em;">
@@ -152,21 +265,10 @@
                                             <div class="item-title">预计办结时长</div>
                                         </th>
                                     </tr>
-                                    <tr v-for="list in RealTimeAceeptList">
-                                        <td>
-                                            <div class="item-value" style="text-align: left">{{list.itemName}}</div>
-                                        </td>
-                                        <td>
-                                            <div class="item-value" v-if="list.status == 10" style="text-align: left">{{list.currentLine}}</div>
-                                            <div class="item-value" v-if="list.status == 15" style="text-align: left">已办结</div>
-                                        </td>
-                                        <td>
-                                            <div class="item-value" v-if="list.status == 10">办理中</div>
-                                            <div class="item-value" v-if="list.status == 15">已办结</div>
-                                        </td>
-                                        <td>
-                                            <div class="item-value" v-if="list.status == 10">{{list.expectTime>0?list.expectTime+'天':'延期'}}</div>
-                                            <div class="item-value" v-if="list.status == 15">/</div>
+                                    <tr>
+                                        <td colspan="4">
+                                            <div class="roll-p3" id="roll-p3">
+                                            </div>
                                         </td>
                                     </tr>
                                 </table>
@@ -201,15 +303,9 @@
                                             <div class="item-title">满意率</div>
                                         </th>
                                     </tr>
-                                    <tr v-for="list in windowSactisfactionList">
-                                        <td>
-                                            <div class="item-value">{{list.windowName}}</div>
-                                        </td>
-                                        <td>
-                                            <div class="item-value">{{list.joincommentRate}}%</div>
-                                        </td>
-                                        <td>
-                                            <div class="item-value">{{list.satisfactionRate}}%</div>
+                                    <tr>
+                                        <td colspan="3">
+                                           <div class="roll-p2"></div>
                                         </td>
                                     </tr>
                                 </table>
@@ -219,7 +315,7 @@
                         <div class="flex-item" style="flex:1">
 
                             <div class="item-title">热门事项正常办结率</div>
-                            <div style="margin: 0px 20px">
+                            <div class="dowebok" id="mainDiv" style="margin: 0px 20px">
                                 <table id="hotItemFinishTop10" border="0" cellpadding="0" cellspacing="0"
                                        style="width: 100%;">
                                     <tr>
@@ -230,24 +326,15 @@
                                             <div class="item-title">业务量</div>
                                         </th>
                                         <th>
-                                            <div class="item-title">超期率</div>
+                                            <div class="item-title">按时办结率</div>
                                         </th>
                                         <th>
                                             <div class="item-title">正常办结率</div>
                                         </th>
                                     </tr>
-                                    <tr v-for="list in hotItemFinishList">
-                                        <td>
-                                            <div class="item-value">{{list.deptName}}</div>
-                                        </td>
-                                        <td>
-                                            <div class="item-value">{{list.total}}</div>
-                                        </td>
-                                        <td>
-                                            <div class="item-value">{{list.timeOutRate}}%</div>
-                                        </td>
-                                        <td>
-                                            <div class="item-value">{{list.untimeOutRate}}%</div>
+                                    <tr >
+                                        <td colspan="4">
+                                            <div class="roll-p"></div>
                                         </td>
                                     </tr>
                                 </table>
@@ -268,13 +355,14 @@
 
     </div>
 </div>
-<script src="../vue.min.js"></script>
-<script src="../jquery.min.js"></script>
+<script src="js/jquery-1.8.3.min.js"></script>
+<script src="js/jquery.liMarquee.js"></script>
 <script src="../echarts-all.js"></script>
+<script src="../jquery.SuperSlide.2.1.1.js"></script>
+<script src="../vue.min.js"></script>
+
 <script type="text/javascript">
     var interfaceUrl = '';
-    // $('head').append(decodeURIComponent('%3Cscript%20src%3D' + interfaceUrl + "%2Fapi%2Fcommon%2Fdicsjs'%3E%3C%2Fscript%3E"))
-    //     .append(decodeURIComponent('%3Cscript%20src%3D' + interfaceUrl + "%2Fapi%2Fcommon%2Fenumsjs'%3E%3C%2Fscript%3E"));
 </script>
 <script type="text/javascript">
     var app = new Vue({
@@ -291,7 +379,6 @@
                 var _this = this;
                 $.ajax({
                     url: interfaceUrl + '/api/hallSystem/count/statistics/getItemAcceptCount',
-                    //dataType: 'jsonp',
                     xhrFields: {
                         withCredentials: true
                     },
@@ -299,36 +386,45 @@
                     success: function (result) {
                         console.log(result);
                         if (result.httpCode == 200) {
-                            // console.log('222');
                             _this.itemAcceptount = result.data;
-                            console.log(_this.itemAcceptount);
                         }
                     }
                 })
             },
             getRealTimeApproveSchedule: function () {
-                var _this = this;
                 $.ajax({
                     url: interfaceUrl + "/api/hallSystem/count/statistics/getRealTimeApproveSchedule",
-                    dataType: 'jsonp',
                     xhrFields: {
                         withCredentials: true
                     },
                     crossDomain: true,
                     success: function (result) {
-                        console.log(result);
                         if (result.httpCode == 200) {
-                            _this.RealTimeAceeptList = result.data;
-                            console.log(_this.RealTimeAceeptList);
+                            $('.roll-p-one').html('');
+                            var html = "<ul>";
+                            for (var i = result.data.length - 1; i >= 0; i--) {
+                                var row = result.data[i];
+                                if (row.status == 10 && row.expectTime > 0) {
+                                   html += '<li><span class="td1" >' + row.itemName + '</span><span class="td2">' + row.currentLine + '</span><span class="td3">' + '已办结' + '</span><span class="td4">' + row.expectTime + '</span></li>';
+                                } else if (row.status == 10 && row.expectTime <= 0) {
+                                    html += '<li><span class="td1" >' + row.itemName + '</span><span class="td2">' + row.currentLine + '</span><span class="td3">' + '办理中' + '</span><span class="td4">' + '延期' + '</span></li>';
+                                } else if (row.status == 15) {
+                                    html += '<li><span class="td1" >' + row.itemName + '</span><span class="td2">' + '已办结' + '</span><span class="td3">' + '已办结' + '</span><span class="td4">' + '/' + '</span></li>';
+                                }
+                            }
+                            html += "</ul>";
+                            $('.roll-p3').html(html);
+                            $('.roll-p3').liMarquee({
+                                scrollamount: 28,
+                                direction: 'up'
+                            });
                         }
                     }
                 })
             },
             getSatisfactionTop10: function () {
-                var _this = this;
                 $.ajax({
                     url: interfaceUrl + "/api/hallSystem/count/statistics/getSatisfactionTop10",
-                    dataType: 'jsonp',
                     xhrFields: {
                         withCredentials: true
                     },
@@ -336,17 +432,26 @@
                     success: function (result) {
                         console.log(result);
                         if (result.httpCode == 200) {
-                            _this.windowSactisfactionList = result.data;
-                            console.log(_this.windowSactisfactionList);
+                            $('.roll-p2').html('');
+                            var html = "<ul>";
+                            for (var i = result.data.length - 1; i >= 0; i--) {
+                                var row = result.data[i];
+                                html += '<li><span class="td1" >' + row.windowName + '</span><span class="td2">' + row.joincommentRate + '%' + '</span><span class="td3">' + row.satisfactionRate + '%' + '</span></li>';
+
+                            }
+                            html += "</ul>";
+                            $('.roll-p2').html(html);
+                            $('.roll-p2').liMarquee({
+                                scrollamount: 28,
+                                direction: 'up'
+                            });
                         }
                     }
                 })
             },
             getTopItemFinishRate: function () {
-                var _this = this;
                 $.ajax({
                     url: interfaceUrl + "/api/hallSystem/count/statistics/getTopItemFinishRate",
-                    dataType: 'jsonp',
                     xhrFields: {
                         withCredentials: true
                     },
@@ -354,8 +459,22 @@
                     success: function (result) {
                         console.log(result);
                         if (result.httpCode == 200) {
-                            _this.hotItemFinishList = result.data;
-                            console.log(_this.hotItemFinishList);
+
+                            $('.roll-p').html('');
+                            var html = "<ul>";
+                            for (var i = result.data.length - 1; i >= 0; i--) {
+                                var row = result.data[i];
+                                html += '<li><span class="td1" >' + row.deptName + '</span><span class="td2">' + row.total + '</span><span class="td3">' + row.timeOutRate + '%' + '</span><span class="td4">' + row.untimeOutRate + '%' + '</span></li>';
+
+                            }
+                            html += "</ul>";
+                            $('.roll-p').html(html);
+                            $('.roll-p').liMarquee(
+                                {
+                                    scrollamount: 28,
+                                    direction: 'up'
+                                }
+                            );
                         }
                     }
                 })
@@ -433,15 +552,12 @@
                                         }
                                     ]
                                 })
-
                             }, 1000);
                         }
                     }
                 })
             }
-
         },
-
         mounted: function () {
             this.$nextTick(function () {
                 // 本月预审量、办理中事项、本月办结量
@@ -461,7 +577,6 @@
             setInterval(this.getTopItemFinishRate, 30000);
             setInterval(this.dataPlotByWindow, 30000);
         }
-
     });
 
 
