@@ -337,13 +337,16 @@
                                     var html = "<ul>";
                                     for (var i = _this.todayData.windowsRealTimeAccept.length - 1; i >= 0; i--) {
                                         var row = _this.todayData.windowsRealTimeAccept[i];
-                                        var str1 = row.personIdcard.replace(/(\d{10})(\d+)(\d{4})/, function (x, y, z, p) {
-                                            var i = "";
-                                            while (i.length < z.length) {
-                                                i += "*"
-                                            }
-                                            return y + i + p
-                                        })
+                                        var str1 = "";
+                                        if (row.personIdcard) {
+                                            str1 = row.personIdcard.replace(/(\d{10})(\d+)(\d{4})/, function (x, y, z, p) {
+                                                var i = "";
+                                                while (i.length < z.length) {
+                                                    i += "*"
+                                                }
+                                                return y + i + p
+                                            });
+                                        }
                                         if (row.personName == null) {
                                             html += '<li><span class="td1" >' + row.callTime + '</span><span class="td2">' + '/' + '</span><span class="td3">' + str1 + '</span><span class="td4">' + row.itemName + '</span></li>';
                                         } else {
