@@ -148,7 +148,7 @@
         }
 
         .roll-p ul {
-            padding: 15px;
+            padding: 20px;
             overflow: hidden;
             line-height: 32px;
             margin: 0px;
@@ -166,19 +166,15 @@
         }
 
         .roll-p ul li span.td1 {
-            width: 5em;
+            width: 3em;
             text-align: left
         }
 
         .roll-p ul li span.td2 {
-            width: 5em;
+            width: 16em;
         }
 
         .roll-p ul li span.td3 {
-            width: 11.5em;
-        }
-
-        .roll-p ul li span.td4 {
             width: 10em;
         }
 
@@ -255,7 +251,7 @@
                         <div class="flex-item"
                              style="flex:5;background: none;border: none;margin: 0px;">
                             <div class="item-title">实时审批进度</div>
-                            <div style="margin: 2em 30px">
+                            <div style="margin: 0em 30px">
 
                                 <table id="window-accept-table" border="0" cellpadding="0" cellspacing="0"
                                        style="width: 100%;">
@@ -275,7 +271,7 @@
                                     </tr>
                                     <tr>
                                         <td colspan="4">
-                                            <div class="roll-p3" id="roll-p3">
+                                            <div class="roll-p3">
                                             </div>
                                         </td>
                                     </tr>
@@ -323,7 +319,7 @@
                         <div class="flex-item" style="flex:1">
 
                             <div class="item-title">热门事项正常办结率</div>
-                            <div class="dowebok" id="mainDiv" style="margin: 0px 20px">
+                            <div style="margin: 0px 20px">
                                 <table id="hotItemFinishTop10" border="0" cellpadding="0" cellspacing="0"
                                        style="width: 100%;">
                                     <tr>
@@ -336,12 +332,9 @@
                                         <th>
                                             <div class="item-title">按时办结率</div>
                                         </th>
-                                        <th>
-                                            <div class="item-title">正常办结率</div>
-                                        </th>
                                     </tr>
                                     <tr>
-                                        <td colspan="4">
+                                        <td colspan="3">
                                             <div class="roll-p"></div>
                                         </td>
                                     </tr>
@@ -494,7 +487,7 @@
                                 var html = "<ul>";
                                 for (var i = result.data.topItemFinishRate.length - 1; i >= 0; i--) {
                                     var row = result.data.topItemFinishRate[i];
-                                    html += '<li><span class="td1" >' + row.deptName + '</span><span class="td2">' + row.total + '</span><span class="td3">' + row.timeOutRate + '%' + '</span><span class="td4">' + row.untimeOutRate + '%' + '</span></li>';
+                                    html += '<li><span class="td1" >' + row.deptName + '</span><span class="td2">' + row.total + '</span><span class="td3">' + row.timeOutRate + '%' + '</span></li>';
 
                                 }
                                 html += "</ul>";
