@@ -190,7 +190,7 @@
         },
         methods: {
             showAll() {
-                window.open('keshihuadaping/businessApprove.html')
+                window.open('keshihuadaping/lunbo.html')
             },
             getSatisfactionTop10() {
                 this.windowSatisfactionLoading = true;
