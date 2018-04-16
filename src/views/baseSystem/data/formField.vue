@@ -92,6 +92,9 @@
                                    :key="type.code" :value="type.code" :label="type.value"/>
                     </el-select>
                 </el-form-item>
+                <el-form-item v-if="formField.inputType == 2 || formField.inputType == 3" label="选项字典" prop="optionDic">
+                    <el-input v-model="formField.optionDic"/>
+                </el-form-item>
                 <el-form-item label="默认值" prop="defaultValue">
                     <el-input v-model="formField.defaultValue"/>
                 </el-form-item>
@@ -146,7 +149,8 @@
                     require: false,
                     defaultValue: null,
                     regex: undefined,
-                    remark: undefined
+                    remark: undefined,
+                    optionDic: undefined
                 },
                 currentRow: null,
                 selectedRows: [],
@@ -300,7 +304,8 @@
                     require: false,
                     defaultValue: null,
                     regex: undefined,
-                    remark: undefined
+                    remark: undefined,
+                    optionDic: undefined
                 };
             },
             resetFormFieldForm() {
