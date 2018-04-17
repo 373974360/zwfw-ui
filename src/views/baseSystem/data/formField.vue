@@ -41,7 +41,7 @@
             </el-table-column>
             <el-table-column align="center" label="类型">
                 <template scope="scope">
-                    <span>{{scope.row.inputType}}</span>
+                    <span>{{scope.row.inputType | enums('InputType')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="必填">
