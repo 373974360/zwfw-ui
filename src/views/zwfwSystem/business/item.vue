@@ -1340,16 +1340,17 @@
                 })
             },
             queryPretrialUserId(keywords) {
-                // todo 预审人员是否根据所选部门筛选
-                getAllUser({
-                    name: keywords
-                }).then(response => {
-                    if (response.httpCode === 200) {
-                        this.userListPretrial = response.data;
-                    } else {
-                        this.$message.error('加载用户列表失败');
-                    }
-                });
+                if(keywords && keywords.length > 0) {
+                    getAllUser({
+                        name: keywords
+                    }).then(response => {
+                        if (response.httpCode === 200) {
+                            this.userListPretrial = response.data;
+                        } else {
+                            this.$message.error('加载用户列表失败');
+                        }
+                    });
+                }
             },
             queryHandUserId(keywords) {
                 // todo 预审人员是否根据所选部门筛选
