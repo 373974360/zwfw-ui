@@ -104,6 +104,9 @@
                 <el-form-item label="正则验证" prop="regex">
                     <el-input v-model="formField.regex"/>
                 </el-form-item>
+                <el-form-item label="验证错误提示" prop="regexError">
+                    <el-input v-model="formField.regexError"/>
+                </el-form-item>
                 <el-form-item label="备注" prop="remark">
                     <el-input v-model="formField.remark"/>
                 </el-form-item>

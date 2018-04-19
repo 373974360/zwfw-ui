@@ -267,7 +267,7 @@ export const asyncRouterMap = [
                 component: Dict,
                 name: '数据字典',
                 meta: {permission: 'baseSystem:data:dicIndex:list'}
-            },{
+            }, {
                 path: 'formField',
                 component: FormField,
                 name: '表单域管理',
@@ -434,7 +434,8 @@ export const asyncRouterMap = [
             // {path: 'windowHistory', component: WindowHistory, name: '办件查询'}
         ]
     },
-    {redirect: 'noredirect',
+    {
+        redirect: 'noredirect',
         name: '统计分析',
         path: '/analysis',
         meta: {permission: 'hallSystem:count:admin'},
@@ -501,7 +502,8 @@ export const asyncRouterMap = [
             }
         ]
     },
-    {redirect: 'noredirect',
+    {
+        redirect: 'noredirect',
         name: '数据可视化',
         path: '/visualization',
         meta: {permission: 'hallSystem:visualization:admin'},
@@ -578,13 +580,13 @@ export const asyncRouterMap = [
                 component: TaskSetting,
                 name: '审批节点管理',
                 meta: {permission: 'zwfwSystem:business:taskSetting:list'}
+            },
+            {
+                path: 'formEditor',
+                component: FormEditor,
+                name: '表单编辑器',
+                meta: {permission: 'zwfwSystem:business:formEditor:list'}
             }
-            // {
-            //     path: 'formEditor',
-            //     component: FormEditor,
-            //     name: '表单编辑器',
-            //     meta: {permission: 'zwfwSystem:business:formEditor:list'}
-            // }
         ]
     },
     // ym test 广告管理

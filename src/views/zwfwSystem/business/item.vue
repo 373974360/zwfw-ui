@@ -85,6 +85,10 @@
             <el-table-column align="center" label="办理形式" prop="handleType" width="100">
                 <template scope="scope">
                     {{scope.row.handleType | dics('blxs')}}
+                    <span class="link-type" v-show="scope.row.handleType=='blxs_wsys'"
+                          @click="handlePretrialForm(scope.row,$event)">
+                        设置
+                    </span>
                 </template>
             </el-table-column>
             <el-table-column prop="enable" class-name="status-col" label="状态" width="80">
@@ -101,9 +105,6 @@
                                    type="primary" size="small">
                             办件材料
                         </el-button>
-                        <!--<br />-->
-                        <!--<br />-->
-
                     </el-badge>
                     <el-button class="filter-item" style="" @click="handleItemConfig(scope.row)"
                                type="primary" size="small">
@@ -120,7 +121,7 @@
             </el-pagination>
         </div>
 
-        <el-dialog  :title="zwfwItem.id?('编辑事项，ID:' + zwfwItem.id):'添加事项'" :visible.sync="dialogItemFormVisible"
+        <el-dialog :title="zwfwItem.id?('编辑事项，ID:' + zwfwItem.id):'添加事项'" :visible.sync="dialogItemFormVisible"
                    @open="initEditor"
                    :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemForm">
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem" label-position="right"
@@ -738,6 +739,20 @@
                 </el-button>
             </div>
         </el-dialog>
+        <!--事项预审表单配置-->
+        <el-dialog title="事项预审表单配置" :visible.sync="dialogItemPretrialFormVisible" :close-on-click-modal="closeOnClickModal"
+                   :before-close="closeZwfwItemPretrialForm"
+                   @open="onPretrialFormOpen">
+
+            <item-pretrial-form :itemVo="currentItem" ref="itemPretrialForm"></item-pretrial-form>
+
+            <div style="text-align: center" slot="footer" class="dialog-footer">
+                <el-button icon="circle-cross" type="danger" @click="closeZwfwItemPretrialForm">取 消</el-button>
+                <el-button type="primary" icon="circle-check"
+                           @click="submitItemPretrialForm">确 定
+                </el-button>
+            </div>
+        </el-dialog>
 
     </div>
 </template>
@@ -761,10 +776,12 @@
     import {getDeptCascader} from 'api/baseSystem/org/dept';
     import {getAllAddressees, getAddresseeById} from 'api/hallSystem/window/addressee';
     import {quillEditor} from 'vue-quill-editor'
+    import ItemPretrialForm from "./itemPretrialForm";
 
     export default {
         name: 'zwfwItem_table',
         components: {
+            ItemPretrialForm,
             quillEditor
         },
         data() {
@@ -814,7 +831,7 @@
                     processType: undefined,
                     handleType: undefined,
                     enable: '1',
-                    orderable:''
+                    orderable: ''
                 },
                 activeName: 'first',
                 zwfwItem: {
@@ -909,6 +926,7 @@
                 dialogItemFormVisible: false,
                 dialogMaterialFormVisible: false,
                 dialogItemConfigFormVisible: false,
+                dialogItemPretrialFormVisible: false,
                 dialogStatus: '',
                 uploadAction: this.$store.state.app.uploadUrl,
                 fileAccepts: this.$store.state.app.fileAccepts,
@@ -1141,7 +1159,8 @@
                         this.$message.error(response.msg || '事项列表查询失败');
                     }
                     this.pageLoading = false;
-                }).catch(e=>{
+                }).catch(e => {
+                    this.pageLoading = false;
                     this.$message.error('事项列表查询失败');
                     console.error(e);
                 });
@@ -1286,7 +1305,7 @@
                             } else {
                                 this.$message.error(response.msg || '创建失败');
                             }
-                        }).catch(e=>{
+                        }).catch(e => {
                             console.log(e);
                             this.$message.error('创建失败');
                         });
@@ -1313,10 +1332,11 @@
                             } else {
                                 this.$message.error(response.msg || '更新失败');
                             }
-                        }).catch(e=>{
+                        }).catch(e => {
                             console.log(e);
                             this.$message.error('更新失败');
-                        });;
+                        });
+                        ;
                     } else {
                         this.$message.error('请检查表单各项是否填写完整正确或遗漏');
                         return false;
@@ -1340,7 +1360,7 @@
                 })
             },
             queryPretrialUserId(keywords) {
-                if(keywords && keywords.length > 0) {
+                if (keywords && keywords.length > 0) {
                     getAllUser({
                         name: keywords
                     }).then(response => {
@@ -1486,6 +1506,18 @@
                 this.resetMaterialTemp();
                 this.dialogItemConfigFormVisible = true;
             },
+            /*预审表单设置*/
+            handlePretrialForm(item, $event) {
+                this.currentItem = item;
+                $event.stopPropagation(); //阻止选中事项
+                /*显示添加界面*/
+                this.dialogItemPretrialFormVisible = true;
+            },
+            onPretrialFormOpen(){
+                this.$nextTick(function(){
+                    this.$refs.itemPretrialForm.loadPretrialFormByItemId(this.currentItem.id);
+                })
+            },
             getItemConfig() {
                 getItemConfig(this.currentItem.id).then(response => {
                     if (response.httpCode === 200) {
@@ -1524,6 +1556,11 @@
                     this.zwfwItemConfig.preorderTimeArray = this.zwfwItemConfig.preorderTimeArray1;
                     this.zwfwItemConfig.opentime = this.zwfwItemConfig.opentime1;
                 });
+            },
+
+            /*提交预审表单配置*/
+            submitItemPretrialForm() {
+                this.$refs.itemPretrialForm.submitItemPretrialForm();
             },
             searchMaterial(query, cb) {
                 if (query !== '') {
@@ -1760,6 +1797,9 @@
                 this.dialogItemConfigFormVisible = false;
                 // this.resetZwfwMaterialForm();
             },
+            closeZwfwItemPretrialForm() {
+                this.dialogItemPretrialFormVisible = false;
+            },
             resetZwfwMaterialForm() {
                 this.changeMaterialInfo = false;
                 this.resetMaterialTemp();
@@ -1869,10 +1909,10 @@
         margin-left: 0px;
         margin-right: 15px;
     }
-    .el-checkbox+.el-checkbox{
-        margin-left:0px;
-    }
 
+    .el-checkbox + .el-checkbox {
+        margin-left: 0px;
+    }
 
     .item {
         /*margin-top: 12px;*/
@@ -1892,14 +1932,16 @@
         max-height: 180px;
         overflow: scroll
     }
-    .ql-toolbar.ql-snow .ql-formats{
-        margin-right:0px;
+
+    .ql-toolbar.ql-snow .ql-formats {
+        margin-right: 0px;
     }
 </style>
 <style rel="stylesheet/scss" lang="scss">
-    .el-table .el-table-column--selection .cell{
+    .el-table .el-table-column--selection .cell {
         text-overflow: clip;
     }
+
     .el-table th.action .cell {
         line-height: 50px;
     }
