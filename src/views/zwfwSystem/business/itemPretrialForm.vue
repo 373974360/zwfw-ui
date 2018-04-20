@@ -1,5 +1,6 @@
 <template>
-    <div>
+    <div v-loading="loading"
+         element-loading-text="拼命加载中">
         <el-row :gutter="10">
             <el-col :span="6">
             </el-col>
@@ -66,8 +67,7 @@
                     prop="require"
                     label="必填" width="70">
                 <template scope="scope">
-                    <el-checkbox v-model="scope.row.require" :disabled="!scope.row.fieldId" true-label="1"
-                                 false-label="0"/>
+                    <el-checkbox v-model="scope.row.require" :disabled="!scope.row.fieldId"/>
                 </template>
             </el-table-column>
             <!--<el-table-column-->
@@ -151,15 +151,9 @@
 
     export default {
         name: 'item-pretrial-form',
-        props: {
-            itemVo: {
-                type: Object,
-                default: undefined,
-                required: true
-            }
-        },
         data() {
             return {
+                itemVo: undefined,
                 defualtSize: 6,
                 pretrialForm: {
                     fields: []
@@ -186,6 +180,7 @@
                 };
                 if (field.require) {
                     rule.required = true;
+                    rule.message = '此项为必填项';
                 }
                 if (field.regex) {
                     rule.pattern = new RegExp(field.regex);
@@ -242,38 +237,53 @@
             /**
              * 加载现有的配置
              * */
-            loadPretrialFormByItemId() {
+            loadPretrialForm(itemVo) {
+                this.itemVo = itemVo;
+                this.previewFormModel.fields = [];
+                this.fields = [];
+                this.pretrialForm = {};
+
                 getFormByItemId(this.itemVo.id).then(response => {
-                    if (response.data) {
-                        const i = 0;
-                        for (const field of response.data.fields) {
-                            field.field = {
-                                id: field.fieldId,
-                                key: field.key,
-                                label: field.label,
-                                require: field.require,
-                                regex: field.regex,
-                                regexError: field.regexError
-                            };
-                            this.fields.push({
-                                id: field.fieldId,
-                                key: field.key,
-                                label: field.label,
-                                require: field.require,
-                                regex: field.regex,
-                                regexError: field.regexError
-                            });
+                    if (response.httpCode === 200) {
+                        let data = response.data;
+                        if (data) {
+                            for (const field of data.fields) {
+                                // select 组件中的选中项的信息
+                                field.field = {
+                                    id: field.fieldId,
+                                    key: field.key,
+                                    label: field.label,
+                                    require: field.require,
+                                    regex: field.regex,
+                                    regexError: field.regexError
+                                };
+                                // 添加到 select 组件中的待选项
+                                this.fields.push({
+                                    id: field.fieldId,
+                                    key: field.key,
+                                    label: field.label,
+                                    require: field.require,
+                                    regex: field.regex,
+                                    regexError: field.regexError
+                                });
+                                // 预览区域的数据
+                                this.previewFormModel.fields.push({value: ''});
+                            }
+                            // 返回的数据，修改后用户界面还原显示编辑行
+                            this.pretrialForm = data;
+                        } else {
+                            this.pretrialForm = {
+                                title: this.itemVo.name + '预审表单',
+                                itemId: this.itemVo.id,
+                                version: 1,
+                                tplId: 0,
+                                fields: [],
+                                status: 1
+                            }
                         }
-                        this.pretrialForm = response.data;
                     } else {
-                        this.pretrialForm = {
-                            title: this.itemVo.name + '预审表单',
-                            itemId: this.itemVo.id,
-                            version: 1,
-                            tplId: 0,
-                            fields: [],
-                            status: 1
-                        }
+                        this.$message.error(response.msg);
+
                     }
                 }).catch(e => {
                     console.log(e);
@@ -293,8 +303,12 @@
                     id, itemId, version, tplId, status, title,
                     itemPretrialFormFieldsJson: encodeURIComponent(encodeURIComponent(JSON.stringify(this.pretrialForm.fields.filter(f => !!f.fieldId))))
                 })).then(response => {
+                    if (response.httpCode == 200) {
+                        this.$message.success('提交成功');
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                     console.log(response);
-                    this.$message.success('提交成功');
                 }).catch(e => {
                     console.log(e);
                     this.$message.error('提交失败');
@@ -303,17 +317,21 @@
             remoteSelect(query) {
                 if (query !== '') {
                     this.loading = true;
+                    this.fields = [];
                     suggestField({
                         keywords: query,
                         formId: this.pretrialForm.id
                     }).then(response => {
                         this.loading = false;
-                        this.fields = response.data;
+                        if (response.httpCode === 200) {
+                            this.fields = response.data;
+                        } else {
+                            this.$message.error(response.msg);
+                        }
                     }).catch(e => {
                         this.loading = false;
+                        console.error(e);
                     });
-                } else {
-                    this.fields = [];
                 }
             },
             addNewField() {

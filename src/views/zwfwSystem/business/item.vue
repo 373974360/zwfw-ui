@@ -744,7 +744,7 @@
                    :before-close="closeZwfwItemPretrialForm"
                    @open="onPretrialFormOpen">
 
-            <item-pretrial-form :itemVo="currentItem" ref="itemPretrialForm"></item-pretrial-form>
+            <item-pretrial-form ref="itemPretrialForm"></item-pretrial-form>
 
             <div style="text-align: center" slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="closeZwfwItemPretrialForm">取 消</el-button>
@@ -1515,7 +1515,7 @@
             },
             onPretrialFormOpen(){
                 this.$nextTick(function(){
-                    this.$refs.itemPretrialForm.loadPretrialFormByItemId(this.currentItem.id);
+                    this.$refs.itemPretrialForm.loadPretrialForm(this.currentItem);
                 })
             },
             getItemConfig() {
