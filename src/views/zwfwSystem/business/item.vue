@@ -749,7 +749,7 @@
             <div style="text-align: center" slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="closeZwfwItemPretrialForm">取 消</el-button>
                 <el-button type="primary" icon="circle-check"
-                           @click="submitItemPretrialForm">确 定
+                           @click="submitItemPretrialForm">保 存
                 </el-button>
             </div>
         </el-dialog>

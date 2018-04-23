@@ -54,6 +54,11 @@
                     <span>{{scope.row.regex}}</span>
                 </template>
             </el-table-column>
+            <el-table-column align="center" label="正则错误提示">
+                <template scope="scope">
+                    <span>{{scope.row.regexError}}</span>
+                </template>
+            </el-table-column>
             <el-table-column align="center" label="备注" prop="remark">
                 <template scope="scope">
                     <span>{{scope.row.remark}}</span>
@@ -152,6 +157,7 @@
                     require: false,
                     defaultValue: null,
                     regex: undefined,
+                    regexError: undefined,
                     remark: undefined,
                     optionDic: undefined
                 },
@@ -307,6 +313,7 @@
                     require: false,
                     defaultValue: null,
                     regex: undefined,
+                    regexError: undefined,
                     remark: undefined,
                     optionDic: undefined
                 };

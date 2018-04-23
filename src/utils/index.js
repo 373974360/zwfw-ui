@@ -215,6 +215,12 @@ export function getTime(type) {
     }
 }
 
+/**
+ * 复制对象属性
+ * @param target 接收对象
+ * @param source 原对象
+ * @returns {*}
+ */
 export function copyProperties(target, source) {
     if (source === undefined || source === null) {
         return;

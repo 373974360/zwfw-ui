@@ -175,23 +175,24 @@
             //     return this.pretrialForm.fields.filter(f => f.fieldId === fieldId).length > 0;
             // },
             fieldRule(field) {
-                const rule = {
-                    trigger: 'blur,change'
-                };
+                let rules = [];
                 if (field.require) {
+                    const rule = {
+                        trigger: 'blur,change'
+                    };
                     rule.required = true;
                     rule.message = '此项为必填项';
+                    rules.push(rule);
                 }
                 if (field.regex) {
+                    const rule = {
+                        trigger: 'blur,change'
+                    };
                     rule.pattern = new RegExp(field.regex);
-                    rule.message = field.regexError;
+                    rule.message = field.regexError || '格式不正确';
+                    rules.push(rule);
                 }
-                if (Object.keys(rule).length > 0 && !(field.key in this.rules)) {
-                    // console.log('添加验证规则 for ' + field.key);
-                    // this.$set(this.rules, field.key, [rule]);
-                }
-                // console.log(field.label,rule);
-                return rule;
+                return rules;
             },
             testRegex() {
                 this.$refs.previewForm.validate(result => {
