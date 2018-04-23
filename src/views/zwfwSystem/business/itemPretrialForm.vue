@@ -137,6 +137,12 @@
                 </el-col>
             </el-row>
         </el-form>
+
+
+        <p>
+            每行宽度平均分成24等分，尺寸表示24等分中占几个等分。
+        </p>
+
     </div>
 
 </template>
@@ -337,7 +343,7 @@
             },
             addNewField() {
                 const items = {
-                    id: new Date().getTime() + '',
+                    id: 'new_' + new Date().getTime(),
                     formId: this.formId,
                     fieldId: undefined,
                     key: undefined,

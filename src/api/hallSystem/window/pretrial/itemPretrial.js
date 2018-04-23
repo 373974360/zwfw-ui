@@ -66,4 +66,13 @@ export function getAllZwfwItemPretrial() {
     });
 }
 
+export function getPretrialForm(id) {
+    const data = {id};
+    return fetch({
+        url: '/api/workSystem/itemPretrial/getPretrialForm',
+        method: 'get',
+        data
+    });
+}
+
 

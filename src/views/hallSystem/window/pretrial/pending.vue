@@ -16,16 +16,16 @@
                 </template>
             </el-table-column>
             <!--<el-table-column width="250px" align="center" label="申请企业（个人）">-->
-                <!--<template scope="scope">-->
-                    <!--<span v-if="scope.row.companyName != null">{{scope.row.companyName}}</span>-->
-                    <!--<span v-if="scope.row.memberName != null">{{scope.row.memberName}}</span>-->
-                <!--</template>-->
+            <!--<template scope="scope">-->
+            <!--<span v-if="scope.row.companyName != null">{{scope.row.companyName}}</span>-->
+            <!--<span v-if="scope.row.memberName != null">{{scope.row.memberName}}</span>-->
+            <!--</template>-->
             <!--</el-table-column>-->
             <!--<el-table-column align="center" label="办事员">-->
-                <!--<template scope="scope">-->
-                    <!--<span v-if="scope.row.clerkName != null && scope.row.memberType == 3">{{scope.row.clerkName}}</span>-->
-                    <!--<span v-if="scope.row.memberName != null && scope.row.memberType == 1 || scope.row.memberType == 2">{{scope.row.memberName}}</span>-->
-                <!--</template>-->
+            <!--<template scope="scope">-->
+            <!--<span v-if="scope.row.clerkName != null && scope.row.memberType == 3">{{scope.row.clerkName}}</span>-->
+            <!--<span v-if="scope.row.memberName != null && scope.row.memberType == 1 || scope.row.memberType == 2">{{scope.row.memberName}}</span>-->
+            <!--</template>-->
             <!--</el-table-column>-->
 
 
@@ -45,12 +45,12 @@
             <el-table-column align="left" label="办事员信息" min-width="200">
                 <template scope="scope">
                     <span v-if="scope.row.memberType == 3">
-                        <span >
+                        <span>
                             姓名：{{scope.row.clerkName}}<br>
                         </span>联系电话：{{scope.row.clerkPhone}}<br>
                     </span>
                     <span v-if="scope.row.memberType == 1 || scope.row.memberType == 2">
-                        <span >
+                        <span>
                             姓名：{{scope.row.memberName}}<br>
                         </span>联系电话：{{scope.row.memberPhone}}<br>
                     </span>
@@ -83,7 +83,7 @@
             </el-table-column>
             <el-table-column label="操作" align="center">
                 <template scope="scope">
-                    <el-button class="filter-item"  type="primary"
+                    <el-button class="filter-item" type="primary"
                                @click="editAudit(scope.row)">审 核
                     </el-button>
                 </template>
@@ -207,8 +207,9 @@
     import {
         getZwfwItemPretrialList,
         getPretrialDetail,
-        submitReview
-    } from 'api/hallSystem/window/pretrial/itemPretrial';
+        submitReview,
+        getPretrialForm
+    } from '../../../../api/hallSystem/window/pretrial/itemPretrial';
     import {mapGetters} from 'vuex';
     import {copyProperties, resetForm} from 'utils';
 
@@ -251,7 +252,8 @@
                     status: [
                         {required: true, message: '请选择审核结果', trigger: 'change'}
                     ]
-                }
+                },
+                pretrialForm: {}
             }
         },
         created() {
@@ -263,7 +265,10 @@
                 'enums',
                 'enums',
                 'closeOnClickModal'
-            ])
+            ]),
+            pretrialFormRow() {
+
+            }
         },
         methods: {
             handleFilter() {
@@ -312,7 +317,12 @@
                     } else {
                         this.$message.error('数据加载失败')
                     }
-                })
+                    return this.itemPretrial;
+                }).catch(e => {
+                    this.$message.error('数据加载失败');
+                }).then(itemPretrial => {
+                    console.log(itemPretrial);
+                });
             },
             submitReview() {
                 this.itemPretrialRules.status[0].required = true;
@@ -420,8 +430,16 @@
     }
 
     .h2-style-show {
-        font-weight: 100;
+        font-weight: 400;
         font-size: 24px;
         margin-top: 5px;
+    }
+
+    .pretrialFormTable .label {
+        font-weight: bold;
+    }
+
+    .pretrialFormTable .value {
+        padding: 0px 20px;
     }
 </style>

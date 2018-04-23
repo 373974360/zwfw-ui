@@ -107,7 +107,9 @@
                     <el-checkbox v-model="formField.require" true-label="1" false-label="0"/>
                 </el-form-item>
                 <el-form-item label="正则验证" prop="regex">
-                    <el-input v-model="formField.regex"/>
+                    <el-input type="textarea" v-model="formField.regex"/>
+                    <br>
+                    <a href="https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&tn=baidu&wd=%E5%B8%B8%E7%94%A8%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F" class="link-type" target="_blank">常用正则表达式</a>
                 </el-form-item>
                 <el-form-item label="验证错误提示" prop="regexError">
                     <el-input v-model="formField.regexError"/>
@@ -116,6 +118,7 @@
                     <el-input v-model="formField.remark"/>
                 </el-form-item>
             </el-form>
+
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="resetFormFieldForm">取 消</el-button>
                 <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
