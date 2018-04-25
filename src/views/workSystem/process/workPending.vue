@@ -47,10 +47,37 @@
                     <span>{{scope.row.promiseFinishTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="申请办理人" prop="memberRealname">
+            <!--<el-table-column align="center" label="申请办理人" prop="memberRealname">-->
+                <!--<template scope="scope">-->
+                    <!--<div>{{scope.row.memberRealname}}</div>-->
+                    <!--<div>{{scope.row.memberPhonenumber}}</div>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
+            <el-table-column align="left" label="申请企业（个人）" min-width="200">
                 <template scope="scope">
-                    <div>{{scope.row.memberRealname}}</div>
-                    <div>{{scope.row.memberPhonenumber}}</div>
+                    <span v-if="scope.row.memberType == 1">
+                        姓名：{{scope.row.memberRealname}}<br>联系电话：{{scope.row.memberPhonenumber}}<br>
+                    </span>
+                    <span v-if="scope.row.memberType == 2 || scope.row.memberType == 3">
+                        <span v-if="scope.row.companyName">
+                            公司：{{scope.row.companyName}}<br>
+                        </span>
+                        法人姓名：{{scope.row.memberRealname}}<br>联系电话：{{scope.row.memberPhonenumber}}<br>
+                    </span>
+                </template>
+            </el-table-column>
+            <el-table-column align="left" label="办事员信息" min-width="200">
+                <template scope="scope">
+                    <span v-if="scope.row.memberType == 3">
+                        <span >
+                            姓名：{{scope.row.clerkName}}<br>
+                        </span>联系电话：{{scope.row.clerkPhone}}<br>
+                    </span>
+                    <span v-if="scope.row.memberType == 1 || scope.row.memberType == 2">
+                        <span >
+                            姓名：{{scope.row.memberRealname}}<br>
+                        </span>联系电话：{{scope.row.memberPhonenumber}}<br>
+                    </span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="整改状态" prop="flagCorrection">
@@ -58,11 +85,11 @@
                     <span>{{scope.row.flagCorrection | enums('YesNo')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="企业名称" prop="companyName">
-                <template scope="scope">
-                    <span>{{scope.row.companyName}}</span>
-                </template>
-            </el-table-column>
+            <!--<el-table-column align="center" label="企业名称" prop="companyName">-->
+                <!--<template scope="scope">-->
+                    <!--<span>{{scope.row.companyName}}</span>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
             <el-table-column prop="enable" class-name="status-col" label="状态">
                 <template scope="scope">
                     <span>{{scope.row.status | enums('ItemProcessStatus')}}</span>
@@ -211,7 +238,7 @@
                     <el-tabs v-model="tabPaneShow" type="card">
                         <el-tab-pane label="申请企业/个人" name="first">
                             <div>
-                                <div v-if="member.legalPerson!=null">
+                                <div v-if="member && member.legalPerson!=null">
                                     <table class="table table-responsive table-bordered">
                                         <tr>
                                             <th width="140">办事企业/机构</th>
@@ -267,7 +294,10 @@
                                         </template>
                                     </table>
                                 </div>
-                                <div v-if="member.naturePerson!=null">
+                                <div v-if="member.naturePerson!=null && member.type == 3">
+                                    <h3>授权办事员信息：</h3>
+                                </div>
+                                <div v-if="member && member.naturePerson!=null">
                                     <table class="table table-responsive table-bordered">
                                         <tr>
                                             <th width="140">姓名</th>
@@ -331,6 +361,10 @@
                                         </td>
                                     </tr>
                                 </table>
+                                <div style="text-align: center;">
+                                    <img :src="'/api/workSystem/itemProcessWork/showDiagram?processNumber=' + itemProcessVo.processNumber"
+                                         style="max-width:100%"/>
+                                </div>
                             </div>
                             <div v-if="itemProcessVo.status==15">
                                 已办结
@@ -390,6 +424,7 @@
                             </table>
                         </el-tab-pane>
                         <el-tab-pane label="办件材料" name="fifth">
+                            <el-button @click="downloadMaterialFiles()" type="primary">一键下载材料</el-button><br><br>
                             <table class="table table-bordered table-responsive">
                                 <tr>
                                     <th>序号</th>
@@ -566,7 +601,8 @@
                     }
                 }).catch(e=>{
                     this.listLoading = false;
-                    this.$message.error(response.msg || '加载超时');
+                    console.error(e);
+                    this.$message.error('加载超时');
                 })
             },
             /**
@@ -613,19 +649,25 @@
                                 taskId: itemProcessAttachmentList[o].taskId}
                             );
                         }
-                        this.queryCompanyInfo(this.member);
+                        if(this.member) {
+                            this.queryCompanyInfo(this.member);
+                        }
                     } else {
                     }
 
                 }).catch(e => {
                     this.dialogLoading = false;
-                    this.$message.error(response.msg || '加载超时');
+                    console.error(e);
+                    this.$message.error('加载超时');
                 });
             },
             /**
              * 查询企业信息
              */
             queryCompanyInfo(memberInfo) {
+                if(!memberInfo){
+                    return;
+                }
                 this.companyInfo = {};
                 if (memberInfo.memberCode == '' || memberInfo.memberCode.length != 18) {
                     this.companyInfo = {};
@@ -779,9 +821,14 @@
             },
             print_ycxgzd(processNumber) {
                 if (processNumber != null) {
-                    window.open('/admin/print/ycxgzd.html?processNumber=' + processNumber);
+                    window.open('print/ycxgzd.html?processNumber=' + processNumber);
                     // window.open('/api/hallSystem/hallCompositeWindow/downloadYcxgzd?processNumber=' + processNumber);
                 }
+            },
+
+            downloadMaterialFiles() {
+                // console.log(this.itemProcessVo);
+                window.open('/api/common/downloadMaterialFiles?processNumber='+this.itemProcessVo.processNumber+'&taskId='+this.itemProcessVo.taskId);
             },
 
             /**
@@ -881,7 +928,7 @@
     }
 
     .h2-style-show {
-        font-weight: 100;
+        font-weight: 400;
         font-size: 24px;
         margin-top: 5px;
     }

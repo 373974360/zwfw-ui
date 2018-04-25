@@ -37,18 +37,17 @@
                 <el-checkbox :label="3">成功受理</el-checkbox>
                 <el-checkbox :label="4">不予受理</el-checkbox>
             </el-checkbox-group>
-            <br>
-            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" placement="top-start">
-                <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
-                    搜索
-                </el-button>
-            </el-tooltip>
+            <!--<br>-->
+            <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
+                搜索
+            </el-button>
+
         </div>
 
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row style="width: 100%">
-            <el-table-column align="center" label="编号" width="140">
+            <el-table-column align="center" label="编号" width="170">
                 <template scope="scope">
-                    {{scope.row.id}} <br>
+                    {{scope.row.fullOrderNo}} <br>
                     【{{scope.row.orderNo}}】
                 </template>
             </el-table-column>
@@ -57,11 +56,28 @@
                     <span>{{scope.row.itemName}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="申请人">
+            <el-table-column align="left" label="申请企业（个人）" width="260">
                 <template scope="scope">
-                    <span>{{scope.row.companyName || scope.row.memberName}}</span>
-                    <br>
-                    {{scope.row.mobilephone}}
+                    <span v-if="scope.row.memberType == 1">
+                        姓名：{{scope.row.memberName}}<br>联系电话：{{scope.row.mobilephone}}<br>
+                    </span>
+                    <span v-if="scope.row.memberType == 2 ||scope.row.memberType == 3">
+                        <span v-if="scope.row.companyName">
+                            公司：{{scope.row.companyName}}<br>
+                        </span>
+                        法人姓名：{{scope.row.memberName}}<br>联系电话：{{scope.row.mobilephone}}<br>
+                    </span>
+                </template>
+            </el-table-column>
+            <el-table-column align="left" label="办事员" width="200">
+                <template scope="scope">
+                    <span v-if="scope.row.memberType == 1">姓名：{{scope.row.memberName}}<br>
+                    联系电话：{{scope.row.mobilephone}}</span>
+                    <span v-if="scope.row.memberType == 2">姓名：{{ scope.row.memberName}}<br>
+                    联系电话：{{scope.row.mobilephone}}</span>
+                    <span v-if="scope.row.memberType == 3">
+                    姓名：{{ scope.row.clerkName}}<br>
+                    联系电话：{{scope.row.clerkPhone}}</span>
                 </template>
             </el-table-column>
             <!--<el-table-column align="center" label="联系电话">-->
@@ -126,31 +142,39 @@
                         <!--<td style="color:red"><strong class="font-size:5rem">{{itemNumber.type | enum-->
                         <!--'ItemWindowSupport'}}</strong></td>-->
                         <!--</tr>-->
-                        <tr v-if="member!=null && member.naturePerson!=null">
-                            <th>姓名:</th>
+                        <tr v-if="member!=null && member.naturePerson!=null && member.type == 1">
+                            <th>(个人)姓名:</th>
+                            <td>{{member.naturePerson.name}}</td>
+                        </tr>
+                        <tr v-if="member!=null && member.naturePerson!=null &&  member.type == 3">
+                            <th>（授权）办事员姓名:</th>
                             <td>{{member.naturePerson.name}}</td>
                         </tr>
                         <tr v-if="itemNumber!=null && itemNumber.personPhone!=null">
                             <th>办事员电话:</th>
                             <td>{{itemNumber.personPhone}}</td>
                         </tr>
-                        <tr v-if="member!=null && member.naturePerson!=null">
-                            <th>自然人手机号:</th>
+                        <tr v-if="member!=null && member.naturePerson!=null && member.type == 1">
+                            <th>(个人)手机号:</th>
                             <td>{{member.naturePerson.phone}}</td>
                         </tr>
-                        <tr v-if="member!=null && member.legalPerson!=null">
+                        <tr v-if="member!=null && member.naturePerson!=null &&  member.type == 3">
+                            <th>（授权）办事员手机号:</th>
+                            <td>{{member.naturePerson.phone}}</td>
+                        </tr>
+                        <tr v-if="member!=null && member.legalPerson!=null && member.type == 2 || member.type == 3">
                             <th>企业法人:</th>
                             <td>{{member.legalPerson.legalPerson}}</td>
                         </tr>
-                        <tr v-if="member!=null && member.legalPerson!=null">
+                        <tr v-if="member!=null && member.legalPerson!=null && member.type == 2 || member.type == 3">
                             <th>法人电话:</th>
                             <td>{{member.legalPerson.phone}}</td>
                         </tr>
-                        <tr v-if="member!=null && member.legalPerson!=null">
+                        <tr v-if="member!=null && member.legalPerson!=null && member.type == 2 || member.type == 3">
                             <th>企业名称:</th>
                             <td>{{member.legalPerson.companyName}}</td>
                         </tr>
-                        <tr v-if="member!=null && member.legalPerson!=null">
+                        <tr v-if="member!=null && member.legalPerson!=null && member.type == 2 || member.type == 3">
                             <th>社会统一信用代码:</th>
                             <td>{{member.legalPerson.companyCode}}</td>
                         </tr>
@@ -537,19 +561,19 @@
             },
             print_ywsld() {
                 if (this.itemNumber != null) {
-                    window.open('/admin/print/ywsld.html?numberId=' + this.itemNumber.id);
+                    window.open('print/ywsld.html?numberId=' + this.itemNumber.id);
                     // window.open('/api/hallSystem/hallCompositeWindow/downloadYwsld?numberId=' + this.itemNumber.id);
                 }
             },
             print_wlzyd() {
                 if (this.itemNumber != null) {
-                    window.open('/admin/print/wlzyd.html?numberId=' + this.itemNumber.id);
+                    window.open('print/wlzyd.html?numberId=' + this.itemNumber.id);
                     // window.open('/api/hallSystem/hallCompositeWindow/downloadWlzyd?numberId=' + this.itemNumber.id);
                 }
             },
             print_ycxgzd() {
                 if (this.itemNumber != null) {
-                    window.open('/admin/print/ycxgzd.html?numberId=' + this.itemNumber.id);
+                    window.open('print/ycxgzd.html?numberId=' + this.itemNumber.id);
                     // window.open('/api/hallSystem/hallCompositeWindow/downloadYcxgzd?numberId=' + this.itemNumber.id);
                 }
             },

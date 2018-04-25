@@ -1,4 +1,4 @@
-import {loginByEmail,refreshToken, logout, getInfo} from 'api/common/login/login';
+import {loginByEmail,refreshToken, logout, getInfo} from '../../api/common/login/login';
 import {
     getToken,
     setToken,

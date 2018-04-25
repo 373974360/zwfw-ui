@@ -12,6 +12,10 @@
                       v-model="listQuery.idcard"></el-input>
             <el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item" placeholder="请输入联系电话"
                       v-model="listQuery.phone"></el-input>
+            <el-select class="filter-item" v-model="listQuery.verifyStatus" clearable placeholder="请选择审核状态">
+                <el-option value="0" label="未审核"></el-option>
+                <el-option value="1" label="已审核"></el-option>
+            </el-select>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
             <!--<el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">-->
             <!--添加-->
@@ -119,7 +123,7 @@
                             <th width="140">注册地址</th>
                             <td>{{legalPersonVerify.registerPlace}}</td>
                             <th width="140">注册日期</th>
-                            <td>{{legalPersonVerify.registerDate}}</td>
+                            <td>{{legalPersonVerify.registerDate | date('YYYY-MM-DD')}}</td>
                         </tr>
                     </table>
                 </div>
@@ -134,15 +138,12 @@
                                     <el-option label="未通过" value="2"></el-option>
                                 </el-select>
                             </el-form-item>
-                            <!--<el-form-item v-if="zwfwLegalPerson.pass==1 && zwfwLegalPerson.pass !=''" label="通过备注">-->
-                            <!--<el-input v-model="passRemark" type="textarea"></el-input>-->
-                            <!--</el-form-item>-->
-                            <!--<el-form-item v-if="zwfwLegalPerson.pass==2 && zwfwLegalPerson.pass !=''" label="未通过原因">-->
-                            <!--<el-input v-model="noPassRemark" type="textarea"></el-input>-->
-                            <!--</el-form-item>-->
+                            <el-form-item label="审核结果说明">
+                                <el-input v-model="legalPersonVerify.verifyResult" type="textarea"></el-input>
+                            </el-form-item>
                         </el-form>
                         <div style="text-align: center" slot="footer" class="dialog-footer">
-                            <el-button type="primary" icon="circle-check" @click="submitReview">提交预审结果
+                            <el-button type="primary" icon="circle-check" @click="submitReview">提交
                             </el-button>
                         </div>
                     </div>
@@ -152,8 +153,18 @@
                             <tr>
                                 <th width="140">审核结果</th>
                                 <td>{{legalPersonVerify.verifyStatus | enums('VerifyStatus')}}</td>
-                                <!--<th width="140">通过备注</th>-->
-                                <!--<td>{{zwfwLegalPerson.remark}}</td>-->
+                            </tr>
+                            <tr>
+                                <th width="140">审核结果说明</th>
+                                <td>{{legalPersonVerify.verifyResult}}</td>
+                            </tr>
+                            <tr width="140">
+                                <th>审核人员</th>
+                                <td>{{legalPersonVerify.updateByName}}</td>
+                            </tr>
+                            <tr width="140">
+                                <th>审核时间</th>
+                                <td>{{legalPersonVerify.updateTime | date('YYYY-MM-DD HH:mm:ss')}}</td>
                             </tr>
                         </table>
                     </div>
@@ -179,12 +190,12 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
-                    name: undefined,
                     companyName: undefined,
                     companyCode: undefined,
                     idcard: undefined,
                     phone: undefined,
-                    legalPerson: undefined
+                    legalPerson: undefined,
+                    verifyStatus: undefined
                 },
                 currentRow: null,
                 selectedRows: [],
@@ -204,7 +215,10 @@
                     phone: undefined,
                     registerPlace: undefined,
                     registerDate: undefined,
-                    verifyStatus: undefined
+                    verifyStatus: undefined,
+                    verifyResult: undefined,
+                    updateByName: undefined,
+                    updateTime: undefined
                 },
                 legalPersonVerifyRules: {
                     verifyStatus: [{required: true, message: '请选择审核结果', trigger: 'blur'}]
@@ -263,13 +277,14 @@
                         this.dialogFormVisible = false;
                         verify({
                             id: this.legalPersonVerify.id,
-                            verifyStatus: this.legalPersonVerify.verifyStatus
+                            verifyStatus: this.legalPersonVerify.verifyStatus,
+                            verifyResult: this.legalPersonVerify.verifyResult
                         }).then(response => {
                             if (response.httpCode === 200) {
                                 this.$message.success('审核成功！');
                                 this.getList();
                             } else {
-                                this.$message.error(response.msg);
+                                this.$message.error(response.msg || '审核失败');
                             }
                         })
                     } else {
@@ -289,12 +304,14 @@
                     phone: undefined,
                     registerPlace: undefined,
                     registerDate: undefined,
-                    verifyStatus: undefined
+                    verifyStatus: undefined,
+                    verifyResult: undefined,
+                    updateByName: undefined,
+                    updateTime: undefined
                 }
             },
             handleSizeChange(val) {
                 this.listQuery.rows = val;
-                this.listQuery.name = null;
                 this.getList();
             },
             handleCurrentChange(val) {

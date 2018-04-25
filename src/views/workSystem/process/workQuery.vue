@@ -8,7 +8,7 @@
             <el-select
                     remote
                     style="width: 400px;" class="filter-item" placeholder="公司名称"
-                    v-model="listQuery.companyId"
+                    v-model="listQuery.ownerPersonId"
                     filterable clearable
                     :remote-method="queryCompanySearch"
                     @change="handleCompanySelect">
@@ -59,10 +59,31 @@
                     <span>{{scope.row.promiseFinishTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="申请办理人" prop="memberRealname">
+            <el-table-column align="left" label="申请企业（个人）" min-width="200">
                 <template scope="scope">
-                    <div>{{scope.row.memberRealname}}</div>
-                    <div>{{scope.row.memberPhonenumber}}</div>
+                    <span v-if="scope.row.memberType == 1">
+                        姓名：{{scope.row.memberRealname}}<br>联系电话：{{scope.row.memberPhonenumber}}<br>
+                    </span>
+                    <span v-if="scope.row.memberType == 2 || scope.row.memberType == 3">
+                        <span v-if="scope.row.companyName">
+                            公司：{{scope.row.companyName}}<br>
+                        </span>
+                        法人姓名：{{scope.row.memberRealname}}<br>联系电话：{{scope.row.memberPhonenumber}}<br>
+                    </span>
+                </template>
+            </el-table-column>
+            <el-table-column align="left" label="办事员信息" min-width="200">
+                <template scope="scope">
+                    <span v-if="scope.row.memberType == 3">
+                        <span >
+                            姓名：{{scope.row.clerkName}}<br>
+                        </span>联系电话：{{scope.row.clerkPhone}}<br>
+                    </span>
+                    <span v-if="scope.row.memberType == 1 || scope.row.memberType == 2">
+                        <span >
+                            姓名：{{scope.row.memberRealname}}<br>
+                        </span>联系电话：{{scope.row.memberPhonenumber}}<br>
+                    </span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="整改状态" prop="flagCorrection">
@@ -70,11 +91,11 @@
                     <span>{{scope.row.flagCorrection | enums('YesNo')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="企业名称" prop="companyName">
-                <template scope="scope">
-                    <span>{{scope.row.companyName}}</span>
-                </template>
-            </el-table-column>
+            <!--<el-table-column align="center" label="企业名称" prop="companyName">-->
+                <!--<template scope="scope">-->
+                    <!--<span>{{scope.row.companyName}}</span>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
             <el-table-column prop="enable" class-name="status-col" label="状态" width="50">
                 <template scope="scope">
                     <span>{{scope.row.status | enums('ItemProcessStatus')}}</span>
@@ -203,6 +224,9 @@
                                             </tr>
                                         </template>
                                     </table>
+                                </div>
+                                <div v-if="member.naturePerson!=null && member.type == 3">
+                                    <h3>授权办事员信息：</h3>
                                 </div>
                                 <div v-if="member!=null && member.naturePerson!=null">
                                     <table class="table table-responsive table-bordered">
@@ -409,7 +433,7 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
-                    companyId: undefined,
+                    ownerPersonId: undefined,
                     processNumber: null
                 },
                 zwfwDeptWorkQuery: {
@@ -529,7 +553,7 @@
                 this.dialogFormVisible = false;
             },
             handleCompanySelect(code) {
-                this.listQuery.companyId = code;
+                this.listQuery.ownerPersonId = code;
                 this.getList();
             },
             queryCompanySearch(queryString) {
@@ -618,14 +642,14 @@
             print_ycxgzd(processNumber) {
                 if (processNumber != null) {
                     // window.open('/api/hallSystem/hallCompositeWindow/downloadYcxgzd?processNumber=' + processNumber);
-                    window.open('/admin/print/ycxgzd.html?processNumber=' + processNumber);
+                    window.open('print/ycxgzd.html?processNumber=' + processNumber);
                 }
             },
             handlePictureCardPreview(file) {
                 window.open(file.url);
             },
             downloadMaterialFiles() {
-                console.log(this.itemProcessVo);
+                // console.log(this.itemProcessVo);
                 window.open('/api/common/downloadMaterialFiles?processNumber='+this.itemProcessVo.processNumber+'&taskId='+this.itemProcessVo.taskId);
             },
             printMaterialFiles() {
@@ -671,7 +695,7 @@
     }
 
     .h2-style-show {
-        font-weight: 100;
+        font-weight: 400;
         font-size: 24px;
     }
 

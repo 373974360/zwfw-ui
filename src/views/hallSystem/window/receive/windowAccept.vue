@@ -151,9 +151,10 @@
                                                         </el-row>
                                                         <el-row :gutter="10">
                                                             <el-col :span="12">
-                                                                <el-tooltip content="如果只有15位注册号，使用000作为前缀后面跟入15位注册号，可用于注册查询"
-                                                                            placement="bottom"
-                                                                            effect="light">
+                                                                <el-tooltip
+                                                                        content="如果只有15位注册号，使用000作为前缀后面跟入15位注册号，可用于注册查询"
+                                                                        placement="bottom"
+                                                                        effect="light">
                                                                     <el-input v-model="companyCode"
                                                                               placeholder="社会统一信用代码"
                                                                               @keyup.native="toUpperCase">
@@ -177,7 +178,8 @@
                                                                         effect="light">
                                                                     <el-button type="primary"
                                                                                @click="checkLegalMemberExist()"
-                                                                               :disabled="!companyCode && !memberCode">注册查询
+                                                                               :disabled="!companyCode && !memberCode">
+                                                                        注册查询
                                                                     </el-button>
                                                                 </el-tooltip>
                                                             </el-col>
@@ -354,7 +356,7 @@
                                                     v-model="selectedItem"
                                                     placeholder="选择分类下的事项"
                                                     filterable
-                                                    @change="changeItem" :loading="loadingItem" style="width:100%" >
+                                                    @change="changeItem" :loading="loadingItem" style="width:100%">
                                                 <el-option
                                                         v-for="item in optionsName"
                                                         :key="item.id"
@@ -417,31 +419,39 @@
                                         <!--<td style="color:red"><strong class="font-size:5rem">{{itemNumber.type | enum-->
                                         <!--'ItemWindowSupport'}}</strong></td>-->
                                         <!--</tr>-->
-                                        <tr v-if="member!=null && member.naturePerson!=null">
-                                            <th>姓名:</th>
+                                        <tr v-if="member!=null &&member.type == 1 &&  member.naturePerson!=null">
+                                            <th>(个人)姓名:</th>
                                             <td>{{member.naturePerson.name}}</td>
+                                        </tr>
+                                        <tr v-if="member!=null &&member.type == 1 && member.naturePerson!=null">
+                                            <th>自然人手机号:</th>
+                                            <td>{{member.naturePerson.phone}}</td>
+                                        </tr>
+                                        <tr v-if="member!=null &&member.type == 3 && member.naturePerson!=null">
+                                            <th>(授权)办事员:</th>
+                                            <td>{{member.naturePerson.name}}</td>
+                                        </tr>
+                                        <tr v-if="member!=null &&member.type == 3 && member.naturePerson!=null">
+                                            <th>(授权)办事员手机号:</th>
+                                            <td>{{member.naturePerson.phone}}</td>
                                         </tr>
                                         <tr v-if="itemNumber!=null && itemNumber.personPhone!=null">
                                             <th>办事员电话:</th>
                                             <td>{{itemNumber.personPhone}}</td>
                                         </tr>
-                                        <tr v-if="member!=null && member.naturePerson!=null">
-                                            <th>自然人手机号:</th>
-                                            <td>{{member.naturePerson.phone}}</td>
-                                        </tr>
-                                        <tr v-if="member!=null && member.legalPerson!=null">
+                                        <tr v-if="member!=null &&member.type != 1 && member.legalPerson!=null">
                                             <th>企业法人:</th>
                                             <td>{{member.legalPerson.legalPerson}}</td>
                                         </tr>
-                                        <tr v-if="member!=null && member.legalPerson!=null">
+                                        <tr v-if="member!=null &&member.type != 1 && member.legalPerson!=null">
                                             <th>法人电话:</th>
                                             <td>{{member.legalPerson.phone}}</td>
                                         </tr>
-                                        <tr v-if="member!=null && member.legalPerson!=null">
+                                        <tr v-if="member!=null &&member.type != 1 && member.legalPerson!=null">
                                             <th>企业名称:</th>
                                             <td>{{member.legalPerson.companyName}}</td>
                                         </tr>
-                                        <tr v-if="member!=null && member.legalPerson!=null">
+                                        <tr v-if="member!=null &&member.type != 1 && member.legalPerson!=null">
                                             <th>社会统一信用代码:</th>
                                             <td>{{member.legalPerson.companyCode}}</td>
                                         </tr>
@@ -751,10 +761,10 @@
 
                             <template v-if="itemNumber.status!=3">
                                 <el-input v-if="itemNumber.status!=4"
-                                        type="textarea"
-                                        :autosize="{ minRows: 2, maxRows: 4}"
-                                        placeholder="填写备注"
-                                        v-model="remark">
+                                          type="textarea"
+                                          :autosize="{ minRows: 2, maxRows: 4}"
+                                          placeholder="填写备注"
+                                          v-model="remark">
                                 </el-input>
                                 <div style="margin-top:10px;" v-if="itemNumber.status!=4">
 
@@ -795,7 +805,7 @@
                                     <span v-show="!contactsPhone">缺少联系手机号；</span>
                                     <span v-show="memberType=='2' && !companyCode">缺少社会统一信用代码；</span>
                                     <span v-show="memberType=='2' && !companyName">缺少公司名称；</span>
-                                    <span v-show="memberType=='2' && !companyAddress">缺少公司地址；</span>
+                                    <!--<span v-show="memberType=='2' && !companyAddress">缺少公司地址；</span>-->
                                     <span v-show="!itemVo.id">缺少事项；</span>
                                 </p>
                             </template>
@@ -973,7 +983,7 @@
         checkNatureMemberExist,
         fastRegMember,
         queryPendingFromBoxList
-    } from 'api/hallSystem/window/receive/windowAccept';
+    } from '../../../../api/hallSystem/window/receive/windowAccept';
     import {getAllByNameOrbasicCode} from 'api/zwfwSystem/business/item';
     import {getCategoryCascader} from 'api/zwfwSystem/business/category';
     import {getAllMailbox} from 'api/hallSystem/window/mailbox';
@@ -1177,7 +1187,7 @@
                     (!this.contactsPhone) ||
                     (this.memberType == '2' && !this.companyCode) ||
                     (this.memberType == '2' && !this.companyName) ||
-                    (this.memberType == '2' && !this.companyAddress) ||
+                    // (this.memberType == '2' && !this.companyAddress) ||
                     (!this.itemVo.id)
 
                 // return (this.itemNumber.id && this.itemNumber.status != 6) || !this.memberPhone || !this.memberRealname || !this.memberCode || this.submiting || !this.itemVo || !this.itemVo.id
@@ -1514,6 +1524,7 @@
                             }
                             if (!this.memberPhone) {
                                 this.memberPhone = this.member.mobilephone;
+                                this.contactsPhone = this.member.mobilephone;
                             }
                             if (!this.memberCode) {
                                 this.memberCode = this.member.memberCode;
@@ -1535,7 +1546,7 @@
                 }
                 checkLegalMemberExist({
                     companyCode: this.companyCode,
-                    memberCode:this.memberCode
+                    memberCode: this.memberCode
                 }).then(response => {
                     if (response.httpCode === 200) {
                         if (response.data == null) {
@@ -1557,7 +1568,7 @@
                             if (!this.memberCode) {
                                 this.memberCode = this.member.memberCode;
                             }
-                            if (this.member.type == 2 && this.member.legalPerson) {
+                            if (this.member && this.member.type == 2 && this.member.legalPerson) {
                                 if (!this.companyName) {
                                     this.companyName = this.member.legalPerson.companyName;
                                 }
@@ -1914,8 +1925,9 @@
                     this.$message.warning('请选择取件方式');
                     return;
                 }
-                if (!this.contactsPhone) {
-                    this.$message.warning('请输入联系人手机号');
+                if (!validatMobiles(this.contactsPhone)) {
+                    this.$message.warning('联系人手机号格式不正确');
+                    return;
                 }
                 //判断如果是无预审收件，则验证无预审表单各项目是否填写完整
                 if (this.memberType == 1) { //自然人
@@ -1971,7 +1983,7 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    if (!this.itemNumber.id) {
+                    if (!this.itemNumber || !this.itemNumber.id || !this.itemNumber.flagPretrial) { //非预审的号
                         this.submiting = true;
                         submitNoPretrial({
                             memberType: this.memberType,
@@ -2153,7 +2165,7 @@
                         }).catch(e => {
                             this.submiting = false;
                         });
-                    }else{
+                    } else {
                         this.submiting = true;
                         submitWork({
                             numberId: _itemNumber.id,
@@ -2270,19 +2282,19 @@
             },
             print_ywsld() {
                 if (this.itemNumber != null) {
-                    window.open('/admin/print/ywsld.html?numberId=' + this.itemNumber.id);
+                    window.open('print/ywsld.html?numberId=' + this.itemNumber.id);
                     // window.open('/api/hallSystem/hallCompositeWindow/downloadYwsld?numberId=' + this.itemNumber.id);
                 }
             },
             print_wlzyd() {
                 if (this.itemNumber != null) {
-                    window.open('/admin/print/wlzyd.html?numberId=' + this.itemNumber.id);
+                    window.open('print/wlzyd.html?numberId=' + this.itemNumber.id);
                     // window.open('/api/hallSystem/hallCompositeWindow/downloadWlzyd?numberId=' + this.itemNumber.id);
                 }
             },
             print_ycxgzd() {
                 if (this.itemNumber != null) {
-                    window.open('/admin/print/ycxgzd.html?numberId=' + this.itemNumber.id);
+                    window.open('print/ycxgzd.html?numberId=' + this.itemNumber.id);
                     // window.open('/api/hallSystem/hallCompositeWindow/downloadYcxgzd?numberId=' + this.itemNumber.id);
                 }
             },

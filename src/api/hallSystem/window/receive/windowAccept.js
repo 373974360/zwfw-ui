@@ -148,18 +148,6 @@ export function queryCompanyInfo(query) {
 // }
 
 /**
- * 添加企业信息
- * @param compony
- */
-export function addCompanyInfo(compony) {
-    return fetch({
-        url: '/api/hallSystem/hallCompositeWindow/addCompanyInfo',
-        method: 'post',
-        params: compony
-    });
-}
-
-/**
  * 分页查询企业信息
  * @param query
  */
@@ -287,3 +275,28 @@ export function queryPendingFromBoxList(query) {
     });
 }
 
+/**
+ * 添加企业信息 (new业务流程)
+ * @param compony
+ */
+export function insertCompanyInfo(enterpriseList) {
+    const data = enterpriseList;
+    return fetch({
+        url: '/api/hallSystem/hallCompositeWindow/insertCompanyInfo',
+        method: 'post',
+        data
+    });
+}
+
+/**
+ * 获取变更历史企业信息
+ * @param query
+ */
+export function queryHistoryCompanysInfo(gs_code) {
+    const data = {"gs_code": gs_code};
+    return fetch({
+        url: '/api/hallSystem/hallCompositeWindow/queryHistoryCompanysInfo',
+        method: 'post',
+        params: data
+    });
+}

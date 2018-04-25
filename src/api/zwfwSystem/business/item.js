@@ -104,7 +104,7 @@ export function getDetailById(id) {
 
 export function getItemConfig(itemId) {
     return fetch({
-        url: '/api/zwfwSystem/item/getPreorderconfig',
+        url: '/api/zwfwSystem/business/preorderConfig/getPreorderconfig',
         method: 'get',
         params: {itemId: itemId}
     })
@@ -113,7 +113,7 @@ export function getItemConfig(itemId) {
 export function setItemConfig(zwfwItemConfig) {
     const data = zwfwItemConfig;
     return fetch({
-        url: '/api/zwfwSystem/item/setPreorderconfig',
+        url: '/api/zwfwSystem/business/preorderConfig/setPreorderconfig',
         method: 'post',
         params: data
     })

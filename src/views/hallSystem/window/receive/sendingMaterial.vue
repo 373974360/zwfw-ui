@@ -52,13 +52,30 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column align="left" label="申请人信息" min-width="260">
+            <el-table-column align="left" label="申请企业（个人）" min-width="260">
                 <template scope="scope">
-                    <span>
+                    <span v-if="scope.row.memberType == 1">
+                        姓名：{{scope.row.memberName}}<br>联系电话：{{scope.row.memberPhone}}<br>
+                    </span>
+                    <span v-if="scope.row.memberType == 2 || scope.row.memberType == 3">
                         <span v-if="scope.row.companyName">
                             公司：{{scope.row.companyName}}<br>
                         </span>
-                        申请人：{{scope.row.memberName}}<br>联系电话：{{scope.row.memberPhone}}<br>
+                        法人姓名：{{scope.row.memberName}}<br>联系电话：{{scope.row.memberPhone}}<br>
+                    </span>
+                </template>
+            </el-table-column>
+            <el-table-column align="left" label="办事员信息" min-width="200">
+                <template scope="scope">
+                    <span v-if="scope.row.memberType == 3">
+                        <span >
+                            姓名：{{scope.row.clerkName}}<br>
+                        </span>联系电话：{{scope.row.clerkPhone}}<br>
+                    </span>
+                    <span v-if="scope.row.memberType == 1 || scope.row.memberType == 2">
+                        <span >
+                            姓名：{{scope.row.memberName}}<br>
+                        </span>联系电话：{{scope.row.memberPhone}}<br>
                     </span>
                 </template>
             </el-table-column>
@@ -118,10 +135,22 @@
                 <el-form-item label="公司名称" v-if="currentRow.companyName">
                     <el-input v-model="currentRow.companyName" disabled></el-input>
                 </el-form-item>
-                <el-form-item label="申请人姓名">
+                <el-form-item label="法人名称" v-if="currentRow.memberType == 3 && currentRow.memberName">
                     <el-input v-model="currentRow.memberName" disabled></el-input>
                 </el-form-item>
-                <el-form-item label="联系电话">
+                <el-form-item label="法人联系电话" v-if="currentRow.memberType == 3 && currentRow.memberPhone">
+                    <el-input v-model="currentRow.memberPhone" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="办事员" v-if="currentRow.memberType == 3 && currentRow.clerkName">
+                    <el-input v-model="currentRow.clerkName" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="办事员联系电话" v-if="currentRow.memberType == 3 && currentRow.clerkPhone">
+                    <el-input v-model="currentRow.clerkPhone" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="申请人姓名" v-if="currentRow.memberType != 3">
+                    <el-input v-model="currentRow.memberName" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="联系电话" v-if="currentRow.memberType != 3">
                     <el-input v-model="currentRow.memberPhone" disabled></el-input>
                 </el-form-item>
                 <template v-if="currentRow.handTypeInfo">

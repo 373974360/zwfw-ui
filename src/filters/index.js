@@ -11,8 +11,8 @@ export function date(value, format) {
 
 export function statusFilter(status) {
     const statusMap = {
-        '正常': 'success',
-        '禁用': 'gray',
+        '启用': 'success',
+        '停用': 'gray',
         '已删除': 'danger',
         '菜单': 'success',
         '按钮': 'primary'
@@ -69,10 +69,14 @@ export function expressTypeFilter(type) {
 }
 
 export function enums(value, type) {
+
+    if(type == 'Enable' && value==-1) {
+        return '已删除';
+    }
     var array = app.state.enums[type];
     if(!array) {
         console.warn('没有枚举类型' + type);
-        return '';
+        return value;
     }
     var result = array.filter(function (item) {
         return item.code === value;
@@ -80,7 +84,7 @@ export function enums(value, type) {
     if (result[0]) {
         return result[0].value || value;
     } else {
-        return '';
+        return value;
     }
 }
 export function dics(value, type) {
@@ -97,7 +101,7 @@ export function dics(value, type) {
         if (result[0]) {
             return result[0].value || value;
         } else {
-            return '';
+            return value;
         }
     }
 }
