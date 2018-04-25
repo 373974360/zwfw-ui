@@ -172,7 +172,7 @@ export function getDataNumberCount() {
 export function jiaohao(windowId) {
     const data = {windowId}
     return fetch({
-        url: '/api/hallSystem/count/statistics/jiaohao',
+        url: '/api/hallSystem/count/statistics/weixinOrSmsJiaohao',
         method: 'post',
         data
     });
