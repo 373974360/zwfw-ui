@@ -43,6 +43,11 @@
                     <span>{{scope.row.electronicMaterial | enums('YesNo')}}</span>
                 </template>
             </el-table-column>
+            <el-table-column prop="electronicMaterial" align="center" label="预审表单">
+                <template scope="scope">
+                    <span class="link-type" @click='handlePretrialForm(scope.row,$event)'>设置表单域</span>
+                </template>
+            </el-table-column>
         </el-table>
 
         <div v-show="!pageLoading" class="pagination-container">
@@ -111,8 +116,11 @@
                         <!--<el-button style="margin-left: 10px;" size="small" type="info" @click="showMaterialExample">
                             点击下载
                         </el-button>-->
-                        <a :href="this.zwfwMaterial.example" :download="downloadExample" :class="{disabled: !this.zwfwMaterial.example}">
-                            <el-button style="margin-left: 10px;" size="small" type="info" :disabled="!this.zwfwMaterial.example">点击下载</el-button>
+                        <a :href="this.zwfwMaterial.example" :download="downloadExample"
+                           :class="{disabled: !this.zwfwMaterial.example}">
+                            <el-button style="margin-left: 10px;" size="small" type="info"
+                                       :disabled="!this.zwfwMaterial.example">点击下载
+                            </el-button>
                         </a>
                     </el-upload>
                 </el-form-item>
@@ -135,8 +143,11 @@
                         <!--<el-button style="margin-left: 10px;" size="small" type="info" @click="showEformFile">
                             点击下载
                         </el-button>-->
-                        <a :href="this.zwfwMaterial.eform" :download="downloadEform" :class="{disabled: !this.zwfwMaterial.eform}">
-                            <el-button style="margin-left: 10px;" size="small" type="info" :disabled="!this.zwfwMaterial.eform">点击下载</el-button>
+                        <a :href="this.zwfwMaterial.eform" :download="downloadEform"
+                           :class="{disabled: !this.zwfwMaterial.eform}">
+                            <el-button style="margin-left: 10px;" size="small" type="info"
+                                       :disabled="!this.zwfwMaterial.eform">点击下载
+                            </el-button>
                         </a>
                     </el-upload>
                 </el-form-item>
@@ -155,6 +166,22 @@
                 </el-button>
             </div>
         </el-dialog>
+
+        <!--材料表单配置-->
+        <el-dialog title="材料表单配置" :visible.sync="dialogItemPretrialFormVisible"
+                   :close-on-click-modal="closeOnClickModal"
+                   :before-close="closeZwfwItemPretrialForm"
+                   @open="onPretrialFormOpen">
+
+            <item-pretrial-form ref="materialForm"></item-pretrial-form>
+
+            <div style="text-align: center" slot="footer" class="dialog-footer">
+                <el-button icon="circle-cross" type="danger" @click="closeZwfwItemPretrialForm">取 消</el-button>
+                <el-button type="primary" icon="circle-check"
+                           @click="submitItemPretrialForm">保 存
+                </el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -167,9 +194,14 @@
         updateZwfwMaterial,
         delZwfwMaterials
     } from 'api/zwfwSystem/business/material';
+    import ItemPretrialForm from "./itemPretrialForm";
+
 
     export default {
         name: 'zwfwMaterial_table',
+        components:{
+            ItemPretrialForm
+        },
         data() {
             return {
                 zwfwMaterialList: [],
@@ -192,6 +224,7 @@
                     example: '',
                     notice: ''
                 },
+                dialogItemPretrialFormVisible: false,
                 currentRow: null,
                 selectedRows: [],
                 dialogFormVisible: false,
@@ -315,7 +348,7 @@
             },
             doDelete() {
                 this.pageLoading = true;
-                let ids = [];
+                const ids = [];
                 for (const deleteRow of this.selectedRows) {
                     ids.push(deleteRow.id);
                 }
@@ -405,6 +438,25 @@
             },
             toggleSelection(row) {
                 this.$refs.zwfwMaterialTable.toggleRowSelection(row);
+            },
+            /* 预审表单设置 */
+            handlePretrialForm(zwfwMaterial, $event) {
+                this.zwfwMaterial = zwfwMaterial;
+                $event.stopPropagation(); // 阻止选中事项
+                /* 显示添加界面 */
+                this.dialogItemPretrialFormVisible = true;
+            },
+            onPretrialFormOpen() {
+                this.$nextTick(function() {
+                    this.$refs.materialForm.loadPretrialForm(this.zwfwMaterial);
+                })
+            },
+            /* 提交预审表单配置 */
+            submitItemPretrialForm() {
+                this.$refs.materialForm.submitItemPretrialForm();
+            },
+            closeZwfwItemPretrialForm() {
+                this.dialogItemPretrialFormVisible = false;
             }
         }
     }

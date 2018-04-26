@@ -2,13 +2,13 @@ import fetch from 'utils/fetch';
 
 /**
  * 查询表单
- * @param itemId 事项 id
+ * @param materialId 材料 id
  */
-export function getFormByItemId(itemId) {
+export function getFormByMaterialId(materialId) {
     return fetch({
-        url: '/api/zwfwSystem/business/itemPretrialForm/getFormByItemId',
+        url: '/api/zwfwSystem/business/itemPretrialForm/getFormByMaterialId',
         method: 'get',
-        params: {itemId}
+        params: { materialId }
     });
 }
 

@@ -85,10 +85,6 @@
             <el-table-column align="center" label="办理形式" prop="handleType" width="100">
                 <template scope="scope">
                     {{scope.row.handleType | dics('blxs')}}
-                    <span class="link-type" v-show="scope.row.handleType=='blxs_wsys'"
-                          @click="handlePretrialForm(scope.row,$event)">
-                        设置
-                    </span>
                 </template>
             </el-table-column>
             <el-table-column prop="enable" class-name="status-col" label="状态" width="80">
@@ -739,20 +735,7 @@
                 </el-button>
             </div>
         </el-dialog>
-        <!--事项预审表单配置-->
-        <el-dialog title="事项预审表单配置" :visible.sync="dialogItemPretrialFormVisible" :close-on-click-modal="closeOnClickModal"
-                   :before-close="closeZwfwItemPretrialForm"
-                   @open="onPretrialFormOpen">
 
-            <item-pretrial-form ref="itemPretrialForm"></item-pretrial-form>
-
-            <div style="text-align: center" slot="footer" class="dialog-footer">
-                <el-button icon="circle-cross" type="danger" @click="closeZwfwItemPretrialForm">取 消</el-button>
-                <el-button type="primary" icon="circle-check"
-                           @click="submitItemPretrialForm">保 存
-                </el-button>
-            </div>
-        </el-dialog>
 
     </div>
 </template>
@@ -776,12 +759,10 @@
     import {getDeptCascader} from 'api/baseSystem/org/dept';
     import {getAllAddressees, getAddresseeById} from 'api/hallSystem/window/addressee';
     import {quillEditor} from 'vue-quill-editor'
-    import ItemPretrialForm from "./itemPretrialForm";
 
     export default {
         name: 'zwfwItem_table',
         components: {
-            ItemPretrialForm,
             quillEditor
         },
         data() {
@@ -926,7 +907,6 @@
                 dialogItemFormVisible: false,
                 dialogMaterialFormVisible: false,
                 dialogItemConfigFormVisible: false,
-                dialogItemPretrialFormVisible: false,
                 dialogStatus: '',
                 uploadAction: this.$store.state.app.uploadUrl,
                 fileAccepts: this.$store.state.app.fileAccepts,
@@ -1506,18 +1486,7 @@
                 this.resetMaterialTemp();
                 this.dialogItemConfigFormVisible = true;
             },
-            /*预审表单设置*/
-            handlePretrialForm(item, $event) {
-                this.currentItem = item;
-                $event.stopPropagation(); //阻止选中事项
-                /*显示添加界面*/
-                this.dialogItemPretrialFormVisible = true;
-            },
-            onPretrialFormOpen(){
-                this.$nextTick(function(){
-                    this.$refs.itemPretrialForm.loadPretrialForm(this.currentItem);
-                })
-            },
+
             getItemConfig() {
                 getItemConfig(this.currentItem.id).then(response => {
                     if (response.httpCode === 200) {
@@ -1558,10 +1527,6 @@
                 });
             },
 
-            /*提交预审表单配置*/
-            submitItemPretrialForm() {
-                this.$refs.itemPretrialForm.submitItemPretrialForm();
-            },
             searchMaterial(query, cb) {
                 if (query !== '') {
                     let valid = validateQueryStr(query);
@@ -1797,9 +1762,7 @@
                 this.dialogItemConfigFormVisible = false;
                 // this.resetZwfwMaterialForm();
             },
-            closeZwfwItemPretrialForm() {
-                this.dialogItemPretrialFormVisible = false;
-            },
+
             resetZwfwMaterialForm() {
                 this.changeMaterialInfo = false;
                 this.resetMaterialTemp();

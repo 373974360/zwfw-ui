@@ -150,7 +150,7 @@
 <script>
 
     import {
-        getFormByItemId,
+        getFormByMaterialId,
         updateForm,
         suggestField
     } from '../../../api/zwfwSystem/business/itemPretrialForm';
@@ -244,13 +244,12 @@
             /**
              * 加载现有的配置
              * */
-            loadPretrialForm(itemVo) {
-                this.itemVo = itemVo;
+            loadPretrialForm(zwfwMaterial) {
+                this.zwfwMaterial = zwfwMaterial;
                 this.previewFormModel.fields = [];
                 this.fields = [];
                 this.pretrialForm = {};
-
-                getFormByItemId(this.itemVo.id).then(response => {
+                getFormByMaterialId(this.zwfwMaterial.id).then(response => {
                     if (response.httpCode === 200) {
                         let data = response.data;
                         if (data) {
@@ -280,8 +279,8 @@
                             this.pretrialForm = data;
                         } else {
                             this.pretrialForm = {
-                                title: this.itemVo.name + '预审表单',
-                                itemId: this.itemVo.id,
+                                title: this.zwfwMaterial.name + '表单',
+                                materialId: this.zwfwMaterial.id,
                                 version: 1,
                                 tplId: 0,
                                 fields: [],
@@ -301,13 +300,13 @@
              * 提交修改
              */
             submitItemPretrialForm() {
-                const {id, title, itemId, version, tplId, status} = this.pretrialForm;
+                const {id, title,  version, tplId, status, materialId} = this.pretrialForm;
                 for (const field of this.pretrialForm.fields) {
                     field.createTime = null;// 提交上去转换 Date 类型会报错，所以不传
                     field.updateTime = null;// 提交上去转换 Date 类型会报错，所以不传
                 }
                 updateForm(Object.assign({
-                    id, itemId, version, tplId, status, title,
+                    id,  version, tplId, status, title, materialId,
                     itemPretrialFormFieldsJson: encodeURIComponent(encodeURIComponent(JSON.stringify(this.pretrialForm.fields.filter(f => !!f.fieldId))))
                 })).then(response => {
                     if (response.httpCode == 200) {
@@ -342,7 +341,7 @@
                 }
             },
             addNewField() {
-                const items = {
+                const newField = {
                     id: 'new_' + new Date().getTime(),
                     formId: this.formId,
                     fieldId: undefined,
@@ -354,7 +353,7 @@
                     require: true,
                     field: {}
                 };
-                this.pretrialForm.fields.push(items);
+                this.pretrialForm.fields.push(newField);
                 this.previewFormModel.fields.push({value: ''});
                 /* 清空自动完成 */
                 this.fields = [];
