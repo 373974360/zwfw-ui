@@ -90,6 +90,11 @@
                      label-width="120px"
                      label-suffix="："
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="formFieldRules">
+                <el-form-item label="上级表单域分类">
+                    <el-cascader :options="cascader" v-model="selectedCategoryArray" @change="handleChange"
+                                 :show-all-levels="false" expand-trigger="hover" :clearable="true"
+                                 :change-on-select="false" style="width:100%"></el-cascader>
+                </el-form-item>
                 <el-form-item label="名称" prop="label">
                     <el-input v-model="formField.label"/>
                 </el-form-item>
@@ -153,6 +158,11 @@
         delFormFields
     } from '../../../api/baseSystem/data/formField';
 
+    import {
+        getCategoryTree,
+        getCategoryCascader
+    } from '../../../api/baseSystem/data/formFieldCategory';
+
     export default {
         name: 'formField_table',
         data() {
@@ -167,6 +177,7 @@
                 },
                 formField: {
                     id: undefined,
+                    categoryId: undefined,
                     label: undefined,
                     key: undefined,
                     inputType: undefined,
@@ -190,7 +201,9 @@
                     key: [
                         {required: true, message: '请输入表单域key'}
                     ]
-                }
+                },
+                cascader: [],
+                selectedCategoryArray: []
             }
         },
         created() {
@@ -239,6 +252,8 @@
                 this.resetTemp();
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
+                this.selectedCategoryArray = [];
+                this.getOptions(null);
             },
             handleUpdate(row) {
                 this.currentRow = row;
@@ -246,6 +261,11 @@
                 this.formField = copyProperties(this.formField, row);
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
+                this.selectedCategoryArray = [];
+                if (this.formField.categoryId) {
+                    this.selectedCategoryArray.push(this.formField.categoryId);
+                }
+                this.getOptions(this.formField.categoryId);
             },
             handleDelete(row) {
                 if (this.selectedRows == 0) {
@@ -324,6 +344,7 @@
             resetTemp() {
                 this.formField = {
                     id: undefined,
+                    categoryId: undefined,
                     label: undefined,
                     key: undefined,
                     inputType: 1,
@@ -340,6 +361,22 @@
                 this.dialogFormVisible = false;
                 this.resetTemp();
                 resetForm(this, 'formFieldForm');
+            },
+            getOptions(id) {
+                getCategoryCascader(id).then(response => {
+                    if (response.httpCode === 200) {
+                        this.cascader = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                })
+            },
+            handleChange(value) {
+                if (value.length > 0) {
+                    this.formField.categoryId = value[value.length - 1];
+                } else {
+                    this.formField.categoryId = value;
+                }
             }
         }
     }
