@@ -33,6 +33,7 @@ const MessageFiled = () => import('../views/baseSystem/data/messageFiled');
 const MessageTemplate = () => import('../views/baseSystem/data/messageTemplate');
 const Dict = () => import('../views/baseSystem/data/dic');
 const FormField = () => import('../views/baseSystem/data/formField');
+const FormFieldCategory = () => import('../views/baseSystem/data/formFieldCategory');
 const MetadataType = () => import('../views/baseSystem/data/metadataType');
 const Holiday = () => import('../views/baseSystem/data/holiday');
 /* 系统管理 */
@@ -267,7 +268,13 @@ export const asyncRouterMap = [
                 component: Dict,
                 name: '数据字典',
                 meta: {permission: 'baseSystem:data:dicIndex:list'}
-            }, {
+            },
+            {
+                path: 'formFieldCategory',
+                component: FormFieldCategory,
+                name: '表单域分类管理',
+                meta: {permission: 'baseSystem:data:formFieldCategory:list'}
+            },{
                 path: 'formField',
                 component: FormField,
                 name: '表单域管理',
