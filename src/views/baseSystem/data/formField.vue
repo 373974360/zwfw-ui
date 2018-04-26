@@ -16,12 +16,11 @@
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column type="selection" width="55"/>
-            <el-table-column align="center" label="序号">
-                <template scope="scope">
-                    <span>{{scope.row.id}}</span>
-                </template>
-            </el-table-column>
-
+            <!--<el-table-column align="center" label="序号">-->
+                <!--<template scope="scope">-->
+                    <!--<span>{{scope.row.id}}</span>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
             <el-table-column align="center" label="表单域名称" prop="label">
                 <template scope="scope">
                     <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
@@ -29,12 +28,12 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="key">
+            <el-table-column align="center" label="唯一标识">
                 <template scope="scope">
                     <span>{{scope.row.key}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="默认值">
+            <el-table-column align="center" label="默认内容">
                 <template scope="scope">
                     <span>{{scope.row.defaultValue}}</span>
                 </template>
@@ -46,15 +45,20 @@
             </el-table-column>
             <el-table-column align="center" label="必填">
                 <template scope="scope">
-                    <span>{{scope.row.require}}</span>
+                    <i v-if="scope.row.require" style="color:green" class="el-icon-circle-check"></i>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="正则验证">
+            <el-table-column align="center" label="复用">
+                <template scope="scope">
+                    <i v-if="scope.row.flagHistoryValue" style="color:green" class="el-icon-circle-check"></i>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="正则表达式">
                 <template scope="scope">
                     <span>{{scope.row.regex}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="正则错误提示">
+            <el-table-column align="center" label="正则验证失败提示">
                 <template scope="scope">
                     <span>{{scope.row.regexError}}</span>
                 </template>
@@ -64,13 +68,13 @@
                     <span>{{scope.row.remark}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="enable" class-name="status-col" label="状态">
-                <template scope="scope">
-                    <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
-                        {{scope.row.enable | enums('Enable')}}
-                    </el-tag>
-                </template>
-            </el-table-column>
+            <!--<el-table-column prop="enable" class-name="status-col" label="状态">-->
+                <!--<template scope="scope">-->
+                    <!--<el-tag :type="scope.row.enable | enums('Enable') | statusFilter">-->
+                        <!--{{scope.row.enable | enums('Enable')}}-->
+                    <!--</el-tag>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
         </el-table>
 
         <div v-show="!listLoading" class="pagination-container">
@@ -103,16 +107,22 @@
                     <br>
                     <span>选项之间使用分号(;)隔开</span>
                 </el-form-item>
-                <el-form-item label="默认值" prop="defaultValue">
+                <el-form-item label="默认内容" prop="defaultValue">
                     <el-input v-model="formField.defaultValue"/>
                 </el-form-item>
-                <el-form-item label="必填" prop="require">
+                <el-form-item label="是否是必填项" prop="require">
                     <el-checkbox v-model="formField.require" true-label="1" false-label="0"/>
+                </el-form-item>
+                <el-form-item label="是否可复用" prop="flagHistoryValue">
+                    <el-checkbox v-model="formField.flagHistoryValue" true-label="1" false-label="0"/>
+                    <br>
+                    <span>如果此内容后期可在输入时复用请勾选，否则请勿勾选</span>
                 </el-form-item>
                 <el-form-item label="正则表达式" prop="regex">
                     <el-input type="textarea" v-model="formField.regex"/>
                     <br>
-                    <a href="https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&tn=baidu&wd=%E5%B8%B8%E7%94%A8%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F" class="link-type" target="_blank">常用正则表达式</a>
+                    <a href="https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&tn=baidu&wd=%E5%B8%B8%E7%94%A8%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"
+                       class="link-type" target="_blank">常用正则表达式</a>
                 </el-form-item>
                 <el-form-item label="验证失败提示" prop="regexError">
                     <el-input v-model="formField.regexError"/>
@@ -165,7 +175,8 @@
                     regex: undefined,
                     regexError: undefined,
                     remark: undefined,
-                    optionDic: undefined
+                    optionDic: undefined,
+                    flagHistoryValue: false
                 },
                 currentRow: null,
                 selectedRows: [],
@@ -321,7 +332,8 @@
                     regex: undefined,
                     regexError: undefined,
                     remark: undefined,
-                    optionDic: undefined
+                    optionDic: undefined,
+                    flagHistoryValue: false
                 };
             },
             resetFormFieldForm() {
