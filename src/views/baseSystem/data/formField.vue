@@ -83,7 +83,8 @@
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible"
                    :close-on-click-modal="closeOnClickModal" :before-close="resetFormFieldForm">
             <el-form ref="formFieldForm" class="small-space" :model="formField" label-position="right"
-                     label-width="80px"
+                     label-width="120px"
+                     label-suffix="："
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="formFieldRules">
                 <el-form-item label="名称" prop="label">
                     <el-input v-model="formField.label"/>
@@ -99,6 +100,8 @@
                 </el-form-item>
                 <el-form-item v-if="formField.inputType == 2 || formField.inputType == 3" label="选项字典" prop="optionDic">
                     <el-input v-model="formField.optionDic"/>
+                    <br>
+                    <span>选项之间使用分号(;)隔开</span>
                 </el-form-item>
                 <el-form-item label="默认值" prop="defaultValue">
                     <el-input v-model="formField.defaultValue"/>
@@ -106,12 +109,12 @@
                 <el-form-item label="必填" prop="require">
                     <el-checkbox v-model="formField.require" true-label="1" false-label="0"/>
                 </el-form-item>
-                <el-form-item label="正则验证" prop="regex">
+                <el-form-item label="正则表达式" prop="regex">
                     <el-input type="textarea" v-model="formField.regex"/>
                     <br>
                     <a href="https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&tn=baidu&wd=%E5%B8%B8%E7%94%A8%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F" class="link-type" target="_blank">常用正则表达式</a>
                 </el-form-item>
-                <el-form-item label="验证错误提示" prop="regexError">
+                <el-form-item label="验证失败提示" prop="regexError">
                     <el-input v-model="formField.regexError"/>
                 </el-form-item>
                 <el-form-item label="备注" prop="remark">
