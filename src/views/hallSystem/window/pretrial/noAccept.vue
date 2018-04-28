@@ -142,6 +142,25 @@
 
                     </table>
                 </div>
+                <div v-if="pretrialForm && pretrialForm.length>0">
+                    <h2 class="h2-style-show">预审表单：</h2>
+                    <div v-for="form in pretrialForm">
+                        <table class="table table-responsive table-bordered">
+                            <tr>
+                                <th colspan="24" style="text-align: center;background: #eee;">{{form.title}}</th>
+                            </tr>
+                            <tr v-for="row in form.rows">
+                                <td v-for="(field,index) in row"
+                                    :colspan="field.size"
+                                    :key="field.id"
+                                    style="padding:5px;">
+                                    <span class="label"><span v-if="field.require" style="color:red">*</span>
+                                        {{field.labelAlias || field.label}}:</span> <span class="value">{{field.value}}</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
                 <div class="table-show">
                     <div class="table-inline">
                         <h2 class="h2-style-show">预审材料:</h2>
@@ -227,7 +246,9 @@
                 titleName: '',
                 currentItemPretrial: [],
                 dialogStatus: '',
-                dialogFormVisible: false
+                dialogFormVisible: false,
+                pretrialForm: []
+
             }
         },
         created() {
@@ -279,13 +300,41 @@
             getPretrialDetail() {
                 getPretrialDetail(this.processNumber).then(response => {
                     if (response.httpCode === 200) {
-                        this.member = response.data.member;
-                        this.materialList = response.data.pretrialMaterialList;
+                        const data = response.data;
+                        this.member = data.member;
+                        this.pretrialMaterialList = data.pretrialMaterialList;
                         this.itemPretrial = this.currentItemPretrial;
+                        this.itemPretrial.status = '';
+                        this.pretrialForm = [];
+                        for (const form of data.pretrialForm || []) {
+                            for (const field of form.fields) {
+                                field.value = data.pretrialFormFieldValueMap[field.fieldId] || '';
+                            }
+                            const fields = form.fields;
+                            const rowsData = [];
+                            let pos = 0;
+                            let rows = 0;
+                            fields.forEach(field => {
+                                if (24 - pos < field.size) {
+                                    rows++;
+                                    pos = 0;
+                                }
+                                pos += field.size;
+                                if (!rowsData[rows]) {
+                                    rowsData[rows] = [];
+                                }
+                                rowsData[rows].push(field);
+                            });
+                            form.rows = rowsData;
+                            this.pretrialForm.push(form);
+                        }
+                        this.itemPretrialRules.status[0].required = false;
                     } else {
                         this.$message.error('数据加载失败')
                     }
-                })
+                }).catch(e => {
+                    this.$message.error('数据加载失败');
+                });
             },
             print_ycxgzd() {
                 if (this.itemPretrial != null) {
