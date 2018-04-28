@@ -2,16 +2,28 @@
     <div v-loading="loading"
          element-loading-text="拼命加载中">
         <el-row :gutter="10">
-            <el-col :span="6">
-            </el-col>
-            <el-col :span="18">
+            <el-col :span="14">
                 默认尺寸：
                 <el-input-number v-model="defualtSize" value="6" :min="1" :max="24">
 
                 </el-input-number>
-
                 <el-button type="primary" @click="addNewField">添加字段</el-button>
-                <el-button type="primary" @click="testRegex">测试正则</el-button>
+            </el-col>
+            <el-col :span="2">
+                <div style="text-align: right">版本：</div>
+            </el-col>
+            <el-col :span="5">
+                <el-select v-model="selectFormId" placeholder="请选择" style="width:100%" @change="changeVersion">
+                    <el-option
+                            v-for="version in versions"
+                            :key="version.id"
+                            :label="getVersionName(version)"
+                            :value="version.id">
+                    </el-option>
+                </el-select>
+            </el-col>
+            <el-col :span="3">
+                <el-button type="primary" @click="addNewVersion">创建新版本</el-button>
             </el-col>
         </el-row>
         <el-table
@@ -123,7 +135,7 @@
         </el-table>
 
         <h1>预览区域：</h1>
-        <el-form ref="previewForm" :model="previewFormModel" label-position="top" label-width="80px" label-suffix=":">
+        <el-form ref="previewForm" :model="pretrialForm" label-position="top" label-width="80px" label-suffix=":">
             <el-row :gutter="10">
                 <el-col v-for="(field,index) in pretrialForm.fields" v-if="!!field.fieldId"
                         :span="field.size"
@@ -132,28 +144,27 @@
                                   :rules="fieldRule(field)"
                                   :key="field.id+'_input'"
                                   :prop="'fields.'+index+'.value'">
-                        <el-input v-model="previewFormModel.fields[index].value"></el-input>
+                        <el-input v-model="pretrialForm.fields[index].value"></el-input>
                     </el-form-item>
                 </el-col>
             </el-row>
         </el-form>
-
-
         <p>
             每行宽度平均分成24等分，尺寸表示24等分中占几个等分。
         </p>
-
     </div>
 
 </template>
 
 <script>
-
+    import {enums} from '../../../filters';
     import {
         getFormByMaterialId,
         updateForm,
         suggestField
     } from '../../../api/zwfwSystem/business/itemPretrialForm';
+
+    import {mapGetters} from 'vuex';
 
     export default {
         name: 'item-pretrial-form',
@@ -172,16 +183,27 @@
                 previewFormModel: {
                     fields: []
                 },
-                rules: {}
+                rules: {},
+                versions: [],
+                newForm: undefined,
+                selectFormId:undefined
             }
         },
-
+        computed: {
+            ...mapGetters([
+                'enums',
+                'dics'
+            ])
+        },
         methods: {
             // checkFieldExist(fieldId) {
             //     return this.pretrialForm.fields.filter(f => f.fieldId === fieldId).length > 0;
             // },
+            getVersionName(version) {
+                return '[' + enums(version.status, 'ItemPretrialFormStatus') + '] ' + version.version;
+            },
             fieldRule(field) {
-                let rules = [];
+                const rules = [];
                 if (field.require) {
                     const rule = {
                         trigger: 'blur,change'
@@ -246,67 +268,87 @@
              * */
             loadPretrialForm(zwfwMaterial) {
                 this.zwfwMaterial = zwfwMaterial;
-                this.previewFormModel.fields = [];
-                this.fields = [];
-                this.pretrialForm = {};
+                this.newForm = undefined; // 删除新增 form
                 getFormByMaterialId(this.zwfwMaterial.id).then(response => {
                     if (response.httpCode === 200) {
-                        let data = response.data;
+                        const allVersions = this.versions = response.data;
+                        const data = allVersions.length > 0 ? allVersions[0] : null;
                         if (data) {
-                            for (const field of data.fields) {
-                                // select 组件中的选中项的信息
-                                field.field = {
-                                    id: field.fieldId,
-                                    key: field.key,
-                                    label: field.label,
-                                    require: field.require,
-                                    regex: field.regex,
-                                    regexError: field.regexError
-                                };
-                                // 添加到 select 组件中的待选项
-                                this.fields.push({
-                                    id: field.fieldId,
-                                    key: field.key,
-                                    label: field.label,
-                                    require: field.require,
-                                    regex: field.regex,
-                                    regexError: field.regexError
-                                });
-                                // 预览区域的数据
-                                this.previewFormModel.fields.push({value: ''});
-                            }
-                            // 返回的数据，修改后用户界面还原显示编辑行
-                            this.pretrialForm = data;
+                            this.selectFormId = data.id;
                         } else {
-                            this.pretrialForm = {
-                                title: this.zwfwMaterial.name + '表单',
-                                materialId: this.zwfwMaterial.id,
-                                version: 1,
-                                tplId: 0,
-                                fields: [],
-                                status: 1
-                            }
+                            this.addNewVersion();
                         }
                     } else {
                         this.$message.error(response.msg);
-
                     }
                 }).catch(e => {
                     console.log(e);
                     this.$message.error('查询失败，请重新打开窗口尝试');
                 });
             },
+            changeVersion(id) {
+                let data = this.versions.filter(form => form.id === id)[0];
+                console.log(id);
+                // if (this.pretrialForm != null && data.id === this.pretrialForm.id) {
+                //     return;
+                // }
+                this.previewFormModel.fields = [];
+                this.fields = [];
+                this.pretrialForm = {};
+                for (const field of data.fields) {
+                    // select 组件中的选中项的信息
+                    field.field = {
+                        id: field.fieldId,
+                        key: field.key,
+                        label: field.label,
+                        require: field.require,
+                        regex: field.regex,
+                        regexError: field.regexError
+                    };
+                    // 添加到 select 组件中的待选项
+                    this.fields.push({
+                        id: field.fieldId,
+                        key: field.key,
+                        label: field.label,
+                        require: field.require,
+                        regex: field.regex,
+                        regexError: field.regexError
+                    });
+                    // 预览区域的数据
+                    this.previewFormModel.fields.push({value: ''});
+                }
+                // 返回的数据，修改后用户界面还原显示编辑行
+                this.pretrialForm = data;
+                this.$emit('changeVersion', data);
+            },
+            addNewVersion() {
+                if (this.newForm != null) {
+                    this.$message.error('已有尚未保存的新版本');
+                    return false;
+                }
+                const newForm = this.newForm = {
+                    id: 'new_' + new Date().getTime(),
+                    title: this.zwfwMaterial.name,
+                    materialId: this.zwfwMaterial.id,
+                    version: 1,
+                    tplId: 0,
+                    fields: [],
+                    status: 1
+                };
+                this.versions.unshift(newForm);
+                this.changeVersion(newForm);
+            },
             /**
              * 提交修改
              */
             submitItemPretrialForm() {
-                const {id, title,  version, tplId, status, materialId} = this.pretrialForm;
+                const {id, title, version, tplId, status, materialId} = this.pretrialForm;
                 for (const field of this.pretrialForm.fields) {
                     field.createTime = null;// 提交上去转换 Date 类型会报错，所以不传
                     field.updateTime = null;// 提交上去转换 Date 类型会报错，所以不传
                 }
                 updateForm(Object.assign({
-                    id,  version, tplId, status, title, materialId,
+                    id, version, tplId, status, title, materialId,
                     itemPretrialFormFieldsJson: encodeURIComponent(encodeURIComponent(JSON.stringify(this.pretrialForm.fields.filter(f => !!f.fieldId))))
                 })).then(response => {
                     if (response.httpCode == 200) {

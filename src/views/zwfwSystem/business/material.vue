@@ -172,14 +172,24 @@
                    :close-on-click-modal="closeOnClickModal"
                    :before-close="closeZwfwItemPretrialForm"
                    @open="onPretrialFormOpen">
-
-            <item-pretrial-form ref="materialForm"></item-pretrial-form>
-
+            <item-pretrial-form ref="materialForm" @changeVersion="changeFormVersion"></item-pretrial-form>
             <div style="text-align: center" slot="footer" class="dialog-footer">
-                <el-button icon="circle-cross" type="danger" @click="closeZwfwItemPretrialForm">取 消</el-button>
-                <el-button type="primary" icon="circle-check"
-                           @click="submitItemPretrialForm">保 存
-                </el-button>
+                <div v-if="editingForm">
+                    <el-button type="primary" @click="testRegex">测试正则</el-button>
+                    <el-button type="primary"
+                               :disabled="!editingForm || editingForm.status === 3"
+                               @click="submitItemPretrialForm">
+                        <span v-if="editingForm.status===3">历史不可修改</span>
+                        <span v-else>保存/修改</span>
+                    </el-button>
+                    <el-button type="danger"
+                               :disabled="!editingForm || editingForm.status ===2 || editingForm.status ===3 "
+                               @click="publishItemPretrialForm">
+                        <span v-if="editingForm.status===2">已发布</span>
+                        <span v-else-if="editingForm.status===3">历史发布</span>
+                        <span v-else>发 布</span>
+                    </el-button>
+                </div>
             </div>
         </el-dialog>
     </div>
@@ -199,7 +209,7 @@
 
     export default {
         name: 'zwfwMaterial_table',
-        components:{
+        components: {
             ItemPretrialForm
         },
         data() {
@@ -242,7 +252,8 @@
                     type: [
                         {required: true, message: '请输入材料类型'}
                     ]
-                }
+                },
+                editingForm: undefined
             }
         },
         created() {
@@ -447,13 +458,22 @@
                 this.dialogItemPretrialFormVisible = true;
             },
             onPretrialFormOpen() {
-                this.$nextTick(function() {
+                this.$nextTick(function () {
                     this.$refs.materialForm.loadPretrialForm(this.zwfwMaterial);
                 })
+            },
+            testRegex() {
+                this.$refs.materialForm.testRegex();
             },
             /* 提交预审表单配置 */
             submitItemPretrialForm() {
                 this.$refs.materialForm.submitItemPretrialForm();
+            },
+            publishItemPretrialForm() {
+
+            },
+            changeFormVersion(data) {
+                this.editingForm = data;
             },
             closeZwfwItemPretrialForm() {
                 this.dialogItemPretrialFormVisible = false;
