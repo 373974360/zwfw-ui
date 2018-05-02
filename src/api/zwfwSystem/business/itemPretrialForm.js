@@ -30,7 +30,7 @@ export function updateForm(data) {
  */
 export function publishForm(data) {
     return fetch({
-        url: '/api/zwfwSystem/business/itemPretrialForm/publishForm',
+        url: '/api/zwfwSystem/business/itemPretrialForm/publish',
         method: 'post',
         data
     });
