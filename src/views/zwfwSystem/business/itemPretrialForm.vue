@@ -150,7 +150,9 @@
             </el-row>
         </el-form>
         <p>
-            每行宽度平均分成24等分，尺寸表示24等分中占几个等分。
+            ※ 每行宽度平均分成24等分，尺寸表示24等分中占几个等分。
+            <br>
+            ※ 发布后预审界面使用新的表单，发布后表单无法再进行修改。
         </p>
     </div>
 
@@ -161,6 +163,7 @@
     import {
         getFormByMaterialId,
         updateForm,
+        publishForm,
         suggestField
     } from '../../../api/zwfwSystem/business/itemPretrialForm';
 
@@ -186,7 +189,7 @@
                 rules: {},
                 versions: [],
                 newForm: undefined,
-                selectFormId:undefined
+                selectFormId: undefined
             }
         },
         computed: {
@@ -351,8 +354,9 @@
                     id, version, tplId, status, title, materialId,
                     itemPretrialFormFieldsJson: encodeURIComponent(encodeURIComponent(JSON.stringify(this.pretrialForm.fields.filter(f => !!f.fieldId))))
                 })).then(response => {
-                    if (response.httpCode == 200) {
+                    if (response.httpCode === 200) {
                         this.$message.success('提交成功');
+                        this.loadPretrialForm(this.zwfwMaterial);
                     } else {
                         this.$message.error(response.msg);
                     }
@@ -360,6 +364,32 @@
                 }).catch(e => {
                     console.log(e);
                     this.$message.error('提交失败');
+                });
+            },
+            /**
+             * 更新草稿状态的表单为发布状态
+             */
+            publishPretrialForm() {
+                const {id, title, version, tplId, status, materialId} = this.pretrialForm;
+                for (const field of this.pretrialForm.fields) {
+                    field.createTime = null;// 提交上去转换 Date 类型会报错，所以不传
+                    field.updateTime = null;// 提交上去转换 Date 类型会报错，所以不传
+                }
+                publishForm(Object.assign({
+                    id, version, tplId, status, title, materialId,
+                    itemPretrialFormFieldsJson: encodeURIComponent(encodeURIComponent(JSON.stringify(this.pretrialForm.fields.filter(f => !!f.fieldId))))
+                })).then(response => {
+                    if (response.httpCode === 200) {
+                        this.$message.success('发布成功');
+                        this.loadPretrialForm(this.zwfwMaterial);
+
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                    console.log(response);
+                }).catch(e => {
+                    console.log(e);
+                    this.$message.error('发布失败');
                 });
             },
             remoteSelect(query) {

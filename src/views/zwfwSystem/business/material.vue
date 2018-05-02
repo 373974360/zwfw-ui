@@ -187,7 +187,7 @@
                                @click="publishItemPretrialForm">
                         <span v-if="editingForm.status===2">已发布</span>
                         <span v-else-if="editingForm.status===3">历史发布</span>
-                        <span v-else>发 布</span>
+                        <span v-else>保存/修改并发布</span>
                     </el-button>
                 </div>
             </div>
@@ -470,7 +470,7 @@
                 this.$refs.materialForm.submitItemPretrialForm();
             },
             publishItemPretrialForm() {
-
+                this.$refs.materialForm.publishPretrialForm();
             },
             changeFormVersion(data) {
                 this.editingForm = data;

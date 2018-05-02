@@ -8,7 +8,7 @@ export function getFormByMaterialId(materialId) {
     return fetch({
         url: '/api/zwfwSystem/business/itemPretrialForm/getFormByMaterialId',
         method: 'get',
-        params: { materialId }
+        params: {materialId}
     });
 }
 
@@ -19,6 +19,18 @@ export function getFormByMaterialId(materialId) {
 export function updateForm(data) {
     return fetch({
         url: '/api/zwfwSystem/business/itemPretrialForm/update',
+        method: 'post',
+        data
+    });
+}
+
+/**
+ * 发布表单
+ * @param data
+ */
+export function publishForm(data) {
+    return fetch({
+        url: '/api/zwfwSystem/business/itemPretrialForm/publishForm',
         method: 'post',
         data
     });
