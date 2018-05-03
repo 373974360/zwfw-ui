@@ -1,38 +1,51 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="getList" style="width: 300px;" class="filter-item" placeholder="办件号"
-                      v-model="listQuery.processNumber"></el-input>
+            <el-row :gutter="20">
+                <el-col :span="6">
+                    <el-input @keyup.enter.native="getList"  class="filter-item" placeholder="办件号"
+                              v-model="listQuery.processNumber"></el-input>
+                </el-col>
+                <el-col :span="6">
+                    <el-select
+                            style="width: 100%;"
+                            remote
+                             class="filter-item" placeholder="公司名称"
+                            v-model="listQuery.ownerPersonId"
+                            filterable clearable
+                            :remote-method="queryCompanySearch"
+                            @change="handleCompanySelect">
+                        <el-option
+                                v-for="companyInfo in companyList"
+                                :key="companyInfo.id"
+                                :label="companyInfo.companyName"
+                                :value="companyInfo.id">
+                        </el-option>
+                    </el-select>
+                </el-col>
+                <el-col :span="6">
+                    <el-cascader :options="cascader" @change="handleChange"
+                                 :show-all-levels="true" expand-trigger="hover" :clearable="true"
+                                 :change-on-select="true" style="width: 100%;"></el-cascader>
+                </el-col>
+                <el-col :span="6">
+                    <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
+                </el-col>
+            </el-row>
 
-
-            <el-select
-                    remote
-                    style="width: 400px;" class="filter-item" placeholder="公司名称"
-                    v-model="listQuery.ownerPersonId"
-                    filterable clearable
-                    :remote-method="queryCompanySearch"
-                    @change="handleCompanySelect">
-                <el-option
-                        v-for="companyInfo in companyList"
-                        :key="companyInfo.id"
-                        :label="companyInfo.companyName"
-                        :value="companyInfo.id">
-                </el-option>
-            </el-select>
 
             <!--<el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item" placeholder="公司名称"-->
             <!--v-model="listQuery.companyName"></el-input>-->
 
 
-            <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
         </div>
         <el-table ref="zwfwDeptWorkQueryTable" :data="zwfwDeptWorkQueryList" v-loading.body="listLoading" border fit
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <!--<el-table-column align="center" label="ID">-->
-                <!--<template scope="scope">-->
-                    <!--<span>{{scope.row.id}}</span>-->
-                <!--</template>-->
+            <!--<template scope="scope">-->
+            <!--<span>{{scope.row.id}}</span>-->
+            <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column align="center" label="办件号">
                 <template scope="scope">
@@ -185,15 +198,15 @@
                                         </tr>
                                         <tr>
                                             <th width="140">企业/机构地址</th>
-                                            <td >{{member.legalPerson.registerPlace}}</td>
+                                            <td>{{member.legalPerson.registerPlace}}</td>
                                             <th width="140">联系电话</th>
-                                            <td >{{member.legalPerson.phone}}</td>
+                                            <td>{{member.legalPerson.phone}}</td>
                                         </tr>
                                         <tr>
                                             <th width="140">办事员电话</th>
-                                            <td >{{itemProcessVo.contactsPhone}}</td>
+                                            <td>{{itemProcessVo.contactsPhone}}</td>
                                             <th width="140"></th>
-                                            <td ></td>
+                                            <td></td>
                                         </tr>
                                         <template v-if="companyInfo.id">
                                             <tr>
@@ -356,7 +369,8 @@
                             </table>
                         </el-tab-pane>
                         <el-tab-pane label="办件材料" name="fifth">
-                            <el-button @click="downloadMaterialFiles()" type="primary">一键下载材料</el-button><br><br>
+                            <el-button @click="downloadMaterialFiles()" type="primary">一键下载材料</el-button>
+                            <br><br>
                             <!--<el-button @click="printMaterialFiles()" type="primary">打印</el-button><br><br>-->
                             <table class="table table-bordered table-responsive">
                                 <tr>
@@ -420,6 +434,9 @@
     import {
         queryCompanyInfo
     } from 'api/hallSystem/window/receive/windowAccept';
+    import {
+        getCategoryTreeByIds
+    } from 'api/zwfwSystem/business/category';
 
     export default {
         name: 'zwfwDeptWorkQuery_table',
@@ -433,6 +450,9 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
+                    processNumber: null,
+                    categoryId: undefined,
+                    categoryIdFather: undefined
                     ownerPersonId: undefined,
                     processNumber: null
                 },
@@ -506,11 +526,13 @@
                     up_user: '',
                     ssjd: '',
                     vtype: ''
-                }
+                },
+                cascader: []
             }
         },
         created() {
             this.getList();
+            this.getOptions();
         },
         computed: {
             ...mapGetters([
@@ -527,6 +549,27 @@
             }
         },
         methods: {
+            handleChange(value) {
+                console.log(value)
+                this.listQuery.categoryIdChild = undefined;
+                this.listQuery.categoryIdFather = undefined
+                if (value.length > 1) {
+                    this.listQuery.categoryIdChild = value[value.length - 1];
+                    console.log(this.listQuery.categoryIdChild)
+                } else {
+                    this.listQuery.categoryIdFather = value[0];
+                    console.log(this.listQuery.categoryIdFather);
+                }
+            },
+            getOptions() {
+                getCategoryTreeByIds().then(response => {
+                    if (response.httpCode === 200) {
+                        this.cascader = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                })
+            },
             getList() {
                 this.listLoading = true;
                 getZwfwDeptWorkQueryList(this.listQuery).then(response => {
@@ -642,7 +685,7 @@
             print_ycxgzd(processNumber) {
                 if (processNumber != null) {
                     // window.open('/api/hallSystem/hallCompositeWindow/downloadYcxgzd?processNumber=' + processNumber);
-                    window.open('print/ycxgzd.html?processNumber=' + processNumber);
+                    window.open('/admin/print/ycxgzd.html?processNumber=' + processNumber);
                 }
             },
             handlePictureCardPreview(file) {
@@ -650,7 +693,7 @@
             },
             downloadMaterialFiles() {
                 // console.log(this.itemProcessVo);
-                window.open('/api/common/downloadMaterialFiles?processNumber='+this.itemProcessVo.processNumber+'&taskId='+this.itemProcessVo.taskId);
+                window.open('/api/common/downloadMaterialFiles?processNumber=' + this.itemProcessVo.processNumber + '&taskId=' + this.itemProcessVo.taskId);
             },
             printMaterialFiles() {
                 print();
