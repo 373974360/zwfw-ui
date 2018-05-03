@@ -272,5 +272,12 @@ export function getRealTimeApproveSchedule() {
         method: 'get'
     })
 }
+// 第三版
+export function getAllDateDapingShow() {
+    return fetch({
+        url: '/api/hallSystem/count/statistics/getAllDateDapingShow',
+        method: 'get'
+    })
+}
 
 
