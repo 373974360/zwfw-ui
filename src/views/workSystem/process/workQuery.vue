@@ -451,10 +451,9 @@
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     processNumber: null,
-                    categoryId: undefined,
-                    categoryIdFather: undefined
-                    ownerPersonId: undefined,
-                    processNumber: null
+                    categoryIdChild: undefined,
+                    categoryIdFather: undefined,
+                    ownerPersonId: undefined
                 },
                 zwfwDeptWorkQuery: {
                     id: undefined,
