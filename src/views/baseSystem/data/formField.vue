@@ -16,12 +16,11 @@
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column type="selection" width="55"/>
-            <el-table-column align="center" label="序号">
-                <template scope="scope">
-                    <span>{{scope.row.id}}</span>
-                </template>
-            </el-table-column>
-
+            <!--<el-table-column align="center" label="序号">-->
+                <!--<template scope="scope">-->
+                    <!--<span>{{scope.row.id}}</span>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
             <el-table-column align="center" label="表单域名称" prop="label">
                 <template scope="scope">
                     <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
@@ -29,12 +28,12 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="key">
+            <el-table-column align="center" label="唯一标识">
                 <template scope="scope">
                     <span>{{scope.row.key}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="默认值">
+            <el-table-column align="center" label="默认内容">
                 <template scope="scope">
                     <span>{{scope.row.defaultValue}}</span>
                 </template>
@@ -46,12 +45,22 @@
             </el-table-column>
             <el-table-column align="center" label="必填">
                 <template scope="scope">
-                    <span>{{scope.row.require}}</span>
+                    <i v-if="scope.row.require" style="color:green" class="el-icon-circle-check"></i>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="正则验证">
+            <el-table-column align="center" label="复用">
+                <template scope="scope">
+                    <i v-if="scope.row.flagHistoryValue" style="color:green" class="el-icon-circle-check"></i>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="正则表达式">
                 <template scope="scope">
                     <span>{{scope.row.regex}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="正则验证失败提示">
+                <template scope="scope">
+                    <span>{{scope.row.regexError}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="备注" prop="remark">
@@ -59,13 +68,13 @@
                     <span>{{scope.row.remark}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="enable" class-name="status-col" label="状态">
-                <template scope="scope">
-                    <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
-                        {{scope.row.enable | enums('Enable')}}
-                    </el-tag>
-                </template>
-            </el-table-column>
+            <!--<el-table-column prop="enable" class-name="status-col" label="状态">-->
+                <!--<template scope="scope">-->
+                    <!--<el-tag :type="scope.row.enable | enums('Enable') | statusFilter">-->
+                        <!--{{scope.row.enable | enums('Enable')}}-->
+                    <!--</el-tag>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
         </el-table>
 
         <div v-show="!listLoading" class="pagination-container">
@@ -78,8 +87,14 @@
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible"
                    :close-on-click-modal="closeOnClickModal" :before-close="resetFormFieldForm">
             <el-form ref="formFieldForm" class="small-space" :model="formField" label-position="right"
-                     label-width="80px"
+                     label-width="120px"
+                     label-suffix="："
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="formFieldRules">
+                <el-form-item label="上级表单域分类">
+                    <el-cascader :options="cascader" v-model="selectedCategoryArray" @change="handleChange"
+                                 :show-all-levels="false" expand-trigger="hover" :clearable="true"
+                                 :change-on-select="false" style="width:100%"></el-cascader>
+                </el-form-item>
                 <el-form-item label="名称" prop="label">
                     <el-input v-model="formField.label"/>
                 </el-form-item>
@@ -94,20 +109,34 @@
                 </el-form-item>
                 <el-form-item v-if="formField.inputType == 2 || formField.inputType == 3" label="选项字典" prop="optionDic">
                     <el-input v-model="formField.optionDic"/>
+                    <br>
+                    <span>选项之间使用分号(;)隔开</span>
                 </el-form-item>
-                <el-form-item label="默认值" prop="defaultValue">
+                <el-form-item label="默认内容" prop="defaultValue">
                     <el-input v-model="formField.defaultValue"/>
                 </el-form-item>
-                <el-form-item label="必填" prop="require">
+                <el-form-item label="是否是必填项" prop="require">
                     <el-checkbox v-model="formField.require" true-label="1" false-label="0"/>
                 </el-form-item>
-                <el-form-item label="正则验证" prop="regex">
-                    <el-input v-model="formField.regex"/>
+                <el-form-item label="是否可复用" prop="flagHistoryValue">
+                    <el-checkbox v-model="formField.flagHistoryValue" true-label="1" false-label="0"/>
+                    <br>
+                    <span>如果此内容后期可在输入时复用请勾选，否则请勿勾选</span>
+                </el-form-item>
+                <el-form-item label="正则表达式" prop="regex">
+                    <el-input type="textarea" v-model="formField.regex"/>
+                    <br>
+                    <a href="https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&tn=baidu&wd=%E5%B8%B8%E7%94%A8%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"
+                       class="link-type" target="_blank">常用正则表达式</a>
+                </el-form-item>
+                <el-form-item label="验证失败提示" prop="regexError">
+                    <el-input v-model="formField.regexError"/>
                 </el-form-item>
                 <el-form-item label="备注" prop="remark">
                     <el-input v-model="formField.remark"/>
                 </el-form-item>
             </el-form>
+
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="resetFormFieldForm">取 消</el-button>
                 <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
@@ -129,6 +158,11 @@
         delFormFields
     } from '../../../api/baseSystem/data/formField';
 
+    import {
+        getCategoryTree,
+        getCategoryCascader
+    } from '../../../api/baseSystem/data/formFieldCategory';
+
     export default {
         name: 'formField_table',
         data() {
@@ -143,14 +177,17 @@
                 },
                 formField: {
                     id: undefined,
+                    categoryId: undefined,
                     label: undefined,
                     key: undefined,
                     inputType: undefined,
                     require: false,
                     defaultValue: null,
                     regex: undefined,
+                    regexError: undefined,
                     remark: undefined,
-                    optionDic: undefined
+                    optionDic: undefined,
+                    flagHistoryValue: false
                 },
                 currentRow: null,
                 selectedRows: [],
@@ -164,7 +201,9 @@
                     key: [
                         {required: true, message: '请输入表单域key'}
                     ]
-                }
+                },
+                cascader: [],
+                selectedCategoryArray: []
             }
         },
         created() {
@@ -213,6 +252,8 @@
                 this.resetTemp();
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
+                this.selectedCategoryArray = [];
+                this.getOptions(null);
             },
             handleUpdate(row) {
                 this.currentRow = row;
@@ -220,6 +261,11 @@
                 this.formField = copyProperties(this.formField, row);
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
+                this.selectedCategoryArray = [];
+                if (this.formField.categoryId) {
+                    this.selectedCategoryArray.push(this.formField.categoryId);
+                }
+                this.getOptions(this.formField.categoryId);
             },
             handleDelete(row) {
                 if (this.selectedRows == 0) {
@@ -298,20 +344,39 @@
             resetTemp() {
                 this.formField = {
                     id: undefined,
+                    categoryId: undefined,
                     label: undefined,
                     key: undefined,
                     inputType: 1,
                     require: false,
                     defaultValue: null,
                     regex: undefined,
+                    regexError: undefined,
                     remark: undefined,
-                    optionDic: undefined
+                    optionDic: undefined,
+                    flagHistoryValue: false
                 };
             },
             resetFormFieldForm() {
                 this.dialogFormVisible = false;
                 this.resetTemp();
                 resetForm(this, 'formFieldForm');
+            },
+            getOptions(id) {
+                getCategoryCascader(id).then(response => {
+                    if (response.httpCode === 200) {
+                        this.cascader = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                })
+            },
+            handleChange(value) {
+                if (value.length > 0) {
+                    this.formField.categoryId = value[value.length - 1];
+                } else {
+                    this.formField.categoryId = value;
+                }
             }
         }
     }

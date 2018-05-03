@@ -33,6 +33,7 @@ const MessageFiled = () => import('../views/baseSystem/data/messageFiled');
 const MessageTemplate = () => import('../views/baseSystem/data/messageTemplate');
 const Dict = () => import('../views/baseSystem/data/dic');
 const FormField = () => import('../views/baseSystem/data/formField');
+const FormFieldCategory = () => import('../views/baseSystem/data/formFieldCategory');
 const MetadataType = () => import('../views/baseSystem/data/metadataType');
 const Holiday = () => import('../views/baseSystem/data/holiday');
 /* 系统管理 */
@@ -267,6 +268,12 @@ export const asyncRouterMap = [
                 component: Dict,
                 name: '数据字典',
                 meta: {permission: 'baseSystem:data:dicIndex:list'}
+            },
+            {
+                path: 'formFieldCategory',
+                component: FormFieldCategory,
+                name: '表单域分类管理',
+                meta: {permission: 'baseSystem:data:formFieldCategory:list'}
             },{
                 path: 'formField',
                 component: FormField,
@@ -434,7 +441,8 @@ export const asyncRouterMap = [
             // {path: 'windowHistory', component: WindowHistory, name: '办件查询'}
         ]
     },
-    {redirect: 'noredirect',
+    {
+        redirect: 'noredirect',
         name: '统计分析',
         path: '/analysis',
         meta: {permission: 'hallSystem:count:admin'},
@@ -501,7 +509,8 @@ export const asyncRouterMap = [
             }
         ]
     },
-    {redirect: 'noredirect',
+    {
+        redirect: 'noredirect',
         name: '数据可视化',
         path: '/visualization',
         meta: {permission: 'hallSystem:visualization:admin'},
@@ -578,13 +587,13 @@ export const asyncRouterMap = [
                 component: TaskSetting,
                 name: '审批节点管理',
                 meta: {permission: 'zwfwSystem:business:taskSetting:list'}
+            },
+            {
+                path: 'formEditor',
+                component: FormEditor,
+                name: '表单编辑器',
+                meta: {permission: 'zwfwSystem:business:formEditor:list'}
             }
-            // {
-            //     path: 'formEditor',
-            //     component: FormEditor,
-            //     name: '表单编辑器',
-            //     meta: {permission: 'zwfwSystem:business:formEditor:list'}
-            // }
         ]
     },
     // ym test 广告管理

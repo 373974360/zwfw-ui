@@ -112,7 +112,7 @@
             <div class="pagination-container">
                 <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
                                :current-page.sync="listQuery.page" :page-sizes="this.$store.state.app.pageSize"
-                               :page-size="listQuery.rows" layout="total, sizes, prev, pager, next, jumper" :total="categoryItemListTotle">
+                               :page-size="listQuery.rows" layout="total, sizes, prev, pager, next, jumper" :total="categoryItemListTotal">
                 </el-pagination>
             </div>
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem"
@@ -167,7 +167,7 @@
                 itemList: [],
                 categoryItem: [],
                 categoryItemList: [],
-                categoryItemListTotle: 0,
+                categoryItemListTotal: 0,
                 pageLoading: true,
                 dialogTableLoading: true,
                 showButton: true,
@@ -439,7 +439,7 @@
                 getAllPageList(this.listQuery).then(response => {
                     if (response.httpCode === 200) {
                         this.categoryItemList = response.data.list;
-                        this.categoryItemListTotle = response.data.total;
+                        this.categoryItemListTotal = response.data.total;
                     } else {
                         this.$message.error(response.msg);
                     }

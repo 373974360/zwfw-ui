@@ -101,9 +101,6 @@
                                    type="primary" size="small">
                             办件材料
                         </el-button>
-                        <!--<br />-->
-                        <!--<br />-->
-
                     </el-badge>
                     <el-button class="filter-item" style="" @click="handleItemConfig(scope.row)"
                                type="primary" size="small">
@@ -120,7 +117,7 @@
             </el-pagination>
         </div>
 
-        <el-dialog  :title="zwfwItem.id?('编辑事项，ID:' + zwfwItem.id):'添加事项'" :visible.sync="dialogItemFormVisible"
+        <el-dialog :title="zwfwItem.id?('编辑事项，ID:' + zwfwItem.id):'添加事项'" :visible.sync="dialogItemFormVisible"
                    @open="initEditor"
                    :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemForm">
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem" label-position="right"
@@ -739,6 +736,7 @@
             </div>
         </el-dialog>
 
+
     </div>
 </template>
 
@@ -814,7 +812,7 @@
                     processType: undefined,
                     handleType: undefined,
                     enable: '1',
-                    orderable:''
+                    orderable: ''
                 },
                 activeName: 'first',
                 zwfwItem: {
@@ -1141,7 +1139,8 @@
                         this.$message.error(response.msg || '事项列表查询失败');
                     }
                     this.pageLoading = false;
-                }).catch(e=>{
+                }).catch(e => {
+                    this.pageLoading = false;
                     this.$message.error('事项列表查询失败');
                     console.error(e);
                 });
@@ -1286,7 +1285,7 @@
                             } else {
                                 this.$message.error(response.msg || '创建失败');
                             }
-                        }).catch(e=>{
+                        }).catch(e => {
                             console.log(e);
                             this.$message.error('创建失败');
                         });
@@ -1313,10 +1312,11 @@
                             } else {
                                 this.$message.error(response.msg || '更新失败');
                             }
-                        }).catch(e=>{
+                        }).catch(e => {
                             console.log(e);
                             this.$message.error('更新失败');
-                        });;
+                        });
+                        ;
                     } else {
                         this.$message.error('请检查表单各项是否填写完整正确或遗漏');
                         return false;
@@ -1340,7 +1340,7 @@
                 })
             },
             queryPretrialUserId(keywords) {
-                if(keywords && keywords.length > 0) {
+                if (keywords && keywords.length > 0) {
                     getAllUser({
                         name: keywords
                     }).then(response => {
@@ -1486,6 +1486,7 @@
                 this.resetMaterialTemp();
                 this.dialogItemConfigFormVisible = true;
             },
+
             getItemConfig() {
                 getItemConfig(this.currentItem.id).then(response => {
                     if (response.httpCode === 200) {
@@ -1525,6 +1526,7 @@
                     this.zwfwItemConfig.opentime = this.zwfwItemConfig.opentime1;
                 });
             },
+
             searchMaterial(query, cb) {
                 if (query !== '') {
                     let valid = validateQueryStr(query);
@@ -1760,6 +1762,7 @@
                 this.dialogItemConfigFormVisible = false;
                 // this.resetZwfwMaterialForm();
             },
+
             resetZwfwMaterialForm() {
                 this.changeMaterialInfo = false;
                 this.resetMaterialTemp();
@@ -1869,10 +1872,10 @@
         margin-left: 0px;
         margin-right: 15px;
     }
-    .el-checkbox+.el-checkbox{
-        margin-left:0px;
-    }
 
+    .el-checkbox + .el-checkbox {
+        margin-left: 0px;
+    }
 
     .item {
         /*margin-top: 12px;*/
@@ -1892,14 +1895,16 @@
         max-height: 180px;
         overflow: scroll
     }
-    .ql-toolbar.ql-snow .ql-formats{
-        margin-right:0px;
+
+    .ql-toolbar.ql-snow .ql-formats {
+        margin-right: 0px;
     }
 </style>
 <style rel="stylesheet/scss" lang="scss">
-    .el-table .el-table-column--selection .cell{
+    .el-table .el-table-column--selection .cell {
         text-overflow: clip;
     }
+
     .el-table th.action .cell {
         line-height: 50px;
     }
