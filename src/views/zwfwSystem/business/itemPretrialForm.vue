@@ -13,7 +13,8 @@
                 <div style="text-align: right">版本：</div>
             </el-col>
             <el-col :span="5">
-                <el-select v-model="selectFormId" placeholder="请选择" style="width:100%" @change="changeVersion">
+                <el-select v-model="selectFormId" placeholder="请选择" style="width:100%" @change="changeVersion"
+                           :disabled="versions==null || versions.length===0">
                     <el-option
                             v-for="version in versions"
                             :key="version.id"
@@ -26,9 +27,9 @@
                 <el-button type="primary" @click="addNewVersion">创建新版本</el-button>
             </el-col>
         </el-row>
-        <el-table
-                :data="pretrialForm.fields"
-                style="width: 100%"
+        <el-table v-if="pretrialForm && pretrialForm.fields"
+                  :data="pretrialForm.fields"
+                  style="width: 100%"
         >
             <el-table-column
                     type="index"
@@ -135,7 +136,7 @@
         </el-table>
 
         <h1>预览区域：</h1>
-        <el-form ref="previewForm" :model="pretrialForm" label-position="top" label-width="80px" label-suffix=":">
+        <el-form v-if="pretrialForm && pretrialForm.fields" ref="previewForm" :model="pretrialForm" label-position="top" label-width="80px" label-suffix=":">
             <el-row :gutter="10">
                 <el-col v-for="(field,index) in pretrialForm.fields" v-if="!!field.fieldId"
                         :span="field.size"
@@ -290,7 +291,7 @@
                 });
             },
             changeVersion(id) {
-                let data = this.versions.filter(form => form.id === id)[0];
+                const data = this.versions.filter(form => form.id === id)[0];
                 console.log(id);
                 // if (this.pretrialForm != null && data.id === this.pretrialForm.id) {
                 //     return;
@@ -298,27 +299,29 @@
                 this.previewFormModel.fields = [];
                 this.fields = [];
                 this.pretrialForm = {};
-                for (const field of data.fields) {
-                    // select 组件中的选中项的信息
-                    field.field = {
-                        id: field.fieldId,
-                        key: field.key,
-                        label: field.label,
-                        require: field.require,
-                        regex: field.regex,
-                        regexError: field.regexError
-                    };
-                    // 添加到 select 组件中的待选项
-                    this.fields.push({
-                        id: field.fieldId,
-                        key: field.key,
-                        label: field.label,
-                        require: field.require,
-                        regex: field.regex,
-                        regexError: field.regexError
-                    });
-                    // 预览区域的数据
-                    this.previewFormModel.fields.push({value: ''});
+                if (data && data.length > 0) {
+                    for (const field of data.fields) {
+                        // select 组件中的选中项的信息
+                        field.field = {
+                            id: field.fieldId,
+                            key: field.key,
+                            label: field.label,
+                            require: field.require,
+                            regex: field.regex,
+                            regexError: field.regexError
+                        };
+                        // 添加到 select 组件中的待选项
+                        this.fields.push({
+                            id: field.fieldId,
+                            key: field.key,
+                            label: field.label,
+                            require: field.require,
+                            regex: field.regex,
+                            regexError: field.regexError
+                        });
+                        // 预览区域的数据
+                        this.previewFormModel.fields.push({value: ''});
+                    }
                 }
                 // 返回的数据，修改后用户界面还原显示编辑行
                 this.pretrialForm = data;
@@ -329,8 +332,9 @@
                     this.$message.error('已有尚未保存的新版本');
                     return false;
                 }
+                let formId = 'new_' + new Date().getTime();
                 const newForm = this.newForm = {
-                    id: 'new_' + new Date().getTime(),
+                    id: formId,
                     title: this.zwfwMaterial.name,
                     materialId: this.zwfwMaterial.id,
                     version: 1,
@@ -339,7 +343,9 @@
                     status: 1
                 };
                 this.versions.unshift(newForm);
-                this.changeVersion(newForm);
+                this.$nextTick(function() {
+                    this.selectFormId = formId;
+                });
             },
             /**
              * 提交修改
@@ -382,7 +388,6 @@
                     if (response.httpCode === 200) {
                         this.$message.success('发布成功');
                         this.loadPretrialForm(this.zwfwMaterial);
-
                     } else {
                         this.$message.error(response.msg);
                     }
