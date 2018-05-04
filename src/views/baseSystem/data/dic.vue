@@ -9,13 +9,13 @@
                     搜索
                 </el-button>
             </el-tooltip>
-            <el-tooltip class="item" effect="dark" content="添加用户" placement="top-start">
+            <el-tooltip class="item" effect="dark" content="添加" placement="top-start">
                 <el-button class="filter-item" style="margin-left: 10px;" @click="handleDicIndexCreate" type="primary"
                            icon="plus">
                     添加
                 </el-button>
             </el-tooltip>
-            <el-tooltip class="item" effect="dark" content="删除用户" placement="top-start">
+            <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
                 <el-button class="filter-item" style="margin-left: 10px;" @click="handleDicIndexDelete" type="danger"
                            icon="delete">
                     删除

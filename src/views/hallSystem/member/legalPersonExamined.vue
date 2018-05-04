@@ -123,7 +123,7 @@
                             <th width="140">注册地址</th>
                             <td>{{legalPersonVerify.registerPlace}}</td>
                             <th width="140">注册日期</th>
-                            <td>{{legalPersonVerify.registerDate}}</td>
+                            <td>{{legalPersonVerify.registerDate | date('YYYY-MM-DD')}}</td>
                         </tr>
                     </table>
                 </div>
