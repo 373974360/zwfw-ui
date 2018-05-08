@@ -123,13 +123,13 @@
                     <br>
                     <span>如果此内容后期可在输入时复用请勾选，否则请勿勾选</span>
                 </el-form-item>
-                <el-form-item label="正则表达式" prop="regex">
+                <el-form-item v-if="formField.inputType == 1" label="正则表达式" prop="regex">
                     <el-input type="textarea" v-model="formField.regex"/>
                     <br>
                     <a href="https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&tn=baidu&wd=%E5%B8%B8%E7%94%A8%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"
                        class="link-type" target="_blank">常用正则表达式</a>
                 </el-form-item>
-                <el-form-item label="验证失败提示" prop="regexError">
+                <el-form-item v-if="formField.inputType == 1" label="验证失败提示" prop="regexError">
                     <el-input v-model="formField.regexError"/>
                 </el-form-item>
                 <el-form-item label="备注" prop="remark">
