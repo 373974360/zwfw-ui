@@ -41,13 +41,13 @@
                     width="180"
             >
                 <template scope="scope">
-                    <el-select v-model="scope.row.field" remote filterable placeholder="请选择"
-                               :remote-method="remoteSelect" @change="value=>{setLabel(value,scope.row)}" value-key="id"
+                    <el-select v-model="scope.row.fieldId" filterable placeholder="请选择"
+                               @change="value=>{setLabel(value,scope.row)}"
                                :default-first-option="true">
                         <el-option
                                 v-for="field in fields"
                                 :label="field.label"
-                                :value="field"
+                                :value="field.id"
                                 :key="field.id"
                                 :disabled="pretrialForm.fields.filter(f => f.fieldId === field.id ).length > 0">
                         </el-option>
@@ -136,7 +136,8 @@
         </el-table>
 
         <h1>预览区域：</h1>
-        <el-form v-if="pretrialForm && pretrialForm.fields" ref="previewForm" :model="pretrialForm" label-position="top" label-width="80px" label-suffix=":">
+        <el-form v-if="pretrialForm && pretrialForm.fields" ref="previewForm" :model="pretrialForm" label-position="top"
+                 label-width="80px" label-suffix=":">
             <el-row :gutter="10">
                 <el-col v-for="(field,index) in pretrialForm.fields" v-if="!!field.fieldId"
                         :span="field.size"
@@ -199,10 +200,14 @@
                 'dics'
             ])
         },
+        mounted() {
+            this.remoteSelect('%');
+        },
         methods: {
             // checkFieldExist(fieldId) {
             //     return this.pretrialForm.fields.filter(f => f.fieldId === fieldId).length > 0;
             // },
+
             getVersionName(version) {
                 return '[' + enums(version.status, 'ItemPretrialFormStatus') + '] ' + version.version;
             },
@@ -252,7 +257,13 @@
                 }
                 return field.label;
             },
-            setLabel(field, pretrialFormField) {
+            setLabel(fieldId, pretrialFormField) {
+                let field = this.fields.filter(f => {
+                    return f.id === fieldId;
+                })[0];
+                if (field == null) {
+                    return;
+                }
                 pretrialFormField.fieldId = field.id;
                 pretrialFormField.id = null;
                 pretrialFormField.key = field.key;
@@ -265,7 +276,7 @@
                     pretrialFormField.size = this.smartSize();
                 }
                 // 清空候选列表
-                this.fields = [];
+                // this.fields = [];
             },
             /**
              * 加载现有的配置
@@ -297,7 +308,7 @@
                 //     return;
                 // }
                 this.previewFormModel.fields = [];
-                this.fields = [];
+                // this.fields = [];
                 this.pretrialForm = {};
                 if (data && data.length > 0) {
                     for (const field of data.fields) {
@@ -343,7 +354,7 @@
                     status: 1
                 };
                 this.versions.unshift(newForm);
-                this.$nextTick(function() {
+                this.$nextTick(function () {
                     this.selectFormId = formId;
                 });
             },
@@ -408,6 +419,7 @@
                         this.loading = false;
                         if (response.httpCode === 200) {
                             this.fields = response.data;
+                            console.log(this.fields);
                         } else {
                             this.$message.error(response.msg);
                         }
@@ -433,7 +445,7 @@
                 this.pretrialForm.fields.push(newField);
                 this.previewFormModel.fields.push({value: ''});
                 /* 清空自动完成 */
-                this.fields = [];
+                // this.fields = [];
             },
             fieldDel(field) {
                 this.pretrialForm.fields.splice(this.pretrialForm.fields.indexOf(field), 1);
