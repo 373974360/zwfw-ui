@@ -108,7 +108,7 @@ const WorkPending = () => import('../views/workSystem/process/workPending');
 /* 待办事项 */
 const WorkQuery = () => import('../views/workSystem/process/workQuery');
 /* 办结查询 */
-const WorkFinish = () => import('../views/workSystem/process/WorkFinish');
+const WorkFinish = () => import('../views/workSystem/process/workFinish');
 /* 办件查询 */
 const WorkExtendTime = () => import('../views/workSystem/process/workExtendTime');
 /* 延期审核管理 */
