@@ -69,10 +69,14 @@ export function expressTypeFilter(type) {
 }
 
 export function enums(value, type) {
+
+    if(type == 'Enable' && value==-1) {
+        return '已删除';
+    }
     var array = app.state.enums[type];
     if(!array) {
         console.warn('没有枚举类型' + type);
-        return '';
+        return value;
     }
     var result = array.filter(function (item) {
         return item.code === value;
@@ -80,7 +84,7 @@ export function enums(value, type) {
     if (result[0]) {
         return result[0].value || value;
     } else {
-        return '';
+        return value;
     }
 }
 export function dics(value, type) {
@@ -97,7 +101,7 @@ export function dics(value, type) {
         if (result[0]) {
             return result[0].value || value;
         } else {
-            return '';
+            return value;
         }
     }
 }
