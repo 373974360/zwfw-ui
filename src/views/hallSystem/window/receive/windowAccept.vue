@@ -2002,6 +2002,7 @@
                             memberPhone: this.memberPhone,
                             companyCode: this.companyCode,
                             companyName: this.companyName,
+                            companyAddress: this.companyAddress,
                             contactsPhone: this.contactsPhone,
                             received: checked_m.join(','),
                             remark: this.remark,
