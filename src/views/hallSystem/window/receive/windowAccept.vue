@@ -112,6 +112,18 @@
                                                                 </el-tooltip>
                                                             </el-col>
                                                         </el-row>
+                                                        <el-row :gutter="10">
+                                                            <el-col :span="11">
+                                                                <el-tooltip content="如果已注册点击查询会自动填入，如果未注册请人工填写"
+                                                                            placement="bottom"
+                                                                            effect="light">
+                                                                    <el-input v-model="address"
+                                                                              placeholder="地址">
+                                                                        <template slot="prepend">地址：</template>
+                                                                    </el-input>
+                                                                </el-tooltip>
+                                                            </el-col>
+                                                        </el-row>
                                                     </el-tab-pane>
                                                     <el-tab-pane label="法人" name="2"
                                                                  :disabled="member!=null && member.type==1">
@@ -151,9 +163,10 @@
                                                         </el-row>
                                                         <el-row :gutter="10">
                                                             <el-col :span="12">
-                                                                <el-tooltip content="如果只有15位注册号，使用000作为前缀后面跟入15位注册号，可用于注册查询"
-                                                                            placement="bottom"
-                                                                            effect="light">
+                                                                <el-tooltip
+                                                                        content="如果只有15位注册号，使用000作为前缀后面跟入15位注册号，可用于注册查询"
+                                                                        placement="bottom"
+                                                                        effect="light">
                                                                     <el-input v-model="companyCode"
                                                                               placeholder="社会统一信用代码"
                                                                               @keyup.native="scanInput">
@@ -177,7 +190,8 @@
                                                                         effect="light">
                                                                     <el-button type="primary"
                                                                                @click="checkLegalMemberExist()"
-                                                                               :disabled="!companyCode && !memberCode">注册查询
+                                                                               :disabled="!companyCode && !memberCode">
+                                                                        注册查询
                                                                     </el-button>
                                                                 </el-tooltip>
                                                             </el-col>
@@ -354,7 +368,7 @@
                                                     v-model="selectedItem"
                                                     placeholder="选择分类下的事项"
                                                     filterable
-                                                    @change="changeItem" :loading="loadingItem" style="width:100%" >
+                                                    @change="changeItem" :loading="loadingItem" style="width:100%">
                                                 <el-option
                                                         v-for="item in optionsName"
                                                         :key="item.id"
@@ -421,6 +435,10 @@
                                             <th>姓名:</th>
                                             <td>{{member.naturePerson.name}}</td>
                                         </tr>
+                                        <tr v-if="itemNumber!=null && itemNumber.personName!=null">
+                                            <th>办事员:</th>
+                                            <td>{{itemNumber.personName}}</td>
+                                        </tr>
                                         <tr v-if="itemNumber!=null && itemNumber.personPhone!=null">
                                             <th>办事员电话:</th>
                                             <td>{{itemNumber.personPhone}}</td>
@@ -428,6 +446,10 @@
                                         <tr v-if="member!=null && member.naturePerson!=null">
                                             <th>自然人手机号:</th>
                                             <td>{{member.naturePerson.phone}}</td>
+                                        </tr>
+                                        <tr v-if="member!=null && member.naturePerson!=null">
+                                            <th>自然人地址:</th>
+                                            <td>{{member.naturePerson.address}}</td>
                                         </tr>
                                         <tr v-if="member!=null && member.legalPerson!=null">
                                             <th>企业法人:</th>
@@ -751,13 +773,15 @@
 
                             <template v-if="itemNumber.status!=3">
                                 <el-input v-if="itemNumber.status!=4"
-                                        type="textarea"
-                                        :autosize="{ minRows: 2, maxRows: 4}"
-                                        placeholder="填写备注"
-                                        v-model="remark">
+                                          type="textarea"
+                                          :autosize="{ minRows: 2, maxRows: 4}"
+                                          placeholder="填写备注"
+                                          v-model="remark">
                                 </el-input>
                                 <div style="margin-top:10px;" v-if="itemNumber.status!=4">
 
+                                    <el-input v-show="contactsNameShow" v-model="contactsName" placeholder="请输入申请人姓名"
+                                              style="width: 180px"></el-input>
                                     <el-input v-model="contactsPhone" placeholder="请输入申请人联系手机号"
                                               style="width: 180px"></el-input>
 
@@ -793,6 +817,7 @@
                                     <span v-show="!memberCode">缺少{{memberType==2?'法人':'自然人'}}身份证号码；</span>
                                     <span v-show="!memberPhone">缺少{{memberType==2?'法人':'自然人'}}手机号；</span>
                                     <span v-show="!contactsPhone">缺少联系手机号；</span>
+                                    <span v-show="!contactsName">缺少申请人姓名；</span>
                                     <span v-show="memberType=='2' && !companyCode">缺少社会统一信用代码；</span>
                                     <span v-show="memberType=='2' && !companyName">缺少公司名称；</span>
                                     <span v-show="memberType=='2' && !companyAddress">缺少公司地址；</span>
@@ -1016,8 +1041,11 @@
                 loginCallerKey: '',
                 memberCode: '',
                 memberRealname: '',
+                address: '',
                 contactsPhone: '', //联系人手机号
+                contactsName: '', //联系人
                 memberPhone: '',
+                contactsNameShow: true,
                 companyName: '',
                 companyCode: '',
                 companyAddress: '',
@@ -1325,11 +1353,11 @@
             scanInput(event) {
                 this.isScanInput = false;
                 var _this = this;
-                if (event.keyCode == 13 ) {
-                    this.$nextTick(function(){
+                if (event.keyCode == 13) {
+                    this.$nextTick(function () {
                         console.log(_this.companyCode);
 
-                        if(_this.companyCode.indexOf('：') > 0 || _this.companyCode.indexOf(':') > 0) {
+                        if (_this.companyCode.indexOf('：') > 0 || _this.companyCode.indexOf(':') > 0) {
                             _this.isScanInput = true;
                             const companyInfo = _this.companyCode.replace('：', ':').split(';');
                             //社会统一信用代码
@@ -1420,6 +1448,12 @@
              * 查询事项列表
              * */
             queryItem(query) {
+                console.log(this.memberType);
+                if (this.memberType == 1) {
+                    this.contactsNameShow = false
+                } else {
+                    this.contactsNameShow = true
+                }
                 if (!this.itemCategory) {
                     return;
                 }
@@ -1538,6 +1572,9 @@
                             if (!this.memberCode) {
                                 this.memberCode = this.member.memberCode;
                             }
+                            if (!this.address) {
+                                this.address = this.member.naturePerson.address;
+                            }
                         }
                     } else {
                         this.$message.error(response.msg);
@@ -1548,6 +1585,11 @@
              * 检测法人用户是否注册，如果注册，返回用户信息，如果没有注册显示出快速注册界面
              * */
             checkLegalMemberExist() {
+                this.memberRealname = '';
+                this.memberPhone = '';
+                this.memberCode = '';
+                this.companyName = '';
+                this.companyAddress = '';
                 if (this.companyCode && !checkSocialCreditCode(this.companyCode)) {
                     this.companyInfo = {};
                     this.$message.warning("社会统一信用代码不正确，请重新输入");
@@ -1555,7 +1597,7 @@
                 }
                 checkLegalMemberExist({
                     companyCode: this.companyCode,
-                    memberCode:this.memberCode
+                    memberCode: this.memberCode
                 }).then(response => {
                     if (response.httpCode === 200) {
                         if (response.data == null) {
@@ -1607,6 +1649,11 @@
                 this.memberPhone = '';
                 //清空姓名
                 this.memberRealname = '';
+                //清空地址
+                this.address = '';
+                this.contactsName = '';
+                this.contactsPhone = '';
+                this.companyAddress = '';
                 //清空身份证号
                 this.memberCode = '';
                 //清空事项对象
@@ -1993,23 +2040,48 @@
                 }).then(() => {
                     if (!this.itemNumber.id) {
                         this.submiting = true;
-                        submitNoPretrial({
-                            memberType: this.memberType,
-                            itemId: this.itemVo.id,
-                            //身份证号
-                            memberCode: this.memberCode,
-                            //姓名
-                            memberRealname: this.memberRealname,
-                            memberPhone: this.memberPhone,
-                            companyCode: this.companyCode,
-                            companyName: this.companyName,
-                            companyAddress: this.companyAddress,
-                            contactsPhone: this.contactsPhone,
-                            received: checked_m.join(','),
-                            remark: this.remark,
-                            itemHandTypeVo: this.itemHandTypeVo,
-                            itemTakeTypeVo: this.itemTakeTypeVo
-                        }).then(response => {
+                        if (this.memberType == 1){
+                            var query = {
+                                memberType: this.memberType,
+                                itemId: this.itemVo.id,
+                                //身份证号
+                                memberCode: this.memberCode,
+                                //姓名
+                                memberRealname: this.memberRealname,
+                                memberPhone: this.memberPhone,
+                                companyCode: this.companyCode,
+                                companyName: this.companyName,
+                                memberAddress: this.address,
+                                companyAddress: this.companyAddress,
+                                contactsPhone: this.contactsPhone,
+                                contactsName: this.contactsName,
+                                received: checked_m.join(','),
+                                remark: this.remark,
+                                itemHandTypeVo: this.itemHandTypeVo,
+                                itemTakeTypeVo: this.itemTakeTypeVo
+                            }
+                        } else if (this.memberType == 2){
+                            var query = {
+                                memberType: this.memberType,
+                                itemId: this.itemVo.id,
+                                //身份证号
+                                memberCode: this.memberCode,
+                                //姓名
+                                memberRealname: this.contactsName,
+                                memberPhone: this.memberPhone,
+                                companyCode: this.companyCode,
+                                companyName: this.companyName,
+                                memberAddress: this.address,
+                                companyAddress: this.companyAddress,
+                                contactsPhone: this.contactsPhone,
+                                contactsName: this.contactsName,
+                                received: checked_m.join(','),
+                                remark: this.remark,
+                                itemHandTypeVo: this.itemHandTypeVo,
+                                itemTakeTypeVo: this.itemTakeTypeVo
+                            }
+                        }
+                        submitNoPretrial(query).then(response => {
                             this.submiting = false;
                             if (response.httpCode === 200) {
                                 this.$message.success('提交成功');
@@ -2174,7 +2246,7 @@
                         }).catch(e => {
                             this.submiting = false;
                         });
-                    }else{
+                    } else {
                         this.submiting = true;
                         submitWork({
                             numberId: _itemNumber.id,
