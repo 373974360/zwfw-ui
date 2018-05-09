@@ -1,27 +1,53 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-select
-                    remote
-                    style="width: 200px;" class="filter-item" placeholder="企业名称"
-                    v-model="listQuery.companyId"
-                    filterable clearable
-                    :remote-method="queryCompanySearch"
-                    @change="handleCompanySelect">
-                <el-option
-                        v-for="companyInfo in companyList"
-                        :key="companyInfo.id"
-                        :label="companyInfo.companyName"
-                        :value="companyInfo.id">
-                </el-option>
-            </el-select>
-            <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
+            <el-row :gutter="20">
+                <el-col :span="6">
+                    <el-select
+                            remote
+                            style="width: 100%;" class="filter-item" placeholder="企业名称"
+                            v-model="listQuery.companyId"
+                            filterable clearable
+                            :remote-method="queryCompanySearch"
+                            @change="handleCompanySelect">
+                        <el-option
+                                v-for="companyInfo in companyList"
+                                :key="companyInfo.id"
+                                :label="companyInfo.companyName"
+                                :value="companyInfo.id">
+                        </el-option>
+                    </el-select>
+                </el-col>
+                <el-col :span="4">
+                    <el-select  style="width: 100%;" v-model="listQuery.inStatus" placeholder="请选择" clearable @change="handleChange">
+                        <el-option
+                                v-for="item in status"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
+                </el-col>
+                <el-col :span="4">
+                    <el-select style="width: 100%;" v-model="listQuery.flagTimeOut" placeholder="请选择" clearable @change="handleChanges">
+                        <el-option
+                                v-for="item in flagTimeOut"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
+                </el-col>
+                <el-col :span="4">
+                    <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
+                </el-col>
+            </el-row>
         </div>
 
         <el-table ref="zwfwDeptWorkPendingTable" :data="list" v-loading.body="listLoading" border fit
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
-            <el-table-column align="center" label="办件序号" >
+            <el-table-column align="center" label="办件序号">
                 <template scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
@@ -74,7 +100,7 @@
             </el-table-column>
             <el-table-column align="center" label="操作" width="200px">
                 <template scope="scope">
-                    <el-button  type="primary" @click="handleDetailList(scope.row)">查看
+                    <el-button type="primary" @click="handleDetailList(scope.row)">查看
                     </el-button>
                     <el-button v-show="scope.row.flagSupervied != null && scope.row.flagSupervied == 0"
                                class="filter-item"
@@ -119,17 +145,17 @@
                                 </tr>
                                 <tr>
                                     <th width="140">企业/机构地址</th>
-                                    <td >{{member.legalPerson.registerPlace}}</td>
+                                    <td>{{member.legalPerson.registerPlace}}</td>
                                     <th width="140">联系电话</th>
-                                    <td >{{member.legalPerson.phone}}</td>
+                                    <td>{{member.legalPerson.phone}}</td>
                                 </tr>
                                 <tr>
                                     <th width="140">办事员电话</th>
-                                    <td >{{itemProcessVo.contactsPhone}}</td>
+                                    <td>{{itemProcessVo.contactsPhone}}</td>
                                     <th width="140"></th>
-                                    <td ></td>
+                                    <td></td>
                                 </tr>
-                                <template v-if="companyInfo.id" >
+                                <template v-if="companyInfo.id">
                                     <tr>
                                         <th width="140">联系电话</th>
                                         <td>{{companyInfo.lxdh}}</td>
@@ -370,6 +396,8 @@
                             </span>
                         </el-tab-pane>
                         <el-tab-pane label="办件材料" name="fifth">
+                            <el-button @click="downloadMaterialFiles()" type="primary">一键下载材料</el-button>
+                            <br><br>
                             <table class="table table-bordered table-responsive">
                                 <tr>
                                     <th>序号</th>
@@ -390,13 +418,14 @@
                                             </span>
                                             <span v-else>未上传</span>
                                          </span>
-                                        </div>s
+                                        </div>
                                     </td>
                                 </tr>
                             </table>
                         </el-tab-pane>
                         <el-tab-pane label="内部办理流程描述" name="itemStep">
-                            <div id="itemStepInfo" style="white-space:pre-wrap" v-html="itemVo.workflowDescription"></div>
+                            <div id="itemStepInfo" style="white-space:pre-wrap"
+                                 v-html="itemVo.workflowDescription"></div>
                         </el-tab-pane>
 
                     </el-tabs>
@@ -419,21 +448,44 @@
     import {
         queryCompanyInfo
     } from 'api/hallSystem/window/receive/windowAccept';
+
     export default {
         name: 'zwfwDeptWorkPending_table',
         data() {
             return {
+                flagTimeOut: [
+                    {
+                        value: 1,
+                        label: '超期'
+                    },
+                    {
+                        value: 0,
+                        label: '未超期'
+                    }
+                ],
+                status: [
+                    {
+                        value: 'PROCESSING',
+                        label: '在办'
+                    },
+                    {
+                        value: 'FINISH',
+                        label: '办结'
+                    }
+                ],
                 textMapTitle: null,
                 itemNumber: [],
                 list: null,
                 total: null,
                 listLoading: true,
-                companyList:[],
+                companyList: [],
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     name: undefined,
-                    companyId: ''
+                    companyId: undefined,
+                    inStatus: undefined,
+                    flagTimeOut: undefined
                 },
                 itemMaterialVoList: [],
                 itemProcessVo: [],
@@ -492,6 +544,20 @@
             ])
         },
         methods: {
+            handleChange(value) {
+                if (value) {
+                    this.listQuery.inStatus = value;
+                } else {
+                    this.listQuery.inStatus = undefined
+                }
+            },
+            handleChanges(value) {
+                if (value) {
+                    this.listQuery.flagTimeOut = value;
+                } else {
+                    this.listQuery.flagTimeOut = undefined
+                }
+            },
             getList() {
                 this.listLoading = true;
                 getDeptSuperviseList(this.listQuery).then(response => {
@@ -616,6 +682,10 @@
             resetDeptSuperviseForm() {
                 this.dialogFormVisible = false;
                 this.tabPaneShow = 'first';
+            },
+            downloadMaterialFiles() {
+                // console.log(this.itemProcessVo);
+                window.open('/api/common/downloadMaterialFiles?processNumber=' + this.itemProcessVo.processNumber + '&taskId=' + this.itemProcessVo.taskId);
             }
         }
     }

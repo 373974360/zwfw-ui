@@ -64,3 +64,11 @@ export function getAllCategory() {
         mothod: 'get'
     });
 }
+
+export function getCategoryListByPid(parentId) {
+    return fetch({
+        url: '/api/zwfwSystem/business/category/getCategoryList',
+        method: 'get',
+        params: {parentId}
+    });
+}

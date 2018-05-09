@@ -39,79 +39,73 @@ service.interceptors.request.use(config => {
 // respone拦截器
 service.interceptors.response.use(
     response => {
-        let code = response.status;
+        let code = response.data.httpCode;
         /**
          * 下面的注释为通过response自定义code来标示请求状态，当code返回如下情况为权限有问题，登出并返回到登录页
          * 如通过xmlhttprequest 状态码标识 逻辑可写在下面error中
          */
         // // 50014:Token 过期了 50012:其他客户端登录了 50008:非法的token
-        if (code !== 200) {
-            if (code === 207) {
-                Message({
-                    message: "短时间内请求太过频繁，请重新刷新页面",
-                    type: 'error',
-                    duration: 5 * 1000
-                });
-            } else {
-                Message({
-                    message: response.data.msg,
-                    type: 'error',
-                    duration: 5 * 1000
-                });
-            }
-        } else {
-            code = response.data.httpCode;
-            if (code === 401 || code === 40101) {
-                Message({
-                    message: "登录超时，请重新登录",
-                    type: 'error',
-                    duration: 5 * 1000
-                });
-
-                // 登出
-                store.dispatch('LogOut').then(() => {
-                    router.push({path: '/login'});
-                });
-            }
-            if (code === 403) {
-                Message({
-                    message: "当前登录用户没有此权限",
-                    type: 'error',
-                    duration: 5 * 1000
-                });
-            }
-            if (code === 500) {
-                Message({
-                    message: "系统错误，请联系管理员",
-                    type: 'error',
-                    duration: 5 * 1000
-                });
-            }
-            const refreshtoken = response.headers.refresh_token;
-            if (refreshtoken) {
-                // 刷新token
-                store.dispatch('RefreshToken').then(() => {
-                    console.dir("刷新token成功");
-                });
-            }
-        }
-        return response.data;
-    },
-    error => {
-        //error.response.data 表示的是后台返回的内容
-        if (error.response.data && error.response.data.httpCode == 409) {
+        if (code === 207) {
             Message({
-                message: error.response.data.msg,
-                type: 'error',
-                duration: 10 * 1000
-            });
-        } else {
-            Message({
-                message: error.message,
+                message: "短时间内请求太过频繁，请重新刷新页面",
                 type: 'error',
                 duration: 5 * 1000
             });
         }
+        if (code === 400) {
+            Message({
+                message: "请求参数出错，请重新填写",
+                type: 'error',
+                duration: 5 * 1000
+            });
+        }
+        if (code === 455) {
+            Message({
+                message: "非法参数，请重试",
+                type: 'error',
+                duration: 5 * 1000
+            });
+        }
+        if (code === 500) {
+            Message({
+                message: response.data.msg,
+                type: 'error',
+                duration: 5 * 1000
+            });
+        }
+        if (code === 40101) {
+            Message({
+                message: "登录超时，请重新登录",
+                type: 'error',
+                duration: 5 * 1000
+            });
+            // 登出
+            store.dispatch('LogOut').then(() => {
+                router.push({path: '/login'});
+            });
+        }
+        if (code === 40102) {
+            Message({
+                message: "当前登录用户没有此权限",
+                type: 'error',
+                duration: 5 * 1000
+            });
+        }
+        const refreshtoken = response.headers.refresh_token;
+        if (refreshtoken) {
+            // 刷新token
+            store.dispatch('RefreshToken').then(() => {
+                console.dir("刷新token成功");
+            });
+        }
+        return response.data;
+    },
+    error => {
+        Message({
+            message: "系统错误，请联系管理员",
+            type: 'error',
+            duration: 5 * 1000
+        });
         return Promise.reject(error);
     }
 );

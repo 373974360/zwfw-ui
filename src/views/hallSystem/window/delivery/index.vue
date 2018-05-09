@@ -5,9 +5,9 @@
             <el-select v-model="listQuery.memberId" class="filter-item"
                        clearable filterable remote
                        placeholder="按申请人名称或证件号搜索"
-                       :remote-method="remoteMethod">
+                       :remote-method="searchMemberFilter">
                 <el-option
-                        v-for="item in optionsName"
+                        v-for="item in memberListFilter"
                         :key="item.id"
                         :label="item.name + ' | ' + item.loginName"
                         :value="item.id">
@@ -22,25 +22,25 @@
                     :remote-method="searchItem"
                     style="width: 320px;">
                 <el-option
-                        v-for="item in optionsNames"
+                        v-for="item in itemList"
                         :key="item.id"
                         :label="item.name"
                         :value="item.id">
                 </el-option>
             </el-select>-->
             <el-select class="filter-item" v-model="listQuery.takeType" clearable placeholder="请选择取件方式">
-                <el-option v-for="item in enums['TakeType']" v-if="item.code != 2" :key="item.code" :value="item.code" :label="item.value"></el-option>
+                <el-option v-for="item in enums['TakeType']" :key="item.code" :value="item.code" :label="item.value"></el-option>
             </el-select>
             <el-select class="filter-item" v-model="listQuery.flagTakeCert" clearable placeholder="请选择取件状态">
                 <el-option v-for="item in enums['TakeStatus']" :key="item.code" :value="item.code" :label="item.value"
-                           v-if="[1,2].includes(item.code)?listQuery.takeType=='1':([3,4,5].includes(item.code)?listQuery.takeType=='2':([6,9].includes(item.code)?listQuery.takeType=='3':false))"></el-option>
+                           v-if="[1,2].includes(item.code)?listQuery.takeType=='1':([3,4,5].includes(item.code)?listQuery.takeType=='2':([6,7,8].includes(item.code)?listQuery.takeType=='3':false))"></el-option>
             </el-select>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">
                 搜索
             </el-button>
-            <!--<el-button class="filter-item" style="margin-left: 10px;" type="primary" @click="createProcessOffline" icon="plus">
+            <el-button class="filter-item" style="margin-left: 10px;" type="primary" @click="createProcessOffline" icon="plus">
                 添加
-            </el-button>-->
+            </el-button>
         </div>
 
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row
@@ -79,44 +79,37 @@
                 <template scope="scope">
                     <el-tooltip class="item" effect="dark" placement="right" content="点击修改">
                         <el-button type="text" @click="changeTakeType(scope.row)">
-                            <span v-if="scope.row.takeTypeInfo">{{scope.row.takeTypeInfo.takeType | enums('TakeType')}}</span>
-                            <span v-else>未设置</span>
+                            <span>{{scope.row.takeTypeInfo.takeType | enums('TakeType')}}</span>
                         </el-button>
                     </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="取件状态">
                 <template scope="scope">
-                    <span v-if="scope.row.takeTypeInfo">{{scope.row.takeTypeInfo.flagTakeCert | enums('TakeStatus')}}</span>
-                    <span v-else>未知</span>
+                    <span>{{scope.row.takeTypeInfo.flagTakeCert | enums('TakeStatus')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作" width="240">
-                <template scope="scope" v-if="scope.row.takeTypeInfo">
-                    <template v-if="scope.row.takeTypeInfo">
-                        <el-button v-if="scope.row.takeTypeInfo.flagTakeCert == 1 || scope.row.takeTypeInfo.flagTakeCert == 7"
-                                   type="primary" @click="completeTake(scope.row)">确认取件</el-button>
-                        <el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert == 3 && scope.row.takeTypeInfo.mailboxInfo.status == 1"
-                                   type="primary" @click="mailboxReserve(scope.row)">预约投递</el-button>
-                        <el-tooltip v-else-if="scope.row.takeTypeInfo.flagTakeCert == 3 && scope.row.takeTypeInfo.mailboxInfo.status == 2"
-                                    class="item" effect="dark" placement="right" content="点击更新状态">
-                            <el-button type="text" @click="mailboxInfoUpdate(scope.row)">预约中...</el-button>
-                        </el-tooltip>
-                        <el-button-group v-else-if="scope.row.takeTypeInfo.flagTakeCert == 3 && scope.row.takeTypeInfo.mailboxInfo.status == 3">
-                            <el-button type="primary" @click="showReserveCode(scope.row)">获取<br>开箱码</el-button>
-                            <el-button type="primary" @click="mailboxCancelReserve(scope.row)">取消<br>预约</el-button>
-                            <el-button type="primary" @click="mailboxInfoUpdate(scope.row)">更新<br>状态</el-button>
-                        </el-button-group>
-                        <el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert == 4" type="primary" @click="mailboxStatusUpdate(scope.row)">
-                            更新状态
-                        </el-button>
-                        <el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert == 6" type="primary"
-                                   @click="enterExpressInfo(scope.row)">录入邮寄信息</el-button>
-                        <el-button v-else type="primary" @click="showProcessTakeInfo(scope.row)">查看</el-button>
-                    </template>
-                    <template v-else>
-                        <el-button type="primary" @click="showProcessTakeInfo(scope.row)">查看</el-button>
-                    </template>
+                <template scope="scope">
+                    <el-button v-if="scope.row.takeTypeInfo.flagTakeCert == 1 || scope.row.takeTypeInfo.flagTakeCert == 7"
+                               type="primary" @click="completeTake(scope.row)">确认取件</el-button>
+                    <el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert == 3 && scope.row.takeTypeInfo.mailboxInfo.status == 1"
+                               type="primary" @click="mailboxReserve(scope.row)">预约投递</el-button>
+                    <el-tooltip v-else-if="scope.row.takeTypeInfo.flagTakeCert == 3 && scope.row.takeTypeInfo.mailboxInfo.status == 2"
+                                class="item" effect="dark" placement="right" content="点击更新状态">
+                        <el-button type="text" @click="mailboxInfoUpdate(scope.row)">预约中...</el-button>
+                    </el-tooltip>
+                    <el-button-group v-else-if="scope.row.takeTypeInfo.flagTakeCert == 3 && scope.row.takeTypeInfo.mailboxInfo.status == 3">
+                        <el-button type="primary" @click="showReserveCode(scope.row)">获取<br>开箱码</el-button>
+                        <el-button type="primary" @click="mailboxCancelReserve(scope.row)">取消<br>预约</el-button>
+                        <el-button type="primary" @click="mailboxInfoUpdate(scope.row)">更新<br>状态</el-button>
+                    </el-button-group>
+                    <el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert == 4" type="primary" @click="mailboxStatusUpdate(scope.row)">
+                        更新状态
+                    </el-button>
+                    <el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert == 6" type="primary"
+                               @click="enterExpressInfo(scope.row)">录入邮寄信息</el-button>
+                    <el-button v-else type="primary" @click="showProcessTakeInfo(scope.row)">查看</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -230,20 +223,17 @@
             <el-form ref="processOfflineForm" :model="processOfflineInfo" :rules="processOfflineInfoRules"
                      label-width="100px" class="small-space" label-position="right"
                      style="width: 80%; margin-left:10%;" v-loading="dialogLoading">
-                <el-form-item label="办件号" v-show="offlineReadonly">
+                <el-form-item label="办件号" v-if="offlineReadonly">
                     <el-input v-model="processOfflineInfo.processNumber" :disabled="offlineReadonly"></el-input>
                 </el-form-item>
-                <el-form-item label="事项名称" v-if="offlineReadonly">
-                    <el-input v-model="processOfflineInfo.itemName" :disabled="offlineReadonly"></el-input>
-                </el-form-item>
-                <el-form-item label="事项" prop="itemId" v-if="!offlineReadonly">
-                    <el-select v-model="processOfflineInfo.itemId" value-key="id"
+                <el-form-item label="事项" prop="itemId">
+                    <el-select v-model="processOfflineInfo.itemId" value-key="id" :disabled="offlineReadonly"
                                filterable
                                remote
                                placeholder="请输入事项名称" style="width: 100%"
                                @change="getItemTakeTypes"
-                               :remote-method="searchItem1">
-                        <el-option v-for="item in optionsNamess" :key="item.id" :label="item.name" :value="item.id"></el-option>
+                               :remote-method="searchItem">
+                        <el-option v-for="item in itemList" :key="item.id" :label="item.name" :value="item.id"></el-option>
                     </el-select>
                 </el-form-item>
                 <!--<el-form-item label="开始办件时间">
@@ -256,22 +246,19 @@
                                     :disabled="offlineReadonly" @change="formatDateTime">
                     </el-date-picker>
                 </el-form-item>
-                <el-form-item label="取件方式" v-if="!offlineReadonly">
-                    <el-select v-model="processOfflineInfo.takeTypeInfo.takeType">
+                <el-form-item label="取件方式">
+                    <el-select v-model="processOfflineInfo.takeTypeInfo.takeType" :disabled="offlineReadonly">
                         <el-option v-for="item in takeTypeList" :key="item"
                                    :value="item" :label="item | parseToInt | enums('TakeType')"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="取件方式" v-if="offlineReadonly">
-                    <span>&nbsp;&nbsp;<b>{{processOfflineInfo.takeTypeInfo.takeType | parseToInt | enums('TakeType')}}</b></span>
-                </el-form-item>
                 <el-form-item label="取件状态" v-if="offlineReadonly">
                     <span>&nbsp;&nbsp;<b>{{processOfflineInfo.takeTypeInfo.flagTakeCert | enums('TakeStatus')}}</b></span>
                     &nbsp;&nbsp;
-                    <!--<el-button v-if="[7,8].includes(processOfflineInfo.takeTypeInfo.flagTakeCert)" type="text"
-                               @click="showLogistics(processOfflineInfo.takeTypeInfo)">查看物流</el-button>-->
+                    <el-button v-if="[7,8].includes(processOfflineInfo.takeTypeInfo.flagTakeCert)" type="text"
+                               @click="showLogistics(processOfflineInfo.takeTypeInfo)">查看物流</el-button>
                 </el-form-item>
-                <el-form-item label="取件时间" v-show="offlineReadonly && [2,5,8].includes(processOfflineInfo.takeTypeInfo.flagTakeCert)">
+                <el-form-item label="取件时间" v-if="offlineReadonly && [2,5,8].includes(processOfflineInfo.takeTypeInfo.flagTakeCert)">
                     <el-date-picker v-model="processOfflineInfo.takeTypeInfo.takeCertTime" type="datetime" :disabled="offlineReadonly"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="快件箱" prop="takeTypeInfo.mailboxInfo.mailboxId"
@@ -353,21 +340,27 @@
                         </div>
                     </el-card>
                 </el-form-item>
+                <el-form-item label="出件窗口" v-if="offlineReadonly && window && window.name">
+                    <span>&nbsp;&nbsp;<b>{{window.name}}</b></span>
+                </el-form-item>
+                <el-form-item label="出件人员" v-if="offlineReadonly && user && user.name">
+                    <span>&nbsp;&nbsp;<b>{{user.name}} {{user.empNo}}</b></span>
+                </el-form-item>
                 <el-form-item label="申请人是否注册帐号" v-show="!offlineReadonly">
                     <el-radio-group v-model="processOfflineInfo.hasMemberId">
                         <el-radio :label="true">已注册</el-radio>
                         <el-radio :label="false">未注册</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item label="申请人帐号" prop="memberId" v-show="!offlineReadonly && processOfflineInfo.hasMemberId"
+                <el-form-item label="申请人帐号" prop="memberId" v-show="processOfflineInfo.hasMemberId"
                               :rules="processOfflineInfo.hasMemberId ? processOfflineInfoRules.memberId : []">
-                    <el-select v-model="processOfflineInfo.memberId"
+                    <el-select v-model="processOfflineInfo.memberId" :disabled="offlineReadonly"
                                clearable filterable remote
                                placeholder="请输入会员名称或证件号" style="width: 100%"
-                               :remote-method="remoteMethod"
+                               :remote-method="searchMember"
                                @change="handleChangeMember">
                         <el-option
-                                v-for="item in optionsName"
+                                v-for="item in memberList"
                                 :key="item.id"
                                 :label="item.name + ' | ' + item.loginName"
                                 :value="item.id + ''">
@@ -376,62 +369,64 @@
                 </el-form-item>
             </el-form>
             <el-form ref="memberInfoForm" :model="memberInfo" :rules="memberInfoRules"
-                      v-show="!processOfflineInfo.hasMemberId"
+                      v-show="!processOfflineInfo.hasMemberId || offlineReadonly"
                       label-width="100px" class="small-space" label-position="right"
                       style="width: 80%; margin-left:10%;" v-loading="dialogLoading">
-                <el-form-item label="用户类型">
+                <el-form-item label="用户类型" v-show="!offlineReadonly">
                     <el-radio-group v-model="memberInfo.type">
                         <el-radio v-for="item in enums['MemberType']" :key="item.code" :label="item.code">{{item.value}}</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="姓名" prop="naturePerson.name" v-show="memberInfo.type == 1"
                               :rules="natureRequired ? memberInfoRules.name : []">
-                    <el-input v-model="memberInfo.naturePerson.name"
+                    <el-input v-model="memberInfo.naturePerson.name" :disabled="offlineReadonly"
                               @blur="validateField('memberInfoForm', 'naturePerson.name')"></el-input>
                 </el-form-item>
                 <el-form-item label="身份证号" prop="naturePerson.idcard" v-show="memberInfo.type == 1"
                               :rules="natureRequired ? memberInfoRules.idcard : []">
-                    <el-input v-model="memberInfo.naturePerson.idcard"
+                    <el-input v-model="memberInfo.naturePerson.idcard" :disabled="offlineReadonly"
                               @blur="validateField('memberInfoForm', 'naturePerson.idcard')"></el-input>
                 </el-form-item>
-                <el-form-item label="手机号" prop="naturePerson.phone" v-show="memberInfo.type == 1">
+                <el-form-item label="手机号" prop="naturePerson.phone" v-show="memberInfo.type == 1 && (offlineReadonly ? memberInfo.naturePerson.phone : true)">
                     <!--:rules="natureRequired ? memberInfoRules.phone : []"-->
-                    <el-input v-model="memberInfo.naturePerson.phone"></el-input>
+                    <el-input v-model="memberInfo.naturePerson.phone" :disabled="offlineReadonly"></el-input>
                     <!--@blur="validateField('memberInfoForm', 'naturePerson.phone')"-->
                 </el-form-item>
                 <el-form-item label="公司名称" prop="legalPerson.companyName" v-show="memberInfo.type == 2"
                               :rules="legalRequired ? memberInfoRules.companyName : []">
-                    <el-input v-model="memberInfo.legalPerson.companyName"
+                    <el-input v-model="memberInfo.legalPerson.companyName" :disabled="offlineReadonly"
                               @blur="validateField('memberInfoForm', 'legalPerson.companyName')"></el-input>
                 </el-form-item>
                 <el-form-item label="统一社会信用代码" prop="legalPerson.companyCode" v-show="memberInfo.type == 2"
                               :rules="legalRequired ? memberInfoRules.companyCode : []">
-                    <el-input v-model="memberInfo.legalPerson.companyCode"
+                    <el-input v-model="memberInfo.legalPerson.companyCode" :disabled="offlineReadonly"
                               @blur="validateField('memberInfoForm', 'legalPerson.companyCode')"></el-input>
                 </el-form-item>
-                <el-form-item label="法人姓名" prop="legalPerson.legalPerson" v-show="memberInfo.type == 2">
+                <el-form-item label="法人姓名" prop="legalPerson.legalPerson" v-show="memberInfo.type == 2 && (offlineReadonly ? memberInfo.legalPerson.legalPerson : true)">
                               <!--:rules="legalRequired ? memberInfoRules.legalPerson : []"-->
-                    <el-input v-model="memberInfo.legalPerson.legalPerson"></el-input>
+                    <el-input v-model="memberInfo.legalPerson.legalPerson" :disabled="offlineReadonly"></el-input>
                     <!--@blur="validateField('memberInfoForm', 'legalPerson.legalPerson')"-->
                 </el-form-item>
-                <el-form-item label="法人身份证号" prop="legalPerson.idcard" v-show="memberInfo.type == 2">
+                <el-form-item label="法人身份证号" prop="legalPerson.idcard" v-show="memberInfo.type == 2 && (offlineReadonly ? memberInfo.legalPerson.idcard : true)">
                               <!--:rules="legalRequired ? memberInfoRules.legalPersonCard : []"-->
-                    <el-input v-model="memberInfo.legalPerson.idcard"></el-input>
+                    <el-input v-model="memberInfo.legalPerson.idcard" :disabled="offlineReadonly"></el-input>
                     <!--@blur="validateField('memberInfoForm', 'legalPerson.idcard')"-->
                 </el-form-item>
-                <el-form-item label="联系电话" prop="legalPerson.phone" v-show="memberInfo.type == 2">
+                <el-form-item label="联系电话" prop="legalPerson.phone" v-show="memberInfo.type == 2 && (offlineReadonly ? memberInfo.legalPerson.phone : true)">
                               <!--:rules="legalRequired ? memberInfoRules.legalPersonPhone : []"-->
-                    <el-input v-model="memberInfo.legalPerson.phone"></el-input>
+                    <el-input v-model="memberInfo.legalPerson.phone" :disabled="offlineReadonly"></el-input>
                     <!--@blur="validateField('memberInfoForm', 'legalPerson.phone')"-->
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button v-if="offlineReadonly && processOfflineInfo.offlineFlag" icon="edit" type="primary">编辑</el-button>
-                <el-button icon="circle-cross" type="danger" @click="resetProcessOfflineForm">取 消</el-button>
+                <el-button v-if="offlineReadonly && processOfflineInfo.offlineFlag" icon="edit" type="primary" @click="updateProcessOffline">编辑</el-button>
+                <el-button v-if="offlineReadonly && processOfflineInfo.offlineFlag" icon="circle-cross" type="danger" @click="handleDeleteProcessOffline">删除</el-button>
+                <el-button v-if="!offlineReadonly" icon="circle-cross" type="danger" @click="resetProcessOfflineForm">取 消</el-button>
                 <el-button v-if="!offlineReadonly" type="primary" icon="circle-check" @click="submitProcessOffline"
                            :loading="btnLoading">确 定</el-button>
             </div>
         </el-dialog>
+
         <el-dialog title="物流信息" :visible.sync="logisticsVisible" :close-on-click-modal="closeOnClickModal">
             <el-card class="box-card">
                 <div slot="header" class="clearfix card-header">
@@ -470,10 +465,12 @@
     import {getByNameOrLoginName, getMemberById} from '../../../../api/hallSystem/member/member'
     import {idCardExist} from '../../../../api/hallSystem/member/naturePerson'
     import {creditCodeExist} from '../../../../api/hallSystem/member/legalPerson'
-    import {getFinishList, addProcessOffline, saveExpressInfo, saveTakeType, complete, reserve, cancelReserve,
+    import {getFinishList, addProcessOffline, deleteProcessOffline, saveExpressInfo, saveTakeType, complete, reserve, cancelReserve,
         getOrderStatus, getOrderDetail} from '../../../../api/hallSystem/window/delivery'
     import {getAllAddresseesByMemberId, getMemberAddresseeById} from '../../../../api/hallSystem/member/memberAddressee';
-    import {queryLogistics} from '../../../../api/hallSystem/window/express'
+    import {queryLogistics} from '../../../../api/hallSystem/window/express';
+    import {getUserInfo} from '../../../../api/baseSystem/org/user'
+    import {getWindowInfo} from '../../../../api/hallSystem/lobby/window'
 
     export default {
         name: 'table_demo',
@@ -521,10 +518,8 @@
             return {
                 list: null,
                 itemList: [],
-                memberDetail: {},
-                optionsName: [],
-                optionsNames: [],
-                optionsNamess: [],
+                memberListFilter: [],
+                memberList: [],
                 mailboxList: [],
                 takeTypeList: [],
                 total: null,
@@ -549,6 +544,7 @@
                 offlineCardVisible: false,
                 offlineCardItemVisible: false,
                 logisticsVisible: false,
+                deliveryVisible: false,
                 offlineCardHeader: {
                     name: '',
                     phone: '',
@@ -557,6 +553,7 @@
                 },
                 offlineAddresseeList: [],
                 processOfflineInfo: {
+                    id: undefined,
                     processNumber: undefined,
                     itemName: undefined,
                     itemId: '',
@@ -569,7 +566,10 @@
                         takeType: '',
                         flagTakeCert: undefined,
                         takeCertTime: undefined,
+                        userId: undefined,
+                        windowId: undefined,
                         mailboxInfo: {
+                            id: undefined,
                             mailboxId: '',
                             status: undefined,
                             consigneeMobile: '',
@@ -578,6 +578,7 @@
                             openCode: undefined
                         },
                         postInfo: {
+                            id: undefined,
                             name: '',
                             mobilephone: '',
                             address: '',
@@ -590,6 +591,7 @@
                 },
                 memberInfo: {
                     type: 1,
+                    enable: undefined,
                     naturePerson: {
                         name: '',
                         idcard: '',
@@ -603,6 +605,8 @@
                         phone: ''
                     }
                 },
+                user: {},
+                window: {},
                 processOfflineInfoRules: {
                     itemId: [
                         {required: true, message: '请选择事项', trigger: 'change'}
@@ -797,7 +801,8 @@
             },
             getItemTakeTypes(id) {
                 return new Promise((resolve, reject) => {
-                    if (this.offlineReadonly && this.processOfflineVisible) {
+                    if (!id) {
+                        this.takeTypeList = [];
                         return reject();
                     }
                     getDetailById(id).then(response => {
@@ -811,85 +816,97 @@
                     })
                 })
             },
-            getMemberDetail(id) {
-                return new Promise((resolve, reject) => {
-                    getMemberById(id).then(response => {
-                        if (response.httpCode == 200) {
-                            this.memberDetail = response.data;
-                            resolve();
-                        } else {
-                            this.$message.error('获取用户信息失败');
-                            reject(response.msg);
-                        }
-                    })
-                })
-            },
             searchItem(query) {
-                const listQueryName = {
-                    name: undefined
-                }
-                if (query !== '') {
-                    let valid = validateQueryStr(query);
-                    if (valid) {
-                        this.$message.error(`输入中包含非法字符 ${valid}`)
-                        return
+                return new Promise((resolve, reject) => {
+                    const listQueryName = {
+                        name: undefined,
+                        showStatus: 1
+                    };
+                    if (this.offlineReadonly) {
+                        query = this.processOfflineInfo.itemName;
                     }
-                    if (/.*[\u4e00-\u9fa5]+.*$/.test(query)) {
-                        listQueryName.name = query;
-                    }
-                    getAllByNameOrbasicCode(listQueryName).then(response => {
-                        if (response.httpCode === 200) {
-                            this.optionsNames = response.data;
-                        } else {
-                            this.$message.error(response.msg);
+                    if (query !== '') {
+                        let valid = validateQueryStr(query);
+                        if (valid) {
+                            this.$message.error(`输入中包含非法字符 ${valid}`);
+                            return reject();
                         }
-                    })
-                } else {
-                    this.optionsNames = [];
-                }
-            },
-            searchItem1(query) {
-                const listQueryName = {
-                    name: undefined,
-                    showStatus: 1
-                }
-                if (query !== '') {
-                    let valid = validateQueryStr(query);
-                    if (valid) {
-                        this.$message.error(`输入中包含非法字符 ${valid}`)
-                        return
-                    }
-                    if (/.*[\u4e00-\u9fa5]+.*$/.test(query)) {
-                        listQueryName.name = query;
-                    }
-                    getAllByNameOrbasicCode(listQueryName).then(response => {
-                        if (response.httpCode === 200) {
-                            this.optionsNamess = response.data;
-                        } else {
-                            this.$message.error(response.msg);
+                        if (/.*[\u4e00-\u9fa5]+.*$/.test(query)) {
+                            listQueryName.name = query;
                         }
-                    })
-                } else {
-                    this.optionsNamess = [];
-                }
+                        if (listQueryName.name) {
+                            getAllByNameOrbasicCode(listQueryName).then(response => {
+                                if (response.httpCode === 200) {
+                                    this.itemList = response.data;
+                                    resolve();
+                                } else {
+                                    this.$message.error(response.msg);
+                                    reject(response.msg);
+                                }
+                            })
+                        }
+                    } else {
+                        this.itemList = [];
+                        resolve();
+                    }
+                });
             },
-            remoteMethod(query) {
+            searchMemberFilter(query) {
                 if (query !== '') {
                     let valid = validateQueryStr(query);
                     if (valid) {
-                        this.$message.error(`输入中包含非法字符 ${valid}`)
-                        return
+                        this.$message.error(`输入中包含非法字符 ${valid}`);
+                        return;
                     }
                     getByNameOrLoginName(query).then(response => {
                         if (response.httpCode === 200) {
-                            this.optionsName = response.data;
+                            this.memberListFilter = response.data;
                         } else {
                             this.$message.error('数据加载失败')
                         }
                     })
                 } else {
-                    this.optionsName = [];
+                    this.memberListFilter = [];
                 }
+            },
+            searchMember(query) {
+                return new Promise((resolve, reject) => {
+                    if (this.offlineReadonly) {
+                        query = this.memberInfo.type === 1 ? this.memberInfo.naturePerson.idcard : this.memberInfo.legalPerson.companyName;
+                    }
+                    if (query !== '') {
+                        let valid = validateQueryStr(query);
+                        if (valid) {
+                            this.$message.error(`输入中包含非法字符 ${valid}`);
+                            return reject();
+                        }
+                        getByNameOrLoginName(query).then(response => {
+                            if (response.httpCode === 200) {
+                                this.memberList = response.data;
+                                resolve();
+                            } else {
+                                this.$message.error('数据加载失败');
+                                reject(response.msg);
+                            }
+                        })
+                    } else {
+                        this.memberList = [];
+                        resolve();
+                    }
+                });
+            },
+            getMemberInfo(id) {
+                return new Promise((resolve, reject) => {
+                    getMemberById(id).then(response => {
+                        if (response.httpCode === 200) {
+                            copyProperties(this.memberInfo, response.data);
+                            resolve();
+                        } else {
+                            this.$message.error('获取申请人信息失败');
+                            reject(response.msg);
+                        }
+                    })
+                });
             },
             createProcessOffline() {
                 this.offlineReadonly = false;
@@ -936,14 +953,18 @@
                 })
             },
             changeMemberAddressee(memberId) {
-                getAllAddresseesByMemberId({memberId: memberId}).then(response => {
-                    if (response.httpCode === 200) {
-                        this.offlineAddresseeList = response.data;
-                        this.initOfflineCardHeader();
-                    } else {
-                        this.$message.error('获取用户收件地址信息错误');
-                    }
-                })
+                return new Promise((resolve, reject) => {
+                    getAllAddresseesByMemberId({memberId: memberId}).then(response => {
+                        if (response.httpCode === 200) {
+                            this.offlineAddresseeList = response.data;
+                            this.initOfflineCardHeader();
+                            resolve();
+                        } else {
+                            this.$message.error('获取用户收件地址信息错误');
+                            reject(response.msg);
+                        }
+                    })
+                });
             },
             initOfflineCardHeader() {
                 if (!this.offlineAddresseeList || this.offlineAddresseeList.length <= 0
@@ -992,11 +1013,11 @@
                             this.dialogLoading = false;
                             this.btnLoading = false;
                             if (response.httpCode === 200) {
-                                this.resetProcessOfflineForm();
-                                this.$message.success('添加成功');
+                                this.$message.success('保存成功');
                                 this.getList();
+                                this.resetProcessOfflineForm();
                             } else {
-                                this.$message.error('添加失败');
+                                this.$message.error('保存失败');
                             }
                         })
                     })
@@ -1010,33 +1031,26 @@
                 this.takeTypeInfo.postInfo.addresseeId = undefined;
                 this.resetCardHeader();
                 this.cardItemVisible = false;
-                this.initDefaultAddressee();
             },
             changeTakeType(row) {
-                if (row.takeTypeInfo && row.takeTypeInfo.flagTakeCert !== 1
+                if (row.takeTypeInfo.flagTakeCert !== 1
                     && row.takeTypeInfo.flagTakeCert !== 3
                     && row.takeTypeInfo.flagTakeCert !== 6) {
                     this.$message.warning('当前状态不可修改取件方式');
                     return;
                 }
+                this.takeTypeInfo.id = row.takeTypeInfo.id;
                 this.takeTypeInfo.processNumber = row.processNumber;
                 this.takeTypeInfo.memberId = row.memberId;
-                if (row.takeTypeInfo) {
-                    this.takeTypeInfo.id = row.takeTypeInfo.id;
-                    this.takeTypeInfo.takeType = row.takeTypeInfo.takeType + '';
-                    if (row.takeTypeInfo.mailboxInfo) {
-                        copyProperties(this.takeTypeInfo.mailboxInfo, row.takeTypeInfo.mailboxInfo);
-                    }
-                    if (row.takeTypeInfo.postInfo) {
-                        copyProperties(this.takeTypeInfo.postInfo, row.takeTypeInfo.postInfo);
-                    }
+                this.takeTypeInfo.takeType = row.takeTypeInfo.takeType + '';
+                if (row.takeTypeInfo.mailboxInfo) {
+                    copyProperties(this.takeTypeInfo.mailboxInfo, row.takeTypeInfo.mailboxInfo);
+                }
+                if (row.takeTypeInfo.postInfo) {
+                    copyProperties(this.takeTypeInfo.postInfo, row.takeTypeInfo.postInfo);
                 }
                 this.getSelectedAddressee();
-                Promise.all([
-                    this.getItemTakeTypes(row.itemId),
-                    this.getMemberAddressees(),
-                    this.getMemberDetail(row.memberId)
-                ]).then(() => {
+                Promise.all([this.getItemTakeTypes(row.itemId), this.getMemberAddressees()]).then(() => {
                     this.takeTypeVisible = true;
                 });
             },
@@ -1045,7 +1059,6 @@
                     getAllAddresseesByMemberId({
                         memberId: this.takeTypeInfo.memberId
                     }).then(response => {
-                        console.log();
                         if (response.httpCode == 200) {
                             this.addresseeList = response.data;
                             resolve()
@@ -1064,9 +1077,6 @@
                     this.takeTypeInfo.postInfo.addresseeId = undefined;
                     this.resetCardHeader();
                     this.cardItemVisible = false;
-                    if (this.takeTypeInfo.takeType == 3) {
-                        this.initDefaultAddressee();
-                    }
                     return;
                 }
                 let addressee;
@@ -1092,24 +1102,8 @@
                 copyProperties(this.cardHeader, addressee);
                 this.cardVisible = true;
             },
-            initDefaultAddressee() {
-                this.takeTypeInfo.postInfo.name = undefined;
-                this.takeTypeInfo.postInfo.mobilephone = undefined;
-                this.takeTypeInfo.postInfo.address = undefined;
-                if (this.memberDetail) {
-                    if (this.memberDetail.type == 1) {
-                        this.takeTypeInfo.postInfo.name = this.memberDetail.naturePerson.name;
-                        this.takeTypeInfo.postInfo.mobilephone = this.memberDetail.naturePerson.phone;
-                        this.takeTypeInfo.postInfo.address = this.memberDetail.naturePerson.address;
-                    } else if (this.memberDetail.type == 2) {
-                        this.takeTypeInfo.postInfo.name = this.memberDetail.legalPerson.legalPerson;
-                        this.takeTypeInfo.postInfo.mobilephone = this.memberDetail.legalPerson.phone;
-                        this.takeTypeInfo.postInfo.address = this.memberDetail.legalPerson.registerPlace;
-                    }
-                }
-            },
             getSelectedAddressee() {
-                if (this.takeTypeInfo && this.takeTypeInfo.takeType == 3 && this.takeTypeInfo.postInfo
+                if (this.takeTypeInfo.takeType == 3 && this.takeTypeInfo.postInfo
                     && this.takeTypeInfo.postInfo.addresseeId) {
                     getMemberAddresseeById(this.takeTypeInfo.postInfo.addresseeId).then(response => {
                         if (response.httpCode == 200) {
@@ -1254,11 +1248,69 @@
                 })
             },
             showProcessTakeInfo(row) {
-                this.processOfflineInfo = copyProperties(this.processOfflineInfo, row);
-                this.processOfflineInfo.hasMemberId = true;
                 this.offlineReadonly = true;
-                this.changeMemberAddressee(this.processOfflineInfo.memberId);
-                this.processOfflineVisible = true;
+                this.getUser(row.takeTypeInfo.userId);
+                this.getWindow(row.takeTypeInfo.windowId);
+                Promise.all([
+                    this.getMemberInfo(row.memberId),
+                    this.changeMemberAddressee(row.memberId)
+                ]).then(() => {
+                    copyProperties(this.processOfflineInfo, row);
+                    this.processOfflineInfo.takeTypeInfo.takeType += '';
+                    this.processOfflineInfo.memberId += '';
+                    this.processOfflineVisible = true;
+                });
+            },
+            getUser(userId) {
+                if (userId) {
+                    getUserInfo(userId).then(response => {
+                        if (response.httpCode === 200) {
+                            this.user = response.data;
+                        } else {
+                            this.$message.error('获取出件人员信息失败');
+                        }
+                    })
+                }
+            },
+            getWindow(windowId) {
+                if (windowId) {
+                    getWindowInfo(windowId).then(response => {
+                        if (response.httpCode === 200) {
+                            this.window = response.data;
+                        } else {
+                            this.$message.error('获取出件窗口信息失败');
+                        }
+                    })
+                }
+            },
+            updateProcessOffline() {
+                if (this.memberInfo.enable !== 1) {
+                    this.processOfflineInfo.hasMemberId = false;
+                }
+                this.offlineReadonly = false;
+            },
+            handleDeleteProcessOffline() {
+                if (![1, 3, 6].includes(this.processOfflineInfo.takeTypeInfo.flagTakeCert)) {
+                    this.$message.error('当前状态不允许删除');
+                    return;
+                }
+                this.$confirm('确定要删除该条信息吗？', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    deleteProcessOffline(this.processOfflineInfo.processNumber).then(response => {
+                        if (response.httpCode === 200) {
+                            this.$message.success('删除成功');
+                            this.processOfflineVisible = false;
+                            this.getList();
+                        } else {
+                            this.$message.error('删除失败');
+                        }
+                    })
+                }).catch(() => {
+                    console.dir('取消');
+                })
             },
             showLogistics(takeTypeInfo) {
                 let company = takeTypeInfo.postInfo.expressCompany;
@@ -1360,6 +1412,7 @@
             },
             resetProcessOfflineTemp() {
                 this.processOfflineInfo = {
+                    id: undefined,
                     processNumber: undefined,
                     itemName: undefined,
                     itemId: '',
@@ -1372,7 +1425,10 @@
                         takeType: '',
                         flagTakeCert: undefined,
                         takeCertTime: undefined,
+                        userId: undefined,
+                        windowId: undefined,
                         mailboxInfo: {
+                            id: undefined,
                             mailboxId: '',
                             status: undefined,
                             consigneeMobile: '',
@@ -1381,6 +1437,7 @@
                             openCode: undefined
                         },
                         postInfo: {
+                            id: undefined,
                             name: '',
                             mobilephone: '',
                             address: '',
@@ -1393,6 +1450,7 @@
                 };
                 this.memberInfo = {
                     type: 1,
+                    enable: undefined,
                     naturePerson: {
                         name: '',
                         idcard: '',
@@ -1405,7 +1463,9 @@
                         idcard: '',
                         phone: ''
                     }
-                }
+                };
+                this.user = {};
+                this.window = {};
             },
             resetOfflineCardHeader() {
                 this.offlineCardHeader = {

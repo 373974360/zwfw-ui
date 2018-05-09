@@ -50,3 +50,11 @@ export function getAllUser(query) {
         params: query
     });
 }
+
+export function getUserInfo(id) {
+    return fetch({
+        url: '/api/baseSystem/org/user/get',
+        method: 'get',
+        params: {id}
+    })
+}

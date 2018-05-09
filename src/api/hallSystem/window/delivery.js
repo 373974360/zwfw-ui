@@ -21,6 +21,15 @@ export function addProcessOffline(itemProcessOfflineVo, memberVo) {
     })
 }
 
+export function deleteProcessOffline(processNumber) {
+    const data = {processNumber};
+    return fetch({
+        url: '/api/hallSystem/hallCompositeWindowCert/deleteProcessOffline',
+        method: 'post',
+        data
+    })
+}
+
 export function saveTakeType(takeTypeInfo) {
     const data = takeTypeInfo;
     return fetch({
