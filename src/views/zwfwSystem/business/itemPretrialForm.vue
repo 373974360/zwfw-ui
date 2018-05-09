@@ -135,7 +135,8 @@
         </el-table>
 
         <h1>预览区域：</h1>
-        <el-form v-if="pretrialForm && pretrialForm.fields" ref="previewForm" :model="pretrialForm" label-position="top"
+        <el-form v-if="pretrialForm && pretrialForm.fields" ref="pretrialForm" :model="pretrialForm"
+                 label-position="top"
                  label-width="80px" label-suffix=":">
             <el-row :gutter="10">
                 <el-col v-for="(field,index) in pretrialForm.fields" v-if="!!field.fieldId"
@@ -217,9 +218,9 @@
                 },
                 fields: [],
                 loading: false,
-                previewFormModel: {
-                    fields: []
-                },
+                // previewFormModel: {
+                //     fields: []
+                // },
                 rules: {},
                 versions: [],
                 newForm: undefined,
@@ -265,7 +266,7 @@
                 return rules.length === 0 ? null : rules;
             },
             testRegex() {
-                this.$refs.previewForm.validate(result => {
+                this.$refs.pretrialForm.validate(result => {
                     if (!result) {
                         this.$message.error('验证不通过');
                     } else {
@@ -307,9 +308,10 @@
                 if (!pretrialFormField.size) {
                     pretrialFormField.size = this.smartSize();
                 }
-                console.log(typeof pretrialFormField.inputType);
                 if (pretrialFormField.inputType == 3 && !Array.isArray(pretrialFormField.value)) {
-                    pretrialFormField.value = [];
+                    pretrialFormField.value = field.defaultValue ? field.defaultValue.split('|') : [];
+                } else if (!pretrialFormField.value) {
+                    pretrialFormField.value = field.defaultValue || null;
                 }
                 // 清空候选列表
                 // this.fields = [];
@@ -342,7 +344,7 @@
                 if (!data) {
                     return null;
                 }
-                this.previewFormModel.fields = [];
+                // this.previewFormModel.fields = [];
                 this.pretrialForm = {};
                 if (data.fields && data.fields.length > 0) {
                     for (const field of data.fields) {
@@ -366,7 +368,7 @@
                         // 添加到 select 组件中的待选项
                         this.fields.push(field.field);
                         // 预览区域的数据
-                        this.previewFormModel.fields.push(field.field);
+                        // this.previewFormModel.fields.push(field.field);
                     }
                 }
                 // 返回的数据，修改后用户界面还原显示编辑行
@@ -482,12 +484,10 @@
                     size: this.defualtSize,
                     require: true,
                     field: {},
-                    value: undefined
+                    value: null
                 };
                 this.pretrialForm.fields.push(newField);
-                this.previewFormModel.fields.push({
-                    value: undefined
-                });
+                // this.previewFormModel.fields.push(newField);
                 /* 清空自动完成 */
                 // this.fields = [];
             },
