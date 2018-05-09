@@ -4,13 +4,14 @@
             <el-input @keyup.enter.native="getItemList" style="width: 230px;" class="filter-item"
                       placeholder="输入事项名称/基本编码"
                       v-model="listQuery.name"></el-input>
-            <el-select v-model="listQuery.itemCategories" class="filter-item"  filterable placeholder="选择科室分类">
-                <el-option :key="category.id" v-for="category in categoryDept" :label="category.name" :value="category.id">
+            <el-select v-model="listQuery.itemCategories" class="filter-item" filterable placeholder="选择科室分类">
+                <el-option :key="category.id" v-for="category in categoryDept" :label="category.name"
+                           :value="category.id">
                 </el-option>
             </el-select>
             <!--<el-cascader :options="cascader" class="filter-item" @change="handleChange"-->
-                         <!--:show-all-levels="true" clearable filterable expand-trigger="hover"-->
-                         <!--:change-on-select="true" style="width: 180px" placeholder="所属部门">-->
+            <!--:show-all-levels="true" clearable filterable expand-trigger="hover"-->
+            <!--:change-on-select="true" style="width: 180px" placeholder="所属部门">-->
             <!--</el-cascader>-->
             <el-select class="filter-item" v-model="listQuery.processType" clearable placeholder="请选择办件类型">
                 <el-option v-for="item in dics['bjlx']" :key="item.code" :value="item.code"
@@ -792,21 +793,20 @@
                 callback();
             };
             const promiseEndTimeValidate = (rule, value, callback) => {
-                if (!/^[1-9]+(\.5)?$|^0\.5$/.test(this.zwfwItem.promiseEndTime)) {
-                    callback(new Error('请填写承诺的工作日，最小单位为0.5天'));
+                if (this.zwfwItem.promiseEndTime.length > 3 || !/^[0-9]+(\.5)?$|^0\.5$/.test(this.zwfwItem.promiseEndTime)) {
+                    callback(new Error('请填写承诺的工作日，最小单位为0.5天,最多三位整数'));
                 }
                 callback();
             };
-
             const pretrialDaysValidate = (rule, value, callback) => {
-                if (!/^[1-9]+(\.5)?$|^0\.5$/.test(this.zwfwItem.pretrialDays)) {
-                    callback(new Error('请填写预审的工作日，最小单位为0.5天'));
+                if (this.zwfwItem.pretrialDays.length > 3 || !/^[0-9]+(\.5)?$|^0\.5$/.test(this.zwfwItem.pretrialDays) ) {
+                    callback(new Error('请填写预审的工作日，最小单位为0.5天,最多三位整数'));
                 }
                 callback();
             };
             const legalEndTimeValidate = (rule, value, callback) => {
-                if (!/^[1-9]+(\.5)?$|^0\.5$/.test(this.zwfwItem.legalEndTime)) {
-                    callback(new Error('请填写法定办结的工作日，最小单位为0.5天'));
+                if (this.zwfwItem.legalEndTime.length > 3 || !/^[0-9]+(\.5)?$|^0\.5$/.test(this.zwfwItem.legalEndTime)) {
+                    callback(new Error('请填写法定办结的工作日，最小单位为0.5天,最多三位整数'));
                 }
                 callback();
             };
