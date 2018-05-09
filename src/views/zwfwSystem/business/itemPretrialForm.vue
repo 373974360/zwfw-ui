@@ -169,8 +169,14 @@
                                 v-if="field.inputType == 5"
                                 v-model="field.value"
                                 type="date"
-                                placeholder="选择日期"
+                                :placeholder="field.placeholder"
                                 :picker-options="{}">
+                        </el-date-picker>
+                        <el-date-picker
+                                v-if="field.inputType == 6"
+                                v-model="field.value"
+                                type="datetime"
+                                :placeholder="field.placeholder">
                         </el-date-picker>
 
                     </el-form-item>
