@@ -793,19 +793,19 @@
                 callback();
             };
             const promiseEndTimeValidate = (rule, value, callback) => {
-                if (this.zwfwItem.promiseEndTime.length > 3 || !/^[0-9]+(\.5)?$|^0\.5$/.test(this.zwfwItem.promiseEndTime)) {
+                if (!/^[1-9]\d{0,2}(\.5)?$|^0\.5$|^0$/.test(this.zwfwItem.promiseEndTime)) {
                     callback(new Error('请填写承诺的工作日，最小单位为0.5天,最多三位整数'));
                 }
                 callback();
             };
             const pretrialDaysValidate = (rule, value, callback) => {
-                if (this.zwfwItem.pretrialDays.length > 3 || !/^[0-9]+(\.5)?$|^0\.5$/.test(this.zwfwItem.pretrialDays) ) {
+                if (!/^[1-9]\d{0,2}(\.5)?$|^0\.5$|^0$/.test(this.zwfwItem.pretrialDays) ) {
                     callback(new Error('请填写预审的工作日，最小单位为0.5天,最多三位整数'));
                 }
                 callback();
             };
             const legalEndTimeValidate = (rule, value, callback) => {
-                if (this.zwfwItem.legalEndTime.length > 3 || !/^[0-9]+(\.5)?$|^0\.5$/.test(this.zwfwItem.legalEndTime)) {
+                if (!/^[1-9]\d{0,2}(\.5)?$|^0\.5$|^0$/.test(this.zwfwItem.legalEndTime)) {
                     callback(new Error('请填写法定办结的工作日，最小单位为0.5天,最多三位整数'));
                 }
                 callback();
