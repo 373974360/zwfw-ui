@@ -48,7 +48,6 @@
                                 v-for="field in fields"
                                 :label="field.label"
                                 :value="field.id"
-                                :key="field.id"
                                 :disabled="pretrialForm.fields.filter(f => f.fieldId === field.id ).length > 0">
                         </el-option>
                     </el-select>
@@ -141,12 +140,39 @@
             <el-row :gutter="10">
                 <el-col v-for="(field,index) in pretrialForm.fields" v-if="!!field.fieldId"
                         :span="field.size"
-                        :key="field.id">
+                        :key="'field_'+field.id">
                     <el-form-item :label="smartLabel(field)"
                                   :rules="fieldRule(field)"
                                   :key="field.id+'_input'"
                                   :prop="'fields.'+index+'.value'">
-                        <el-input v-model="pretrialForm.fields[index].value"></el-input>
+                        <el-input v-if="field.inputType == 1" v-model="field.value"
+                                  :placeholder="field.placeholder"></el-input>
+
+                        <el-select v-if="field.inputType == 2" style="width:100%"
+                                   v-model="field.value" filterable
+                                   :placeholder="field.placeholder">
+                            <el-option
+                                    v-for="(option,optIdx) in field.optionDic.split('|')"
+                                    :key="field.id+'_select_'+optIdx"
+                                    :label="option"
+                                    :value="option">
+                            </el-option>
+                        </el-select>
+                        <el-checkbox-group v-if="field.inputType == 3" v-model="field.value">
+                            <el-checkbox v-for="(option,optIdx) in field.optionDic.split('|')" :label="option"
+                                         :name="field.id" :key="field.id+'_checkbox_'+optIdx">{{option}}
+                            </el-checkbox>
+                        </el-checkbox-group>
+                        <el-input v-if="field.inputType == 4" type="textarea"
+                                  v-model="field.value"></el-input>
+                        <el-date-picker
+                                v-if="field.inputType == 5"
+                                v-model="field.value"
+                                type="date"
+                                placeholder="选择日期"
+                                :picker-options="{}">
+                        </el-date-picker>
+
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -213,7 +239,8 @@
             },
             fieldRule(field) {
                 const rules = [];
-                if (field.require) {
+
+                if (field.inputType != 3 && field.require) {
                     const rule = {
                         trigger: 'blur,change'
                     };
@@ -221,7 +248,7 @@
                     rule.message = '此项为必填项';
                     rules.push(rule);
                 }
-                if (field.regex) {
+                if (field.inputType == 1 && field.regex) {
                     const rule = {
                         trigger: 'blur,change'
                     };
@@ -229,7 +256,7 @@
                     rule.message = field.regexError || '格式不正确';
                     rules.push(rule);
                 }
-                return rules;
+                return rules.length === 0 ? null : rules;
             },
             testRegex() {
                 this.$refs.previewForm.validate(result => {
@@ -258,22 +285,25 @@
                 return field.label;
             },
             setLabel(fieldId, pretrialFormField) {
-                let field = this.fields.filter(f => {
-                    return f.id === fieldId;
-                })[0];
+                const field = this.fields.filter(f => f.id === fieldId)[0];
                 if (field == null) {
                     return;
                 }
                 pretrialFormField.fieldId = field.id;
-                pretrialFormField.id = null;
+                // pretrialFormField.id = null;
                 pretrialFormField.key = field.key;
                 pretrialFormField.label = field.label;
                 pretrialFormField.labelAlias = field.label;
                 pretrialFormField.require = field.require;
                 pretrialFormField.regex = field.regex;
                 pretrialFormField.regexError = field.regexError;
+                pretrialFormField.inputType = field.inputType;
                 if (!pretrialFormField.size) {
                     pretrialFormField.size = this.smartSize();
+                }
+                console.log(typeof pretrialFormField.inputType);
+                if (pretrialFormField.inputType == 3 && !Array.isArray(pretrialFormField.value)) {
+                    pretrialFormField.value = [];
                 }
                 // 清空候选列表
                 // this.fields = [];
@@ -303,35 +333,34 @@
             },
             changeVersion(id) {
                 const data = this.versions.filter(form => form.id === id)[0];
-                console.log(id);
-                // if (this.pretrialForm != null && data.id === this.pretrialForm.id) {
-                //     return;
-                // }
+                if (!data) {
+                    return null;
+                }
                 this.previewFormModel.fields = [];
-                // this.fields = [];
                 this.pretrialForm = {};
-                if (data && data.length > 0) {
+                if (data.fields && data.fields.length > 0) {
                     for (const field of data.fields) {
                         // select 组件中的选中项的信息
                         field.field = {
                             id: field.fieldId,
                             key: field.key,
                             label: field.label,
+                            inputType: field.inputType,
                             require: field.require,
                             regex: field.regex,
                             regexError: field.regexError
                         };
+
+                        if (field.inputType == 3) {
+                            field.value = [];
+                        } else {
+                            field.value = undefined;
+                        }
+
                         // 添加到 select 组件中的待选项
-                        this.fields.push({
-                            id: field.fieldId,
-                            key: field.key,
-                            label: field.label,
-                            require: field.require,
-                            regex: field.regex,
-                            regexError: field.regexError
-                        });
+                        this.fields.push(field.field);
                         // 预览区域的数据
-                        this.previewFormModel.fields.push({value: ''});
+                        this.previewFormModel.fields.push(field.field);
                     }
                 }
                 // 返回的数据，修改后用户界面还原显示编辑行
@@ -343,7 +372,7 @@
                     this.$message.error('已有尚未保存的新版本');
                     return false;
                 }
-                let formId = 'new_' + new Date().getTime();
+                const formId = 'new_' + new Date().getTime();
                 const newForm = this.newForm = {
                     id: formId,
                     title: this.zwfwMaterial.name,
@@ -366,7 +395,13 @@
                 for (const field of this.pretrialForm.fields) {
                     field.createTime = null;// 提交上去转换 Date 类型会报错，所以不传
                     field.updateTime = null;// 提交上去转换 Date 类型会报错，所以不传
+                    field.value = null;
                 }
+                // const formFieldData = this.pretrialForm.fields.filter(f => !!f.fieldId).map(f => {
+                //     f.value = undefined;
+                //     return f;
+                // });
+                // console.log(formFieldData);
                 updateForm(Object.assign({
                     id, version, tplId, status, title, materialId,
                     itemPretrialFormFieldsJson: encodeURIComponent(encodeURIComponent(JSON.stringify(this.pretrialForm.fields.filter(f => !!f.fieldId))))
@@ -419,7 +454,7 @@
                         this.loading = false;
                         if (response.httpCode === 200) {
                             this.fields = response.data;
-                            console.log(this.fields);
+                            // console.log(this.fields);
                         } else {
                             this.$message.error(response.msg);
                         }
@@ -440,10 +475,13 @@
                     position: 0,
                     size: this.defualtSize,
                     require: true,
-                    field: {}
+                    field: {},
+                    value: undefined
                 };
                 this.pretrialForm.fields.push(newField);
-                this.previewFormModel.fields.push({value: ''});
+                this.previewFormModel.fields.push({
+                    value: undefined
+                });
                 /* 清空自动完成 */
                 // this.fields = [];
             },
@@ -452,24 +490,25 @@
             },
             fieldUp(field) {
                 const index = this.pretrialForm.fields.indexOf(field);
-                console.log(index);
+                // console.log(index);
                 if (index === 0) {
                     return;
                 }
+                console.log(field.dicList);
                 const prev = this.pretrialForm.fields[index - 1];
-                const curr = this.pretrialForm.fields[index];
-                this.$set(this.pretrialForm.fields, index - 1, curr);
+                // const curr = this.pretrialForm.fields[index];
+                this.$set(this.pretrialForm.fields, index - 1, field);
                 this.$set(this.pretrialForm.fields, index, prev);
             },
             fieldDown(field) {
                 const index = this.pretrialForm.fields.indexOf(field);
-                console.log(index);
+                // console.log(index);
                 if (index === this.pretrialForm.fields.length - 1) {
                     return;
                 }
                 const next = this.pretrialForm.fields[index + 1];
-                const curr = this.pretrialForm.fields[index];
-                this.$set(this.pretrialForm.fields, index + 1, curr);
+                // const curr = this.pretrialForm.fields[index];
+                this.$set(this.pretrialForm.fields, index + 1, field);
                 this.$set(this.pretrialForm.fields, index, next);
             }
         }
