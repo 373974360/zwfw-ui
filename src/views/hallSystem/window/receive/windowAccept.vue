@@ -817,7 +817,7 @@
                                     <span v-show="!memberCode">缺少{{memberType==2?'法人':'自然人'}}身份证号码；</span>
                                     <span v-show="!memberPhone">缺少{{memberType==2?'法人':'自然人'}}手机号；</span>
                                     <span v-show="!contactsPhone">缺少联系手机号；</span>
-                                    <span v-show="!contactsName">缺少申请人姓名；</span>
+                                    <span v-show="contactsNameShow">缺少申请人姓名；</span>
                                     <span v-show="memberType=='2' && !companyCode">缺少社会统一信用代码；</span>
                                     <span v-show="memberType=='2' && !companyName">缺少公司名称；</span>
                                     <span v-show="memberType=='2' && !companyAddress">缺少公司地址；</span>
