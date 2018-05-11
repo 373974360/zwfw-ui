@@ -10,7 +10,7 @@
                     <el-select
                             style="width: 100%;"
                             remote
-                             class="filter-item" placeholder="公司名称"
+                            class="filter-item" placeholder="公司名称"
                             v-model="listQuery.ownerPersonId"
                             filterable clearable
                             :remote-method="queryCompanySearch"
@@ -105,9 +105,9 @@
                 </template>
             </el-table-column>
             <!--<el-table-column align="center" label="企业名称" prop="companyName">-->
-                <!--<template scope="scope">-->
-                    <!--<span>{{scope.row.companyName}}</span>-->
-                <!--</template>-->
+            <!--<template scope="scope">-->
+            <!--<span>{{scope.row.companyName}}</span>-->
+            <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column prop="enable" class-name="status-col" label="状态" width="50">
                 <template scope="scope">
