@@ -443,7 +443,7 @@
                                             <th>自然人地址:</th>
                                             <td>{{member.naturePerson.address}}</td>
                                         </tr>
-                                        <tr v-if="member.type == 2 && itemNumber!=null && itemNumber.personName!=null">
+                                        <tr v-if="member!=null && member.type == 2 && itemNumber!=null && itemNumber.personName!=null">
                                             <th>办事员:</th>
                                             <td>{{itemNumber.personName}}</td>
                                         </tr>
