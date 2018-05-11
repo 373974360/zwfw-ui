@@ -160,10 +160,10 @@
                                             <td >{{member.legalPerson.phone}}</td>
                                         </tr>
                                         <tr>
+                                            <th width="140">办事员</th>
+                                            <td >{{itemProcessVo.contactsName}}</td>
                                             <th width="140">办事员电话</th>
                                             <td >{{itemProcessVo.contactsPhone}}</td>
-                                            <th width="140"></th>
-                                            <td ></td>
                                         </tr>
                                         <template v-if="companyInfo.id">
                                             <tr>
@@ -204,10 +204,10 @@
                                             <td>{{member.naturePerson.idcard}}</td>
                                         </tr>
                                         <tr>
-                                            <th width="140">邮箱</th>
-                                            <td>{{member.email}}</td>
                                             <th width="140">手机</th>
                                             <td>{{member.naturePerson.phone}}</td>
+                                            <th width="140" >办事员联系方式</th>
+                                            <td>{{itemProcessVo.contactsPhone}}</td>
                                         </tr>
                                         <tr>
                                             <th width="140">地址</th>
