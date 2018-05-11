@@ -432,16 +432,8 @@
                                         <!--'ItemWindowSupport'}}</strong></td>-->
                                         <!--</tr>-->
                                         <tr v-if="member!=null && member.naturePerson!=null">
-                                            <th>姓名:</th>
+                                            <th>自然人姓名:</th>
                                             <td>{{member.naturePerson.name}}</td>
-                                        </tr>
-                                        <tr v-if="itemNumber!=null && itemNumber.personName!=null">
-                                            <th>办事员:</th>
-                                            <td>{{itemNumber.personName}}</td>
-                                        </tr>
-                                        <tr v-if="itemNumber!=null && itemNumber.personPhone!=null">
-                                            <th>办事员电话:</th>
-                                            <td>{{itemNumber.personPhone}}</td>
                                         </tr>
                                         <tr v-if="member!=null && member.naturePerson!=null">
                                             <th>自然人手机号:</th>
@@ -450,6 +442,14 @@
                                         <tr v-if="member!=null && member.naturePerson!=null">
                                             <th>自然人地址:</th>
                                             <td>{{member.naturePerson.address}}</td>
+                                        </tr>
+                                        <tr v-if="member.type == 2 && itemNumber!=null && itemNumber.personName!=null">
+                                            <th>办事员:</th>
+                                            <td>{{itemNumber.personName}}</td>
+                                        </tr>
+                                        <tr v-if="itemNumber!=null && itemNumber.personPhone!=null">
+                                            <th>办事员电话:</th>
+                                            <td>{{itemNumber.personPhone}}</td>
                                         </tr>
                                         <tr v-if="member!=null && member.legalPerson!=null">
                                             <th>企业法人:</th>
@@ -817,7 +817,7 @@
                                     <span v-show="!memberCode">缺少{{memberType==2?'法人':'自然人'}}身份证号码；</span>
                                     <span v-show="!memberPhone">缺少{{memberType==2?'法人':'自然人'}}手机号；</span>
                                     <span v-show="!contactsPhone">缺少联系手机号；</span>
-                                    <span v-show="contactsNameShow">缺少申请人姓名；</span>
+                                    <span v-show="contactsNameShow&&!contactsName">缺少申请人姓名；</span>
                                     <span v-show="memberType=='2' && !companyCode">缺少社会统一信用代码；</span>
                                     <span v-show="memberType=='2' && !companyName">缺少公司名称；</span>
                                     <span v-show="memberType=='2' && !companyAddress">缺少公司地址；</span>
@@ -2054,7 +2054,6 @@
                                 memberAddress: this.address,
                                 companyAddress: this.companyAddress,
                                 contactsPhone: this.contactsPhone,
-                                contactsName: this.contactsName,
                                 received: checked_m.join(','),
                                 remark: this.remark,
                                 itemHandTypeVo: this.itemHandTypeVo,
