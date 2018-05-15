@@ -130,6 +130,10 @@
                             <th>姓名:</th>
                             <td>{{member.naturePerson.name}}</td>
                         </tr>
+                        <tr v-if="itemNumber!=null && itemNumber.personName!=null">
+                            <th>办事员:</th>
+                            <td>{{itemNumber.personName}}</td>
+                        </tr>
                         <tr v-if="itemNumber!=null && itemNumber.personPhone!=null">
                             <th>办事员电话:</th>
                             <td>{{itemNumber.personPhone}}</td>

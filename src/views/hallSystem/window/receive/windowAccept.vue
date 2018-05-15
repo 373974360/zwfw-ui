@@ -1564,7 +1564,7 @@
                             this.$message.success("已注册");
                             this.doFastReg = false;
                             if (!this.memberRealname) {
-                                this.memberRealname = this.member.name;
+                                this.memberRealname = this.member.personName;
                             }
                             if (!this.memberPhone) {
                                 this.memberPhone = this.member.mobilephone;
@@ -1611,7 +1611,7 @@
                             this.$message.success("已注册");
                             this.doFastReg = false;
                             if (!this.memberRealname) {
-                                this.memberRealname = this.member.name;
+                                this.memberRealname = this.member.personName;
                             }
                             if (!this.memberPhone) {
                                 this.memberPhone = this.member.mobilephone;
@@ -1865,7 +1865,7 @@
                 }
                 if (data.member) {
                     _this.memberPhone = data.member.mobilephone;
-                    _this.memberRealname = data.member.name;
+                    _this.memberRealname = data.member.personName;
                     _this.memberCode = data.member.memberCode;
                     _this.memberType = data.member.type + '';
                     if (data.member.legalPerson) {
