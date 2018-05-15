@@ -784,6 +784,24 @@
                 }
                 callback();
             };
+            const promiseEndTimeValidate = (rule, value, callback) => {
+                if (!/^[1-9]\d{0,2}(\.5)?$|^0\.5$|^0$/.test(this.zwfwItem.promiseEndTime)) {
+                    callback(new Error('请填写承诺的工作日，最小单位为0.5天,最多三位整数'));
+                }
+                callback();
+            };
+            const pretrialDaysValidate = (rule, value, callback) => {
+                if (!/^[1-9]\d{0,2}(\.5)?$|^0\.5$|^0$/.test(this.zwfwItem.pretrialDays) ) {
+                    callback(new Error('请填写预审的工作日，最小单位为0.5天,最多三位整数'));
+                }
+                callback();
+            };
+            const legalEndTimeValidate = (rule, value, callback) => {
+                if (!/^[1-9]\d{0,2}(\.5)?$|^0\.5$|^0$/.test(this.zwfwItem.legalEndTime)) {
+                    callback(new Error('请填写法定办结的工作日，最小单位为0.5天,最多三位整数'));
+                }
+                callback();
+            };
             return {
                 options: [{
                     value: '1',
@@ -927,11 +945,8 @@
                     type: [
                         {required: true, message: '请输入事项类型'}
                     ],
-                    promiseEndTime: [
-                        {required: true, message: '请输入事项承诺办结日期'}
-                    ],
                     pretrialDays: [
-                        {required: true, message: '请输入预审天数'}
+                        {required: true, validator: pretrialDaysValidate, trigger: 'blur'}
                     ],
                     askPhone: [
                         {required: true, message: '请输入咨询电话'}
@@ -956,6 +971,12 @@
                     ],
                     addresseeId: [
                         {validator: addresseeIdValidate, trigger: 'blur'}
+                    ],
+                    promiseEndTime: [
+                        {required: true, validator: promiseEndTimeValidate, trigger: 'blur'}
+                    ],
+                    legalEndTime: [
+                        {required: true, validator: legalEndTimeValidate, trigger: 'blur'}
                     ]
                 },
                 zwfwItemMaterialRules: {

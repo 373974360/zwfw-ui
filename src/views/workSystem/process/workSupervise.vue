@@ -420,10 +420,28 @@
                                 </tr>
                             </table>
                         </el-tab-pane>
-                        <el-tab-pane label="内部办理流程描述" name="itemStep">
-                            <div id="itemStepInfo" style="white-space:pre-wrap" v-html="itemVo.workflowDescription"></div>
+                        <el-tab-pane label="表单信息" name="pretrialForm">
+                            <div v-if="pretrialForm && pretrialForm.length>0">
+                                <h2 class="h2-style-show">预审表单：</h2>
+                                <div v-for="form in pretrialForm">
+                                    <table class="table table-responsive table-bordered">
+                                        <tr>
+                                            <th colspan="24" style="text-align: center;background: #eee;">{{form.title}}</th>
+                                        </tr>
+                                        <tr v-for="row in form.rows">
+                                            <td v-for="(field,index) in row"
+                                                :colspan="field.size"
+                                                :key="field.id"
+                                                style="padding:5px;">
+                                    <span class="label"><span v-if="field.require" style="color:red">*</span>
+                                        {{field.labelAlias || field.label}}:</span> <span class="value">{{field.value}}</span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div v-else>无</div>
                         </el-tab-pane>
-
                     </el-tabs>
                 </div>
             </div>
@@ -503,7 +521,8 @@
                     up_user: '',
                     ssjd: '',
                     vtype: ''
-                }
+                },
+                pretrialForm: []
             }
         },
         created() {
@@ -562,6 +581,29 @@
                     this.correctionList = response.data.correctionList;
                     this.extendTimeVoList = response.data.extendTimeVoList;
                     this.queryCompanyInfo(this.member);
+                    this.pretrialForm = [];
+                    for (const form of data.pretrialForm || []) {
+                        for (const field of form.fields) {
+                            field.value = data.pretrialFormFieldValueMap[field.fieldId] || '';
+                        }
+                        const fields = form.fields;
+                        const rowsData = [];
+                        let pos = 0;
+                        let rows = 0;
+                        fields.forEach(field => {
+                            if (24 - pos < field.size) {
+                                rows++;
+                                pos = 0;
+                            }
+                            pos += field.size;
+                            if (!rowsData[rows]) {
+                                rowsData[rows] = [];
+                            }
+                            rowsData[rows].push(field);
+                        });
+                        form.rows = rowsData;
+                        this.pretrialForm.push(form);
+                    }
                 });
             },
             /**
