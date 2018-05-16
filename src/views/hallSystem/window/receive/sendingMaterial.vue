@@ -43,7 +43,7 @@
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row
                   style="width: 100%">
             <el-table-column align="left" label="事项名称" min-width="300">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" placement="right" content="点击查看">
                         <div style="cursor:pointer;" @click="showHandInfo(scope.row)">
                             <div>{{scope.row.itemName}}</div>
@@ -53,7 +53,7 @@
                 </template>
             </el-table-column>
             <el-table-column align="left" label="申请企业（个人）" min-width="260">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.memberType == 1">
                         姓名：{{scope.row.memberName}}<br>联系电话：{{scope.row.memberPhone}}<br>
                     </span>
@@ -66,7 +66,7 @@
                 </template>
             </el-table-column>
             <el-table-column align="left" label="办事员信息" min-width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.memberType == 3">
                         <span >
                             姓名：{{scope.row.clerkName}}<br>
@@ -80,24 +80,24 @@
                 </template>
             </el-table-column>
             <el-table-column align="center" label="审批时间" width="180">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.auditTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="交件方式">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.handTypeInfo">{{scope.row.handTypeInfo.handType | enums('HandType')}}</span>
                     <span v-else>未设置</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="交件状态">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.handTypeInfo">{{scope.row.handTypeInfo.handStatus | enums('HandStatus')}}</span>
                     <span v-else>无</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作" width="240">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-button v-if="scope.row.handTypeInfo && scope.row.handTypeInfo.handStatus==4" type="primary"
                                @click="showOpenCode(scope.row.handTypeInfo)">查看取件码</el-button>
                     <el-button-group v-else-if="scope.row.handTypeInfo && scope.row.handTypeInfo.handStatus==7">

@@ -11,25 +11,25 @@
         <el-table :data="pretrialList" v-loading.body="listLoading" border fit highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column align="center" label="预审号">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.processNumber}}<br/>({{scope.row.itemName}})</span>
                 </template>
             </el-table-column>
             <!--<el-table-column width="250px" align="center" label="申请企业（个人）">-->
-                <!--<template scope="scope">-->
+                <!--<template slot-scope="scope">-->
                     <!--<span v-if="scope.row.companyName != null">{{scope.row.companyName}}</span>-->
                     <!--<span v-if="scope.row.memberName != null">{{scope.row.memberName}}</span>-->
                 <!--</template>-->
             <!--</el-table-column>-->
             <!--<el-table-column align="center" label="办事员">-->
-                <!--<template scope="scope">-->
+                <!--<template slot-scope="scope">-->
                     <!--<span v-if="scope.row.clerkName != null && scope.row.memberType == 3">{{scope.row.clerkName}}</span>-->
                     <!--<span v-if="scope.row.memberName != null && scope.row.memberType == 1 || scope.row.memberType == 2">{{scope.row.memberName}}</span>-->
                 <!--</template>-->
             <!--</el-table-column>-->
 
             <el-table-column align="left" label="申请企业（个人）" min-width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.memberType == 1">
                         姓名：{{scope.row.memberName}}<br>联系电话：{{scope.row.memberPhone}}<br>
                     </span>
@@ -42,7 +42,7 @@
                 </template>
             </el-table-column>
             <el-table-column align="left" label="办事员信息" min-width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.memberType == 3">
                         <span >
                             姓名：{{scope.row.clerkName}}<br>
@@ -56,32 +56,32 @@
                 </template>
             </el-table-column>
             <el-table-column align="center" label="申请时间">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.applyTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="审核时间">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.auditTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="审核期限">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.expireDate | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="状态">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.status | enums('PretrialStatus')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="备注">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <div style="white-space:pre-wrap;text-align: left;">{{scope.row.remark}}</div>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-button class="filter-item"  type="primary"
                                @click="editAudit(scope.row)">查 看
                     </el-button>

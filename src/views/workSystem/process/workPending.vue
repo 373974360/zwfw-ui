@@ -18,43 +18,43 @@
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange">
             <!--<el-table-column align="center" label="ID">-->
-            <!--<template scope="scope">-->
+            <!--<template slot-scope="scope">-->
             <!--<span>{{scope.row.id}}</span>-->
             <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column align="center" label="办件号">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.processNumber}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="办理事项" prop="itemName">
-                <template scope="scope">
+                <template slot-scope="scope">
                     {{scope.row.itemName}}
                 </template>
             </el-table-column>
             <el-table-column align="center" label="当前步骤" prop="currentTaskName">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.currentTaskName}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="步骤时限" prop="taskLimitTime">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.taskLimitTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="承诺期限" prop="promiseFinishTime">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.promiseFinishTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <!--<el-table-column align="center" label="申请办理人" prop="memberRealname">-->
-            <!--<template scope="scope">-->
+            <!--<template slot-scope="scope">-->
             <!--<div>{{scope.row.memberRealname}}</div>-->
             <!--<div>{{scope.row.memberPhonenumber}}</div>-->
             <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column align="left" label="申请企业（个人）" min-width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.memberType == 1">
                         姓名：{{scope.row.memberRealname}}<br>联系电话：{{scope.row.memberPhonenumber}}<br>
                     </span>
@@ -67,7 +67,7 @@
                 </template>
             </el-table-column>
             <el-table-column align="left" label="办事员信息" min-width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.memberType == 3">
                         <span>
                             姓名：{{scope.row.clerkName}}<br>
@@ -81,22 +81,22 @@
                 </template>
             </el-table-column>
             <el-table-column align="center" label="整改状态" prop="flagCorrection">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.flagCorrection | enums('YesNo')}}</span>
                 </template>
             </el-table-column>
             <!--<el-table-column align="center" label="企业名称" prop="companyName">-->
-            <!--<template scope="scope">-->
+            <!--<template slot-scope="scope">-->
             <!--<span>{{scope.row.companyName}}</span>-->
             <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column prop="enable" class-name="status-col" label="状态">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.status | enums('ItemProcessStatus')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-button @click="showDetail(scope.row)" type="primary">查看</el-button>
                 </template>
             </el-table-column>

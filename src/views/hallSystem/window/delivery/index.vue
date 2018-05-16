@@ -46,12 +46,12 @@
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row
                   style="width: 100%">
             <!--<el-table-column align="center" label="办件号" width="100">-->
-            <!--<template scope="scope">-->
+            <!--<template slot-scope="scope">-->
             <!--<span>{{scope.row.processNumber}}</span>-->
             <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column align="left" label="事项名称" min-width="300">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" placement="right" content="点击查看">
                         <div style="cursor:pointer;" @click="showProcessTakeInfo(scope.row)">
                             <div>{{scope.row.itemName}}</div>
@@ -61,7 +61,7 @@
                 </template>
             </el-table-column>
             <el-table-column align="left" label="申请企业（个人）" min-width="260">
-                <template scope="scope">
+                <template slot-scope="scope">
 
                     <span v-if="scope.row.memberType == 1">
                         姓名：{{scope.row.memberRealname}}<br>联系电话：{{scope.row.memberPhonenumber}}<br>
@@ -82,7 +82,7 @@
             </el-table-column>
 
             <el-table-column align="left" label="办事员" width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.memberType == 1">姓名：{{scope.row.memberRealname}}<br>
                     联系电话：{{scope.row.memberPhonenumber}}</span>
                     <span v-if="scope.row.memberType == 2">姓名：{{ scope.row.memberRealname}}<br>
@@ -93,12 +93,12 @@
                 </template>
             </el-table-column>
             <el-table-column align="center" label="办结时间" width="180">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.finishItemTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="取件方式">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" placement="right" content="点击修改">
                         <el-button type="text" @click="changeTakeType(scope.row)">
                             <span v-if="scope.row.takeTypeInfo">{{scope.row.takeTypeInfo.takeType | enums('TakeType')}}</span>
@@ -108,13 +108,13 @@
                 </template>
             </el-table-column>
             <el-table-column align="center" label="取件状态">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.takeTypeInfo">{{scope.row.takeTypeInfo.flagTakeCert | enums('TakeStatus')}}</span>
                     <span v-else>无</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作" width="240">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <template v-if="scope.row.takeTypeInfo">
                         <el-button v-if="scope.row.takeTypeInfo.flagTakeCert == 1 || scope.row.takeTypeInfo.flagTakeCert == 7"
                                    type="primary" @click="completeTake(scope.row)">确认取件</el-button>

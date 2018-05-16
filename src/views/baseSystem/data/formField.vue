@@ -17,59 +17,59 @@
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column type="selection" width="55"/>
             <!--<el-table-column align="center" label="序号">-->
-                <!--<template scope="scope">-->
+                <!--<template slot-scope="scope">-->
                     <!--<span>{{scope.row.id}}</span>-->
                 <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column align="center" label="表单域名称" prop="label">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.label}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="唯一标识">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.key}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="默认内容">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.defaultValue}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="类型">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.inputType | enums('InputType')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="必填">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <i v-if="scope.row.require" style="color:green" class="el-icon-circle-check"></i>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="复用">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <i v-if="scope.row.flagHistoryValue" style="color:green" class="el-icon-circle-check"></i>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="正则表达式">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.regex}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="正则验证失败提示">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.regexError}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="备注" prop="remark">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.remark}}</span>
                 </template>
             </el-table-column>
             <!--<el-table-column prop="enable" class-name="status-col" label="状态">-->
-                <!--<template scope="scope">-->
+                <!--<template slot-scope="scope">-->
                     <!--<el-tag :type="scope.row.enable | enums('Enable') | statusFilter">-->
                         <!--{{scope.row.enable | enums('Enable')}}-->
                     <!--</el-tag>-->
@@ -110,7 +110,7 @@
                 <el-form-item v-if="formField.inputType == 2 || formField.inputType == 3" label="选项字典" prop="optionDic">
                     <el-input v-model="formField.optionDic"/>
                     <br>
-                    <span>选项之间使用分号(;)隔开</span>
+                    <span>选项之间使用分号(|)隔开</span>
                 </el-form-item>
                 <el-form-item label="默认内容" prop="defaultValue">
                     <el-input v-model="formField.defaultValue"/>

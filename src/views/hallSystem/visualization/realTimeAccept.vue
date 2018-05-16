@@ -44,22 +44,22 @@
                       highlight-current-row
                       style="width: 100%">
                 <el-table-column prop="callTime" align="center" label="时间" width="">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.callTime}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="personName" align="center" label="姓名">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.personName}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="personIdcard" align="center" label="身份证号">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.personIdcard}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="itemName" align="center" label="事项名称">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.itemName}}</span>
                     </template>
                 </el-table-column>

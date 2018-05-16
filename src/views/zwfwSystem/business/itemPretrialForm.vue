@@ -40,7 +40,7 @@
                     label="表单域"
                     width="180"
             >
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-select v-model="scope.row.fieldId" filterable placeholder="请选择"
                                @change="value=>{setLabel(value,scope.row)}"
                                :default-first-option="true">
@@ -48,6 +48,7 @@
                                 v-for="field in fields"
                                 :label="field.label"
                                 :value="field.id"
+                                :key="scope.row.fieldId+'_option_for_select'"
                                 :disabled="pretrialForm.fields.filter(f => f.fieldId === field.id ).length > 0">
                         </el-option>
                     </el-select>
@@ -57,7 +58,7 @@
                     prop="labelAlias"
                     label="别名"
                     width="180">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-input :disabled="!scope.row.fieldId" v-model="scope.row.labelAlias"
                               placeholder="留空不变"></el-input>
                 </template>
@@ -66,7 +67,7 @@
             <!--prop="inputType"-->
             <!--label="类型"-->
             <!--width="180">-->
-            <!--<template scope="scope">-->
+            <!--<template slot-scope="scope">-->
             <!--<span v-if="scope.row.inputType">-->
             <!--{{scope.row.inputType | enums('InputType')}}-->
             <!--</span>-->
@@ -78,21 +79,21 @@
             <el-table-column
                     prop="require"
                     label="必填" width="70">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-checkbox v-model="scope.row.require" :disabled="!scope.row.fieldId"/>
                 </template>
             </el-table-column>
             <!--<el-table-column-->
             <!--prop="position"-->
             <!--label="位置">-->
-            <!--<template scope="scope">-->
+            <!--<template slot-scope="scope">-->
             <!--<el-input v-model="scope.row.position"></el-input>-->
             <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column
                     prop="size"
                     label="尺寸" width="80">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-input-number style="width:100%" v-model="scope.row.size" :controls="false" :value="1" :min="1"
                                      :max="24" :disabled="!scope.row.fieldId">
 
@@ -102,7 +103,7 @@
             <el-table-column
                     prop="regex"
                     label="正则">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <!--<el-input v-model="scope.row.regex" placeholder="留空不验证" :disabled="!scope.row.fieldId">-->
                     <!--</el-input>-->
                     {{scope.row.regex}}
@@ -111,14 +112,14 @@
             <!--<el-table-column-->
             <!--prop="regexError"-->
             <!--label="正则错误">-->
-            <!--<template scope="scope">-->
+            <!--<template slot-scope="scope">-->
             <!--<el-input v-model="scope.row.regexError" placeholder="正则不匹配时的提示" :disabled="!scope.row.fieldId">-->
 
             <!--</el-input>-->
             <!--</template>-->
             <!--</el-table-column>-->
-            <el-table-column label="操作" width="160">
-                <template scope="scope">
+            <el-table-column label="操作" width="200">
+                <template slot-scope="scope">
                     <el-button size="small"
                                @click="fieldUp(scope.row)" icon="arrow-up">
                     </el-button>

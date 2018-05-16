@@ -22,42 +22,42 @@
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column align="center" label="办件序号" >
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="办理事项" width="200px">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.itemName}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="开始时间" prop="startItemTime">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.startItemTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="承诺办结时间" prop="promiseFinishTime">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.promiseFinishTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="超期件" prop="flagTimeout">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.flagTimeout | enums('YesNo')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="督办件" prop="flagSupervied">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.flagSupervied | enums('YesNo')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="资料存档状态" prop="flagArchive">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.flagArchive | enums('YesNo')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="left" label="申请企业（个人）" min-width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.memberType == 1">
                         姓名：{{scope.row.memberRealname}}<br>联系电话：{{scope.row.memberPhonenumber}}<br>
                     </span>
@@ -70,7 +70,7 @@
                 </template>
             </el-table-column>
             <el-table-column align="left" label="办事员信息" min-width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.memberType == 3">
                         <span >
                             姓名：{{scope.row.clerkName}}<br>
@@ -84,17 +84,17 @@
                 </template>
             </el-table-column>
             <!--<el-table-column align="center" label="企业名称" prop="companyName">-->
-                <!--<template scope="scope">-->
+                <!--<template slot-scope="scope">-->
                     <!--<span>{{scope.row.companyName}}</span>-->
                 <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column prop="enable" class-name="status-col" label="状态">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.status | enums('ItemProcessStatus')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作" width="200px">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-button  type="primary" @click="handleDetailList(scope.row)">查看
                     </el-button>
                     <el-button v-show="scope.row.flagSupervied != null && scope.row.flagSupervied == 0"

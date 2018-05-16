@@ -34,17 +34,17 @@
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row
                   style="width: 100%">
             <el-table-column align="center" label="序号">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.processNumber}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="事项名称" min-width="140">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.itemName}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="申请人信息" min-width="180">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>
                         <span v-if="scope.row.companyName!=null">
                             公司：{{scope.row.companyName}}<br>
@@ -54,12 +54,12 @@
                 </template>
             </el-table-column>
             <el-table-column align="center" label="办结时间">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.finishItemTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="取件时间">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.takeCertTime != null">{{scope.row.takeCertTime | date('YYYY-MM-DD HH:mm:ss')}}
                         <div v-if="scope.row.itemPostInfo!=null">{{scope.row.itemPostInfo.expressCompany}}:{{scope.row.itemPostInfo.expressNumber}}</div>
                     </span>
@@ -67,7 +67,7 @@
                 </template>
             </el-table-column>
             <el-table-column align="center" label="取件" width="120">
-                <template scope="scope">
+                <template slot-scope="scope">
 
                     <el-button v-if="scope.row.itemPostInfo == null && scope.row.flagTakeCert == 0" class="filter-item"
                                type="primary"

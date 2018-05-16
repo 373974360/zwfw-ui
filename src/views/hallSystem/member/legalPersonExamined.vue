@@ -30,17 +30,17 @@
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <!--<el-table-column type="selection" width="55"/>-->
             <el-table-column align="center" label="序号">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="统一社会信用代码" prop="companyCode" width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.companyCode}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="left" label="机构名称" prop="companyName" width="300">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" content="天眼查" placement="right-start">
                         <a :href="'https://www.tianyancha.com/search?key='+scope.row.companyCode"
                            target="_blank">{{scope.row.companyName}}</a>
@@ -48,39 +48,39 @@
                 </template>
             </el-table-column>
             <el-table-column align="left" label="联系电话" prop="phone">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.phone}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="法定代表人" prop="legalPerson" width="120">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.legalPerson}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="法人身份证/登录名" prop="legalPerson" width="180px">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.idcard}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="机构类型" prop="companyType">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.companyType | dics('gsxz')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="left" label="注册地址" prop="registerPlace">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.registerPlace}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="enable" class-name="status-col" label="审核状态">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tag :type="scope.row.verifyStatus | enums('VerifyStatus') | statusFilter">
                         {{scope.row.verifyStatus | enums('VerifyStatus')}}
                     </el-tag>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-button v-if="scope.row.verifyStatus == 0" @click="showDetail(scope.row)" type="primary">审核
                     </el-button>
                     <el-button v-else @click="showDetail(scope.row)" type="primary">查看
