@@ -16,11 +16,11 @@
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column type="selection" width="55"/>
-            <el-table-column align="center" label="ID" width="150">
-                <template slot-scope="scope">
-                    <span>{{scope.row.id}}</span>
-                </template>
-            </el-table-column>
+            <!--<el-table-column align="right" label="ID" width="150">-->
+                <!--<template slot-scope="scope">-->
+                    <!--<span>{{scope.row.id}}</span>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
             <el-table-column prop="name" align="left" label="材料名称" width="600">
                 <template slot-scope="scope">
                     <el-tooltip content="点击编辑" placement="right" effect="dark">
@@ -33,7 +33,7 @@
                     <span>{{scope.row.type | dics('cllx')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column v-once prop="source" align="center" label="来源渠道">
+            <el-table-column v-once prop="source" align="center" label="来源渠道" width="120">
                 <template slot-scope="scope">
                     <span>{{scope.row.source | dics('sxsqclly')}}</span>
                 </template>
@@ -43,7 +43,7 @@
                     <span>{{scope.row.electronicMaterial | enums('YesNo')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="electronicMaterial" align="center" label="预审表单">
+            <el-table-column prop="electronicMaterial" align="center" label="预审表单" width="120">
                 <template slot-scope="scope">
                     <span class="link-type" @click='handlePretrialForm(scope.row,$event)'>设置表单域</span>
                 </template>

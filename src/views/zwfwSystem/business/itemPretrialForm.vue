@@ -324,6 +324,8 @@
                 this.loading = true;
                 this.zwfwMaterial = zwfwMaterial;
                 this.newForm = undefined; // 删除新增 form
+                this.previewFormModel.fields = [];
+                this.pretrialForm = {};
                 getFormByMaterialId(this.zwfwMaterial.id).then(response => {
                     this.loading = false;
                     if (response.httpCode === 200) {
