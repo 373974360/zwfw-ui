@@ -319,9 +319,11 @@
              * 加载现有的配置
              * */
             loadPretrialForm(zwfwMaterial) {
+                this.loading = true;
                 this.zwfwMaterial = zwfwMaterial;
                 this.newForm = undefined; // 删除新增 form
                 getFormByMaterialId(this.zwfwMaterial.id).then(response => {
+                    this.loading = false;
                     if (response.httpCode === 200) {
                         const allVersions = this.versions = response.data;
                         const data = allVersions.length > 0 ? allVersions[0] : null;
@@ -335,6 +337,7 @@
                     }
                 }).catch(e => {
                     console.log(e);
+                    this.loading = false;
                     this.$message.error('查询失败，请重新打开窗口尝试');
                 });
             },
