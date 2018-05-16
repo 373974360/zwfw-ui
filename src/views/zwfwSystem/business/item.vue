@@ -46,56 +46,56 @@
                   row-class-name="elRow">
             <el-table-column type="selection"/>
             <!--<el-table-column align="center" label="序号" width="70">-->
-            <!--<template scope="scope">-->
+            <!--<template slot-scope="scope">-->
             <!--<span>{{scope.row.id}}</span>-->
             <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column align="left" label="事项名称" prop="name">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" :content="'点击编辑：' +scope.row.id " placement="right-start">
                         <span class="link-type" @click="handleItemUpdate(scope.row)">{{scope.row.name}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="基本编码" prop="basicCode" width="160">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.basicCode}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="事项类型" prop="type" width="180">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.type | dics('sslx')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="办件类型" prop="processType" width="100">
-                <template scope="scope">
+                <template slot-scope="scope">
                     {{scope.row.processType | dics('bjlx')}}
                 </template>
             </el-table-column>
             <el-table-column align="center" label="承诺时限" prop="promiseEndTime" width="110">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.promiseEndTime}} 工作日</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="法定时限" prop="legalEndTime" width="110">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.legalEndTime}} 工作日</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="办理形式" prop="handleType" width="100">
-                <template scope="scope">
+                <template slot-scope="scope">
                     {{scope.row.handleType | dics('blxs')}}
                 </template>
             </el-table-column>
             <el-table-column prop="enable" class-name="status-col" label="状态" width="80">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
                         {{scope.row.enable | enums('Enable')}}
                     </el-tag>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作" width="200" class-name="action">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-badge :value="scope.row.itemMaterialCount" class="item">
                         <el-button class="filter-item" style="" @click="handleMaterialList(scope.row)"
                                    type="primary" size="small">
@@ -538,31 +538,31 @@
                       style="width: 100%" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="40"/>
                 <!--<el-table-column align="center" label="序号" width="70">-->
-                <!--<template scope="scope">-->
+                <!--<template slot-scope="scope">-->
                 <!--<span>{{scope.row.id}}</span>-->
                 <!--</template>-->
                 <!--</el-table-column>-->
                 <el-table-column prop="sortNo" align="center" label="排序" width="70">
                 </el-table-column>
                 <el-table-column prop="name" align="left" label="材料名称">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <el-tooltip content="点击编辑" placement="right" effect="dark">
                             <span class="link-type" @click="handleMaterialUpdate(scope.row)">{{scope.row.name}}</span>
                         </el-tooltip>
                     </template>
                 </el-table-column>
                 <el-table-column prop="type" align="center" label="材料类型" width="130">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.type | dics('cllx')}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column v-once prop="source" align="center" label="来源渠道" width="130">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.source | dics('sxsqclly')}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="electronicMaterial" align="center" label="预审材料" width="100">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.electronicMaterial | enums('YesNo')}}</span>
                     </template>
                 </el-table-column>

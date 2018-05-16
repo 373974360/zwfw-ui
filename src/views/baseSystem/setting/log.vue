@@ -20,39 +20,39 @@
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row
                   style="width: 100%">
             <el-table-column align="center" label="序号">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="请求方法" min-width="140">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" content="查看详细" placement="right-start">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.notes}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="请求URL" min-width="180">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.requestUrl}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="请求IP">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.ip}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="请求用户" width="100">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.userName}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="请求时间">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.createTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="耗时" width="120">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.timeBetween}}</span>
                 </template>
             </el-table-column>

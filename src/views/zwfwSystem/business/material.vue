@@ -17,34 +17,34 @@
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column type="selection" width="55"/>
             <el-table-column align="center" label="ID" width="150">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="name" align="left" label="材料名称" width="600">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tooltip content="点击编辑" placement="right" effect="dark">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column prop="type" align="center" label="材料类型">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.type | dics('cllx')}}</span>
                 </template>
             </el-table-column>
             <el-table-column v-once prop="source" align="center" label="来源渠道">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.source | dics('sxsqclly')}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="electronicMaterial" align="center" label="是否需要电子材料">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.electronicMaterial | enums('YesNo')}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="electronicMaterial" align="center" label="预审表单">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span class="link-type" @click='handlePretrialForm(scope.row,$event)'>设置表单域</span>
                 </template>
             </el-table-column>
@@ -171,6 +171,7 @@
         <el-dialog title="材料表单配置" :visible.sync="dialogItemPretrialFormVisible"
                    :close-on-click-modal="closeOnClickModal"
                    :before-close="closeZwfwItemPretrialForm"
+                   size="large"
                    @open="onPretrialFormOpen">
             <item-pretrial-form ref="materialForm" @changeVersion="changeFormVersion"></item-pretrial-form>
             <div style="text-align: center" slot="footer" class="dialog-footer">

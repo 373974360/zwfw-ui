@@ -619,7 +619,7 @@
                                             prop="name"
                                             label="材料"
                                             width="300">
-                                        <template scope="scope">
+                                        <template slot-scope="scope">
                                             {{scope.row.name}}
                                             <div v-if="scope.row.multipleFile" style="color:blue">
                                                 预审资料：
@@ -638,14 +638,14 @@
                                     <el-table-column
                                             prop="type"
                                             label="类型">
-                                        <template scope="scope">
+                                        <template slot-scope="scope">
                                             {{scope.row.type | dics('cllx')}}
                                         </template>
                                     </el-table-column>
                                     <!--<el-table-column-->
                                     <!--prop="example"-->
                                     <!--label="样本">-->
-                                    <!--<template scope="scope">-->
+                                    <!--<template slot-scope="scope">-->
                                     <!--<a v-if="scope.row.example" :href="scope.row.example" target="_blank">点击下载</a>-->
                                     <!--<span v-else>无</span>-->
                                     <!--</template>-->
@@ -653,7 +653,7 @@
                                     <el-table-column
                                             prop="source"
                                             label="来源">
-                                        <template scope="scope">
+                                        <template slot-scope="scope">
                                             {{scope.row.source | dics('sxsqclly')}}
                                         </template>
                                     </el-table-column>
@@ -672,7 +672,7 @@
                                     <!--<el-table-column-->
                                     <!--prop="electronicMaterial"-->
                                     <!--label="需要预审">-->
-                                    <!--<template scope="scope">-->
+                                    <!--<template slot-scope="scope">-->
                                     <!--{{scope.row.electronicMaterial ? '是 ' : '否'}}-->
                                     <!--</template>-->
                                     <!--</el-table-column>-->
@@ -946,7 +946,7 @@
                 <!--</el-table-column>-->
                 <el-table-column property="handTime" label="取出时间"></el-table-column>
                 <el-table-column property="memberType" label="用户类型">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         {{scope.row.memberType | enums('MemberType')}}
                     </template>
                 </el-table-column>

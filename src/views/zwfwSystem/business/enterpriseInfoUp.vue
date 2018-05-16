@@ -98,39 +98,39 @@
         <el-table v-show="listShow" :data="list" v-loading.body="listLoading" border fit highlight-current-row
                   style="width: 100%">
             <el-table-column type="expand">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.jyfw}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="left" label="企业名称" width="300">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tooltip content="点击详情" placement="right" effect="dark">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.qymc}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="统一社会信用代码" width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span style="font-family: Consolas,Monaco,monospace">{{scope.row.ty_code}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="法人姓名">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.fr}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="联系电话">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.lxdh}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="企业类型">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.qllx}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="注册地址">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.jgzs}}</span>
                 </template>
             </el-table-column>
