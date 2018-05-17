@@ -26,10 +26,11 @@ export function getCategoryCascader(id) {
 /**
  * 按部门、主题查询分类
  */
-export function getCategoryTreeByIds() {
+export function getCategoryTreeByIds(flag) {
     return fetch({
         url: '/api/zwfwSystem/business/category/getCategoryTree',
-        method: 'get'
+        method: 'get',
+        params: {flag}
     });
 }
 

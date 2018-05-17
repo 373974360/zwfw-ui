@@ -131,6 +131,13 @@ const WorkExtendTime = () => import('../views/workSystem/process/workExtendTime'
 const WorkSupervise = () => import('../views/workSystem/process/workSupervise');
 /* 督办管理 */
 
+
+/* 政策兑现 */
+/* 金额录入 */
+const SumEntry = () => import('../views/workSystem/policyCashing/sumEntry');
+/* 统计分析 */
+const Analysis = () => import('../views/workSystem/policyCashing/analysis');
+
 /** **********************共享数据管理系统************************/
 /* index */
 const DataShareSystem = () => import('../views/dataShareSystem/index');
@@ -514,7 +521,7 @@ export const asyncRouterMap = [
         name: '数据可视化',
         path: '/visualization',
         meta: {permission: 'hallSystem:visualization:admin'},
-        icon: 'keshihuashuju',
+        icon: 'keshihuashujuETL',
         component: Layout,
         children: [
             {
@@ -709,6 +716,28 @@ export const asyncRouterMap = [
                 component: WorkFinish,
                 name: '待监管事项',
                 meta: {permission: 'workSystem:process:workFinishSupervise:list'}
+            }
+        ]
+    },,
+    {
+        path: '/policyCashing',
+        redirect: 'noredirect',
+        name: '政策兑现',
+        meta: {permission: 'workSystem:policyCashing:admin'},
+        icon: 'zhengceduixianguanli',
+        component: Layout,
+        children: [
+            {
+                path: 'sumEntry',
+                component: SumEntry,
+                name: '金额录入 ',
+                meta: {permission: 'workSystem:policyCashing:sumEntry:list'}
+            },
+            {
+                path: 'analysis',
+                component: Analysis,
+                name: '统计分析',
+                meta: {permission: 'workSystem:policyCashing:analysis:list'}
             }
         ]
     },
