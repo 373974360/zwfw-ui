@@ -3,14 +3,14 @@
         <div class="filter-container">
             <el-row :gutter="20">
                 <el-col :span="6">
-                    <el-input @keyup.enter.native="getList"  class="filter-item" placeholder="办件号"
+                    <el-input @keyup.enter.native="getList" class="filter-item" placeholder="办件号"
                               v-model="listQuery.processNumber"></el-input>
                 </el-col>
                 <el-col :span="6">
                     <el-select
                             style="width: 100%;"
                             remote
-                             class="filter-item" placeholder="公司名称"
+                            class="filter-item" placeholder="公司名称"
                             v-model="listQuery.ownerPersonId"
                             filterable clearable
                             :remote-method="queryCompanySearch"
@@ -88,12 +88,12 @@
             <el-table-column align="left" label="办事员信息" min-width="200">
                 <template scope="scope">
                     <span v-if="scope.row.memberType == 3">
-                        <span >
+                        <span>
                             姓名：{{scope.row.clerkName}}<br>
                         </span>联系电话：{{scope.row.clerkPhone}}<br>
                     </span>
                     <span v-if="scope.row.memberType == 1 || scope.row.memberType == 2">
-                        <span >
+                        <span>
                             姓名：{{scope.row.memberRealname}}<br>
                         </span>联系电话：{{scope.row.memberPhonenumber}}<br>
                     </span>
@@ -105,9 +105,9 @@
                 </template>
             </el-table-column>
             <!--<el-table-column align="center" label="企业名称" prop="companyName">-->
-                <!--<template scope="scope">-->
-                    <!--<span>{{scope.row.companyName}}</span>-->
-                <!--</template>-->
+            <!--<template scope="scope">-->
+            <!--<span>{{scope.row.companyName}}</span>-->
+            <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column prop="enable" class-name="status-col" label="状态" width="50">
                 <template scope="scope">
@@ -561,7 +561,7 @@
                 }
             },
             getOptions() {
-                getCategoryTreeByIds().then(response => {
+                getCategoryTreeByIds(false).then(response => {
                     if (response.httpCode === 200) {
                         this.cascader = response.data;
                     } else {
