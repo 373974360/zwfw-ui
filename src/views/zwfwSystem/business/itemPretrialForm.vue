@@ -376,7 +376,7 @@
                         }
                         // 添加到 select 组件中的待选项
                         var exist = this.fields.find(function (f) {
-                            return f.fieldId  == field.field.id;
+                            return f.id  == field.field.id;
                         });
                         if (!exist) {
                             this.fields.push(field.field);
