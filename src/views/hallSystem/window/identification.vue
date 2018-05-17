@@ -177,9 +177,9 @@
             },
             getCertResult() {
                 if (this.certResultParams.cert_token != '' && this.certResultParams.access_token != '') {
-                    getCertResult(this.certResultParams).then(response => {
+                    getCertResult(Object.assign({},this.certTokenParams,this.certResultParams)).then(response => {
                         if (response.data.ret_code == 0) {
-                            switch(response.data.log_data.auth_res){
+                            switch(response.data.log_data.auth_res) {
                                 case 0 :
                                     this.$message.success("用户信息已通过微警认证");
                                     break;
@@ -198,6 +198,7 @@
                                 default :
                                     this.$message.error('未能成功获取认证结果')
                             }
+                            console.log(response.data.certURL);
                         }else{
                             this.$message.error(response.data.error_msg)
                         }
