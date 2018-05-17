@@ -374,9 +374,13 @@
                         } else {
                             field.value = undefined;
                         }
-
                         // 添加到 select 组件中的待选项
-                        this.fields.push(field.field);
+                        var exist = this.fields.find(function (f) {
+                            return f.fieldId  == field.field.id;
+                        });
+                        if (!exist) {
+                            this.fields.push(field.field);
+                        }
                     }
                 }
                 // 返回的数据，修改后用户界面还原显示编辑行
