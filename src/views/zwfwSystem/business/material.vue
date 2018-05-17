@@ -477,6 +477,7 @@
                 this.editingForm = data;
             },
             closeZwfwItemPretrialForm() {
+                this.$refs.materialForm.selectFormId = null;
                 this.dialogItemPretrialFormVisible = false;
             }
         }

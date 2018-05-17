@@ -325,7 +325,9 @@
                 this.loading = true;
                 this.zwfwMaterial = zwfwMaterial;
                 this.newForm = undefined; // 删除新增 form
-                this.pretrialForm = {};
+                this.pretrialForm = {
+                    fields: []
+                };
                 getFormByMaterialId(this.zwfwMaterial.id).then(response => {
                     this.loading = false;
                     if (response.httpCode === 200) {
@@ -346,11 +348,14 @@
                 });
             },
             changeVersion(id) {
+                this.pretrialForm = {};
+                if (!id) {
+                    return;
+                }
                 const data = this.versions.filter(form => form.id === id)[0];
                 if (!data) {
                     return null;
                 }
-                this.pretrialForm = {};
                 if (data.fields && data.fields.length > 0) {
                     for (const field of data.fields) {
                         // select 组件中的选中项的信息
