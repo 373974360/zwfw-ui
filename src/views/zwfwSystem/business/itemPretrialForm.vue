@@ -45,10 +45,10 @@
                                @change="value=>{setLabel(value,scope.row)}"
                                :default-first-option="true">
                         <el-option
-                                v-for="field in fields"
+                                v-for="(field,index) in fields"
                                 :label="field.label"
                                 :value="field.id"
-                                :key="scope.row.fieldId+'_option_for_select'"
+                                :key="scope.$index +'_select_option_' + index"
                                 :disabled="pretrialForm.fields.filter(f => f.fieldId === field.id ).length > 0">
                         </el-option>
                     </el-select>
@@ -308,7 +308,7 @@
                 if (!pretrialFormField.size) {
                     pretrialFormField.size = this.smartSize();
                 }
-                console.log(typeof pretrialFormField.inputType);
+                // console.log(typeof pretrialFormField.inputType);
                 if (pretrialFormField.inputType == 3 && !Array.isArray(pretrialFormField.value)) {
                     pretrialFormField.value = [];
                 }
@@ -322,7 +322,9 @@
                 this.loading = true;
                 this.zwfwMaterial = zwfwMaterial;
                 this.newForm = undefined; // 删除新增 form
-                this.previewFormModel.fields = [];
+                this.previewFormModel = {
+                    fields: []
+                };
                 this.pretrialForm = {};
                 getFormByMaterialId(this.zwfwMaterial.id).then(response => {
                     this.loading = false;
@@ -338,7 +340,7 @@
                         this.$message.error(response.msg);
                     }
                 }).catch(e => {
-                    console.log(e);
+                    console.error(e);
                     this.loading = false;
                     this.$message.error('查询失败，请重新打开窗口尝试');
                 });
@@ -348,7 +350,9 @@
                 if (!data) {
                     return null;
                 }
-                this.previewFormModel.fields = [];
+                this.previewFormModel = {
+                    fields: []
+                };
                 this.pretrialForm = {};
                 if (data.fields && data.fields.length > 0) {
                     for (const field of data.fields) {
@@ -426,7 +430,7 @@
                     }
                     console.log(response);
                 }).catch(e => {
-                    console.log(e);
+                    console.error(e);
                     this.$message.error('提交失败');
                 });
             },
@@ -451,7 +455,7 @@
                     }
                     console.log(response);
                 }).catch(e => {
-                    console.log(e);
+                    console.error(e);
                     this.$message.error('发布失败');
                 });
             },
@@ -506,7 +510,7 @@
                 if (index === 0) {
                     return;
                 }
-                console.log(field.dicList);
+                // console.log(field.dicList);
                 const prev = this.pretrialForm.fields[index - 1];
                 // const curr = this.pretrialForm.fields[index];
                 this.$set(this.pretrialForm.fields, index - 1, field);
