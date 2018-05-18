@@ -26,29 +26,29 @@
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column type="selection" width="55"/>
             <el-table-column prop="jobName" align="center" label="作业名称">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.jobName}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column prop="shardingTotalCount" align="center" label="作业分片总数">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.shardingTotalCount}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="cron" align="center" label="Cron表达式">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.cron}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="description" align="center" label="作业描述信息">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.description}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="status" class-name="status-col" label="状态">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tag :type="scope.row.status | taskStatusFilter">
                         {{scope.row.status | dics('job-status')}}
                     </el-tag>

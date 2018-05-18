@@ -17,27 +17,27 @@
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column type="selection" width="55"/>
             <el-table-column align="center" label="序号">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="事项id" prop="itemId">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.itemId}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="备注" prop="remark">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.remark}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="分类id" prop="categoryId">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.categoryId}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="enable" class-name="status-col" label="状态">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
                         {{scope.row.enable | enums('Enable')}}
                     </el-tag>

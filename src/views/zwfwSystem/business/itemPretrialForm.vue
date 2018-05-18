@@ -40,14 +40,15 @@
                     label="表单域"
                     width="180"
             >
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-select v-model="scope.row.fieldId" filterable placeholder="请选择"
                                @change="value=>{setLabel(value,scope.row)}"
                                :default-first-option="true">
                         <el-option
-                                v-for="field in fields"
+                                v-for="(field,index) in fields"
                                 :label="field.label"
                                 :value="field.id"
+                                :key="scope.$index +'_select_option_' + index"
                                 :disabled="pretrialForm.fields.filter(f => f.fieldId === field.id ).length > 0">
                         </el-option>
                     </el-select>
@@ -57,7 +58,7 @@
                     prop="labelAlias"
                     label="别名"
                     width="180">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-input :disabled="!scope.row.fieldId" v-model="scope.row.labelAlias"
                               placeholder="留空不变"></el-input>
                 </template>
@@ -66,7 +67,7 @@
             <!--prop="inputType"-->
             <!--label="类型"-->
             <!--width="180">-->
-            <!--<template scope="scope">-->
+            <!--<template slot-scope="scope">-->
             <!--<span v-if="scope.row.inputType">-->
             <!--{{scope.row.inputType | enums('InputType')}}-->
             <!--</span>-->
@@ -78,21 +79,21 @@
             <el-table-column
                     prop="require"
                     label="必填" width="70">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-checkbox v-model="scope.row.require" :disabled="!scope.row.fieldId"/>
                 </template>
             </el-table-column>
             <!--<el-table-column-->
             <!--prop="position"-->
             <!--label="位置">-->
-            <!--<template scope="scope">-->
+            <!--<template slot-scope="scope">-->
             <!--<el-input v-model="scope.row.position"></el-input>-->
             <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column
                     prop="size"
                     label="尺寸" width="80">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-input-number style="width:100%" v-model="scope.row.size" :controls="false" :value="1" :min="1"
                                      :max="24" :disabled="!scope.row.fieldId">
 
@@ -102,7 +103,7 @@
             <el-table-column
                     prop="regex"
                     label="正则">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <!--<el-input v-model="scope.row.regex" placeholder="留空不验证" :disabled="!scope.row.fieldId">-->
                     <!--</el-input>-->
                     {{scope.row.regex}}
@@ -111,14 +112,14 @@
             <!--<el-table-column-->
             <!--prop="regexError"-->
             <!--label="正则错误">-->
-            <!--<template scope="scope">-->
+            <!--<template slot-scope="scope">-->
             <!--<el-input v-model="scope.row.regexError" placeholder="正则不匹配时的提示" :disabled="!scope.row.fieldId">-->
 
             <!--</el-input>-->
             <!--</template>-->
             <!--</el-table-column>-->
-            <el-table-column label="操作" width="160">
-                <template scope="scope">
+            <el-table-column label="操作" width="200">
+                <template slot-scope="scope">
                     <el-button size="small"
                                @click="fieldUp(scope.row)" icon="arrow-up">
                     </el-button>
@@ -308,6 +309,7 @@
                 if (!pretrialFormField.size) {
                     pretrialFormField.size = this.smartSize();
                 }
+                // console.log(typeof pretrialFormField.inputType);
                 if (pretrialFormField.inputType == 3 && !Array.isArray(pretrialFormField.value)) {
                     pretrialFormField.value = field.defaultValue ? field.defaultValue.split('|') : [];
                 } else if (!pretrialFormField.value) {
@@ -320,9 +322,14 @@
              * 加载现有的配置
              * */
             loadPretrialForm(zwfwMaterial) {
+                this.loading = true;
                 this.zwfwMaterial = zwfwMaterial;
                 this.newForm = undefined; // 删除新增 form
+                this.pretrialForm = {
+                    fields: []
+                };
                 getFormByMaterialId(this.zwfwMaterial.id).then(response => {
+                    this.loading = false;
                     if (response.httpCode === 200) {
                         const allVersions = this.versions = response.data;
                         const data = allVersions.length > 0 ? allVersions[0] : null;
@@ -335,17 +342,20 @@
                         this.$message.error(response.msg);
                     }
                 }).catch(e => {
-                    console.log(e);
+                    console.error(e);
+                    this.loading = false;
                     this.$message.error('查询失败，请重新打开窗口尝试');
                 });
             },
             changeVersion(id) {
+                this.pretrialForm = {};
+                if (!id) {
+                    return;
+                }
                 const data = this.versions.filter(form => form.id === id)[0];
                 if (!data) {
                     return null;
                 }
-                // this.previewFormModel.fields = [];
-                this.pretrialForm = {};
                 if (data.fields && data.fields.length > 0) {
                     for (const field of data.fields) {
                         // select 组件中的选中项的信息
@@ -364,11 +374,13 @@
                         } else {
                             field.value = undefined;
                         }
-
                         // 添加到 select 组件中的待选项
-                        this.fields.push(field.field);
-                        // 预览区域的数据
-                        // this.previewFormModel.fields.push(field.field);
+                        var exist = this.fields.find(function (f) {
+                            return f.id  == field.field.id;
+                        });
+                        if (!exist) {
+                            this.fields.push(field.field);
+                        }
                     }
                 }
                 // 返回的数据，修改后用户界面还原显示编辑行
@@ -422,7 +434,7 @@
                     }
                     console.log(response);
                 }).catch(e => {
-                    console.log(e);
+                    console.error(e);
                     this.$message.error('提交失败');
                 });
             },
@@ -447,7 +459,7 @@
                     }
                     console.log(response);
                 }).catch(e => {
-                    console.log(e);
+                    console.error(e);
                     this.$message.error('发布失败');
                 });
             },
@@ -500,7 +512,7 @@
                 if (index === 0) {
                     return;
                 }
-                console.log(field.dicList);
+                // console.log(field.dicList);
                 const prev = this.pretrialForm.fields[index - 1];
                 // const curr = this.pretrialForm.fields[index];
                 this.$set(this.pretrialForm.fields, index - 1, field);

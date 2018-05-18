@@ -19,24 +19,24 @@
                   style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"/>
             <el-table-column align="center" label="序号" width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
             <el-table-column min-width="200px" align="center" label="角色名称">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tooltip content="点击编辑" placement="right" effect="dark">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column width="250px" align="center" label="角色类型">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.type | enums('RoleType')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-badge :value="scope.row.roleMenuCount" class="item">
                         <el-button class="filter-item" style="margin-left: 10px;" @click="handleMenuList(scope.row)"
                                    type="primary" size="small">

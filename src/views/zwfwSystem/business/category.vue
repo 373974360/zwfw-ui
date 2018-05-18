@@ -75,34 +75,34 @@
                       style="width: 100%" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="40"/>
                 <el-table-column align="center" label="事项ID" width="80">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.itemId}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="事项名称" prop="name">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.itemName}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="基本编码" prop="basicCode" width="120">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.basicCode}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="事项类型" prop="type" width="100">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.type | dics('sslx')}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="办件类型" prop="processType" width="110">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <el-tag :type="scope.row.processType | dics('bjlx')">
                             {{scope.row.processType | dics('bjlx')}}
                         </el-tag>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="办理形式" prop="handleType" width="110">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <el-tag :type="scope.row.handleType | dics('blxs')">
                             {{scope.row.handleType | dics('blxs')}}
                         </el-tag>

@@ -20,45 +20,45 @@
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column type="selection" width="55"/>
             <el-table-column align="center" label="序号">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="name" align="center" label="姓名">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column prop="empNo" align="center" label="工号">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.empNo}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="deptVo.name" align="center" label="部门">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.deptVo">{{scope.row.deptVo.name}}</span>
                     <span v-else></span>
                 </template>
             </el-table-column>
             <el-table-column prop="sex" align="center" label="性别">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.sex | enums('Gender')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="电话">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.phone}}</span>
                 </template>
             </el-table-column>
             <el-table-column class-name="status-col" label="帐号">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.account}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="enable" class-name="status-col" label="状态">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
                         {{scope.row.enable | enums('Enable')}}
                     </el-tag>

@@ -16,74 +16,74 @@
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column type="selection" width="55"/>
             <el-table-column align="center" label="序号">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
                             <el-table-column align="center" label="营业执照编码" prop="businessLicense">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                                                     <span>{{scope.row.businessLicense}}</span>
                                             </template>
                 </el-table-column>
                             <el-table-column align="center" label="最后修改人" prop="modifyUser">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                                                     <span>{{scope.row.modifyUser}}</span>
                                             </template>
                 </el-table-column>
                             <el-table-column align="center" label="标记是否删除" prop="flagDel">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                                                     <span>{{scope.row.flagDel}}</span>
                                             </template>
                 </el-table-column>
                             <el-table-column align="center" label="企业地址" prop="address">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                                                     <span>{{scope.row.address}}</span>
                                             </template>
                 </el-table-column>
                             <el-table-column align="center" label="修改时间" prop="modifyTime">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                                                     <span>{{scope.row.modifyTime}}</span>
                                             </template>
                 </el-table-column>
                             <el-table-column align="center" label="组织机构代码" prop="organizationCode">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                                                     <span>{{scope.row.organizationCode}}</span>
                                             </template>
                 </el-table-column>
                             <el-table-column align="center" label="法人" prop="legalPerson">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                                                     <span>{{scope.row.legalPerson}}</span>
                                             </template>
                 </el-table-column>
                             <el-table-column align="center" label="企业名称" prop="name">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                                                     <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
                                 <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
                             </el-tooltip>
                                             </template>
                 </el-table-column>
                             <el-table-column align="center" label="备注" prop="remark">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                                                     <span>{{scope.row.remark}}</span>
                                             </template>
                 </el-table-column>
                             <el-table-column align="center" label="统一社会信用代码" prop="unifyCode">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                                                     <span>{{scope.row.unifyCode}}</span>
                                             </template>
                 </el-table-column>
                             <el-table-column align="center" label="法人身份证" prop="legalPersonCard">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                                                     <span>{{scope.row.legalPersonCard}}</span>
                                             </template>
                 </el-table-column>
                             <el-table-column align="center" label="状态,1=未审核,2=已审核,3=审核后有修改" prop="status">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                                                     <span>{{scope.row.status}}</span>
                                             </template>
                 </el-table-column>
                         <el-table-column prop="enable" class-name="status-col" label="状态">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
                         {{scope.row.enable | enums('Enable')}}
                     </el-tag>
