@@ -25,7 +25,7 @@
             </el-col>
         </el-row>
         <el-row :gutter="10">
-            <el-col :span="9">
+            <el-col :span="17">
                 <el-form id="checkboxTable" class="small-space" label-position="right"
                          label-width="100px" ref="zwfwidentificationForm" :model="certTokenParams"
                          :rules="certTokenRules">
@@ -48,6 +48,9 @@
                         <el-button type="primary" style="font-size: medium;height:60px; width: 130px; "
                                    @click="getCertResult()">查看结果
                         </el-button>
+                        <el-button v-if="certResultBase64" type="primary" style="font-size: medium;height:60px; width: 130px; "
+                                   @click="printCertResult()">打印结果
+                        </el-button>
                     </el-form-item>
                 </el-form>
             </el-col>
@@ -55,6 +58,8 @@
                 <div v-show="certTokenInfo.qrcode_content != ''" id="qrcode"></div>
             </el-col>
         </el-row>
+        <!--<div><img v-if="certResultBase64" :src="certResultBase64"/></div>-->
+        <iframe id="certResultIframe" src="about:blank" frameborder="0" height="0" width="0" style="width:0;height: 0;" />
     </div>
 </template>
 
@@ -116,7 +121,8 @@
                     access_token: '',
                     cert_token: ''
                 },
-                qrcode: undefined
+                qrcode: undefined,
+                certResultBase64:undefined
             }
         },
         methods: {
@@ -156,6 +162,7 @@
             getCertToken() {
                 this.certTokenInfo.qrcode_content = '';
                 this.certResultParams.cert_token = '';
+                this.certResultBase64 = undefined;
                 this.$refs['zwfwidentificationForm'].validate(valid => {
                     if (valid) {
                         this.refreshAccessToken().then(result => {
@@ -198,7 +205,9 @@
                                 default :
                                     this.$message.error('未能成功获取认证结果')
                             }
-                            console.log(response.data.certURL);
+                            this.certResultBase64 = 'data:image/png;base64,'+response.data.certURL;
+                            var doc = document.getElementById("certResultIframe").contentDocument || document.frames["certResultIframe"].document;
+                            doc.body.innerHTML = '<html><body style="text-align:center"><img src="'+this.certResultBase64+'"/></body></html>'; //进入可编辑模式前存好
                         }else{
                             this.$message.error(response.data.error_msg)
                         }
@@ -206,6 +215,9 @@
                 } else {
                     this.$message.warning('请先填写信息并请求认证')
                 }
+            },
+            printCertResult(){
+                document.getElementById("certResultIframe").contentWindow.print()
             }
         },
         mounted() {
