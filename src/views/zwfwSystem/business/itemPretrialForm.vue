@@ -153,17 +153,21 @@
                         <el-select v-if="field.inputType == 2" style="width:100%"
                                    v-model="field.value" filterable
                                    :placeholder="field.placeholder">
-                            <el-option
-                                    v-for="(option,optIdx) in field.optionDic.split('|')"
-                                    :key="field.id+'_select_'+optIdx"
-                                    :label="option"
-                                    :value="option">
-                            </el-option>
+                            <template v-if="field.optionDic">
+                                <el-option
+                                        v-for="(option,optIdx) in field.optionDic.split('|')"
+                                        :key="field.id+'_select_'+optIdx"
+                                        :label="option"
+                                        :value="option">
+                                </el-option>
+                            </template>
                         </el-select>
                         <el-checkbox-group v-if="field.inputType == 3" v-model="field.value">
-                            <el-checkbox v-for="(option,optIdx) in field.optionDic.split('|')" :label="option"
-                                         :name="field.id" :key="field.id+'_checkbox_'+optIdx">{{option}}
-                            </el-checkbox>
+                            <template v-if="field.optionDic">
+                                <el-checkbox v-for="(option,optIdx) in field.optionDic.split('|')" :label="option"
+                                             :name="field.id" :key="field.id+'_checkbox_'+optIdx">{{option}}
+                                </el-checkbox>
+                            </template>
                         </el-checkbox-group>
                         <el-input v-if="field.inputType == 4" type="textarea"
                                   v-model="field.value"></el-input>
@@ -233,10 +237,12 @@
                 'enums',
                 'dics'
             ])
-        },
+        }
+        ,
         mounted() {
             this.remoteSelect('%');
-        },
+        }
+        ,
         methods: {
             // checkFieldExist(fieldId) {
             //     return this.pretrialForm.fields.filter(f => f.fieldId === fieldId).length > 0;
@@ -244,7 +250,8 @@
 
             getVersionName(version) {
                 return '[' + enums(version.status, 'ItemPretrialFormStatus') + '] ' + version.version;
-            },
+            }
+            ,
             fieldRule(field) {
                 const rules = [];
 
@@ -265,16 +272,22 @@
                     rules.push(rule);
                 }
                 return rules.length === 0 ? null : rules;
-            },
+            }
+            ,
             testRegex() {
                 this.$refs.pretrialForm.validate(result => {
-                    if (!result) {
+                    if (
+                        !result
+                    ) {
                         this.$message.error('验证不通过');
-                    } else {
+                    }
+                    else {
                         this.$message.success('验证通过');
                     }
-                });
-            },
+                })
+                ;
+            }
+            ,
             smartSize() {
                 let cols = 0;
                 for (const field of this.pretrialForm.fields) {
@@ -285,13 +298,15 @@
                     size = 6;
                 }
                 return size;
-            },
+            }
+            ,
             smartLabel(field) {
                 if (field.labelAlias && field.labelAlias.length > 0) {
                     return field.labelAlias;
                 }
                 return field.label;
-            },
+            }
+            ,
             setLabel(fieldId, pretrialFormField) {
                 const field = this.fields.filter(f => f.id === fieldId)[0];
                 if (field == null) {
@@ -317,7 +332,8 @@
                 }
                 // 清空候选列表
                 // this.fields = [];
-            },
+            }
+            ,
             /**
              * 加载现有的配置
              * */
@@ -352,7 +368,9 @@
                 if (!id) {
                     return;
                 }
-                const data = this.versions.filter(form => form.id === id)[0];
+                const data = this.versions.filter(form => form.id === id
+                )
+                    [0];
                 if (!data) {
                     return null;
                 }
@@ -376,7 +394,7 @@
                         }
                         // 添加到 select 组件中的待选项
                         var exist = this.fields.find(function (f) {
-                            return f.id  == field.field.id;
+                            return f.id == field.field.id;
                         });
                         if (!exist) {
                             this.fields.push(field.field);
@@ -386,7 +404,8 @@
                 // 返回的数据，修改后用户界面还原显示编辑行
                 this.pretrialForm = data;
                 this.$emit('changeVersion', data);
-            },
+            }
+            ,
             addNewVersion() {
                 if (this.newForm != null) {
                     this.$message.error('已有尚未保存的新版本');
@@ -406,7 +425,8 @@
                 this.$nextTick(function () {
                     this.selectFormId = formId;
                 });
-            },
+            }
+            ,
             /**
              * 提交修改
              */
@@ -426,18 +446,22 @@
                     id, version, tplId, status, title, materialId,
                     itemPretrialFormFieldsJson: encodeURIComponent(encodeURIComponent(JSON.stringify(this.pretrialForm.fields.filter(f => !!f.fieldId))))
                 })).then(response => {
-                    if (response.httpCode === 200) {
+                    if (response.httpCode === 200
+                    ) {
                         this.$message.success('提交成功');
                         this.loadPretrialForm(this.zwfwMaterial);
-                    } else {
+                    }
+                    else {
                         this.$message.error(response.msg);
                     }
                     console.log(response);
                 }).catch(e => {
                     console.error(e);
                     this.$message.error('提交失败');
-                });
-            },
+                })
+                ;
+            }
+            ,
             /**
              * 更新草稿状态的表单为发布状态
              */
@@ -451,18 +475,22 @@
                     id, version, tplId, status, title, materialId,
                     itemPretrialFormFieldsJson: encodeURIComponent(encodeURIComponent(JSON.stringify(this.pretrialForm.fields.filter(f => !!f.fieldId))))
                 })).then(response => {
-                    if (response.httpCode === 200) {
+                    if (response.httpCode === 200
+                    ) {
                         this.$message.success('发布成功');
                         this.loadPretrialForm(this.zwfwMaterial);
-                    } else {
+                    }
+                    else {
                         this.$message.error(response.msg);
                     }
                     console.log(response);
                 }).catch(e => {
                     console.error(e);
                     this.$message.error('发布失败');
-                });
-            },
+                })
+                ;
+            }
+            ,
             remoteSelect(query) {
                 if (query !== '') {
                     this.loading = true;
@@ -483,7 +511,8 @@
                         console.error(e);
                     });
                 }
-            },
+            }
+            ,
             addNewField() {
                 const newField = {
                     id: 'new_' + new Date().getTime(),
@@ -502,10 +531,12 @@
                 // this.previewFormModel.fields.push(newField);
                 /* 清空自动完成 */
                 // this.fields = [];
-            },
+            }
+            ,
             fieldDel(field) {
                 this.pretrialForm.fields.splice(this.pretrialForm.fields.indexOf(field), 1);
-            },
+            }
+            ,
             fieldUp(field) {
                 const index = this.pretrialForm.fields.indexOf(field);
                 // console.log(index);
@@ -517,7 +548,8 @@
                 // const curr = this.pretrialForm.fields[index];
                 this.$set(this.pretrialForm.fields, index - 1, field);
                 this.$set(this.pretrialForm.fields, index, prev);
-            },
+            }
+            ,
             fieldDown(field) {
                 const index = this.pretrialForm.fields.indexOf(field);
                 // console.log(index);
