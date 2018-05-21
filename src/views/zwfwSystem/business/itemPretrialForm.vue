@@ -237,365 +237,331 @@
                 'enums',
                 'dics'
             ])
-    }
-    ,
-    mounted()
-    {
-        this.remoteSelect('%');
-    }
-    ,
-    methods: {
-        // checkFieldExist(fieldId) {
-        //     return this.pretrialForm.fields.filter(f => f.fieldId === fieldId).length > 0;
-        // },
+        }
+        ,
+        mounted() {
+            this.remoteSelect('%');
+        }
+        ,
+        methods: {
+            // checkFieldExist(fieldId) {
+            //     return this.pretrialForm.fields.filter(f => f.fieldId === fieldId).length > 0;
+            // },
 
-        getVersionName(version)
-        {
-            return '[' + enums(version.status, 'ItemPretrialFormStatus') + '] ' + version.version;
-        }
-    ,
-        fieldRule(field)
-        {
-            const rules = [];
+            getVersionName(version) {
+                return '[' + enums(version.status, 'ItemPretrialFormStatus') + '] ' + version.version;
+            }
+            ,
+            fieldRule(field) {
+                const rules = [];
 
-            if (field.inputType != 3 && field.require) {
-                const rule = {
-                    trigger: 'blur,change'
-                };
-                rule.required = true;
-                rule.message = '此项为必填项';
-                rules.push(rule);
-            }
-            if (field.inputType == 1 && field.regex) {
-                const rule = {
-                    trigger: 'blur,change'
-                };
-                rule.pattern = new RegExp(field.regex);
-                rule.message = field.regexError || '格式不正确';
-                rules.push(rule);
-            }
-            return rules.length === 0 ? null : rules;
-        }
-    ,
-        testRegex()
-        {
-            this.$refs.pretrialForm.validate(result = > {
-                if(
-            !result
-        )
-            {
-                this.$message.error('验证不通过');
-            }
-        else
-            {
-                this.$message.success('验证通过');
-            }
-        })
-            ;
-        }
-    ,
-        smartSize()
-        {
-            let cols = 0;
-            for (const field of this.pretrialForm.fields) {
-                cols += field.size;
-            }
-            let size = 24 - ((cols - 1) % 24);
-            if (size < 6) {
-                size = 6;
-            }
-            return size;
-        }
-    ,
-        smartLabel(field)
-        {
-            if (field.labelAlias && field.labelAlias.length > 0) {
-                return field.labelAlias;
-            }
-            return field.label;
-        }
-    ,
-        setLabel(fieldId, pretrialFormField)
-        {
-            const field = this.fields.filter(f = > f.id === fieldId
-        )
-            [0];
-            if (field == null) {
-                return;
-            }
-            pretrialFormField.fieldId = field.id;
-            // pretrialFormField.id = null;
-            pretrialFormField.key = field.key;
-            pretrialFormField.label = field.label;
-            pretrialFormField.labelAlias = field.label;
-            pretrialFormField.require = field.require;
-            pretrialFormField.regex = field.regex;
-            pretrialFormField.regexError = field.regexError;
-            pretrialFormField.inputType = field.inputType;
-            if (!pretrialFormField.size) {
-                pretrialFormField.size = this.smartSize();
-            }
-            // console.log(typeof pretrialFormField.inputType);
-            if (pretrialFormField.inputType == 3 && !Array.isArray(pretrialFormField.value)) {
-                pretrialFormField.value = field.defaultValue ? field.defaultValue.split('|') : [];
-            } else if (!pretrialFormField.value) {
-                pretrialFormField.value = field.defaultValue || null;
-            }
-            // 清空候选列表
-            // this.fields = [];
-        }
-    ,
-        /**
-         * 加载现有的配置
-         * */
-        loadPretrialForm(zwfwMaterial)
-        {
-            this.loading = true;
-            this.zwfwMaterial = zwfwMaterial;
-            this.newForm = undefined; // 删除新增 form
-            this.pretrialForm = {
-                fields: []
-            };
-            getFormByMaterialId(this.zwfwMaterial.id).then(response = > {
-                this.loading = false;
-            if (response.httpCode === 200) {
-                const allVersions = this.versions = response.data;
-                const data = allVersions.length > 0 ? allVersions[0] : null;
-                if (data) {
-                    this.selectFormId = data.id;
-                } else {
-                    this.addNewVersion();
-                }
-            } else {
-                this.$message.error(response.msg);
-            }
-        }).
-            catch(e = > {
-                console.error(e);
-            this.loading = false;
-            this.$message.error('查询失败，请重新打开窗口尝试');
-        })
-            ;
-        }
-    ,
-        changeVersion(id)
-        {
-            this.pretrialForm = {};
-            if (!id) {
-                return;
-            }
-            const data = this.versions.filter(form = > form.id === id
-        )
-            [0];
-            if (!data) {
-                return null;
-            }
-            if (data.fields && data.fields.length > 0) {
-                for (const field of data.fields) {
-                    // select 组件中的选中项的信息
-                    field.field = {
-                        id: field.fieldId,
-                        key: field.key,
-                        label: field.label,
-                        inputType: field.inputType,
-                        require: field.require,
-                        regex: field.regex,
-                        regexError: field.regexError
+                if (field.inputType != 3 && field.require) {
+                    const rule = {
+                        trigger: 'blur,change'
                     };
-
-                    if (field.inputType == 3) {
-                        field.value = [];
-                    } else {
-                        field.value = undefined;
-                    }
-                    // 添加到 select 组件中的待选项
-                    var exist = this.fields.find(function (f) {
-                        return f.id == field.field.id;
-                    });
-                    if (!exist) {
-                        this.fields.push(field.field);
-                    }
+                    rule.required = true;
+                    rule.message = '此项为必填项';
+                    rules.push(rule);
                 }
-            }
-            // 返回的数据，修改后用户界面还原显示编辑行
-            this.pretrialForm = data;
-            this.$emit('changeVersion', data);
-        }
-    ,
-        addNewVersion()
-        {
-            if (this.newForm != null) {
-                this.$message.error('已有尚未保存的新版本');
-                return false;
-            }
-            const formId = 'new_' + new Date().getTime();
-            const newForm = this.newForm = {
-                id: formId,
-                title: this.zwfwMaterial.name,
-                materialId: this.zwfwMaterial.id,
-                version: 1,
-                tplId: 0,
-                fields: [],
-                status: 1
-            };
-            this.versions.unshift(newForm);
-            this.$nextTick(function () {
-                this.selectFormId = formId;
-            });
-        }
-    ,
-        /**
-         * 提交修改
-         */
-        submitItemPretrialForm()
-        {
-            const {id, title, version, tplId, status, materialId} = this.pretrialForm;
-            for (const field of this.pretrialForm.fields) {
-                field.createTime = null;// 提交上去转换 Date 类型会报错，所以不传
-                field.updateTime = null;// 提交上去转换 Date 类型会报错，所以不传
-                field.value = null;
-            }
-            // const formFieldData = this.pretrialForm.fields.filter(f => !!f.fieldId).map(f => {
-            //     f.value = undefined;
-            //     return f;
-            // });
-            // console.log(formFieldData);
-            updateForm(Object.assign({
-                id, version, tplId, status, title, materialId,
-                itemPretrialFormFieldsJson: encodeURIComponent(encodeURIComponent(JSON.stringify(this.pretrialForm.fields.filter(f = > !!f.fieldId))))
-        })).
-            then(response = > {
-                if(response.httpCode === 200
-        )
-            {
-                this.$message.success('提交成功');
-                this.loadPretrialForm(this.zwfwMaterial);
-            }
-        else
-            {
-                this.$message.error(response.msg);
-            }
-            console.log(response);
-        }).
-            catch(e = > {
-                console.error(e);
-            this.$message.error('提交失败');
-        })
-            ;
-        }
-    ,
-        /**
-         * 更新草稿状态的表单为发布状态
-         */
-        publishPretrialForm()
-        {
-            const {id, title, version, tplId, status, materialId} = this.pretrialForm;
-            for (const field of this.pretrialForm.fields) {
-                field.createTime = null;// 提交上去转换 Date 类型会报错，所以不传
-                field.updateTime = null;// 提交上去转换 Date 类型会报错，所以不传
-            }
-            publishForm(Object.assign({
-                id, version, tplId, status, title, materialId,
-                itemPretrialFormFieldsJson: encodeURIComponent(encodeURIComponent(JSON.stringify(this.pretrialForm.fields.filter(f = > !!f.fieldId))))
-        })).
-            then(response = > {
-                if(response.httpCode === 200
-        )
-            {
-                this.$message.success('发布成功');
-                this.loadPretrialForm(this.zwfwMaterial);
-            }
-        else
-            {
-                this.$message.error(response.msg);
-            }
-            console.log(response);
-        }).
-            catch(e = > {
-                console.error(e);
-            this.$message.error('发布失败');
-        })
-            ;
-        }
-    ,
-        remoteSelect(query)
-        {
-            if (query !== '') {
-                this.loading = true;
-                this.fields = [];
-                suggestField({
-                    keywords: query,
-                    formId: this.pretrialForm.id
-                }).then(response = > {
-                    this.loading = false;
-                if (response.httpCode === 200) {
-                    this.fields = response.data;
-                    // console.log(this.fields);
-                } else {
-                    this.$message.error(response.msg);
+                if (field.inputType == 1 && field.regex) {
+                    const rule = {
+                        trigger: 'blur,change'
+                    };
+                    rule.pattern = new RegExp(field.regex);
+                    rule.message = field.regexError || '格式不正确';
+                    rules.push(rule);
                 }
-            }).
-                catch(e = > {
-                    this.loading = false;
-                console.error(e);
-            })
+                return rules.length === 0 ? null : rules;
+            }
+            ,
+            testRegex() {
+                this.$refs.pretrialForm.validate(result => {
+                    if (
+                        !result
+                    ) {
+                        this.$message.error('验证不通过');
+                    }
+                    else {
+                        this.$message.success('验证通过');
+                    }
+                })
                 ;
             }
-        }
-    ,
-        addNewField()
-        {
-            const newField = {
-                id: 'new_' + new Date().getTime(),
-                formId: this.formId,
-                fieldId: undefined,
-                key: undefined,
-                label: '',
-                labelAlias: '',
-                position: 0,
-                size: this.defualtSize,
-                require: true,
-                field: {},
-                value: null
-            };
-            this.pretrialForm.fields.push(newField);
-            // this.previewFormModel.fields.push(newField);
-            /* 清空自动完成 */
-            // this.fields = [];
-        }
-    ,
-        fieldDel(field)
-        {
-            this.pretrialForm.fields.splice(this.pretrialForm.fields.indexOf(field), 1);
-        }
-    ,
-        fieldUp(field)
-        {
-            const index = this.pretrialForm.fields.indexOf(field);
-            // console.log(index);
-            if (index === 0) {
-                return;
+            ,
+            smartSize() {
+                let cols = 0;
+                for (const field of this.pretrialForm.fields) {
+                    cols += field.size;
+                }
+                let size = 24 - ((cols - 1) % 24);
+                if (size < 6) {
+                    size = 6;
+                }
+                return size;
             }
-            // console.log(field.dicList);
-            const prev = this.pretrialForm.fields[index - 1];
-            // const curr = this.pretrialForm.fields[index];
-            this.$set(this.pretrialForm.fields, index - 1, field);
-            this.$set(this.pretrialForm.fields, index, prev);
-        }
-    ,
-        fieldDown(field)
-        {
-            const index = this.pretrialForm.fields.indexOf(field);
-            // console.log(index);
-            if (index === this.pretrialForm.fields.length - 1) {
-                return;
+            ,
+            smartLabel(field) {
+                if (field.labelAlias && field.labelAlias.length > 0) {
+                    return field.labelAlias;
+                }
+                return field.label;
             }
-            const next = this.pretrialForm.fields[index + 1];
-            // const curr = this.pretrialForm.fields[index];
-            this.$set(this.pretrialForm.fields, index + 1, field);
-            this.$set(this.pretrialForm.fields, index, next);
+            ,
+            setLabel(fieldId, pretrialFormField) {
+                const field = this.fields.filter(f => f.id === fieldId)[0];
+                if (field == null) {
+                    return;
+                }
+                pretrialFormField.fieldId = field.id;
+                // pretrialFormField.id = null;
+                pretrialFormField.key = field.key;
+                pretrialFormField.label = field.label;
+                pretrialFormField.labelAlias = field.label;
+                pretrialFormField.require = field.require;
+                pretrialFormField.regex = field.regex;
+                pretrialFormField.regexError = field.regexError;
+                pretrialFormField.inputType = field.inputType;
+                if (!pretrialFormField.size) {
+                    pretrialFormField.size = this.smartSize();
+                }
+                // console.log(typeof pretrialFormField.inputType);
+                if (pretrialFormField.inputType == 3 && !Array.isArray(pretrialFormField.value)) {
+                    pretrialFormField.value = field.defaultValue ? field.defaultValue.split('|') : [];
+                } else if (!pretrialFormField.value) {
+                    pretrialFormField.value = field.defaultValue || null;
+                }
+                // 清空候选列表
+                // this.fields = [];
+            }
+            ,
+            /**
+             * 加载现有的配置
+             * */
+            loadPretrialForm(zwfwMaterial) {
+                this.loading = true;
+                this.zwfwMaterial = zwfwMaterial;
+                this.newForm = undefined; // 删除新增 form
+                this.pretrialForm = {
+                    fields: []
+                };
+                getFormByMaterialId(this.zwfwMaterial.id).then(response => {
+                    this.loading = false;
+                    if (response.httpCode === 200) {
+                        const allVersions = this.versions = response.data;
+                        const data = allVersions.length > 0 ? allVersions[0] : null;
+                        if (data) {
+                            this.selectFormId = data.id;
+                        } else {
+                            this.addNewVersion();
+                        }
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                }).catch(e => {
+                    console.error(e);
+                    this.loading = false;
+                    this.$message.error('查询失败，请重新打开窗口尝试');
+                });
+            },
+            changeVersion(id) {
+                this.pretrialForm = {};
+                if (!id) {
+                    return;
+                }
+                const data = this.versions.filter(form => form.id === id
+                )
+                    [0];
+                if (!data) {
+                    return null;
+                }
+                if (data.fields && data.fields.length > 0) {
+                    for (const field of data.fields) {
+                        // select 组件中的选中项的信息
+                        field.field = {
+                            id: field.fieldId,
+                            key: field.key,
+                            label: field.label,
+                            inputType: field.inputType,
+                            require: field.require,
+                            regex: field.regex,
+                            regexError: field.regexError
+                        };
+
+                        if (field.inputType == 3) {
+                            field.value = [];
+                        } else {
+                            field.value = undefined;
+                        }
+                        // 添加到 select 组件中的待选项
+                        var exist = this.fields.find(function (f) {
+                            return f.id == field.field.id;
+                        });
+                        if (!exist) {
+                            this.fields.push(field.field);
+                        }
+                    }
+                }
+                // 返回的数据，修改后用户界面还原显示编辑行
+                this.pretrialForm = data;
+                this.$emit('changeVersion', data);
+            }
+            ,
+            addNewVersion() {
+                if (this.newForm != null) {
+                    this.$message.error('已有尚未保存的新版本');
+                    return false;
+                }
+                const formId = 'new_' + new Date().getTime();
+                const newForm = this.newForm = {
+                    id: formId,
+                    title: this.zwfwMaterial.name,
+                    materialId: this.zwfwMaterial.id,
+                    version: 1,
+                    tplId: 0,
+                    fields: [],
+                    status: 1
+                };
+                this.versions.unshift(newForm);
+                this.$nextTick(function () {
+                    this.selectFormId = formId;
+                });
+            }
+            ,
+            /**
+             * 提交修改
+             */
+            submitItemPretrialForm() {
+                const {id, title, version, tplId, status, materialId} = this.pretrialForm;
+                for (const field of this.pretrialForm.fields) {
+                    field.createTime = null;// 提交上去转换 Date 类型会报错，所以不传
+                    field.updateTime = null;// 提交上去转换 Date 类型会报错，所以不传
+                    field.value = null;
+                }
+                // const formFieldData = this.pretrialForm.fields.filter(f => !!f.fieldId).map(f => {
+                //     f.value = undefined;
+                //     return f;
+                // });
+                // console.log(formFieldData);
+                updateForm(Object.assign({
+                    id, version, tplId, status, title, materialId,
+                    itemPretrialFormFieldsJson: encodeURIComponent(encodeURIComponent(JSON.stringify(this.pretrialForm.fields.filter(f => !!f.fieldId))))
+                })).then(response => {
+                    if (response.httpCode === 200
+                    ) {
+                        this.$message.success('提交成功');
+                        this.loadPretrialForm(this.zwfwMaterial);
+                    }
+                    else {
+                        this.$message.error(response.msg);
+                    }
+                    console.log(response);
+                }).catch(e => {
+                    console.error(e);
+                    this.$message.error('提交失败');
+                })
+                ;
+            }
+            ,
+            /**
+             * 更新草稿状态的表单为发布状态
+             */
+            publishPretrialForm() {
+                const {id, title, version, tplId, status, materialId} = this.pretrialForm;
+                for (const field of this.pretrialForm.fields) {
+                    field.createTime = null;// 提交上去转换 Date 类型会报错，所以不传
+                    field.updateTime = null;// 提交上去转换 Date 类型会报错，所以不传
+                }
+                publishForm(Object.assign({
+                    id, version, tplId, status, title, materialId,
+                    itemPretrialFormFieldsJson: encodeURIComponent(encodeURIComponent(JSON.stringify(this.pretrialForm.fields.filter(f => !!f.fieldId))))
+                })).then(response => {
+                    if (response.httpCode === 200
+                    ) {
+                        this.$message.success('发布成功');
+                        this.loadPretrialForm(this.zwfwMaterial);
+                    }
+                    else {
+                        this.$message.error(response.msg);
+                    }
+                    console.log(response);
+                }).catch(e => {
+                    console.error(e);
+                    this.$message.error('发布失败');
+                })
+                ;
+            }
+            ,
+            remoteSelect(query) {
+                if (query !== '') {
+                    this.loading = true;
+                    this.fields = [];
+                    suggestField({
+                        keywords: query,
+                        formId: this.pretrialForm.id
+                    }).then(response => {
+                        this.loading = false;
+                        if (response.httpCode === 200) {
+                            this.fields = response.data;
+                            // console.log(this.fields);
+                        } else {
+                            this.$message.error(response.msg);
+                        }
+                    }).catch(e => {
+                        this.loading = false;
+                        console.error(e);
+                    });
+                }
+            }
+            ,
+            addNewField() {
+                const newField = {
+                    id: 'new_' + new Date().getTime(),
+                    formId: this.formId,
+                    fieldId: undefined,
+                    key: undefined,
+                    label: '',
+                    labelAlias: '',
+                    position: 0,
+                    size: this.defualtSize,
+                    require: true,
+                    field: {},
+                    value: null
+                };
+                this.pretrialForm.fields.push(newField);
+                // this.previewFormModel.fields.push(newField);
+                /* 清空自动完成 */
+                // this.fields = [];
+            }
+            ,
+            fieldDel(field) {
+                this.pretrialForm.fields.splice(this.pretrialForm.fields.indexOf(field), 1);
+            }
+            ,
+            fieldUp(field) {
+                const index = this.pretrialForm.fields.indexOf(field);
+                // console.log(index);
+                if (index === 0) {
+                    return;
+                }
+                // console.log(field.dicList);
+                const prev = this.pretrialForm.fields[index - 1];
+                // const curr = this.pretrialForm.fields[index];
+                this.$set(this.pretrialForm.fields, index - 1, field);
+                this.$set(this.pretrialForm.fields, index, prev);
+            }
+            ,
+            fieldDown(field) {
+                const index = this.pretrialForm.fields.indexOf(field);
+                // console.log(index);
+                if (index === this.pretrialForm.fields.length - 1) {
+                    return;
+                }
+                const next = this.pretrialForm.fields[index + 1];
+                // const curr = this.pretrialForm.fields[index];
+                this.$set(this.pretrialForm.fields, index + 1, field);
+                this.$set(this.pretrialForm.fields, index, next);
+            }
         }
-    }
     }
 </script>
 
