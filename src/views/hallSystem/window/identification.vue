@@ -209,9 +209,7 @@
                             if (response.data.certURL) {
                                 this.certResultBase64 = 'data:image/png;base64,' + response.data.certURL;
                                 var doc = document.getElementById("certResultIframe").contentDocument || document.frames["certResultIframe"].document;
-                                doc.body.innerHTML = '<html><body style="text-align:center"><img src="' + this.certResultBase64 + '"/></body></html>'; //进入可编辑模式前存好
-                            }else{
-
+                                doc.body.innerHTML = '<html><body ><div style="text-align:center;margin-top:30%;"><img src="' + this.certResultBase64 + '"/></div></body></html>'; //进入可编辑模式前存好
                             }
                         }else{
                             this.$message.error(response.data.error_msg)
