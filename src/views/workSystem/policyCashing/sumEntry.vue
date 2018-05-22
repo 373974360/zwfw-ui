@@ -37,11 +37,6 @@
                     <span>{{scope.row.itemName}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="承诺期限" prop="promiseFinishTime">
-                <template scope="scope">
-                    <span>{{scope.row.promiseFinishTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
-                </template>
-            </el-table-column>
             <el-table-column align="left" label="申请企业（个人）" min-width="200">
                 <template scope="scope">
                     <span v-if="scope.row.memberType == 1">
@@ -67,6 +62,11 @@
                             姓名：{{scope.row.memberRealname}}<br>
                         </span>联系电话：{{scope.row.memberPhonenumber}}<br>
                     </span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="办结时间" prop="finishItemTime">
+                <template scope="scope">
+                    <span>{{scope.row.finishItemTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="enable" class-name="status-col" label="状态">
@@ -124,7 +124,7 @@
 <script>
     import {mapGetters} from 'vuex';
     import {resetForm} from 'utils';
-    import {getWorkFinishList} from '../../../api/workSystem/process/workQuery';
+    import {getZwfwDeptWorkQueryList} from '../../../api/workSystem/process/workQuery';
     import {createSum, updateSum} from '../../../api/workSystem/policyCashing/sumEntry';
     import {
         getAllCompany
@@ -151,6 +151,7 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
+                    inStatus: 'FINISH',
                     ownerPersonId: undefined,
                     processNumber: null,
                     categoryIdChild: '7508770076364288'
@@ -257,7 +258,7 @@
         methods: {
             getList() {
                 this.listLoading = true;
-                getWorkFinishList(this.listQuery).then(response => {
+                getZwfwDeptWorkQueryList(this.listQuery).then(response => {
                     if (response.httpCode === 200) {
                         if (response.data == null) {
                             this.zwfwDeptWorkQueryList = response.data;
