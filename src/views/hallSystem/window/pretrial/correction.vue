@@ -329,7 +329,6 @@
                             form.rows = rowsData;
                             this.pretrialForm.push(form);
                         }
-                        this.itemPretrialRules.status[0].required = false;
                     } else {
                         this.$message.error('数据加载失败')
                     }
