@@ -112,6 +112,17 @@ export function welcomeNumber(query) {
 }
 
 /**
+ * 请评价
+ */
+export function pleaseComment(query) {
+    return fetch({
+        url: '/api/hallSystem/hallCompositeWindow/pleaseComment',
+        method: 'post',
+        params: query
+    });
+}
+
+/**
  * 综合窗口提交收件
  * */
 export function submitWork(query) {
@@ -300,3 +311,5 @@ export function queryHistoryCompanysInfo(gs_code) {
         params: data
     });
 }
+
+
