@@ -397,7 +397,7 @@
                                     </el-col>
                                 </el-row>
                                 <el-row type="flex" justify="center" style="margin-top: 10px;">
-                                    <el-button :disabled="!itemNumber.id || itemNumber.status!=1" type="primary"
+                                    <el-button :disabled="itemNumber.id && itemNumber.status!=1" type="primary"
                                                @click="callNumber" title="设置当前号码为窗口已呼叫状态时点击">
                                         叫号
                                     </el-button>
