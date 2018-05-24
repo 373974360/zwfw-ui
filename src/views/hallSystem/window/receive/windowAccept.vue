@@ -409,6 +409,10 @@
                                                @click="skip" title="申请人未到达窗口，跳过此号码时点击">
                                         跳过号码
                                     </el-button>
+                                    <el-button :disabled="!itemNumber.id || (itemNumber.status!=3 && itemNumber.status!=4) " type="danger"
+                                               @click="pleaseComment" title="业务办理完成时点击">
+                                        请评价
+                                    </el-button>
                                 </el-row>
                             </el-tab-pane>
                         </el-tabs>
@@ -997,7 +1001,8 @@
         checkLegalMemberExist,
         checkNatureMemberExist,
         fastRegMember,
-        queryPendingFromBoxList
+        queryPendingFromBoxList,
+        pleaseComment
     } from 'api/hallSystem/window/receive/windowAccept';
     import {getAllByNameOrbasicCode} from 'api/zwfwSystem/business/item';
     import {getCategoryCascader} from 'api/zwfwSystem/business/category';
@@ -2310,6 +2315,20 @@
                         type: 'info',
                         message: '已取消提交'
                     });
+                });
+            },
+            pleaseComment(){
+                let _this = this;
+                pleaseComment({
+                    callerKey: _this.windowInfo.callerKey
+                }).then(response => {
+                    if (response.httpCode === 200) {
+                        _this.$message.success('提醒评价成功');
+                    } else {
+                        _this.$message.error(response.msg);
+                    }
+                }).catch(e => {
+                    this.submiting = false;
                 });
             },
             handleMaterialSelectionChange(val) {
