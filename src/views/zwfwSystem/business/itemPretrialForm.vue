@@ -104,7 +104,7 @@
                     prop="size"
                     label="fieldKey">
                 <template slot-scope="scope">
-                    {{scope.row.key}}
+                    <pre>{{scope.row.key}}</pre>
                 </template>
             </el-table-column>
             <el-table-column
