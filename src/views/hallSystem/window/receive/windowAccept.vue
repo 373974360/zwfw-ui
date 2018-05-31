@@ -1983,9 +1983,10 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    if (!this.itemNumber || !this.itemNumber.id) { //非预审的号
+                    if (!this.itemNumber || !this.itemNumber.id || !this.itemNumber.flagPretrial) { //非预审的号
                         this.submiting = true;
                         submitNoPretrial({
+                            numberId: this.itemNumber?this.itemNumber.id : '',
                             memberType: this.memberType,
                             itemId: this.itemVo.id,
                             //身份证号
