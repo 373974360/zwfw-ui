@@ -101,6 +101,13 @@
                 </template>
             </el-table-column>
             <el-table-column
+                    prop="size"
+                    label="fieldKey" width="80">
+                <template slot-scope="scope">
+                    {{scope.row.key}}
+                </template>
+            </el-table-column>
+            <el-table-column
                     prop="regex"
                     label="正则">
                 <template slot-scope="scope">
