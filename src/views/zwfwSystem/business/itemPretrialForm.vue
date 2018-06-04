@@ -56,7 +56,7 @@
             </el-table-column>
             <el-table-column
                     prop="labelAlias"
-                    label="别名"
+                    label="此表单中的别名"
                     width="180">
                 <template slot-scope="scope">
                     <el-input :disabled="!scope.row.fieldId" v-model="scope.row.labelAlias"
@@ -98,6 +98,13 @@
                                      :max="24" :disabled="!scope.row.fieldId">
 
                     </el-input-number>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    prop="size"
+                    label="fieldKey">
+                <template slot-scope="scope">
+                    <pre>{{scope.row.key}}</pre>
                 </template>
             </el-table-column>
             <el-table-column
