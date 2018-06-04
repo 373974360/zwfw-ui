@@ -17,9 +17,9 @@
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column type="selection" width="55"/>
             <!--<el-table-column align="right" label="ID" width="150">-->
-                <!--<template slot-scope="scope">-->
-                    <!--<span>{{scope.row.id}}</span>-->
-                <!--</template>-->
+            <!--<template slot-scope="scope">-->
+            <!--<span>{{scope.row.id}}</span>-->
+            <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column prop="name" align="left" label="材料名称" width="600">
                 <template slot-scope="scope">
@@ -107,19 +107,12 @@
                                :headers="uploadHeaders"
                                :before-upload="beforeAvatarUpload"
                                :on-change="changeAvatarExampleFile">
-                        <el-input slot="trigger" v-model="this.zwfwMaterial.example" placeholder="选择文件" readonly
+                        <el-input slot="trigger" v-model="zwfwMaterial.example" placeholder="选择文件" readonly
                                   style="width: 320px"></el-input>
-                        <!--<el-button slot="trigger" size="small" type="primary">选取文件</el-button>-->
-                        <!--<el-button style="margin-left: 10px;" size="small" type="success" @click="submitUploadExample">
-                            上传到服务器
-                        </el-button>-->
-                        <!--<el-button style="margin-left: 10px;" size="small" type="info" @click="showMaterialExample">
-                            点击下载
-                        </el-button>-->
-                        <a :href="this.zwfwMaterial.example" :download="downloadExample"
-                           :class="{disabled: !this.zwfwMaterial.example}">
+                        <a :href="this.zwfwMaterial.example" :download="downloadExample" target="_blank"
+                           :class="{disabled: !zwfwMaterial.example}">
                             <el-button style="margin-left: 10px;" size="small" type="info"
-                                       :disabled="!this.zwfwMaterial.example">点击下载
+                                       :disabled="!zwfwMaterial.example">点击下载
                             </el-button>
                         </a>
                     </el-upload>
@@ -134,21 +127,36 @@
                                :headers="uploadHeaders"
                                :before-upload="beforeAvatarUpload"
                                :on-change="changeAvatarEformFile">
-                        <el-input slot="trigger" v-model="this.zwfwMaterial.eform" placeholder="选择文件" readonly
+                        <el-input slot="trigger" v-model="zwfwMaterial.eform" placeholder="选择文件" readonly
                                   style="width: 320px"></el-input>
-                        <!--<el-button slot="trigger" size="small" type="primary">选取文件</el-button>-->
-                        <!--<el-button style="margin-left: 10px;" size="small" type="success" @click="submitUploadEform">
-                            上传到服务器
-                        </el-button>-->
-                        <!--<el-button style="margin-left: 10px;" size="small" type="info" @click="showEformFile">
-                            点击下载
-                        </el-button>-->
-                        <a :href="this.zwfwMaterial.eform" :download="downloadEform"
-                           :class="{disabled: !this.zwfwMaterial.eform}">
+                        <a :href="this.zwfwMaterial.eform" :download="downloadEform" target="_blank"
+                           :class="{disabled: !zwfwMaterial.eform}">
                             <el-button style="margin-left: 10px;" size="small" type="info"
-                                       :disabled="!this.zwfwMaterial.eform">点击下载
+                                       :disabled="!zwfwMaterial.eform">点击下载
                             </el-button>
                         </a>
+                    </el-upload>
+                </el-form-item>
+                <el-form-item label="套打模板" prop="templateFile">
+                    <el-upload name="uploadFile"
+                               ref="uploadTemplateFile"
+                               :accept="'application/vnd.openxmlformats-officedocument.wordprocessingml.document'"
+                               :action="uploadAction"
+                               :show-file-list="false"
+                               :with-credentials="true"
+                               :headers="uploadHeaders"
+                               :before-upload="beforeAvatarUpload"
+                               :on-change="changeTemplateFile"
+                                :on-success="onUploadSuccess">
+                        <el-input slot="trigger" v-model="zwfwMaterial.templateFile" placeholder="选择文件" readonly
+                                  style="width: 320px"></el-input>
+                        <a :href="this.zwfwMaterial.templateFile" :download="downloadTemplateFile" target="_blank"
+                           :class="{disabled: !zwfwMaterial.templateFile}">
+                            <el-button style="margin-left: 10px;" size="small" type="info"
+                                       :disabled="!zwfwMaterial.templateFile">点击下载
+                            </el-button>
+                        </a>
+                        <span style="color:red"> 必须是docx格式 </span>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="填报须知" prop="notice">
@@ -200,10 +208,10 @@
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import {
-        getZwfwMaterialList,
         createZwfwMaterial,
-        updateZwfwMaterial,
-        delZwfwMaterials
+        delZwfwMaterials,
+        getZwfwMaterialList,
+        updateZwfwMaterial
     } from 'api/zwfwSystem/business/material';
     import ItemPretrialForm from "./itemPretrialForm";
 
@@ -233,7 +241,8 @@
                     source: '',
                     type: '',
                     example: '',
-                    notice: ''
+                    notice: '',
+                    templateFile:''
                 },
                 dialogItemPretrialFormVisible: false,
                 currentRow: null,
@@ -275,6 +284,12 @@
             },
             downloadExample() {
                 return this.zwfwMaterial.name + this.zwfwMaterial.example.substring(this.zwfwMaterial.example.lastIndexOf('.'))
+            },
+            downloadTemplateFile() {
+                if (this.zwfwMaterial.templateFile) {
+                    return this.zwfwMaterial.name + this.zwfwMaterial.templateFile.substring(this.zwfwMaterial.templateFile.lastIndexOf('.'));
+                }
+                return '';
             }
         },
         methods: {
@@ -374,30 +389,6 @@
                     this.pageLoading = false;
                 })
             },
-            submitUploadExample() {
-                if (this.zwfwMaterial.example) {
-                    this.$refs.uploadExample.submit();
-                } else {
-                    this.$message.warning('请选择文件')
-                }
-            },
-            submitUploadEform() {
-                if (this.zwfwMaterial.eform) {
-                    this.$refs.uploadEform.submit();
-                } else {
-                    this.$message.warning('请选择文件')
-                }
-            },
-            showMaterialExample() {
-                if (this.zwfwMaterial.example) {
-                    window.open(this.zwfwMaterial.example);
-                }
-            },
-            showEformFile() {
-                if (this.zwfwMaterial.eform) {
-                    window.open(this.zwfwMaterial.eform);
-                }
-            },
             changeAvatarEformFile(file, fileList) {
                 this.zwfwMaterial.eform = file.name;
                 if (file.response) {
@@ -409,6 +400,16 @@
                 if (file.response) {
                     this.zwfwMaterial.example = file.response.url;
                 }
+            },
+
+            changeTemplateFile(file, fileList) {
+                this.zwfwMaterial.templateFile = file.name;
+                if (file.response) {
+                    this.zwfwMaterial.templateFile = file.response.url;
+                }
+            },
+            onUploadSuccess(response,file,fileList){
+                this.$message.success(file.name + '上传成功');
             },
             beforeAvatarUpload(file) {
                 const isLt2M = file.size / 1024 / 1024 < 10;
@@ -433,7 +434,8 @@
                     source: '',
                     type: '',
                     example: '',
-                    notice: ''
+                    notice: '',
+                    templateFile:''
                 };
             },
             handleSizeChange(val) {
