@@ -79,7 +79,7 @@
             </el-table-column>
             <el-table-column align="center" label="备注">
                 <template slot-scope="scope">
-                    <span>{{scope.row.remark}}</span>
+                    <div style="white-space:pre-wrap;text-align: left;">{{scope.row.remark}}</div>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作">
@@ -98,7 +98,7 @@
         </div>
         <el-dialog size="large" :close-on-click-modal="closeOnClickModal" :title="titleName"
                    :visible.sync="dialogFormVisible"
-        >
+                   :before-close="resetItemPretrialForm">
             <div>
                 <div v-if="member.legalPerson != null">
                     <h2 class="h2-style-show">办事企业/机构信息:</h2>
@@ -172,7 +172,7 @@
                                 <th>名称</th>
                                 <th width="50">链接</th>
                             </tr>
-                            <tr v-for="m in materialList">
+                            <tr v-for="m in pretrialMaterialList">
                                 <td>{{m.itemMaterialName}}</td>
                                 <td style="text-align: center;">
                                     <template v-for="(file,index) in m.itemMaterialUrl.split('|')">
@@ -211,7 +211,7 @@
                             </tr>
                             <tr>
                                 <th width="140">备注</th>
-                                <td>{{itemPretrial.remark}}</td>
+                                <td style="white-space:pre-wrap;text-align: left;">{{itemPretrial.remark}}</td>
                             </tr>
                         </table>
                     </div>
@@ -223,11 +223,10 @@
 <script>
     import {
         getZwfwItemPretrialList,
-        getPretrialDetail,
-        submitReview
-    } from 'api/hallSystem/window/pretrial/itemPretrial';
+        getPretrialDetail
+    } from '../../../../api/hallSystem/window/pretrial/itemPretrial';
     import {mapGetters} from 'vuex';
-    import {copyProperties} from 'utils';
+    import {copyProperties, resetForm} from 'utils';
 
     export default {
         name: 'table_demo',
@@ -244,7 +243,7 @@
                 },
                 legalPerson: [],
                 member: [],
-                materialList: [],
+                pretrialMaterialList: [],
                 itemPretrial: [],
                 titleName: '',
                 currentItemPretrial: [],
@@ -296,7 +295,7 @@
                 this.resetTemp();
                 this.itemPretrial = copyProperties(this.itemPretrial, row);
                 this.processNumber = row.id;
-                this.titleName = '办件预审' + " | 办件号：" + row.processNumber;
+                this.titleName = '办件预审' + ' | 办件号：' + row.processNumber;
                 this.dialogFormVisible = true;
                 this.getPretrialDetail();
             },
@@ -335,8 +334,8 @@
                         this.$message.error('数据加载失败')
                     }
                 }).catch(e => {
-                    this.$message.error('数据加载失败');
                     console.error(e);
+                    this.$message.error('数据加载失败');
                 });
             },
             resetTemp() {
@@ -350,6 +349,11 @@
                     status: '',
                     remark: ''
                 };
+            },
+            resetItemPretrialForm() {
+                this.dialogFormVisible = false;
+                this.resetTemp();
+                resetForm(this, 'zwfwItemPretrial');
             }
         }
     }
@@ -371,6 +375,10 @@
         background-color: transparent;
         border-spacing: 0;
         border-collapse: collapse;
+    }
+
+    label {
+        font-weight: 500;
     }
 
     .table > tr > td, .table > tr > th {
@@ -410,5 +418,13 @@
         font-weight: 400;
         font-size: 24px;
         margin-top: 5px;
+    }
+
+    .pretrialFormTable .label {
+        font-weight: bold;
+    }
+
+    .pretrialFormTable .value {
+        padding: 0px 20px;
     }
 </style>
