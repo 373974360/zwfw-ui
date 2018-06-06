@@ -404,7 +404,7 @@
                                 <div v-for="form in pretrialForm">
                                     <table class="table table-responsive table-bordered">
                                         <tr>
-                                            <th colspan="24" style="text-align: center;background: #eee;">{{form.title}} <el-button @click="downloadMaterialWord(materialId)">下载 word</el-button></th>
+                                            <th colspan="24" style="text-align: center;background: #eee;">{{form.title}} <el-button @click="downloadMaterialWord(form.materialId)">下载 word</el-button></th>
                                         </tr>
                                         <tr v-for="row in form.rows">
                                             <td v-for="(field,index) in row"
@@ -622,7 +622,7 @@
                 this.getList();
             },
             downloadMaterialWord(materialId){
-                window.open('/itemPretrial/downloadMaterialWord?materialId=' + materialId + '&processNumber=' + this.itemProcessVo.processNumber);
+                window.open('/api/workSystem/itemPretrial/downloadMaterialWord?materialId=' + materialId + '&processNumber=' + this.itemProcessVo.processNumber);
             },
             queryCompanySearch(queryString) {
                 let valid = validateQueryStr(queryString);
