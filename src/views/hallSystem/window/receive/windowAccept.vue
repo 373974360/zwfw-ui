@@ -385,7 +385,7 @@
                                     </el-col>
                                 </el-row>
                                 <el-row type="flex" justify="center" style="margin-top: 10px;">
-                                    <el-button :disabled="itemNumber.id && itemNumber.status!=1" type="primary"
+                                    <el-button :disabled="!itemNumber.id || itemNumber.status!=1" type="primary"
                                                @click="callNumber" title="设置当前号码为窗口已呼叫状态时点击">
                                         叫号
                                     </el-button>
@@ -1983,7 +1983,7 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    if (!this.itemNumber || !this.itemNumber.id) { //非预审的号
+                    if (!this.itemNumber || !this.itemNumber.id || !this.itemNumber.flagPretrial) { //非预审的号
                         this.submiting = true;
                         submitNoPretrial({
                             numberId: this.itemNumber?this.itemNumber.id : '',
