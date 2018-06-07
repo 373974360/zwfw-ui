@@ -6,7 +6,6 @@ export function  getAccessToken(clientInfo) {
         method: 'get',
         params: clientInfo
     })
-
 }
 
 export function getCertToken(query) {
@@ -20,6 +19,22 @@ export function getCertToken(query) {
 export function getCertResult(query) {
     return fetch({
         url: '/api/hallSystem/window/identification/getCertResult',
+        method: 'get',
+        params: query
+    })
+}
+
+export function getBlueToothConnect(query){
+    return fetch({
+        url: '/ctid/ConnAuthterm',
+        method: 'get',
+        params: query
+    })
+}
+
+export function setQrCode(query){
+    return fetch({
+        url: '/ctid/SetQrCode',
         method: 'get',
         params: query
     })
