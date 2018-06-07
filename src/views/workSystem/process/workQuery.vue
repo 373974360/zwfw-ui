@@ -404,7 +404,7 @@
                                 <div v-for="form in pretrialForm">
                                     <table class="table table-responsive table-bordered">
                                         <tr>
-                                            <th colspan="24" style="text-align: center;background: #eee;">{{form.title}}</th>
+                                            <th colspan="24" style="text-align: center;background: #eee;">{{form.title}} <el-button @click="downloadMaterialWord(materialId)">下载 word</el-button></th>
                                         </tr>
                                         <tr v-for="row in form.rows">
                                             <td v-for="(field,index) in row"
@@ -621,6 +621,9 @@
                 this.listQuery.ownerPersonId = code;
                 this.getList();
             },
+            downloadMaterialWord(materialId){
+                window.open('/itemPretrial/downloadMaterialWord?materialId=' + materialId + '&processNumber=' + this.itemProcessVo.processNumber);
+            },
             queryCompanySearch(queryString) {
                 let valid = validateQueryStr(queryString);
                 if (valid) {
@@ -733,7 +736,7 @@
             print_ycxgzd(processNumber) {
                 if (processNumber != null) {
                     // window.open('/api/hallSystem/hallCompositeWindow/downloadYcxgzd?processNumber=' + processNumber);
-                    window.open('/admin/print/ycxgzd.html?processNumber=' + processNumber);
+                    window.open('print/ycxgzd.html?processNumber=' + processNumber);
                 }
             },
             handlePictureCardPreview(file) {
