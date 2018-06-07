@@ -26,7 +26,7 @@ export function getCertResult(query) {
 
 export function getBlueToothConnect(query){
     return fetch({
-        url: '/ctid/ConnAuthterm',
+        url: 'http://localhost:8538/ctid/ConnAuthterm',
         method: 'get',
         params: query
     })
@@ -34,7 +34,7 @@ export function getBlueToothConnect(query){
 
 export function setQrCode(query){
     return fetch({
-        url: '/ctid/SetQrCode',
+        url: 'http://localhost:8538/ctid/SetQrCode',
         method: 'get',
         params: query
     })
