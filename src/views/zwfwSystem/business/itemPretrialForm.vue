@@ -102,9 +102,9 @@
             </el-table-column>
             <el-table-column
                     prop="size"
-                    label="fieldKey">
+                    label="变量占位符">
                 <template slot-scope="scope">
-                    <pre>{{scope.row.key}}</pre>
+                    <el-input v-if="scope.row.key" :value="'${'+scope.row.key+'}'" readonly="true"></el-input>
                 </template>
             </el-table-column>
             <el-table-column
