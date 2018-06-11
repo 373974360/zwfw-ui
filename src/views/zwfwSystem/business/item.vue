@@ -894,7 +894,7 @@
                 zwfwItemMaterial: {
                     id: undefined,
                     itemId: undefined,
-                    electronicMaterial: true,
+                    electronicMaterial: false,
                     eform: '',
                     name: '',
                     sortNo: '',
@@ -1857,7 +1857,7 @@
             resetMaterialTemp() {
                 this.zwfwItemMaterial = {
                     id: undefined,
-                    electronicMaterial: true,
+                    electronicMaterial: false,
                     eform: '',
                     name: '',
                     sortNo: '',

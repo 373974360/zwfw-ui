@@ -99,7 +99,7 @@
                     <el-input v-model="formField.label"/>
                 </el-form-item>
                 <el-form-item label="key" prop="key">
-                    <el-input v-model="formField.key"/>
+                    <el-input v-model="formField.key" placeholder="请只使用字母、数字、下划线组合，请勿使用符号和大小括号"/>
                 </el-form-item>
                 <el-form-item label="类型" prop="inputType">
                     <el-select v-model="formField.inputType">
