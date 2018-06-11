@@ -233,7 +233,7 @@
                 },
                 zwfwMaterial: {
                     id: undefined,
-                    electronicMaterial: true,
+                    electronicMaterial: false,
                     eform: '',
                     name: '',
                     acceptStandard: '',
@@ -426,7 +426,7 @@
             resetTemp() {
                 this.zwfwMaterial = {
                     id: undefined,
-                    electronicMaterial: true,
+                    electronicMaterial: false,
                     eform: '',
                     name: '',
                     acceptStandard: '',
