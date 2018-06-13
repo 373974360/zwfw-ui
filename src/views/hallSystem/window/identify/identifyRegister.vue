@@ -88,7 +88,7 @@
                 accessTokenExpireSecond: 0,
                 clientInfo: {
                     client_id: 'xa_gjgwqzwzx_prod',
-                    client_secret: 'e16406db-69f9-4e1c-b3b1-ea0027ce7b83',
+                    client_secret: 'e16406db-69f9-4e1c-b3b1-ea0027ce7b83'
                 },
                 certTokenParams: {
                     access_token: '',
@@ -103,12 +103,12 @@
                 },
                 certTokenRules: {
                     full_name: [
-                        {required: true, message: '请填写姓名', trigger: 'blur'},
+                        {required: true, message: '请填写姓名', trigger: 'blur'}
                     ],
                     id_num: [
                         {required: true, message: '请填写身份证号码', trigger: 'blur'},
-                        {validator: validateIdcard, trigger: 'blur'},
-                    ],
+                        {validator: validateIdcard, trigger: 'blur'}
+                    ]
                     /*  id_start_date: [
                           {required: true, message: '请填写证件有效开始时间', trigger: 'blur'},
                       ],

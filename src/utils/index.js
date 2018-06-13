@@ -245,15 +245,15 @@ export function cloneObject(source) {
     return res
 }
 
-export function mergeTree(list, data, isAppend) {
-    for (const item of list) {
-        if (isAppend) {
-            if (data.parentId == item.id) {
-
-            }
-        }
-    }
-}
+// export function mergeTree(list, data, isAppend) {
+//     for (const item of list) {
+//         if (isAppend) {
+//             if (data.parentId == item.id) {
+//
+//             }
+//         }
+//     }
+// }
 
 export function resetForm(el, form) {
     el.$refs[form].resetFields();

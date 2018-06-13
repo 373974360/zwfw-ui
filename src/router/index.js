@@ -725,7 +725,7 @@ export const asyncRouterMap = [
                 meta: {permission: 'workSystem:process:workFinishSupervise:list'}
             }
         ]
-    },,
+    },
     {
         path: '/policyCashing',
         redirect: 'noredirect',

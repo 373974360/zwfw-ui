@@ -131,8 +131,7 @@
                     name: [{
                         required: true, message: '请输入模型名称'
                     }]
-                },
-
+                }
             }
         },
         created() {
@@ -193,7 +192,7 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        const ids = new Array();
+                        const ids = [];
                         for (const deleteRow of this.selectedRows) {
                             ids.push(deleteRow.id);
                         }
@@ -226,7 +225,7 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        const ids = new Array();
+                        const ids = [];
                         for (const deployRow of this.selectedRows) {
                             ids.push(deployRow.id);
                         }

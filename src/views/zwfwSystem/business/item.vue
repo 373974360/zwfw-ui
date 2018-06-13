@@ -791,7 +791,7 @@
                 callback();
             };
             const pretrialDaysValidate = (rule, value, callback) => {
-                if (!/^[1-9]\d{0,2}(\.5)?$|^0\.5$|^0$/.test(this.zwfwItem.pretrialDays) ) {
+                if (!/^[1-9]\d{0,2}(\.5)?$|^0\.5$|^0$/.test(this.zwfwItem.pretrialDays)) {
                     callback(new Error('请填写预审的工作日，最小单位为0.5天,最多三位整数'));
                 }
                 callback();
@@ -1337,7 +1337,6 @@
                             console.log(e);
                             this.$message.error('更新失败');
                         });
-                        ;
                     } else {
                         this.$message.error('请检查表单各项是否填写完整正确或遗漏');
                         return false;

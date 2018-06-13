@@ -88,7 +88,7 @@
         },
         computed: {
             // 格式化数据源
-            data: function () {
+            data() {
                 let me = this
                 return TreeUtil.treeToArray(me.dataSource, null, null, me.defaultExpandAll);
             },

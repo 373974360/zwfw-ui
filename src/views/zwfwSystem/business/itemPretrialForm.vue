@@ -283,18 +283,14 @@
             ,
             testRegex() {
                 this.$refs.pretrialForm.validate(result => {
-                    if (
-                        !result
-                    ) {
+                    if (!result) {
                         this.$message.error('验证不通过');
                     }
                     else {
                         this.$message.success('验证通过');
                     }
-                })
-                ;
-            }
-            ,
+                });
+            },
             smartSize() {
                 let cols = 0;
                 for (const field of this.pretrialForm.fields) {
@@ -375,9 +371,7 @@
                 if (!id) {
                     return;
                 }
-                const data = this.versions.filter(form => form.id === id
-                )
-                    [0];
+                const data = this.versions.filter(form => form.id === id)[0];
                 if (!data) {
                     return null;
                 }

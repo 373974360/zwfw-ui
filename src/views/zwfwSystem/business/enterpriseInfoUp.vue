@@ -592,15 +592,6 @@
                     }
                 })
             },
-            getQylx1(qylb) {
-                getQylxOptions(qylb).then(response => {
-                    if (response.httpCode === 200) {
-                        this.qllxoptions1 = response.data;
-                    } else {
-                        this.$message.error('数据加载失败')
-                    }
-                })
-            },
             doUpdate() {
                 this.$refs['enterpriseForm'].validate(valid => {
                     if (valid) {

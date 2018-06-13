@@ -711,7 +711,6 @@
                             form.rows = rowsData;
                             this.pretrialForm.push(form);
                         }
-                    } else {
                     }
 
                 }).catch(e => {

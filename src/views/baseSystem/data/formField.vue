@@ -278,7 +278,7 @@
                     }).then(() => {
                         this.listLoading = true;
                         let selectCounts = this.selectedRows.length;
-                        let ids = new Array();
+                        let ids = [];
                         for (const deleteRow of this.selectedRows) {
                             ids.push(deleteRow.id);
                         }

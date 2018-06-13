@@ -198,7 +198,7 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        const ids = new Array();
+                        const ids = [];
                         for (const deployRow of this.selectedRows) {
                             ids.push(deployRow.id);
                         }
@@ -223,7 +223,7 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        const ids = new Array();
+                        const ids = [];
                         for (const deployRow of this.selectedRows) {
                             ids.push(deployRow.id);
                         }
@@ -251,7 +251,7 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        const ids = new Array();
+                        const ids = [];
                         for (const deployRow of this.selectedRows) {
                             ids.push(deployRow.id);
                         }
