@@ -227,8 +227,7 @@
     import {
         getZwfwItemPretrialList,
         getPretrialDetail,
-        submitReview,
-        getPretrialForm
+        submitReview
     } from '../../../../api/hallSystem/window/pretrial/itemPretrial';
     import {mapGetters} from 'vuex';
     import {copyProperties, resetForm} from 'utils';
@@ -282,7 +281,6 @@
         computed: {
             ...mapGetters([
                 'textMap',
-                'enums',
                 'enums',
                 'closeOnClickModal'
             ])
