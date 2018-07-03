@@ -2036,7 +2036,7 @@
                                 } else {
                                     _this.$message({
                                         showClose: true,
-                                        message: '没有下一个号码了'
+                                        message: '网络超时，请刷新页面查看最新状态'
                                     });
                                 }
                             } else {
