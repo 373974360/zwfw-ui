@@ -92,6 +92,7 @@ const EnterpriseInfoUp = () => import('../views/zwfwSystem/business/enterpriseIn
 
 const FormEditor = () => import('../views/zwfwSystem/business/formEditor');
 /* 统计分析 */
+const DoorEventsHistory = () => import('../views/hallSystem/count/DoorEventsHistory');
 const AttendanceCount = () => import('../views/hallSystem/count/attendanceCount');
 const CallCount = () => import('../views/hallSystem/count/callCount');
 const OrderAndLine = () => import('../views/hallSystem/count/operation/orderAndLine');
@@ -467,6 +468,12 @@ export const asyncRouterMap = [
                 component: AttendanceCount,
                 name: '考勤信息',
                 meta: {permission: 'hallSystem:count:attendanceCount:list'}
+            },
+            {
+                path: 'doorEventsHistory',
+                component: DoorEventsHistory,
+                name: '门禁点历史信息',
+                meta: {permission: 'hallSystem:count:doorEventsHistory:list'}
             }
         ]
     },
