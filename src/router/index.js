@@ -113,9 +113,14 @@ const Business = () => import('../views/hallSystem/count/approval/business');
 
 /* 数据可视化模块 */
 /* 业务审批数据可视化模块 */
-const BusinessApprove = () => import('../views/hallSystem/visualization/businessApprove.vue');
+const BusinessApprove = () => import('../views/hallSystem/visualization/businessApprove');
 /* 实时受理数据可视化模块 */
-const RealTimeAccept = () => import('../views/hallSystem/visualization/realTimeAccept.vue');
+const RealTimeAccept = () => import('../views/hallSystem/visualization/realTimeAccept');
+/* 系统用户分布数据 */
+const Heatmap = () => import('../views/hallSystem/visualization/heatmap');
+/* 网厅访问数据可视化 */
+const NewWorkHallVisit = () => import('../views/hallSystem/visualization/netWorkHallVisit');
+
 
 /** **********************政务服务办理系统************************/
 /* index */
@@ -542,6 +547,18 @@ export const asyncRouterMap = [
                 component: BusinessApprove,
                 name: '业务审批数据可视化',
                 meta: {permission: 'hallSystem:visualization:businessApprove:list'}
+            },
+            {
+                path: 'heatmap',
+                component: Heatmap,
+                name: '系统用户分布数据',
+                meta: {permission: 'hallSystem:visualization:heatmap:list'}
+            },
+            {
+                path: 'newWorkHallVisit',
+                component: NewWorkHallVisit,
+                name: '网厅访问数据可视化',
+                meta: {permission: 'hallSystem:visualization:newWorkHallVisit:list'}
             }
         ]
     },

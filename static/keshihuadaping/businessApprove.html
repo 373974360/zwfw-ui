@@ -490,8 +490,9 @@
                                 var html = "<ul>";
                                 for (var i = result.data.topItemFinishRate.length - 1; i >= 0; i--) {
                                     var row = result.data.topItemFinishRate[i];
-                                    html += '<li><span class="td1" >' + row.deptName + '</span><span class="td2">' + row.total + '</span><span class="td3">' + row.timeOutRate + '%' + '</span></li>';
-
+                                    if (row.deptName != '综合窗口') {
+                                        html += '<li><span class="td1" >' + row.deptName + '</span><span class="td2">' + row.total + '</span><span class="td3">' + row.timeOutRate + '%' + '</span></li>';
+                                    }
                                 }
                                 html += "</ul>";
                                 $('.roll-p').html(html);
