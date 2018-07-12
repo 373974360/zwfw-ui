@@ -112,11 +112,13 @@ const Business = () => import('../views/hallSystem/count/approval/business');
 
 /* 数据可视化模块 */
 /* 业务审批数据可视化模块 */
-const BusinessApprove = () => import('../views/hallSystem/visualization/businessApprove.vue');
+const BusinessApprove = () => import('../views/hallSystem/visualization/businessApprove');
 /* 实时受理数据可视化模块 */
-const RealTimeAccept = () => import('../views/hallSystem/visualization/realTimeAccept.vue');
-/* 第三版数据可视化模块 */
-const ThirdEdition = () => import('../views/hallSystem/visualization/thirdEdition.vue');
+const RealTimeAccept = () => import('../views/hallSystem/visualization/realTimeAccept');
+/* 系统用户分布数据 */
+const Heatmap = () => import('../views/hallSystem/visualization/heatmap');
+/* 网厅访问数据可视化 */
+const NewWorkHallVisit = () => import('../views/hallSystem/visualization/netWorkHallVisit');
 
 
 /** **********************政务服务办理系统************************/
@@ -533,10 +535,16 @@ export const asyncRouterMap = [
                 meta: {permission: 'hallSystem:visualization:businessApprove:list'}
             },
             {
-                path: 'thirdEdition',
-                component: ThirdEdition,
-                name: '第三版数据可视化',
-                meta: {permission: 'hallSystem:visualization:thirdEdition:list'}
+                path: 'heatmap',
+                component: Heatmap,
+                name: '系统用户分布数据',
+                meta: {permission: 'hallSystem:visualization:heatmap:list'}
+            },
+            {
+                path: 'newWorkHallVisit',
+                component: NewWorkHallVisit,
+                name: '网厅访问数据可视化',
+                meta: {permission: 'hallSystem:visualization:newWorkHallVisit:list'}
             }
         ]
     },

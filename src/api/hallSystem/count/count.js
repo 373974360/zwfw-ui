@@ -275,9 +275,23 @@ export function getRealTimeApproveSchedule() {
 // 第三版
 export function getAllDateDapingShow() {
     return fetch({
-        url: '/api/hallSystem/count/statistics/getAllDateDapingShow',
+        url: '/api/hallSystem/count/statistics/getBaiDuReLiTuData',
         method: 'get'
     })
 }
+
+export function getBaiDuTongJiAndCount() {
+    return fetch({
+        url: '/api/hallSystem/count/statistics/getBaiDuTongJiAndCount',
+        method: 'get'
+    })
+}
+export function updateAddressToLngLat() {
+    return fetch({
+        url: '/api/hallSystem/count/statistics/updateAddressToLngLat',
+        method: 'get'
+    })
+}
+
 
 
