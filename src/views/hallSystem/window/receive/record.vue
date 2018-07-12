@@ -46,18 +46,18 @@
 
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row style="width: 100%">
             <el-table-column align="center" label="编号" width="170">
-                <template scope="scope">
+                <template slot-scope="scope">
                     {{scope.row.fullOrderNo}} <br>
                     【{{scope.row.orderNo}}】
                 </template>
             </el-table-column>
             <el-table-column align="center" label="事项名称" width="400">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.itemName}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="left" label="申请企业（个人）" width="260">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.memberType == 1">
                         姓名：{{scope.row.memberName}}<br>联系电话：{{scope.row.mobilephone}}<br>
                     </span>
@@ -70,7 +70,7 @@
                 </template>
             </el-table-column>
             <el-table-column align="left" label="办事员" width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.memberType == 1">姓名：{{scope.row.memberName}}<br>
                     联系电话：{{scope.row.mobilephone}}</span>
                     <span v-if="scope.row.memberType == 2">姓名：{{ scope.row.memberName}}<br>
@@ -81,37 +81,37 @@
                 </template>
             </el-table-column>
             <!--<el-table-column align="center" label="联系电话">-->
-            <!--<template scope="scope">-->
+            <!--<template slot-scope="scope">-->
             <!--<span>{{scope.row.mobilephone}}</span>-->
             <!--</template>-->
             <!--</el-table-column>-->
             <!--<el-table-column align="center" label="公司" width="250">-->
-            <!--<template scope="scope">-->
+            <!--<template slot-scope="scope">-->
             <!--<span>{{scope.row.companyName}}</span>-->
             <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column align="center" label="办件号">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.processNumber}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="日期" width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.welcomeTime | date('YYYY-MM-DD')}}</span>
                 </template>
             </el-table-column>
             <!--<el-table-column align="center" label="完成时间" width="200">-->
-            <!--<template scope="scope">-->
+            <!--<template slot-scope="scope">-->
             <!--<span>{{scope.row.applyFinishTime | date('YYYY-MM-DD HH:mm:ss')}}</span>-->
             <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column align="center" label="状态">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.status | enums('ItemNumberStatus')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-button class="filter-item" @click="handleDetailList(scope.row)" type="primary"> 查看</el-button>
                 </template>
             </el-table-column>
@@ -265,7 +265,7 @@
                                         prop="name"
                                         label="材料"
                                         width="300">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         {{scope.row.name}}
                                         <div v-if="scope.row.multipleFile" style="color:blue">
                                             预审资料：
@@ -284,7 +284,7 @@
                                 <el-table-column
                                         prop="received"
                                         label="已收件">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         <i v-if="scope.row.received==1" style="color:green"
                                            class="el-icon-circle-check"></i>
                                         <i v-else class="el-icon-circle-cross" style="color:red"></i>
@@ -293,14 +293,14 @@
                                 <el-table-column
                                         prop="type"
                                         label="类型">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         {{scope.row.type | dics('cllx')}}
                                     </template>
                                 </el-table-column>
                                 <!--<el-table-column-->
                                 <!--prop="example"-->
                                 <!--label="样本">-->
-                                <!--<template scope="scope">-->
+                                <!--<template slot-scope="scope">-->
                                 <!--<a v-if="scope.row.example" :href="scope.row.example" target="_blank">点击下载</a>-->
                                 <!--<span v-else>无</span>-->
                                 <!--</template>-->
@@ -308,7 +308,7 @@
                                 <el-table-column
                                         prop="source"
                                         label="来源">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         {{scope.row.source | dics('sxsqclly')}}
                                     </template>
                                 </el-table-column>
@@ -327,7 +327,7 @@
                                 <el-table-column
                                         prop="electronicMaterial"
                                         label="需要预审">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         <i v-if="scope.row.electronicMaterial" style="color:green"
                                            class="el-icon-circle-check"></i>
                                         <i v-else class="el-icon-circle-cross" style="color:red"></i>

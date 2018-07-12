@@ -12,78 +12,79 @@
             </el-button>
         </div>
 
-        <el-table ref="zwfwCompanyTable" :data="zwfwCompanyList" v-loading.body="listLoading" border fit highlight-current-row
+        <el-table ref="zwfwCompanyTable" :data="zwfwCompanyList" v-loading.body="listLoading" border fit
+                  highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column type="selection" width="55"/>
             <el-table-column align="center" label="序号">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
-                            <el-table-column align="center" label="营业执照编码" prop="businessLicense">
-                    <template scope="scope">
-                                                    <span>{{scope.row.businessLicense}}</span>
-                                            </template>
-                </el-table-column>
-                            <el-table-column align="center" label="最后修改人" prop="modifyUser">
-                    <template scope="scope">
-                                                    <span>{{scope.row.modifyUser}}</span>
-                                            </template>
-                </el-table-column>
-                            <el-table-column align="center" label="标记是否删除" prop="flagDel">
-                    <template scope="scope">
-                                                    <span>{{scope.row.flagDel}}</span>
-                                            </template>
-                </el-table-column>
-                            <el-table-column align="center" label="企业地址" prop="address">
-                    <template scope="scope">
-                                                    <span>{{scope.row.address}}</span>
-                                            </template>
-                </el-table-column>
-                            <el-table-column align="center" label="修改时间" prop="modifyTime">
-                    <template scope="scope">
-                                                    <span>{{scope.row.modifyTime}}</span>
-                                            </template>
-                </el-table-column>
-                            <el-table-column align="center" label="组织机构代码" prop="organizationCode">
-                    <template scope="scope">
-                                                    <span>{{scope.row.organizationCode}}</span>
-                                            </template>
-                </el-table-column>
-                            <el-table-column align="center" label="法人" prop="legalPerson">
-                    <template scope="scope">
-                                                    <span>{{scope.row.legalPerson}}</span>
-                                            </template>
-                </el-table-column>
-                            <el-table-column align="center" label="企业名称" prop="name">
-                    <template scope="scope">
-                                                    <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
-                                <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
-                            </el-tooltip>
-                                            </template>
-                </el-table-column>
-                            <el-table-column align="center" label="备注" prop="remark">
-                    <template scope="scope">
-                                                    <span>{{scope.row.remark}}</span>
-                                            </template>
-                </el-table-column>
-                            <el-table-column align="center" label="统一社会信用代码" prop="unifyCode">
-                    <template scope="scope">
-                                                    <span>{{scope.row.unifyCode}}</span>
-                                            </template>
-                </el-table-column>
-                            <el-table-column align="center" label="法人身份证" prop="legalPersonCard">
-                    <template scope="scope">
-                                                    <span>{{scope.row.legalPersonCard}}</span>
-                                            </template>
-                </el-table-column>
-                            <el-table-column align="center" label="状态,1=未审核,2=已审核,3=审核后有修改" prop="status">
-                    <template scope="scope">
-                                                    <span>{{scope.row.status}}</span>
-                                            </template>
-                </el-table-column>
-                        <el-table-column prop="enable" class-name="status-col" label="状态">
-                <template scope="scope">
+            <el-table-column align="center" label="营业执照编码" prop="businessLicense">
+                <template slot-scope="scope">
+                    <span>{{scope.row.businessLicense}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="最后修改人" prop="modifyUser">
+                <template slot-scope="scope">
+                    <span>{{scope.row.modifyUser}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="标记是否删除" prop="flagDel">
+                <template slot-scope="scope">
+                    <span>{{scope.row.flagDel}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="企业地址" prop="address">
+                <template slot-scope="scope">
+                    <span>{{scope.row.address}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="修改时间" prop="modifyTime">
+                <template slot-scope="scope">
+                    <span>{{scope.row.modifyTime}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="组织机构代码" prop="organizationCode">
+                <template slot-scope="scope">
+                    <span>{{scope.row.organizationCode}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="法人" prop="legalPerson">
+                <template slot-scope="scope">
+                    <span>{{scope.row.legalPerson}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="企业名称" prop="name">
+                <template slot-scope="scope">
+                    <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
+                        <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
+                    </el-tooltip>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="备注" prop="remark">
+                <template slot-scope="scope">
+                    <span>{{scope.row.remark}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="统一社会信用代码" prop="unifyCode">
+                <template slot-scope="scope">
+                    <span>{{scope.row.unifyCode}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="法人身份证" prop="legalPersonCard">
+                <template slot-scope="scope">
+                    <span>{{scope.row.legalPersonCard}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="状态,1=未审核,2=已审核,3=审核后有修改" prop="status">
+                <template slot-scope="scope">
+                    <span>{{scope.row.status}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="enable" class-name="status-col" label="状态">
+                <template slot-scope="scope">
                     <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
                         {{scope.row.enable | enums('Enable')}}
                     </el-tag>
@@ -99,45 +100,46 @@
         </div>
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-            <el-form ref="zwfwCompanyForm" class="small-space" :model="zwfwCompany" label-position="right" label-width="80px"
+            <el-form ref="zwfwCompanyForm" class="small-space" :model="zwfwCompany" label-position="right"
+                     label-width="80px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="zwfwCompanyRules">
-                                    <el-form-item label="营业执照编码" prop="businessLicense">
-                        <el-input v-model="zwfwCompany.businessLicense"></el-input>
-                    </el-form-item>
-                                    <el-form-item label="最后修改人" prop="modifyUser">
-                        <el-input v-model="zwfwCompany.modifyUser"></el-input>
-                    </el-form-item>
-                                    <el-form-item label="标记是否删除" prop="flagDel">
-                        <el-input v-model="zwfwCompany.flagDel"></el-input>
-                    </el-form-item>
-                                    <el-form-item label="企业地址" prop="address">
-                        <el-input v-model="zwfwCompany.address"></el-input>
-                    </el-form-item>
-                                    <el-form-item label="修改时间" prop="modifyTime">
-                        <el-input v-model="zwfwCompany.modifyTime"></el-input>
-                    </el-form-item>
-                                    <el-form-item label="组织机构代码" prop="organizationCode">
-                        <el-input v-model="zwfwCompany.organizationCode"></el-input>
-                    </el-form-item>
-                                    <el-form-item label="法人" prop="legalPerson">
-                        <el-input v-model="zwfwCompany.legalPerson"></el-input>
-                    </el-form-item>
-                                    <el-form-item label="企业名称" prop="name">
-                        <el-input v-model="zwfwCompany.name"></el-input>
-                    </el-form-item>
-                                    <el-form-item label="备注" prop="remark">
-                        <el-input v-model="zwfwCompany.remark"></el-input>
-                    </el-form-item>
-                                    <el-form-item label="统一社会信用代码" prop="unifyCode">
-                        <el-input v-model="zwfwCompany.unifyCode"></el-input>
-                    </el-form-item>
-                                    <el-form-item label="法人身份证" prop="legalPersonCard">
-                        <el-input v-model="zwfwCompany.legalPersonCard"></el-input>
-                    </el-form-item>
-                                    <el-form-item label="状态,1=未审核,2=已审核,3=审核后有修改" prop="status">
-                        <el-input v-model="zwfwCompany.status"></el-input>
-                    </el-form-item>
-                            </el-form>
+                <el-form-item label="营业执照编码" prop="businessLicense">
+                    <el-input v-model="zwfwCompany.businessLicense"></el-input>
+                </el-form-item>
+                <el-form-item label="最后修改人" prop="modifyUser">
+                    <el-input v-model="zwfwCompany.modifyUser"></el-input>
+                </el-form-item>
+                <el-form-item label="标记是否删除" prop="flagDel">
+                    <el-input v-model="zwfwCompany.flagDel"></el-input>
+                </el-form-item>
+                <el-form-item label="企业地址" prop="address">
+                    <el-input v-model="zwfwCompany.address"></el-input>
+                </el-form-item>
+                <el-form-item label="修改时间" prop="modifyTime">
+                    <el-input v-model="zwfwCompany.modifyTime"></el-input>
+                </el-form-item>
+                <el-form-item label="组织机构代码" prop="organizationCode">
+                    <el-input v-model="zwfwCompany.organizationCode"></el-input>
+                </el-form-item>
+                <el-form-item label="法人" prop="legalPerson">
+                    <el-input v-model="zwfwCompany.legalPerson"></el-input>
+                </el-form-item>
+                <el-form-item label="企业名称" prop="name">
+                    <el-input v-model="zwfwCompany.name"></el-input>
+                </el-form-item>
+                <el-form-item label="备注" prop="remark">
+                    <el-input v-model="zwfwCompany.remark"></el-input>
+                </el-form-item>
+                <el-form-item label="统一社会信用代码" prop="unifyCode">
+                    <el-input v-model="zwfwCompany.unifyCode"></el-input>
+                </el-form-item>
+                <el-form-item label="法人身份证" prop="legalPersonCard">
+                    <el-input v-model="zwfwCompany.legalPersonCard"></el-input>
+                </el-form-item>
+                <el-form-item label="状态,1=未审核,2=已审核,3=审核后有修改" prop="status">
+                    <el-input v-model="zwfwCompany.status"></el-input>
+                </el-form-item>
+            </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button icon="circle-cross" type="danger" @click="dialogFormVisible = false">取 消</el-button>
                 <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
@@ -152,7 +154,12 @@
 <script>
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
-    import {getZwfwCompanyList, createZwfwCompany, updateZwfwCompany, delZwfwCompanys} from 'api/zwfwSystem/zwfwCompany';
+    import {
+        createZwfwCompany,
+        delZwfwCompanys,
+        getZwfwCompanyList,
+        updateZwfwCompany
+    } from 'api/zwfwSystem/zwfwCompany';
 
     export default {
         name: 'zwfwCompany_table',
@@ -164,66 +171,66 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
-                    name: undefined,
+                    name: undefined
                 },
                 zwfwCompany: {
                     id: undefined,
-                                         businessLicense: undefined,
-                                         modifyUser: undefined,
-                                         flagDel: undefined,
-                                         address: undefined,
-                                         modifyTime: undefined,
-                                         organizationCode: undefined,
-                                         legalPerson: undefined,
-                                         name: undefined,
-                                         remark: undefined,
-                                         unifyCode: undefined,
-                                         legalPersonCard: undefined,
-                                         status: undefined,
-                                    },
+                    businessLicense: undefined,
+                    modifyUser: undefined,
+                    flagDel: undefined,
+                    address: undefined,
+                    modifyTime: undefined,
+                    organizationCode: undefined,
+                    legalPerson: undefined,
+                    name: undefined,
+                    remark: undefined,
+                    unifyCode: undefined,
+                    legalPersonCard: undefined,
+                    status: undefined
+                },
                 currentRow: null,
                 selectedRows: [],
                 dialogFormVisible: false,
                 dialogStatus: '',
                 dialogLoading: false,
                 zwfwCompanyRules: {
-                                           businessLicense: [
-                         {required: true, message: '请输入营业执照编码', trigger: 'blur'}
-                      ],
-                                           modifyUser: [
-                         {required: true, message: '请输入最后修改人', trigger: 'blur'}
-                      ],
-                                           flagDel: [
-                         {required: true, message: '请输入标记是否删除', trigger: 'blur'}
-                      ],
-                                           address: [
-                         {required: true, message: '请输入企业地址', trigger: 'blur'}
-                      ],
-                                           modifyTime: [
-                         {required: true, message: '请输入修改时间', trigger: 'blur'}
-                      ],
-                                           organizationCode: [
-                         {required: true, message: '请输入组织机构代码', trigger: 'blur'}
-                      ],
-                                           legalPerson: [
-                         {required: true, message: '请输入法人', trigger: 'blur'}
-                      ],
-                                           name: [
-                         {required: true, message: '请输入企业名称', trigger: 'blur'}
-                      ],
-                                           remark: [
-                         {required: true, message: '请输入备注', trigger: 'blur'}
-                      ],
-                                           unifyCode: [
-                         {required: true, message: '请输入统一社会信用代码', trigger: 'blur'}
-                      ],
-                                           legalPersonCard: [
-                         {required: true, message: '请输入法人身份证', trigger: 'blur'}
-                      ],
-                                           status: [
-                         {required: true, message: '请输入状态,1=未审核,2=已审核,3=审核后有修改', trigger: 'blur'}
-                      ],
-                                     }
+                    businessLicense: [
+                        {required: true, message: '请输入营业执照编码', trigger: 'blur'}
+                    ],
+                    modifyUser: [
+                        {required: true, message: '请输入最后修改人', trigger: 'blur'}
+                    ],
+                    flagDel: [
+                        {required: true, message: '请输入标记是否删除', trigger: 'blur'}
+                    ],
+                    address: [
+                        {required: true, message: '请输入企业地址', trigger: 'blur'}
+                    ],
+                    modifyTime: [
+                        {required: true, message: '请输入修改时间', trigger: 'blur'}
+                    ],
+                    organizationCode: [
+                        {required: true, message: '请输入组织机构代码', trigger: 'blur'}
+                    ],
+                    legalPerson: [
+                        {required: true, message: '请输入法人', trigger: 'blur'}
+                    ],
+                    name: [
+                        {required: true, message: '请输入企业名称', trigger: 'blur'}
+                    ],
+                    remark: [
+                        {required: true, message: '请输入备注', trigger: 'blur'}
+                    ],
+                    unifyCode: [
+                        {required: true, message: '请输入统一社会信用代码', trigger: 'blur'}
+                    ],
+                    legalPersonCard: [
+                        {required: true, message: '请输入法人身份证', trigger: 'blur'}
+                    ],
+                    status: [
+                        {required: true, message: '请输入状态,1=未审核,2=已审核,3=审核后有修改', trigger: 'blur'}
+                    ]
+                }
             }
         },
         created() {
@@ -283,7 +290,7 @@
                     }).then(() => {
                         this.listLoading = true;
                         let selectCounts = this.selectedRows.length;
-                        let ids = new Array();
+                        let ids = [];
                         for (const deleteRow of this.selectedRows) {
                             ids.push(deleteRow.id);
                         }
@@ -335,19 +342,19 @@
             resetTemp() {
                 this.zwfwCompany = {
                     id: undefined,
-                                    businessLicense: undefined,
-                                    modifyUser: undefined,
-                                    flagDel: undefined,
-                                    address: undefined,
-                                    modifyTime: undefined,
-                                    organizationCode: undefined,
-                                    legalPerson: undefined,
-                                    name: undefined,
-                                    remark: undefined,
-                                    unifyCode: undefined,
-                                    legalPersonCard: undefined,
-                                    status: undefined,
-                                };
+                    businessLicense: undefined,
+                    modifyUser: undefined,
+                    flagDel: undefined,
+                    address: undefined,
+                    modifyTime: undefined,
+                    organizationCode: undefined,
+                    legalPerson: undefined,
+                    name: undefined,
+                    remark: undefined,
+                    unifyCode: undefined,
+                    legalPersonCard: undefined,
+                    status: undefined
+                };
             }
         }
     }

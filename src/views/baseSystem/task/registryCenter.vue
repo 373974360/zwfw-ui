@@ -21,24 +21,24 @@
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column type="selection" width="55"/>
             <el-table-column prop="name" align="center" label="注册中心名称">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column prop="zkAddressList" align="center" label="注册中心地址">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.zkAddressList}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="namespace" align="center" label="命名空间">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.namespace}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="activated" class-name="status-col" label="状态">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tag :type="scope.row.activated ? 'success' : 'gray'">
                         {{scope.row.activated ? '已连接' : '未连接'}}
                     </el-tag>
@@ -191,7 +191,7 @@
             },
             handleConnect() {
                 this.listLoading = true;
-                let names = new Array();
+                let names = [];
                 for (const deleteRow of this.selectedRows) {
                     names.push(deleteRow.name);
                 }
@@ -213,7 +213,7 @@
                     type: 'warning'
                 }).then(() => {
                     this.listLoading = true;
-                    let names = new Array();
+                    let names = [];
                     for (const deleteRow of this.selectedRows) {
                         names.push(deleteRow.name);
                     }

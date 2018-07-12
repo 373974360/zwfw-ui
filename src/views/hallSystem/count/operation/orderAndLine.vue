@@ -72,17 +72,17 @@
                                       highlight-current-row>
                                 <el-table-column type="index" label="排名" width="80" align="center"></el-table-column>
                                 <el-table-column align="center" label="窗口">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         <span>{{scope.row.windowName}}</span>
                                     </template>
                                 </el-table-column>
                                 <el-table-column align="center" label="所属部门">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         <span>{{scope.row.deptName}}</span>
                                     </template>
                                 </el-table-column>
                                 <el-table-column align="center" label="平均等待时间">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         <span>{{scope.row.avgtime * 1000 | duration}}</span>
                                     </template>
                                 </el-table-column>
@@ -96,17 +96,17 @@
                                       highlight-current-row>
                                 <el-table-column type="index" label="排名" width="80" align="center"></el-table-column>
                                 <el-table-column align="center" label="窗口">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         <span>{{scope.row.windowName}}</span>
                                     </template>
                                 </el-table-column>
                                 <el-table-column align="center" label="所属部门">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         <span>{{scope.row.deptName}}</span>
                                     </template>
                                 </el-table-column>
                                 <el-table-column align="center" label="平均等待时间">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         <span>{{scope.row.avgtime * 1000 | duration}}</span>
                                     </template>
                                 </el-table-column>
@@ -122,17 +122,17 @@
                                       highlight-current-row>
                                 <el-table-column type="index" label="排名" width="80" align="center"></el-table-column>
                                 <el-table-column align="center" label="事项">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         <div style="height:2em;overflow:hidden">{{scope.row.itemName}}</div>
                                     </template>
                                 </el-table-column>
                                 <el-table-column align="center" label="所属部门">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         <div>{{scope.row.deptName}}</div>
                                     </template>
                                 </el-table-column>
                                 <el-table-column align="center" label="平均等待时间">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         <span>{{scope.row.avgtime * 1000 | duration}}</span>
                                     </template>
                                 </el-table-column>
@@ -146,17 +146,17 @@
                                       highlight-current-row>
                                 <el-table-column type="index" label="排名" width="80" align="center"></el-table-column>
                                 <el-table-column align="center" label="事项">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         <div style="height:2em;overflow:hidden">{{scope.row.itemName}}</div>
                                     </template>
                                 </el-table-column>
                                 <el-table-column align="center" label="所属部门">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         <div>{{scope.row.deptName}}</div>
                                     </template>
                                 </el-table-column>
                                 <el-table-column align="center" label="平均等待时间">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         <span>{{scope.row.avgtime * 1000 | duration}}</span>
                                     </template>
                                 </el-table-column>

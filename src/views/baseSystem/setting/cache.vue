@@ -14,19 +14,19 @@
             <el-table-column type="selection" width="50" align="center"/>
             <el-table-column type="index" width="70" label="序号" align="center"/>
             <el-table-column align="center" label="Key" min-width="140">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" content="查看详细" placement="right-start">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.key}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="类型" min-width="180">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.type}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="过期时间">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.ttl | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
@@ -155,7 +155,7 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        let keys = new Array();
+                        let keys = [];
                         for (const deleteRow of this.selectedRows) {
                             keys.push(deleteRow.key);
                         }

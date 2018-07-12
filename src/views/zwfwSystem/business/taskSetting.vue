@@ -94,7 +94,7 @@
                                     <el-table-column
                                             prop="dept"
                                             label="操作">
-                                        <template scope="scope">
+                                        <template slot-scope="scope">
                                             <el-button @click="delCadidateUser(scope.row)">删除</el-button>
                                         </template>
                                     </el-table-column>
@@ -488,7 +488,7 @@
                                 });
 
                             } else if (type == 'boundaryTimer') {
-
+                                console.log('boundaryTimer');
                             } else if (type == 'callActivity') {
                                 var processDefinitonKey = contextObject.getProperty("processDefinitonKey");
                                 var processDefinitons = contextObject.getProperty("processDefinitons");
@@ -555,13 +555,10 @@
                     alert("processDefinitionId parameter is required");
                 }
                 //如果进度条不存在的话，就构建一个进度条
-                if (window.pb1 == null) {
-
-                } else {
+                if (window.pb1 != null) {
                     console.log(window.pb1)
                     window.pb1.set('value', 0);
                 }
-                console.log("Progress bar inited");
             }
         }
     }

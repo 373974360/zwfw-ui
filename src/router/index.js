@@ -86,7 +86,8 @@ const WindowWork = () => import('../views/hallSystem/window/street/windowWork');
 /* 街办查询 */
 const WindowHistory = () => import('../views/hallSystem/window/street/windowHistory');
 /* 微警认证 */
-const Identification = () => import('../views/hallSystem/window/identification');
+const Identification = () => import('../views/hallSystem/window/identify/identification');
+const IdentifyRegister = () => import('../views/hallSystem/window/identify/identifyRegister');
 
 /** **********************政务服务管理系统************************/
 /* index */
@@ -135,6 +136,13 @@ const WorkExtendTime = () => import('../views/workSystem/process/workExtendTime'
 /* 延期审核管理 */
 const WorkSupervise = () => import('../views/workSystem/process/workSupervise');
 /* 督办管理 */
+
+
+/* 政策兑现 */
+/* 金额录入 */
+const SumEntry = () => import('../views/workSystem/policyCashing/sumEntry');
+/* 统计分析 */
+const Analysis = () => import('../views/workSystem/policyCashing/analysis');
 
 /** **********************共享数据管理系统************************/
 /* index */
@@ -441,6 +449,12 @@ export const asyncRouterMap = [
                 component: Identification,
                 name: '微警认证',
                 meta: {permission: 'hallSystem:window:identification:list'}
+            },
+            {
+                path: 'IdentifyRegister',
+                component: IdentifyRegister,
+                name: '微警注册',
+                meta: {permission: 'hallSystem:window:identification:list'}
             }
             // {path: 'windowWork', component: WindowWork, name: '街办收件'},
             // {path: 'windowHistory', component: WindowHistory, name: '办件查询'}
@@ -519,7 +533,7 @@ export const asyncRouterMap = [
         name: '数据可视化',
         path: '/visualization',
         meta: {permission: 'hallSystem:visualization:admin'},
-        icon: 'keshihuashuju',
+        icon: 'keshihuashujuETL',
         component: Layout,
         children: [
             {
@@ -726,6 +740,28 @@ export const asyncRouterMap = [
                 component: WorkFinish,
                 name: '待监管事项',
                 meta: {permission: 'workSystem:process:workFinishSupervise:list'}
+            }
+        ]
+    },
+    {
+        path: '/policyCashing',
+        redirect: 'noredirect',
+        name: '政策兑现',
+        meta: {permission: 'workSystem:policyCashing:admin'},
+        icon: 'zhengceduixianguanli',
+        component: Layout,
+        children: [
+            {
+                path: 'sumEntry',
+                component: SumEntry,
+                name: '金额录入 ',
+                meta: {permission: 'workSystem:policyCashing:sumEntry:list'}
+            },
+            {
+                path: 'analysis',
+                component: Analysis,
+                name: '统计分析',
+                meta: {permission: 'workSystem:policyCashing:analysis:list'}
             }
         ]
     },

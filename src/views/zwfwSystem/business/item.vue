@@ -46,60 +46,56 @@
                   row-class-name="elRow">
             <el-table-column type="selection"/>
             <!--<el-table-column align="center" label="序号" width="70">-->
-            <!--<template scope="scope">-->
+            <!--<template slot-scope="scope">-->
             <!--<span>{{scope.row.id}}</span>-->
             <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column align="left" label="事项名称" prop="name">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" :content="'点击编辑：' +scope.row.id " placement="right-start">
                         <span class="link-type" @click="handleItemUpdate(scope.row)">{{scope.row.name}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="基本编码" prop="basicCode" width="160">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.basicCode}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="事项类型" prop="type" width="180">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.type | dics('sslx')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="办件类型" prop="processType" width="100">
-                <template scope="scope">
+                <template slot-scope="scope">
                     {{scope.row.processType | dics('bjlx')}}
                 </template>
             </el-table-column>
             <el-table-column align="center" label="承诺时限" prop="promiseEndTime" width="110">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.promiseEndTime}} 工作日</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="法定时限" prop="legalEndTime" width="110">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.legalEndTime}} 工作日</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="办理形式" prop="handleType" width="100">
-                <template scope="scope">
+                <template slot-scope="scope">
                     {{scope.row.handleType | dics('blxs')}}
-                    <span class="link-type" v-show="scope.row.handleType=='blxs_wsys'"
-                          @click="handlePretrialForm(scope.row,$event)">
-                        设置
-                    </span>
                 </template>
             </el-table-column>
             <el-table-column prop="enable" class-name="status-col" label="状态" width="80">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
                         {{scope.row.enable | enums('Enable')}}
                     </el-tag>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作" width="200" class-name="action">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-badge :value="scope.row.itemMaterialCount" class="item">
                         <el-button class="filter-item" style="" @click="handleMaterialList(scope.row)"
                                    type="primary" size="small">
@@ -542,31 +538,31 @@
                       style="width: 100%" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="40"/>
                 <!--<el-table-column align="center" label="序号" width="70">-->
-                <!--<template scope="scope">-->
+                <!--<template slot-scope="scope">-->
                 <!--<span>{{scope.row.id}}</span>-->
                 <!--</template>-->
                 <!--</el-table-column>-->
                 <el-table-column prop="sortNo" align="center" label="排序" width="70">
                 </el-table-column>
                 <el-table-column prop="name" align="left" label="材料名称">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <el-tooltip content="点击编辑" placement="right" effect="dark">
                             <span class="link-type" @click="handleMaterialUpdate(scope.row)">{{scope.row.name}}</span>
                         </el-tooltip>
                     </template>
                 </el-table-column>
                 <el-table-column prop="type" align="center" label="材料类型" width="130">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.type | dics('cllx')}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column v-once prop="source" align="center" label="来源渠道" width="130">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.source | dics('sxsqclly')}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="electronicMaterial" align="center" label="预审材料" width="100">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.electronicMaterial | enums('YesNo')}}</span>
                     </template>
                 </el-table-column>
@@ -739,20 +735,7 @@
                 </el-button>
             </div>
         </el-dialog>
-        <!--事项预审表单配置-->
-        <el-dialog title="事项预审表单配置" :visible.sync="dialogItemPretrialFormVisible" :close-on-click-modal="closeOnClickModal"
-                   :before-close="closeZwfwItemPretrialForm"
-                   @open="onPretrialFormOpen">
 
-            <item-pretrial-form ref="itemPretrialForm"></item-pretrial-form>
-
-            <div style="text-align: center" slot="footer" class="dialog-footer">
-                <el-button icon="circle-cross" type="danger" @click="closeZwfwItemPretrialForm">取 消</el-button>
-                <el-button type="primary" icon="circle-check"
-                           @click="submitItemPretrialForm">保 存
-                </el-button>
-            </div>
-        </el-dialog>
 
     </div>
 </template>
@@ -776,12 +759,10 @@
     import {getDeptCascader} from 'api/baseSystem/org/dept';
     import {getAllAddressees, getAddresseeById} from 'api/hallSystem/window/addressee';
     import {quillEditor} from 'vue-quill-editor'
-    import ItemPretrialForm from "./itemPretrialForm";
 
     export default {
         name: 'zwfwItem_table',
         components: {
-            ItemPretrialForm,
             quillEditor
         },
         data() {
@@ -800,6 +781,24 @@
             const addresseeIdValidate = (rule, value, callback) => {
                 if (this.zwfwItem.handTypes.includes('3') && !value) {
                     callback(new Error('请选择收件地址'));
+                }
+                callback();
+            };
+            const promiseEndTimeValidate = (rule, value, callback) => {
+                if (!/^[1-9]\d{0,2}(\.5)?$|^0\.5$|^0$/.test(this.zwfwItem.promiseEndTime)) {
+                    callback(new Error('请填写承诺的工作日，最小单位为0.5天,最多三位整数'));
+                }
+                callback();
+            };
+            const pretrialDaysValidate = (rule, value, callback) => {
+                if (!/^[1-9]\d{0,2}(\.5)?$|^0\.5$|^0$/.test(this.zwfwItem.pretrialDays)) {
+                    callback(new Error('请填写预审的工作日，最小单位为0.5天,最多三位整数'));
+                }
+                callback();
+            };
+            const legalEndTimeValidate = (rule, value, callback) => {
+                if (!/^[1-9]\d{0,2}(\.5)?$|^0\.5$|^0$/.test(this.zwfwItem.legalEndTime)) {
+                    callback(new Error('请填写法定办结的工作日，最小单位为0.5天,最多三位整数'));
                 }
                 callback();
             };
@@ -895,7 +894,7 @@
                 zwfwItemMaterial: {
                     id: undefined,
                     itemId: undefined,
-                    electronicMaterial: true,
+                    electronicMaterial: false,
                     eform: '',
                     name: '',
                     sortNo: '',
@@ -926,7 +925,6 @@
                 dialogItemFormVisible: false,
                 dialogMaterialFormVisible: false,
                 dialogItemConfigFormVisible: false,
-                dialogItemPretrialFormVisible: false,
                 dialogStatus: '',
                 uploadAction: this.$store.state.app.uploadUrl,
                 fileAccepts: this.$store.state.app.fileAccepts,
@@ -947,11 +945,8 @@
                     type: [
                         {required: true, message: '请输入事项类型'}
                     ],
-                    promiseEndTime: [
-                        {required: true, message: '请输入事项承诺办结日期'}
-                    ],
                     pretrialDays: [
-                        {required: true, message: '请输入预审天数'}
+                        {required: true, validator: pretrialDaysValidate, trigger: 'blur'}
                     ],
                     askPhone: [
                         {required: true, message: '请输入咨询电话'}
@@ -976,6 +971,12 @@
                     ],
                     addresseeId: [
                         {validator: addresseeIdValidate, trigger: 'blur'}
+                    ],
+                    promiseEndTime: [
+                        {required: true, validator: promiseEndTimeValidate, trigger: 'blur'}
+                    ],
+                    legalEndTime: [
+                        {required: true, validator: legalEndTimeValidate, trigger: 'blur'}
                     ]
                 },
                 zwfwItemMaterialRules: {
@@ -1336,7 +1337,6 @@
                             console.log(e);
                             this.$message.error('更新失败');
                         });
-                        ;
                     } else {
                         this.$message.error('请检查表单各项是否填写完整正确或遗漏');
                         return false;
@@ -1506,18 +1506,7 @@
                 this.resetMaterialTemp();
                 this.dialogItemConfigFormVisible = true;
             },
-            /*预审表单设置*/
-            handlePretrialForm(item, $event) {
-                this.currentItem = item;
-                $event.stopPropagation(); //阻止选中事项
-                /*显示添加界面*/
-                this.dialogItemPretrialFormVisible = true;
-            },
-            onPretrialFormOpen(){
-                this.$nextTick(function(){
-                    this.$refs.itemPretrialForm.loadPretrialForm(this.currentItem);
-                })
-            },
+
             getItemConfig() {
                 getItemConfig(this.currentItem.id).then(response => {
                     if (response.httpCode === 200) {
@@ -1558,10 +1547,6 @@
                 });
             },
 
-            /*提交预审表单配置*/
-            submitItemPretrialForm() {
-                this.$refs.itemPretrialForm.submitItemPretrialForm();
-            },
             searchMaterial(query, cb) {
                 if (query !== '') {
                     let valid = validateQueryStr(query);
@@ -1797,9 +1782,7 @@
                 this.dialogItemConfigFormVisible = false;
                 // this.resetZwfwMaterialForm();
             },
-            closeZwfwItemPretrialForm() {
-                this.dialogItemPretrialFormVisible = false;
-            },
+
             resetZwfwMaterialForm() {
                 this.changeMaterialInfo = false;
                 this.resetMaterialTemp();
@@ -1873,7 +1856,7 @@
             resetMaterialTemp() {
                 this.zwfwItemMaterial = {
                     id: undefined,
-                    electronicMaterial: true,
+                    electronicMaterial: false,
                     eform: '',
                     name: '',
                     sortNo: '',

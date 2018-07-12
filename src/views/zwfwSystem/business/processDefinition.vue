@@ -24,40 +24,40 @@
                   style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"/>
             <el-table-column align="center" label="流程定义ID" width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
             <el-table-column min-width="50px" align="center" label="流程定义名称">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.name}}</span>
                 </template>
             </el-table-column>
             <el-table-column min-width="50px" align="center" label="流程版本">
-                <template scope="scope">
+                <template slot-scope="scope">
                     {{scope.row.version}}
                 </template>
             </el-table-column>
             <el-table-column min-width="50px" align="center" label="是否挂起">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <i v-if="scope.row.suspended" style="color:green" class="el-icon-circle-check"></i>
                     <i v-else class="el-icon-circle-cross" style="color:red"></i>
                 </template>
             </el-table-column>
             <el-table-column min-width="50px" align="center" label="启动步骤是自定义表单">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <i v-if="scope.row.hasStartFormKey" style="color:green" class="el-icon-circle-check"></i>
                     <i v-else class="el-icon-circle-cross" style="color:red"></i>
                 </template>
             </el-table-column>
             <el-table-column min-width="50px" align="center" label="是否有绘图">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <i v-if="scope.row.hasGraphicalNotation" style="color:green" class="el-icon-circle-check"></i>
                     <i v-else class="el-icon-circle-cross" style="color:red"></i>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="描述" width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.description}}</span>
                 </template>
             </el-table-column>
@@ -65,7 +65,7 @@
             <!--fixed="right"-->
             <!--label="操作"-->
             <!--width="100">-->
-            <!--<template scope="scope">-->
+            <!--<template slot-scope="scope">-->
             <!--<el-button @click="handleView" type="text" size="small">查看</el-button>-->
             <!--<el-button @click="handleCreateInstance" type="text" size="small">创建实例</el-button>-->
             <!--</template>-->
@@ -198,7 +198,7 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        const ids = new Array();
+                        const ids = [];
                         for (const deployRow of this.selectedRows) {
                             ids.push(deployRow.id);
                         }
@@ -223,7 +223,7 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        const ids = new Array();
+                        const ids = [];
                         for (const deployRow of this.selectedRows) {
                             ids.push(deployRow.id);
                         }
@@ -251,7 +251,7 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        const ids = new Array();
+                        const ids = [];
                         for (const deployRow of this.selectedRows) {
                             ids.push(deployRow.id);
                         }

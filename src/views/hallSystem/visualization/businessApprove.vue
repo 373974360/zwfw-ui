@@ -42,29 +42,29 @@
                       highlight-current-row
                       style="width: 100%">
                 <el-table-column prop="processNumber" align="center" label="事项编号" width="">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.processNumber}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="事项名称">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.itemName}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="当前状态">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span v-if="scope.row.status == 15">已办结</span>
                         <span v-if="scope.row.status == 10">办理中</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="当前环节">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span v-if="scope.row.status == 15">已办结</span>
                         <span v-if="scope.row.status == 10">{{scope.row.currentLine}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="预计办结时长">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span v-if="scope.row.status == 15">/</span>
                         <span v-if="scope.row.status == 10">{{scope.row.expectTime}}天</span>
                     </template>
@@ -82,17 +82,17 @@
                             <el-table :data="windowSatisfaction" v-loading.body="windowSatisfactionLoading" border fit
                                       highlight-current-row>
                                 <el-table-column align="center" label="窗口">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         <span>{{scope.row.windowName}}</span>
                                     </template>
                                 </el-table-column>
                                 <el-table-column align="center" label="参评率">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         <span>{{scope.row.joincommentRate}}%</span>
                                     </template>
                                 </el-table-column>
                                 <el-table-column align="center" label="满意率">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         <span>{{scope.row.satisfactionRate}}%</span>
                                     </template>
                                 </el-table-column>
@@ -107,22 +107,22 @@
                             <el-table :data="topItemFinishRate" v-loading.body="topItemFinishRateLoading" border fit
                                       highlight-current-row>
                                 <el-table-column align="center" label="部门">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         <div>{{scope.row.deptName}}</div>
                                     </template>
                                 </el-table-column>
                                 <el-table-column align="center" label="业务量">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         <div>{{scope.row.total}}</div>
                                     </template>
                                 </el-table-column>
                                 <el-table-column align="center" label="超期率">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         <div>{{scope.row.timeOutRate}}%</div>
                                     </template>
                                 </el-table-column>
                                 <el-table-column align="center" label="正常办结率">
-                                    <template scope="scope">
+                                    <template slot-scope="scope">
                                         <span>{{scope.row.untimeOutRate}}%</span>
                                     </template>
                                 </el-table-column>

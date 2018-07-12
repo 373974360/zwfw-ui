@@ -5,7 +5,7 @@
               :row-style="showTr" v-loading.body="listLoading">
         <el-table-column v-for="(column, index) in columns" :key="column.dataIndex"
                          :label="column.text" :width="column.width">
-            <template scope="scope">
+            <template slot-scope="scope">
                 <span v-if="spaceIconShow(index)" v-for="(space, levelIndex) in scope.row._level"
                       class="ms-tree-space"></span>
                 <template v-if="toggleIconShow(index,scope.row)">
@@ -38,7 +38,7 @@
             </template>
         </el-table-column>
         <el-table-column label="操作" v-if="treeType === 'normal'" width="300" align="center">
-            <template scope="scope"  >
+            <template slot-scope="scope"  >
                 <el-button  style="margin: 10px 0px;" type="primary" size="small" @click="onHandleAdd(scope.row)">添加</el-button>
                 <el-button style="margin: 10px 0px;"class="item" type="danger" size="small" @click="onHandleDelete(scope.row)">删除</el-button>
                 <el-badge v-show="assoicateItem" :value="scope.row.categoryItemCount" class="item" style="margin-top: 0px;">

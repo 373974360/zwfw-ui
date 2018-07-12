@@ -17,29 +17,29 @@
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column type="selection" width="55"/>
             <el-table-column align="center" label="序号">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="字段名称" prop="name">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="字段值" prop="value">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.value}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="备注" prop="remark">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.remark}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="enable" class-name="status-col" label="状态">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
                         {{scope.row.enable | enums('Enable')}}
                     </el-tag>
@@ -188,7 +188,7 @@
                     }).then(() => {
                         this.listLoading = true;
                         let selectCounts = this.selectedRows.length;
-                        let ids = new Array();
+                        let ids = [];
                         for (const deleteRow of this.selectedRows) {
                             ids.push(deleteRow.id);
                         }

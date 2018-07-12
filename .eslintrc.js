@@ -35,7 +35,7 @@ module.exports = {
          */
 
         // disallow unnecessary parentheses
-        'no-extra-parens': ['error', 'all', {'nestedBinaryExpressions': false}],
+        'no-extra-parens': ['warn', 'all', {'nestedBinaryExpressions': false}],
 
         // disallow negating the left operand of relational operators
         'no-unsafe-negation': 'error',
@@ -60,7 +60,7 @@ module.exports = {
         'dot-notation': 'off',
 
         // require the use of === and !==
-        'eqeqeq': ['error', 'smart'],
+        // 'eqeqeq': ['error', 'smart'],
 
         // disallow the use of arguments.caller or arguments.callee
         'no-caller': 'error',
@@ -90,7 +90,7 @@ module.exports = {
         'no-lone-blocks': 'error',
 
         // disallow multiple spaces
-        'no-multi-spaces': 'error',
+        'no-multi-spaces': 'warn',
 
         // disallow new operators with the String, Number, and Boolean objects
         'no-new-wrappers': 'error',
@@ -108,13 +108,14 @@ module.exports = {
         'no-throw-literal': 'error',
 
         // disallow unused expressions
-        'no-unused-expressions': 'error',
+        'no-unused-expressions': 'warn',
+        'no-unused-vars':'warn',
 
         // disallow unnecessary calls to .call() and .apply()
         'no-useless-call': 'error',
 
         // disallow unnecessary concatenation of literals or template literals
-        'no-useless-concat': 'error',
+        'no-useless-concat': 'warn',
 
         // disallow unnecessary escape characters
         'no-useless-escape': 'error',
@@ -136,7 +137,7 @@ module.exports = {
         'no-label-var': 'error',
 
         // disallow initializing variables to undefined
-        'no-undef-init': 'error',
+        'no-undef-init': 'warn',
         'no-undef': 'off',
         // disallow the use of variables before they are defined
         'no-use-before-define': 'error',
@@ -153,22 +154,22 @@ module.exports = {
          */
 
         // enforce consistent spacing inside array brackets
-        'array-bracket-spacing': 'error',
+        'array-bracket-spacing': 'warn',
 
         // enforce consistent spacing inside single-line blocks
         'block-spacing': 'error',
 
         // enforce consistent brace style for blocks
-        'brace-style': ['error', '1tbs', {'allowSingleLine': true}],
+        'brace-style': ['warn', '1tbs', {'allowSingleLine': true}],
 
         // require or disallow trailing commas
-        'comma-dangle': 'error',
+        'comma-dangle': 'warn',
 
         // enforce consistent spacing before and after commas
-        'comma-spacing': 'error',
+        'comma-spacing': 'warn',
 
         // enforce consistent comma style
-        'comma-style': 'error',
+        'comma-style': 'warn',
 
         // enforce consistent spacing inside computed property brackets
         'computed-property-spacing': 'error',
@@ -177,16 +178,16 @@ module.exports = {
         'func-call-spacing': 'error',
 
         // enforce consistent indentation
-        indent: ['error', 4, {SwitchCase: 2}],
+        // indent: ['error', 4, {SwitchCase: 2}],
 
         // enforce the consistent use of either double or single quotes in JSX attributes
-        'jsx-quotes': 'error',
+        // 'jsx-quotes': 'never',
 
         // enforce consistent spacing between keys and values in object literal properties
-        'key-spacing': 'error',
+        'key-spacing': 'warn',
 
         // enforce consistent spacing before and after keywords
-        'keyword-spacing': 'error',
+        'keyword-spacing': 'warn',
 
         // enforce consistent linebreak style
         'linebreak-style': [0, 'windows'],//换行风格
@@ -219,13 +220,13 @@ module.exports = {
         'object-curly-spacing': [0, 'never'],
 
         // require or disallow padding within blocks
-        'padded-blocks': ['error', 'never'],
+        // 'padded-blocks': ['error', 'never'],
 
         // require quotes around object literal property names
-        'quote-props': ['error', 'as-needed'],
+        'quote-props': ['warn', 'as-needed'],
 
         // enforce the consistent use of either backticks, double, or single quotes
-        quotes: ['error', 'single'],
+        // quotes: ['error', 'single'],
 
         // enforce consistent spacing before and after semicolons
         'semi-spacing': 'error',
@@ -234,24 +235,24 @@ module.exports = {
         // semi: ['error', 'never'],
 
         // enforce consistent spacing before blocks
-        'space-before-blocks': 'error',
+        // 'space-before-blocks': 'error',
 
         'no-console': 'off',
 
         // enforce consistent spacing before function definition opening parenthesis
-        'space-before-function-paren': ['error', 'never'],
+        // 'space-before-function-paren': ['error', 'never'],
 
         // enforce consistent spacing inside parentheses
         'space-in-parens': 'error',
 
         // require spacing around infix operators
-        'space-infix-ops': 'error',
+        // 'space-infix-ops': 'error',
 
         // enforce consistent spacing before or after unary operators
-        'space-unary-ops': 'error',
+        'space-unary-ops': 'warn',
 
         // enforce consistent spacing after the // or /* in a comment
-        'spaced-comment': 'error',
+        'spaced-comment': 'warn',
 
         // require or disallow Unicode byte order mark (BOM)
         'unicode-bom': 'error',
@@ -265,10 +266,10 @@ module.exports = {
         'arrow-body-style': 'error',
 
         // require parentheses around arrow function arguments
-        'arrow-parens': ['error', 'as-needed'],
+        // 'arrow-parens': ['error', 'as-needed'],
 
         // enforce consistent spacing before and after the arrow in arrow functions
-        'arrow-spacing': 'error',
+        // 'arrow-spacing': 'error',
 
         // enforce consistent spacing around * operators in generator functions
         'generator-star-spacing': ['error', 'after'],
@@ -286,10 +287,10 @@ module.exports = {
         'no-useless-rename': 'error',
 
         // require let or const instead of var
-        'no-var': 'error',
+        'no-var': 'warn',
 
         // require or disallow method and property shorthand syntax for object literals
-        'object-shorthand': 'error',
+        'object-shorthand': 'warn',
 
         // require arrow functions as callbacks
         'prefer-arrow-callback': 'warn',

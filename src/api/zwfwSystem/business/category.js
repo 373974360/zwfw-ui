@@ -23,6 +23,17 @@ export function getCategoryCascader(id) {
     });
 }
 
+/**
+ * 按部门、主题查询分类
+ */
+export function getCategoryTreeByIds(flag) {
+    return fetch({
+        url: '/api/zwfwSystem/business/category/getCategoryTree',
+        method: 'get',
+        params: {flag}
+    });
+}
+
 export function createCategory(zwfwCategoryVo) {
     const data = zwfwCategoryVo;
     return fetch({
