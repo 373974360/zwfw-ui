@@ -60,7 +60,7 @@
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible"
                    :close-on-click-modal="closeOnClickModal" :before-close="resetZwfwMaterialForm">
             <el-form ref="zwfwMaterialForm" class="small-space" :model="zwfwMaterial" label-position="right"
-                     label-width="80px"
+                     label-width="100px"
                      style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="zwfwMaterialRules">
                 <el-form-item label="材料名称" prop="name">
                     <el-input v-model="zwfwMaterial.name"></el-input>
@@ -75,15 +75,38 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="是否需要电子材料" prop="electronicMaterial">
-                    <el-switch
-                            v-model="zwfwMaterial.electronicMaterial"
-                            on-color="#13ce66"
-                            off-color="#ff4949"
-                            :on-value="true"
-                            :off-value="false">
-                    </el-switch>
-                </el-form-item>
+                <el-col :span="12">
+                    <el-form-item label="原件份数" prop="originalNumber">
+                        <el-input-number v-model="zwfwMaterial.originalNumber" :min="0" :max="20"/>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="复印件份数" prop="cpoyNumber">
+                        <el-input-number v-model="zwfwMaterial.cpoyNumber" :min="0" :max="20"/>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="是否必须" prop="necessary">
+                        <el-switch
+                                v-model="zwfwMaterial.necessary"
+                                on-color="#13ce66"
+                                off-color="#ff4949"
+                                :on-value="true"
+                                :off-value="false">
+                        </el-switch>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="是否需要电子材料" prop="electronicMaterial">
+                        <el-switch
+                                v-model="zwfwMaterial.electronicMaterial"
+                                on-color="#13ce66"
+                                off-color="#ff4949"
+                                :on-value="true"
+                                :off-value="false">
+                        </el-switch>
+                    </el-form-item>
+                </el-col>
                 <el-form-item label="受理标准" prop="acceptStandard">
                     <el-input v-model="zwfwMaterial.acceptStandard"></el-input>
                 </el-form-item>
@@ -91,6 +114,29 @@
                     <el-select v-model="zwfwMaterial.source" placeholder="请选择来源渠道" style="width:100%">
                         <el-option
                                 v-for="item in dics['sxsqclly']"
+                                :key="item.code"
+                                :label="item.value"
+                                :value="item.code">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="出具单位" prop="issuingUnit">
+                    <el-input v-model="zwfwMaterial.issuingUnit"></el-input>
+                </el-form-item>
+                <el-form-item label="文书格式" prop="documentFormat">
+                    <el-select v-model="zwfwMaterial.documentFormat" placeholder="请选择文书格式" style="width:100%">
+                        <el-option
+                                v-for="item in dics['wsgs']"
+                                :key="item.code"
+                                :label="item.value"
+                                :value="item.code">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="业务分类" prop="businessClassification">
+                    <el-select v-model="zwfwMaterial.businessClassification" placeholder="请选择业务分类" style="width:100%">
+                        <el-option
+                                v-for="item in dics['ywfl']"
                                 :key="item.code"
                                 :label="item.value"
                                 :value="item.code">
@@ -147,7 +193,7 @@
                                :headers="uploadHeaders"
                                :before-upload="beforeAvatarUpload"
                                :on-change="changeTemplateFile"
-                                :on-success="onUploadSuccess">
+                               :on-success="onUploadSuccess">
                         <el-input slot="trigger" v-model="zwfwMaterial.templateFile" placeholder="选择文件" readonly
                                   style="width: 320px"></el-input>
                         <a :href="this.zwfwMaterial.templateFile" :download="downloadTemplateFile" target="_blank"
@@ -242,7 +288,13 @@
                     type: '',
                     example: '',
                     notice: '',
-                    templateFile:''
+                    templateFile: '',
+                    necessary: 0,
+                    originalNumber: 0,
+                    cpoyNumber: 0,
+                    issuingUnit: '',
+                    documentFormat: '',
+                    businessClassification: ''
                 },
                 dialogItemPretrialFormVisible: false,
                 currentRow: null,
@@ -408,7 +460,7 @@
                     this.zwfwMaterial.templateFile = file.response.url;
                 }
             },
-            onUploadSuccess(response,file,fileList){
+            onUploadSuccess(response, file, fileList) {
                 this.$message.success(file.name + '上传成功');
             },
             beforeAvatarUpload(file) {
@@ -435,7 +487,13 @@
                     type: '',
                     example: '',
                     notice: '',
-                    templateFile:''
+                    templateFile: '',
+                    necessary: 0,
+                    originalNumber: 0,
+                    cpoyNumber: 0,
+                    issuingUnit: '',
+                    documentFormat: '',
+                    businessClassification: ''
                 };
             },
             handleSizeChange(val) {

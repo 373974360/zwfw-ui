@@ -348,6 +348,19 @@
                         </template>
                     </el-checkbox-group>
                 </el-form-item>
+                <el-form-item label="网办深度" prop="handleDeep">
+                    <el-radio-group v-model="zwfwItem.handleDeep">
+                        <el-radio v-for="item in dics['wbsd']"
+                                  :key="item.code"
+                                  :label="item.code"
+                                  :value="item.code">
+                            <span style="font-weight:normal;">{{item.value}}</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="到窗口次数" prop="comTimes">
+                    <el-input-number v-model="zwfwItem.comTimes" :min="0" :max="10"/>
+                </el-form-item>
                 <el-form-item v-if="zwfwItem.handTypes.includes('2')" label="收件人员" prop="handUserId">
                     <el-select v-model="zwfwItem.handUserId" remote :remote-method="queryHandUserId" filterable
                                placeholder="请选择" style="width: 100%" :multiple="false" clearable>
@@ -458,6 +471,16 @@
                 <el-form-item label="结果名称" prop="resultName">
                     <el-input v-model="zwfwItem.resultName"></el-input>
                 </el-form-item>
+                <el-form-item label="办件结果类型" prop="resultType">
+                    <el-radio-group v-model="zwfwItem.resultType">
+                        <el-radio v-for="item in dics['bjjglx']"
+                                  :key="item.code"
+                                  :label="item.code"
+                                  :value="item.code">
+                            <span style="font-weight:normal;">{{item.value}}</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
                 <el-form-item label="预审天数" prop="pretrialDays">
                     <el-input v-model="zwfwItem.pretrialDays"></el-input>
                 </el-form-item>
@@ -474,7 +497,14 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="中介服务" prop="mediumService">
-                    <el-input v-model="zwfwItem.mediumService"></el-input>
+                    <el-radio-group v-model="zwfwItem.mediumService">
+                        <el-radio v-for="item in enums['YesNo']"
+                                  :key="item.code"
+                                  :label="item.code"
+                                  :value="item.code">
+                            <span style="font-weight:normal;">{{item.value}}</span>
+                        </el-radio>
+                    </el-radio-group>
                 </el-form-item>
                 <el-form-item label="常见问题" prop="commonRequestion">
                     <el-input v-model="zwfwItem.commonRequestion"></el-input>
@@ -889,7 +919,10 @@
                     superviseTreePosition: '',
                     implAgencyTreePosition: '',
                     unionAgencyTreePosition: '',
-                    enable: ''
+                    enable: '',
+                    comTimes: 1,
+                    resultType: '',
+                    handleDeep: ''
                 },
                 zwfwItemMaterial: {
                     id: undefined,
@@ -1845,7 +1878,10 @@
                     superviseTreePosition: '',
                     implAgencyTreePosition: '',
                     unionAgencyTreePosition: '',
-                    enable: ''
+                    enable: '',
+                    comTimes: 1,
+                    resultType: '',
+                    handleDeep: ''
                 };
                 this.setBasisHtml = '';
                 this.acceptConditionHtml = '';
