@@ -1,66 +1,79 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input @keyup.enter.native="getList" style="width: 300px;" class="filter-item" placeholder="办件号"
-                      v-model="listQuery.processNumber"></el-input>
+            <el-row :gutter="20">
+                <el-col :span="6">
+                    <el-input @keyup.enter.native="getList" class="filter-item" placeholder="办件号"
+                              v-model="listQuery.processNumber"></el-input>
+                </el-col>
+                <el-col :span="6">
+                    <el-select
+                            style="width: 100%;"
+                            remote
+                            class="filter-item" placeholder="公司名称"
+                            v-model="listQuery.ownerPersonId"
+                            filterable clearable
+                            :remote-method="queryCompanySearch"
+                            @change="handleCompanySelect">
+                        <el-option
+                                v-for="companyInfo in companyList"
+                                :key="companyInfo.id"
+                                :label="companyInfo.companyName"
+                                :value="companyInfo.id">
+                        </el-option>
+                    </el-select>
+                </el-col>
+                <el-col :span="6">
+                    <el-cascader :options="cascader" @change="handleChange"
+                                 :show-all-levels="true" expand-trigger="hover" :clearable="true"
+                                 :change-on-select="true" style="width: 100%;"></el-cascader>
+                </el-col>
+                <el-col :span="6">
+                    <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
+                </el-col>
+            </el-row>
 
-
-            <el-select
-                    remote
-                    style="width: 400px;" class="filter-item" placeholder="公司名称"
-                    v-model="listQuery.companyId"
-                    filterable clearable
-                    :remote-method="queryCompanySearch"
-                    @change="handleCompanySelect">
-                <el-option
-                        v-for="companyInfo in companyList"
-                        :key="companyInfo.id"
-                        :label="companyInfo.companyName"
-                        :value="companyInfo.id">
-                </el-option>
-            </el-select>
 
             <!--<el-input @keyup.enter.native="getList" style="width: 230px;" class="filter-item" placeholder="公司名称"-->
             <!--v-model="listQuery.companyName"></el-input>-->
 
 
-            <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
         </div>
         <el-table ref="zwfwDeptWorkQueryTable" :data="zwfwDeptWorkQueryList" v-loading.body="listLoading" border fit
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <!--<el-table-column align="center" label="ID">-->
-                <!--<template scope="scope">-->
-                    <!--<span>{{scope.row.id}}</span>-->
-                <!--</template>-->
+            <!--<template slot-scope="scope">-->
+            <!--<span>{{scope.row.id}}</span>-->
+            <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column align="center" label="办件号">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.processNumber}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="办理事项" prop="itemName" width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.itemName}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="当前步骤" prop="currentTaskName">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.currentTaskName}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="步骤时限" prop="taskLimitTime">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.taskLimitTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="承诺期限" prop="promiseFinishTime">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.promiseFinishTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="left" label="申请企业（个人）" min-width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.memberType == 1">
                         姓名：{{scope.row.memberRealname}}<br>联系电话：{{scope.row.memberPhonenumber}}<br>
                     </span>
@@ -73,36 +86,36 @@
                 </template>
             </el-table-column>
             <el-table-column align="left" label="办事员信息" min-width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.memberType == 3">
-                        <span >
+                        <span>
                             姓名：{{scope.row.clerkName}}<br>
                         </span>联系电话：{{scope.row.clerkPhone}}<br>
                     </span>
                     <span v-if="scope.row.memberType == 1 || scope.row.memberType == 2">
-                        <span >
+                        <span>
                             姓名：{{scope.row.memberRealname}}<br>
                         </span>联系电话：{{scope.row.memberPhonenumber}}<br>
                     </span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="整改状态" prop="flagCorrection">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.flagCorrection | enums('YesNo')}}</span>
                 </template>
             </el-table-column>
             <!--<el-table-column align="center" label="企业名称" prop="companyName">-->
-                <!--<template scope="scope">-->
+                <!--<template slot-scope="scope">-->
                     <!--<span>{{scope.row.companyName}}</span>-->
                 <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column prop="enable" class-name="status-col" label="状态" width="50">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.status | enums('ItemProcessStatus')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-button @click="showDetail(scope.row)" type="primary">查看</el-button>
                 </template>
             </el-table-column>
@@ -185,15 +198,15 @@
                                         </tr>
                                         <tr>
                                             <th width="140">企业/机构地址</th>
-                                            <td >{{member.legalPerson.registerPlace}}</td>
+                                            <td>{{member.legalPerson.registerPlace}}</td>
                                             <th width="140">联系电话</th>
-                                            <td >{{member.legalPerson.phone}}</td>
+                                            <td>{{member.legalPerson.phone}}</td>
                                         </tr>
                                         <tr>
                                             <th width="140">办事员电话</th>
-                                            <td >{{itemProcessVo.contactsPhone}}</td>
+                                            <td>{{itemProcessVo.contactsPhone}}</td>
                                             <th width="140"></th>
-                                            <td ></td>
+                                            <td></td>
                                         </tr>
                                         <template v-if="companyInfo.id">
                                             <tr>
@@ -356,7 +369,8 @@
                             </table>
                         </el-tab-pane>
                         <el-tab-pane label="办件材料" name="fifth">
-                            <el-button @click="downloadMaterialFiles()" type="primary">一键下载材料</el-button><br><br>
+                            <el-button @click="downloadMaterialFiles()" type="primary">一键下载材料</el-button>
+                            <br><br>
                             <!--<el-button @click="printMaterialFiles()" type="primary">打印</el-button><br><br>-->
                             <table class="table table-bordered table-responsive">
                                 <tr>
@@ -383,6 +397,28 @@
                                     </td>
                                 </tr>
                             </table>
+                        </el-tab-pane>
+                        <el-tab-pane label="表单信息" name="pretrialForm">
+                            <div v-if="pretrialForm && pretrialForm.length>0">
+                                <h2 class="h2-style-show">预审表单：</h2>
+                                <div v-for="form in pretrialForm">
+                                    <table class="table table-responsive table-bordered">
+                                        <tr>
+                                            <th colspan="24" style="text-align: center;background: #eee;">{{form.title}}</th>
+                                        </tr>
+                                        <tr v-for="row in form.rows">
+                                            <td v-for="(field,index) in row"
+                                                :colspan="field.size"
+                                                :key="field.id"
+                                                style="padding:5px;">
+                                    <span class="label"><span v-if="field.require" style="color:red">*</span>
+                                        {{field.labelAlias || field.label}}:</span> <span class="value">{{field.value}}</span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div v-else>无</div>
                         </el-tab-pane>
                     </el-tabs>
                 </div>
@@ -420,6 +456,9 @@
     import {
         queryCompanyInfo
     } from 'api/hallSystem/window/receive/windowAccept';
+    import {
+        getCategoryTreeByIds
+    } from 'api/zwfwSystem/business/category';
 
     export default {
         name: 'zwfwDeptWorkQuery_table',
@@ -433,8 +472,10 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
-                    companyId: undefined,
-                    processNumber: null
+                    processNumber: null,
+                    categoryIdChild: undefined,
+                    categoryIdFather: undefined,
+                    ownerPersonId: undefined
                 },
                 zwfwDeptWorkQuery: {
                     id: undefined,
@@ -506,11 +547,14 @@
                     up_user: '',
                     ssjd: '',
                     vtype: ''
-                }
+                },
+                cascader: [],
+                pretrialForm: []
             }
         },
         created() {
             this.getList();
+            this.getOptions();
         },
         computed: {
             ...mapGetters([
@@ -527,6 +571,27 @@
             }
         },
         methods: {
+            handleChange(value) {
+                console.log(value)
+                this.listQuery.categoryIdChild = undefined;
+                this.listQuery.categoryIdFather = undefined
+                if (value.length > 1) {
+                    this.listQuery.categoryIdChild = value[value.length - 1];
+                    console.log(this.listQuery.categoryIdChild)
+                } else {
+                    this.listQuery.categoryIdFather = value[0];
+                    console.log(this.listQuery.categoryIdFather);
+                }
+            },
+            getOptions() {
+                getCategoryTreeByIds(false).then(response => {
+                    if (response.httpCode === 200) {
+                        this.cascader = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                })
+            },
             getList() {
                 this.listLoading = true;
                 getZwfwDeptWorkQueryList(this.listQuery).then(response => {
@@ -553,7 +618,7 @@
                 this.dialogFormVisible = false;
             },
             handleCompanySelect(code) {
-                this.listQuery.companyId = code;
+                this.listQuery.ownerPersonId = code;
                 this.getList();
             },
             queryCompanySearch(queryString) {
@@ -590,6 +655,7 @@
                 }
 
                 getZwfwDeptWorkDetail(query).then(response => {
+                    let data = response.data;
                     console.log(response.data);
                     this.dialogLoading = false;
 
@@ -613,6 +679,31 @@
                         );
                     }
                     this.queryCompanyInfo(this.member);
+
+
+                    this.pretrialForm = [];
+                    for (const form of data.pretrialForm || []) {
+                        for (const field of form.fields) {
+                            field.value = data.pretrialFormFieldValueMap[field.fieldId] || '';
+                        }
+                        const fields = form.fields;
+                        const rowsData = [];
+                        let pos = 0;
+                        let rows = 0;
+                        fields.forEach(field => {
+                            if (24 - pos < field.size) {
+                                rows++;
+                                pos = 0;
+                            }
+                            pos += field.size;
+                            if (!rowsData[rows]) {
+                                rowsData[rows] = [];
+                            }
+                            rowsData[rows].push(field);
+                        });
+                        form.rows = rowsData;
+                        this.pretrialForm.push(form);
+                    }
                 }).catch(e => {
                     this.dialogLoading = false;
                 });
@@ -650,7 +741,7 @@
             },
             downloadMaterialFiles() {
                 // console.log(this.itemProcessVo);
-                window.open('/api/common/downloadMaterialFiles?processNumber='+this.itemProcessVo.processNumber+'&taskId='+this.itemProcessVo.taskId);
+                window.open('/api/common/downloadMaterialFiles?processNumber=' + this.itemProcessVo.processNumber + '&taskId=' + this.itemProcessVo.taskId);
             },
             printMaterialFiles() {
                 print();
@@ -695,7 +786,7 @@
     }
 
     .h2-style-show {
-        font-weight: 100;
+        font-weight: 400;
         font-size: 24px;
     }
 

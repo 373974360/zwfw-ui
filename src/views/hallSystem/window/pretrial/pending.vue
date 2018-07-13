@@ -11,26 +11,26 @@
         <el-table :data="pretrialList" v-loading.body="listLoading" border fit highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column align="center" label="预审号">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.processNumber}}<br/>({{scope.row.itemName}})</span>
                 </template>
             </el-table-column>
             <!--<el-table-column width="250px" align="center" label="申请企业（个人）">-->
-                <!--<template scope="scope">-->
-                    <!--<span v-if="scope.row.companyName != null">{{scope.row.companyName}}</span>-->
-                    <!--<span v-if="scope.row.memberName != null">{{scope.row.memberName}}</span>-->
-                <!--</template>-->
+            <!--<template slot-scope="scope">-->
+            <!--<span v-if="scope.row.companyName != null">{{scope.row.companyName}}</span>-->
+            <!--<span v-if="scope.row.memberName != null">{{scope.row.memberName}}</span>-->
+            <!--</template>-->
             <!--</el-table-column>-->
             <!--<el-table-column align="center" label="办事员">-->
-                <!--<template scope="scope">-->
-                    <!--<span v-if="scope.row.clerkName != null && scope.row.memberType == 3">{{scope.row.clerkName}}</span>-->
-                    <!--<span v-if="scope.row.memberName != null && scope.row.memberType == 1 || scope.row.memberType == 2">{{scope.row.memberName}}</span>-->
-                <!--</template>-->
+            <!--<template slot-scope="scope">-->
+            <!--<span v-if="scope.row.clerkName != null && scope.row.memberType == 3">{{scope.row.clerkName}}</span>-->
+            <!--<span v-if="scope.row.memberName != null && scope.row.memberType == 1 || scope.row.memberType == 2">{{scope.row.memberName}}</span>-->
+            <!--</template>-->
             <!--</el-table-column>-->
 
 
             <el-table-column align="left" label="申请企业（个人）" min-width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.memberType == 1">
                         姓名：{{scope.row.memberName}}<br>联系电话：{{scope.row.memberPhone}}<br>
                     </span>
@@ -43,47 +43,47 @@
                 </template>
             </el-table-column>
             <el-table-column align="left" label="办事员信息" min-width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.memberType == 3">
-                        <span >
+                        <span>
                             姓名：{{scope.row.clerkName}}<br>
                         </span>联系电话：{{scope.row.clerkPhone}}<br>
                     </span>
                     <span v-if="scope.row.memberType == 1 || scope.row.memberType == 2">
-                        <span >
+                        <span>
                             姓名：{{scope.row.memberName}}<br>
                         </span>联系电话：{{scope.row.memberPhone}}<br>
                     </span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="申请时间">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.applyTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="审核时间">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>-</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="审核期限">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.expireDate | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="状态">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.status | enums('PretrialStatus')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="备注">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.remark}}</span>
                 </template>
             </el-table-column>
             <el-table-column label="操作" align="center">
-                <template scope="scope">
-                    <el-button class="filter-item"  type="primary"
+                <template slot-scope="scope">
+                    <el-button class="filter-item" type="primary"
                                @click="editAudit(scope.row)">审 核
                     </el-button>
                 </template>
@@ -144,6 +144,26 @@
                         </tr>
 
                     </table>
+                </div>
+
+                <div v-if="pretrialForm && pretrialForm.length>0">
+                    <h2 class="h2-style-show">预审表单：</h2>
+                    <div v-for="form in pretrialForm">
+                        <table class="table table-responsive table-bordered">
+                            <tr>
+                                <th colspan="24" style="text-align: center;background: #eee;">{{form.title}}</th>
+                            </tr>
+                            <tr v-for="row in form.rows">
+                                <td v-for="(field,index) in row"
+                                    :colspan="field.size"
+                                    :key="field.id"
+                                    style="padding:5px;">
+                                    <span class="label"><span v-if="field.require" style="color:red">*</span>
+                                        {{field.labelAlias || field.label}}:</span> <span class="value">{{field.value}}</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
                 <div class="table-show">
                     <div class="table-inline">
@@ -208,7 +228,7 @@
         getZwfwItemPretrialList,
         getPretrialDetail,
         submitReview
-    } from 'api/hallSystem/window/pretrial/itemPretrial';
+    } from '../../../../api/hallSystem/window/pretrial/itemPretrial';
     import {mapGetters} from 'vuex';
     import {copyProperties, resetForm} from 'utils';
 
@@ -251,7 +271,8 @@
                     status: [
                         {required: true, message: '请选择审核结果', trigger: 'change'}
                     ]
-                }
+                },
+                pretrialForm: []
             }
         },
         created() {
@@ -260,7 +281,6 @@
         computed: {
             ...mapGetters([
                 'textMap',
-                'enums',
                 'enums',
                 'closeOnClickModal'
             ])
@@ -297,26 +317,52 @@
                 this.resetTemp();
                 this.itemPretrial = copyProperties(this.itemPretrial, row);
                 this.processNumber = row.id;
-                this.titleName = '办件预审' + " | 办件号：" + row.processNumber;
+                this.titleName = '办件预审' + ' | 办件号：' + row.processNumber;
                 this.dialogFormVisible = true;
                 this.getPretrialDetail();
             },
             getPretrialDetail() {
                 getPretrialDetail(this.processNumber).then(response => {
                     if (response.httpCode === 200) {
-                        this.member = response.data.member;
-                        this.pretrialMaterialList = response.data.pretrialMaterialList;
+                        const data = response.data;
+                        this.member = data.member;
+                        this.pretrialMaterialList = data.pretrialMaterialList;
                         this.itemPretrial = this.currentItemPretrial;
                         this.itemPretrial.status = '';
-                        this.itemPretrialRules.status[0].required = false;
+                        this.pretrialForm = [];
+                        for (const form of data.pretrialForm || []) {
+                            for (const field of form.fields) {
+                                field.value = data.pretrialFormFieldValueMap[field.fieldId] || '';
+                            }
+                            const fields = form.fields;
+                            const rowsData = [];
+                            let pos = 0;
+                            let rows = 0;
+                            fields.forEach(field => {
+                                if (24 - pos < field.size) {
+                                    rows++;
+                                    pos = 0;
+                                }
+                                pos += field.size;
+                                if (!rowsData[rows]) {
+                                    rowsData[rows] = [];
+                                }
+                                rowsData[rows].push(field);
+                            });
+                            form.rows = rowsData;
+                            this.pretrialForm.push(form);
+                        }
                     } else {
                         this.$message.error('数据加载失败')
                     }
-                })
+                }).catch(e => {
+                    console.error(e);
+                    this.$message.error('数据加载失败');
+                });
             },
             submitReview() {
                 this.itemPretrialRules.status[0].required = true;
-                this.$refs['zwfwItemPretrial'].validate((valid) => {
+                this.$refs['zwfwItemPretrial'].validate(valid => {
                     if (valid) {
                         this.dialogFormVisible = false;
                         this.listLoading = true;
@@ -420,8 +466,16 @@
     }
 
     .h2-style-show {
-        font-weight: 100;
+        font-weight: 400;
         font-size: 24px;
         margin-top: 5px;
+    }
+
+    .pretrialFormTable .label {
+        font-weight: bold;
+    }
+
+    .pretrialFormTable .value {
+        padding: 0px 20px;
     }
 </style>

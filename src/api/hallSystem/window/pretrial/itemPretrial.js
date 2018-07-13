@@ -16,23 +16,6 @@ export function getPretrialDetail(id) {
     });
 }
 
-export function getZwfwItemPretrialCascader(id) {
-    return fetch({
-        url: '/api/workSystem/itemPretrial/getCascader',
-        method: 'get',
-        params: {id}
-    });
-}
-
-export function createZwfwItemPretrial(zwfwCategoryVo) {
-    const data = zwfwCategoryVo;
-    return fetch({
-        url: '/api/workSystem/itemPretrial/add',
-        method: 'post',
-        data
-    })
-}
-
 export function submitReview(zwfwCategoryVo) {
     const data = zwfwCategoryVo;
     return fetch({
@@ -41,29 +24,4 @@ export function submitReview(zwfwCategoryVo) {
         data
     })
 }
-export function delZwfwItemPretrial(id) {
-    const data = {id};
-    return fetch({
-        url: '/api/workSystem/itemPretrial/del',
-        method: 'post',
-        data
-    })
-}
-
-export function deleteZwfwItemPretrial(id) {
-    const data = {id};
-    return fetch({
-        url: '/api/workSystem/Category/delete',
-        method: 'post',
-        data
-    })
-}
-
-export function getAllZwfwItemPretrial() {
-    return fetch({
-        url: '/api/workSystem/Category/getAll',
-        method: 'get'
-    });
-}
-
 

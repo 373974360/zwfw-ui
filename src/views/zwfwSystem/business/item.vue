@@ -17,15 +17,18 @@
                            :label="item.value"></el-option>
             </el-select>
             <el-select class="filter-item" v-model="listQuery.enable" clearable placeholder="事项状态">
-                <el-option label="全部" value="2">
-
-                </el-option>
+                <el-option label="全部" value="2"></el-option>
                 <el-option
                         v-for="item in options"
                         :key="item.value"
                         :label="item.label"
                         :value="item.value">
                 </el-option>
+            </el-select>
+            <el-select class="filter-item" v-model="listQuery.orderable" clearable placeholder="预约筛选">
+                <el-option label="预约和不可预约" value=""></el-option>
+                <el-option label="支持预约" value="true"></el-option>
+                <el-option label="不可预约" value="false"></el-option>
             </el-select>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getItemList">搜索</el-button>
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleItemCreate" type="primary"
@@ -43,64 +46,61 @@
                   row-class-name="elRow">
             <el-table-column type="selection"/>
             <!--<el-table-column align="center" label="序号" width="70">-->
-            <!--<template scope="scope">-->
+            <!--<template slot-scope="scope">-->
             <!--<span>{{scope.row.id}}</span>-->
             <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column align="left" label="事项名称" prop="name">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" :content="'点击编辑：' +scope.row.id " placement="right-start">
                         <span class="link-type" @click="handleItemUpdate(scope.row)">{{scope.row.name}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="基本编码" prop="basicCode" width="100">
-                <template scope="scope">
+            <el-table-column align="center" label="基本编码" prop="basicCode" width="160">
+                <template slot-scope="scope">
                     <span>{{scope.row.basicCode}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="事项类型" prop="type" width="100">
-                <template scope="scope">
+            <el-table-column align="center" label="事项类型" prop="type" width="180">
+                <template slot-scope="scope">
                     <span>{{scope.row.type | dics('sslx')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="办件类型" prop="processType" width="100">
-                <template scope="scope">
+                <template slot-scope="scope">
                     {{scope.row.processType | dics('bjlx')}}
                 </template>
             </el-table-column>
             <el-table-column align="center" label="承诺时限" prop="promiseEndTime" width="110">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.promiseEndTime}} 工作日</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="法定时限" prop="legalEndTime" width="110">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.legalEndTime}} 工作日</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="办理形式" prop="handleType" width="100">
-                <template scope="scope">
+                <template slot-scope="scope">
                     {{scope.row.handleType | dics('blxs')}}
                 </template>
             </el-table-column>
             <el-table-column prop="enable" class-name="status-col" label="状态" width="80">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
                         {{scope.row.enable | enums('Enable')}}
                     </el-tag>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作" width="200" class-name="action">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-badge :value="scope.row.itemMaterialCount" class="item">
                         <el-button class="filter-item" style="" @click="handleMaterialList(scope.row)"
                                    type="primary" size="small">
                             办件材料
                         </el-button>
-                        <!--<br />-->
-                        <!--<br />-->
-
                     </el-badge>
                     <el-button class="filter-item" style="" @click="handleItemConfig(scope.row)"
                                type="primary" size="small">
@@ -117,7 +117,7 @@
             </el-pagination>
         </div>
 
-        <el-dialog  :title="zwfwItem.id?('编辑事项，ID:' + zwfwItem.id):'添加事项'" :visible.sync="dialogItemFormVisible"
+        <el-dialog :title="zwfwItem.id?('编辑事项，ID:' + zwfwItem.id):'添加事项'" :visible.sync="dialogItemFormVisible"
                    @open="initEditor"
                    :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemForm">
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem" label-position="right"
@@ -568,31 +568,31 @@
                       style="width: 100%" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="40"/>
                 <!--<el-table-column align="center" label="序号" width="70">-->
-                <!--<template scope="scope">-->
+                <!--<template slot-scope="scope">-->
                 <!--<span>{{scope.row.id}}</span>-->
                 <!--</template>-->
                 <!--</el-table-column>-->
                 <el-table-column prop="sortNo" align="center" label="排序" width="70">
                 </el-table-column>
                 <el-table-column prop="name" align="left" label="材料名称">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <el-tooltip content="点击编辑" placement="right" effect="dark">
                             <span class="link-type" @click="handleMaterialUpdate(scope.row)">{{scope.row.name}}</span>
                         </el-tooltip>
                     </template>
                 </el-table-column>
-                <el-table-column prop="type" align="center" label="材料类型" width="100">
-                    <template scope="scope">
+                <el-table-column prop="type" align="center" label="材料类型" width="130">
+                    <template slot-scope="scope">
                         <span>{{scope.row.type | dics('cllx')}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column v-once prop="source" align="center" label="来源渠道" width="100">
-                    <template scope="scope">
+                <el-table-column v-once prop="source" align="center" label="来源渠道" width="130">
+                    <template slot-scope="scope">
                         <span>{{scope.row.source | dics('sxsqclly')}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="electronicMaterial" align="center" label="预审材料" width="100">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.electronicMaterial | enums('YesNo')}}</span>
                     </template>
                 </el-table-column>
@@ -737,17 +737,17 @@
                      :rules="zwfwItemConfigFormRules">
                 <el-form-item label="是否支持预约" prop="ispreorder">
                     <el-radio-group v-model="zwfwItemConfig.ispreorder">
-                        <el-radio :label="1">
+                        <el-radio :label="true">
                             <span style="font-weight:normal;">是</span>
                         </el-radio>
-                        <el-radio :label="0">
+                        <el-radio :label="false">
                             <span style="font-weight:normal;">否</span>
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <div v-if="zwfwItemConfig.ispreorder==1">
+                <div v-if="zwfwItemConfig.ispreorder">
                     <el-form-item label="预约时间" prop="preorderTimeArray">
-                        <el-checkbox-group v-model="zwfwItemConfig.preorderTimeArray" @change="preorderChange">
+                        <el-checkbox-group v-model="zwfwItemConfig.preorderTimeArray">
                             <el-checkbox v-for="item in zwfwItemConfig.opentime" :key="item"
                                          :label="item"></el-checkbox>
                         </el-checkbox-group>
@@ -765,6 +765,7 @@
                 </el-button>
             </div>
         </el-dialog>
+
 
     </div>
 </template>
@@ -813,6 +814,24 @@
                 }
                 callback();
             };
+            const promiseEndTimeValidate = (rule, value, callback) => {
+                if (!/^[1-9]\d{0,2}(\.5)?$|^0\.5$|^0$/.test(this.zwfwItem.promiseEndTime)) {
+                    callback(new Error('请填写承诺的工作日，最小单位为0.5天,最多三位整数'));
+                }
+                callback();
+            };
+            const pretrialDaysValidate = (rule, value, callback) => {
+                if (!/^[1-9]\d{0,2}(\.5)?$|^0\.5$|^0$/.test(this.zwfwItem.pretrialDays) ) {
+                    callback(new Error('请填写预审的工作日，最小单位为0.5天,最多三位整数'));
+                }
+                callback();
+            };
+            const legalEndTimeValidate = (rule, value, callback) => {
+                if (!/^[1-9]\d{0,2}(\.5)?$|^0\.5$|^0$/.test(this.zwfwItem.legalEndTime)) {
+                    callback(new Error('请填写法定办结的工作日，最小单位为0.5天,最多三位整数'));
+                }
+                callback();
+            };
             return {
                 options: [{
                     value: '1',
@@ -840,7 +859,8 @@
                     departmentId: undefined,
                     processType: undefined,
                     handleType: undefined,
-                    enable: '1'
+                    enable: '1',
+                    orderable: ''
                 },
                 activeName: 'first',
                 zwfwItem: {
@@ -921,7 +941,7 @@
                 },
                 isMaterialExist: false,
                 zwfwItemConfig: {
-                    ispreorder: 1,
+                    ispreorder: true,
                     preorderTimeArray: [],
                     preordernum: '',
                     opentime: [],
@@ -958,11 +978,8 @@
                     type: [
                         {required: true, message: '请输入事项类型'}
                     ],
-                    promiseEndTime: [
-                        {required: true, message: '请输入事项承诺办结日期'}
-                    ],
                     pretrialDays: [
-                        {required: true, message: '请输入预审天数'}
+                        {required: true, validator: pretrialDaysValidate, trigger: 'blur'}
                     ],
                     askPhone: [
                         {required: true, message: '请输入咨询电话'}
@@ -987,6 +1004,12 @@
                     ],
                     addresseeId: [
                         {validator: addresseeIdValidate, trigger: 'blur'}
+                    ],
+                    promiseEndTime: [
+                        {required: true, validator: promiseEndTimeValidate, trigger: 'blur'}
+                    ],
+                    legalEndTime: [
+                        {required: true, validator: legalEndTimeValidate, trigger: 'blur'}
                     ]
                 },
                 zwfwItemMaterialRules: {
@@ -1170,8 +1193,9 @@
                         this.$message.error(response.msg || '事项列表查询失败');
                     }
                     this.pageLoading = false;
-                }).catch(e=>{
-                    this.$message.error(response.msg || '事项列表查询失败');
+                }).catch(e => {
+                    this.pageLoading = false;
+                    this.$message.error('事项列表查询失败');
                     console.error(e);
                 });
             },
@@ -1315,8 +1339,12 @@
                             } else {
                                 this.$message.error(response.msg || '创建失败');
                             }
-                        })
+                        }).catch(e => {
+                            console.log(e);
+                            this.$message.error('创建失败');
+                        });
                     } else {
+                        this.$message.error('请检查表单各项是否填写正确或遗漏');
                         return false;
                     }
                 });
@@ -1338,8 +1366,13 @@
                             } else {
                                 this.$message.error(response.msg || '更新失败');
                             }
+                        }).catch(e => {
+                            console.log(e);
+                            this.$message.error('更新失败');
                         });
+                        ;
                     } else {
+                        this.$message.error('请检查表单各项是否填写完整正确或遗漏');
                         return false;
                     }
                 });
@@ -1361,16 +1394,17 @@
                 })
             },
             queryPretrialUserId(keywords) {
-                // todo 预审人员是否根据所选部门筛选
-                getAllUser({
-                    name: keywords
-                }).then(response => {
-                    if (response.httpCode === 200) {
-                        this.userListPretrial = response.data;
-                    } else {
-                        this.$message.error('加载用户列表失败');
-                    }
-                });
+                if (keywords && keywords.length > 0) {
+                    getAllUser({
+                        name: keywords
+                    }).then(response => {
+                        if (response.httpCode === 200) {
+                            this.userListPretrial = response.data;
+                        } else {
+                            this.$message.error('加载用户列表失败');
+                        }
+                    });
+                }
             },
             queryHandUserId(keywords) {
                 // todo 预审人员是否根据所选部门筛选
@@ -1506,6 +1540,7 @@
                 this.resetMaterialTemp();
                 this.dialogItemConfigFormVisible = true;
             },
+
             getItemConfig() {
                 getItemConfig(this.currentItem.id).then(response => {
                     if (response.httpCode === 200) {
@@ -1517,7 +1552,7 @@
                 })
             },
             submitItemConfig() {
-                if (this.zwfwItemConfig.ispreorder == 1) {
+                if (this.zwfwItemConfig.ispreorder) {
                     if (this.zwfwItemConfig.preorderTimeArray == null || this.zwfwItemConfig.preorderTimeArray.length == 0) {
                         this.$message.warning("请勾选预约时间");
                         return false;
@@ -1545,6 +1580,7 @@
                     this.zwfwItemConfig.opentime = this.zwfwItemConfig.opentime1;
                 });
             },
+
             searchMaterial(query, cb) {
                 if (query !== '') {
                     let valid = validateQueryStr(query);
@@ -1780,6 +1816,7 @@
                 this.dialogItemConfigFormVisible = false;
                 // this.resetZwfwMaterialForm();
             },
+
             resetZwfwMaterialForm() {
                 this.changeMaterialInfo = false;
                 this.resetMaterialTemp();
@@ -1892,10 +1929,10 @@
         margin-left: 0px;
         margin-right: 15px;
     }
-    .el-checkbox+.el-checkbox{
-        margin-left:0px;
-    }
 
+    .el-checkbox + .el-checkbox {
+        margin-left: 0px;
+    }
 
     .item {
         /*margin-top: 12px;*/
@@ -1915,11 +1952,16 @@
         max-height: 180px;
         overflow: scroll
     }
-    .ql-toolbar.ql-snow .ql-formats{
-        margin-right:0px;
+
+    .ql-toolbar.ql-snow .ql-formats {
+        margin-right: 0px;
     }
 </style>
 <style rel="stylesheet/scss" lang="scss">
+    .el-table .el-table-column--selection .cell {
+        text-overflow: clip;
+    }
+
     .el-table th.action .cell {
         line-height: 50px;
     }

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>西安国际港务区 —— 政务服务管理系统</title>
+
+<link rel="stylesheet" href="css/shutter.css">
+
+</head>
+<body>
+
+<div class="shutter">
+<div class="shutter-img">
+
+  <a href="#" data-shutter-title="Super Man"><iframe style="width: 100%;height: 100%;border: none;" src="realTimeAccept.html" ></iframe></a>
+  <a href="#" data-shutter-title="Iron Man"><iframe style="width: 100%;height: 100%;border: none;" src="businessApprove.html" ></iframe></a>
+</div>
+<ul class="shutter-btn" style="display: none">
+  <li class="prev"></li>
+  <li class="next"></li>
+</ul>
+</div>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/velocity.js"></script>
+<script src="js/shutter.js"></script>
+<script>
+$(function () {
+  $('.shutter').shutter({
+	shutterW: 1000, // 容器宽度
+	shutterH: 358, // 容器高度
+	isAutoPlay: true, // 是否自动播放
+	playInterval: 30000, // 自动播放时间
+	fullPage: true // 是否全屏展示
+  });
+});
+</script>
+</body>
+</html>

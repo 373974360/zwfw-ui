@@ -11,8 +11,8 @@ export function date(value, format) {
 
 export function statusFilter(status) {
     const statusMap = {
-        '正常': 'success',
-        '禁用': 'gray',
+        '启用': 'success',
+        '停用': 'gray',
         '已删除': 'danger',
         '菜单': 'success',
         '按钮': 'primary'

@@ -14,10 +14,10 @@ const Reset = () => import('../views/common/login/reset');
 /* 选择系统 */
 import System from '../views/common/login/system';
 
-/************************个人设置************************/
+/** **********************个人设置************************/
 const Profile = () => import('../views/common/login/profile');
 
-/************************基础信息管理系统************************/
+/** **********************基础信息管理系统************************/
 /* index */
 const BaseSystem = () => import('../views/baseSystem/index');
 /* 组织机构 */
@@ -25,13 +25,15 @@ const Dept = () => import('../views/baseSystem/org/dept');
 const User = () => import('../views/baseSystem/org/user');
 const Menu = () => import('../views/baseSystem/org/menu');
 /*  ym test start */
-//const Test = () => import('../views/baseSystem/org/test');
+// const Test = () => import('../views/baseSystem/org/test');
 /* ym test end */
 const Role = () => import('../views/baseSystem/org/role');
 /* 数据管理 */
 const MessageFiled = () => import('../views/baseSystem/data/messageFiled');
 const MessageTemplate = () => import('../views/baseSystem/data/messageTemplate');
 const Dict = () => import('../views/baseSystem/data/dic');
+const FormField = () => import('../views/baseSystem/data/formField');
+const FormFieldCategory = () => import('../views/baseSystem/data/formFieldCategory');
 const MetadataType = () => import('../views/baseSystem/data/metadataType');
 const Holiday = () => import('../views/baseSystem/data/holiday');
 /* 系统管理 */
@@ -41,7 +43,7 @@ const Log = () => import('../views/baseSystem/setting/log');
 const RegistryCenter = () => import('../views/baseSystem/task/registryCenter');
 const TimedJob = () => import('../views/baseSystem/task/timedJob');
 
-/************************大厅综合管理系统************************/
+/** **********************大厅综合管理系统************************/
 /* index */
 const HallSystem = () => import('../views/hallSystem/index');
 /* 大厅管理 */
@@ -52,7 +54,7 @@ const NumberScope = () => import('../views/hallSystem/lobby/numberScope');
 const LegalPersonExamined = () => import('../views/hallSystem/member/legalPersonExamined');
 const NaturePerson = () => import('../views/hallSystem/member/naturePerson');
 const LegalPerson = () => import('../views/hallSystem/member/legalPerson');
-const Identification = () => import('../views/hallSystem/member/identification');
+
 
 /* 综合窗口 */
 /* 窗口收件*/
@@ -83,8 +85,10 @@ const NoAccept = () => import('../views/hallSystem/window/pretrial/noAccept');
 const WindowWork = () => import('../views/hallSystem/window/street/windowWork');
 /* 街办查询 */
 const WindowHistory = () => import('../views/hallSystem/window/street/windowHistory');
+/* 微警认证 */
+const Identification = () => import('../views/hallSystem/window/identification');
 
-/************************政务服务管理系统************************/
+/** **********************政务服务管理系统************************/
 /* index */
 const ZwfwSystem = () => import('../views/zwfwSystem/index');
 /* 业务管理 */
@@ -106,7 +110,13 @@ const StaffSatisfaction = () => import('../views/hallSystem/count/operation/staf
 const DeptSatisfaction = () => import('../views/hallSystem/count/operation/deptSatisfaction');
 const Business = () => import('../views/hallSystem/count/approval/business');
 
-/************************政务服务办理系统************************/
+/* 数据可视化模块 */
+/* 业务审批数据可视化模块 */
+const BusinessApprove = () => import('../views/hallSystem/visualization/businessApprove.vue');
+/* 实时受理数据可视化模块 */
+const RealTimeAccept = () => import('../views/hallSystem/visualization/realTimeAccept.vue');
+
+/** **********************政务服务办理系统************************/
 /* index */
 const WorkSystem = () => import('../views/workSystem/index');
 /* 办件管理 */
@@ -114,14 +124,21 @@ const WorkPending = () => import('../views/workSystem/process/workPending');
 /* 待办事项 */
 const WorkQuery = () => import('../views/workSystem/process/workQuery');
 /* 办结查询 */
-const WorkFinish = () => import('../views/workSystem/process/WorkFinish');
+const WorkFinish = () => import('../views/workSystem/process/workFinish');
 /* 办件查询 */
 const WorkExtendTime = () => import('../views/workSystem/process/workExtendTime');
 /* 延期审核管理 */
 const WorkSupervise = () => import('../views/workSystem/process/workSupervise');
 /* 督办管理 */
 
-/************************共享数据管理系统************************/
+
+/* 政策兑现 */
+/* 金额录入 */
+const SumEntry = () => import('../views/workSystem/policyCashing/sumEntry');
+/* 统计分析 */
+const Analysis = () => import('../views/workSystem/policyCashing/analysis');
+
+/** **********************共享数据管理系统************************/
 /* index */
 const DataShareSystem = () => import('../views/dataShareSystem/index');
 
@@ -198,7 +215,7 @@ export default new Router({
 
 export const asyncRouterMap = [
 
-    /************************基础信息管理系统************************/
+    /** **********************基础信息管理系统************************/
     {
         path: '/org',
         redirect: 'noredirect',
@@ -260,6 +277,17 @@ export const asyncRouterMap = [
                 meta: {permission: 'baseSystem:data:dicIndex:list'}
             },
             {
+                path: 'formFieldCategory',
+                component: FormFieldCategory,
+                name: '表单域分类管理',
+                meta: {permission: 'baseSystem:data:formFieldCategory:list'}
+            },{
+                path: 'formField',
+                component: FormField,
+                name: '表单域管理',
+                meta: {permission: 'baseSystem:data:formField:list'}
+            },
+            {
                 path: 'metadataType',
                 component: MetadataType,
                 name: '元数据类型',
@@ -295,7 +323,7 @@ export const asyncRouterMap = [
             }
         ]
     },
-    /************************大厅综合管理系统************************/
+    /** **********************大厅综合管理系统************************/
     {
         path: '/lobby',
         redirect: 'noredirect',
@@ -349,12 +377,6 @@ export const asyncRouterMap = [
                 component: LegalPerson,
                 name: '法人管理',
                 meta: {permission: 'hallSystem:member:legalPerson:list'}
-            },
-            {
-                path: 'identification',
-                component: Identification,
-                name: '身份识别认证',
-                meta: {permission: 'hallSystem:member:identification:list'}
             }
         ]
     },
@@ -415,14 +437,21 @@ export const asyncRouterMap = [
                 component: CompanyInfo,
                 name: '企业信息',
                 meta: {permission: 'hallSystem:window:companyInfo:list'}
+            },
+            {
+                path: 'identification',
+                component: Identification,
+                name: '微警认证',
+                meta: {permission: 'hallSystem:window:identification:list'}
             }
             // {path: 'windowWork', component: WindowWork, name: '街办收件'},
             // {path: 'windowHistory', component: WindowHistory, name: '办件查询'}
         ]
     },
-    {redirect: 'noredirect',
+    {
+        redirect: 'noredirect',
         name: '统计分析',
-        path:'/analysis',
+        path: '/analysis',
         meta: {permission: 'hallSystem:count:admin'},
         icon: 'count',
         component: Layout,
@@ -487,7 +516,29 @@ export const asyncRouterMap = [
             }
         ]
     },
-    /************************政务服务管理系统************************/
+    {
+        redirect: 'noredirect',
+        name: '数据可视化',
+        path: '/visualization',
+        meta: {permission: 'hallSystem:visualization:admin'},
+        icon: 'keshihuashujuETL',
+        component: Layout,
+        children: [
+            {
+                path: 'realTimeAccept',
+                component: RealTimeAccept,
+                name: '实时受理数据可视化',
+                meta: {permission: 'hallSystem:visualization:realTimeAccept:list'}
+            },
+            {
+                path: 'businessApprove',
+                component: BusinessApprove,
+                name: '业务审批数据可视化',
+                meta: {permission: 'hallSystem:visualization:businessApprove:list'}
+            }
+        ]
+    },
+    /** **********************政务服务管理系统************************/
     {
         path: '/business',
         redirect: 'noredirect',
@@ -543,17 +594,17 @@ export const asyncRouterMap = [
                 component: TaskSetting,
                 name: '审批节点管理',
                 meta: {permission: 'zwfwSystem:business:taskSetting:list'}
+            },
+            {
+                path: 'formEditor',
+                component: FormEditor,
+                name: '表单编辑器',
+                meta: {permission: 'zwfwSystem:business:formEditor:list'}
             }
-            // {
-            //     path: 'formEditor',
-            //     component: FormEditor,
-            //     name: '表单编辑器',
-            //     meta: {permission: 'zwfwSystem:business:formEditor:list'}
-            // }
         ]
     },
-    //ym test 广告管理
-    /*{
+    // ym test 广告管理
+    /* {
         path: '/advert',
         redirect: 'noredirect',
         name: '广告管理',
@@ -588,7 +639,7 @@ export const asyncRouterMap = [
 
         ]
     },*/
-    /************************政务业务办理系统************************/
+    /** **********************政务业务办理系统************************/
     {
         path: '/pretrial',
         component: Layout,
@@ -667,12 +718,34 @@ export const asyncRouterMap = [
                 meta: {permission: 'workSystem:process:workFinishSupervise:list'}
             }
         ]
+    },,
+    {
+        path: '/policyCashing',
+        redirect: 'noredirect',
+        name: '政策兑现',
+        meta: {permission: 'workSystem:policyCashing:admin'},
+        icon: 'zhengceduixianguanli',
+        component: Layout,
+        children: [
+            {
+                path: 'sumEntry',
+                component: SumEntry,
+                name: '金额录入 ',
+                meta: {permission: 'workSystem:policyCashing:sumEntry:list'}
+            },
+            {
+                path: 'analysis',
+                component: Analysis,
+                name: '统计分析',
+                meta: {permission: 'workSystem:policyCashing:analysis:list'}
+            }
+        ]
     },
-    /************************共享数据管理系统************************/
+    /** **********************共享数据管理系统************************/
 
-    /*************************404页面******************************/
+    /** ***********************404页面******************************/
     {path: '*', redirect: '/404', hidden: true},
-    /*************************个人设置 修改个人信息******************************/
+    /** ***********************个人设置 修改个人信息******************************/
     {
         hidden: true,
         name: '个人设置',

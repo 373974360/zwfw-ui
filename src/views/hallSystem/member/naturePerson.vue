@@ -28,49 +28,49 @@
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column type="selection" width="55"/>
             <el-table-column align="center" label="序号" width="100">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="姓名" prop="name" width="150">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="身份证号" prop="idcard" width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.idcard}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="性别" prop="gender">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.gender | enums('Gender')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="出生日期" prop="birthday" width="150">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.birthday | date('YYYY-MM-DD')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="left" label="住址" prop="address" width="300">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.address}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="民族" prop="nation">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.nation | dics('mz')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="联系电话" prop="phone" width="150">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.phone}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="enable" class-name="status-col" label="状态">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tag :type="scope.row.enable | enums('Enable') | statusFilter">
                         {{scope.row.enable | enums('Enable')}}
                     </el-tag>
@@ -230,13 +230,15 @@
                 listLoading: true,
                 uploadUrl: this.$store.state.app.uploadUrl,
                 acceptTypes: this.$store.state.app.imageAccepts,
+                statusList: [0, 1],
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     name: undefined,
-                    gender: "",
+                    gender: '',
                     idcard: undefined,
-                    phone: undefined
+                    phone: undefined,
+                    inStatus: undefined
                 },
                 zwfwNaturePerson: {
                     id: undefined,
@@ -304,6 +306,7 @@
         methods: {
             getList() {
                 this.listLoading = true;
+                this.listQuery.inStatus = this.statusList.join();
                 getZwfwNaturePersonList(this.listQuery).then(response => {
                     this.listLoading = false;
                     if (response.httpCode === 200) {

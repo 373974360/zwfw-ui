@@ -9,13 +9,13 @@
                     搜索
                 </el-button>
             </el-tooltip>
-            <el-tooltip class="item" effect="dark" content="添加用户" placement="top-start">
+            <el-tooltip class="item" effect="dark" content="添加" placement="top-start">
                 <el-button class="filter-item" style="margin-left: 10px;" @click="handleDicIndexCreate" type="primary"
                            icon="plus">
                     添加
                 </el-button>
             </el-tooltip>
-            <el-tooltip class="item" effect="dark" content="删除用户" placement="top-start">
+            <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
                 <el-button class="filter-item" style="margin-left: 10px;" @click="handleDicIndexDelete" type="danger"
                            icon="delete">
                     删除
@@ -27,27 +27,27 @@
                   style="width: 100%" @selection-change="handleDicIndexSelectionChange">
             <el-table-column type="selection" width="55"/>
             <el-table-column align="center" label="序号">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="字典名称" min-width="140">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span class="link-type" @click='handleDicIndexUpdate(scope.row)'>{{scope.row.name}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="索引" min-width="140">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.key}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="备注" min-width="130">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.remark}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作" min-width="180">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-button class="filter-item" style="margin-left: 10px;" @click="handleDicIndexClicke(scope.row)"
                                type="primary" size="small">
                         字典子项目
@@ -104,27 +104,27 @@
                       style="width: 100%" @selection-change="handleDictSelectionChange">
                 <el-table-column type="selection" width="55"/>
                 <el-table-column align="center" label="序号" min-width="140">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.id}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="子项名称" min-width="140">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span class="link-type" @click='handleDictUpdate(scope.row)'>{{scope.row.codeText}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="英文代码" min-width="110">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.code}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="排序" min-width="80">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.sortNo}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="备注" min-width="120">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.remark}}</span>
                     </template>
                 </el-table-column>

@@ -18,43 +18,43 @@
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange">
             <!--<el-table-column align="center" label="ID">-->
-                <!--<template scope="scope">-->
-                    <!--<span>{{scope.row.id}}</span>-->
-                <!--</template>-->
+            <!--<template slot-scope="scope">-->
+            <!--<span>{{scope.row.id}}</span>-->
+            <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column align="center" label="办件号">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.processNumber}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="办理事项" prop="itemName">
-                <template scope="scope">
+                <template slot-scope="scope">
                     {{scope.row.itemName}}
                 </template>
             </el-table-column>
             <el-table-column align="center" label="当前步骤" prop="currentTaskName">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.currentTaskName}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="步骤时限" prop="taskLimitTime">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.taskLimitTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="承诺期限" prop="promiseFinishTime">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.promiseFinishTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <!--<el-table-column align="center" label="申请办理人" prop="memberRealname">-->
-                <!--<template scope="scope">-->
-                    <!--<div>{{scope.row.memberRealname}}</div>-->
-                    <!--<div>{{scope.row.memberPhonenumber}}</div>-->
-                <!--</template>-->
+            <!--<template slot-scope="scope">-->
+            <!--<div>{{scope.row.memberRealname}}</div>-->
+            <!--<div>{{scope.row.memberPhonenumber}}</div>-->
+            <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column align="left" label="申请企业（个人）" min-width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.memberType == 1">
                         姓名：{{scope.row.memberRealname}}<br>联系电话：{{scope.row.memberPhonenumber}}<br>
                     </span>
@@ -67,36 +67,36 @@
                 </template>
             </el-table-column>
             <el-table-column align="left" label="办事员信息" min-width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.memberType == 3">
-                        <span >
+                        <span>
                             姓名：{{scope.row.clerkName}}<br>
                         </span>联系电话：{{scope.row.clerkPhone}}<br>
                     </span>
                     <span v-if="scope.row.memberType == 1 || scope.row.memberType == 2">
-                        <span >
+                        <span>
                             姓名：{{scope.row.memberRealname}}<br>
                         </span>联系电话：{{scope.row.memberPhonenumber}}<br>
                     </span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="整改状态" prop="flagCorrection">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.flagCorrection | enums('YesNo')}}</span>
                 </template>
             </el-table-column>
             <!--<el-table-column align="center" label="企业名称" prop="companyName">-->
-                <!--<template scope="scope">-->
-                    <!--<span>{{scope.row.companyName}}</span>-->
-                <!--</template>-->
+            <!--<template slot-scope="scope">-->
+            <!--<span>{{scope.row.companyName}}</span>-->
+            <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column prop="enable" class-name="status-col" label="状态">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.status | enums('ItemProcessStatus')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-button @click="showDetail(scope.row)" type="primary">查看</el-button>
                 </template>
             </el-table-column>
@@ -110,332 +110,337 @@
         </div>
         <!--查看-->
         <el-dialog class="s-dialog-title" size="large" :title="textMapTitle" :visible.sync="dialogFormVisible"
-                   :close-on-click-modal="closeOnClickModal" :before-close="resetWorkPendingForm" v-loading="dialogLoading"
+                   :close-on-click-modal="closeOnClickModal" :before-close="resetWorkPendingForm"
+                   v-loading="dialogLoading"
                    element-loading-text="拼命加载中">
             <div>
-                    <h2 class="h2-style-show">审批处理：{{itemProcessVo.currentTaskName}} </h2>
-                    <input type="hidden" name="taskId" :value='itemProcessVo.taskId'/>
-                    <input type="hidden" name="id" :value='itemProcessVo.id'/>
+                <h2 class="h2-style-show">审批处理：{{itemProcessVo.currentTaskName}} </h2>
+                <input type="hidden" name="taskId" :value='itemProcessVo.taskId'/>
+                <input type="hidden" name="id" :value='itemProcessVo.id'/>
 
 
-                    <div style="margin-bottom:20px;">
-                        <el-button class="filter-item" type="primary" @click="action='pass'">提交办理</el-button>
-                        <el-button v-if="itemTaskSetting.supportCorrection" class="filter-item" type="warning"
-                                   @click="action='correction'" :disabled="itemProcessVo.flagCorrection || dialogLoading">整改
-                        </el-button>
-                        <el-button v-if="itemTaskSetting.supportExtendTime" class="filter-item" type="info"
-                                   @click="action='extendTime'"
-                                   :disabled="itemProcessVo.flagCorrection || itemProcessVo.extendTimeApplying || dialogLoading ">申请延期
-                        </el-button>
-                        <el-button v-if="itemTaskSetting.supportClose" class="filter-item" type="danger"
-                                   @click="action='close' || dialogLoading">不予处理
-                        </el-button>
-                    </div>
+                <div style="margin-bottom:20px;">
+                    <el-button class="filter-item" type="primary" @click="action='pass'">提交办理</el-button>
+                    <el-button v-if="itemTaskSetting.supportCorrection" class="filter-item" type="warning"
+                               @click="action='correction'" :disabled="itemProcessVo.flagCorrection || dialogLoading">整改
+                    </el-button>
+                    <el-button v-if="itemTaskSetting.supportExtendTime" class="filter-item" type="info"
+                               @click="action='extendTime'"
+                               :disabled="itemProcessVo.flagCorrection || itemProcessVo.extendTimeApplying || dialogLoading ">
+                        申请延期
+                    </el-button>
+                    <el-button v-if="itemTaskSetting.supportClose" class="filter-item" type="danger"
+                               @click="action='close' || dialogLoading">不予处理
+                    </el-button>
+                </div>
 
-                    <el-form ref="deptWorkPendingForm" :model="itemProcessVo" label-suffix="：">
+                <el-form ref="deptWorkPendingForm" :model="itemProcessVo" label-suffix="：">
 
-                        <el-form-item v-show="action=='pass'" v-for="field in taskForm" :label="field.name"
-                                      :key="field.id">
-                            <template v-if="field.type=='enum'">
-                                <select v-bind:name="'form_'+field.id"
-                                        v-bind:id="'form_field_'+field.id" placeholder="请选择"
-                                        v-model="formData['form_'+field.id]">
-                                    <option v-for="(v,k) in field.values" :value="k">{{v}}</option>
-                                </select>
+                    <el-form-item v-show="action=='pass'" v-for="field in taskForm" :label="field.name"
+                                  :key="field.id">
+                        <template v-if="field.type=='enum'">
+                            <select v-bind:name="'form_'+field.id"
+                                    v-bind:id="'form_field_'+field.id" placeholder="请选择"
+                                    v-model="formData['form_'+field.id]">
+                                <option v-for="(v,k) in field.values" :value="k">{{v}}</option>
+                            </select>
+                        </template>
+                        <template v-else>
+                            <el-input v-bind:name="'form_'+field.id"
+                                      v-bind:id="'form_field_'+field.id"
+                                      v-model="formData['form_'+field.id]"></el-input>
+                        </template>
+                    </el-form-item>
+
+                    <el-form-item v-show="action=='pass'" class="h2-style-show" label="提交办理意见">
+                        <el-input v-model="passRemark" type="textarea"></el-input>
+                    </el-form-item>
+                    <el-button v-show="action=='pass'" style="width: 100%;" type="primary" @click="submitComplete"
+                               :disabled="dialogLoading">
+                        确定提交
+                    </el-button>
+                    <el-form-item v-show="action=='correction'" class="h2-style-show" label="请输入整改原因">
+                        <el-input class="input-textarea" v-model="correctionReason" type="textarea"></el-input>
+                    </el-form-item>
+                    <el-form-item v-show="action=='correction'">
+                        <el-input v-model="extendTimeDays" type="text"
+                                  :placeholder='"请输入在"+$options.filters.date(itemProcessVo.taskLimitTime, "YYYY-MM-DD HH:mm:ss")+"上的延期天数"'
+                                  min="1"></el-input>
+                    </el-form-item>
+                    <el-button v-show="action=='correction'" type="primary" style="width: 100%;"
+                               @click="submitCorrection" :disabled="dialogLoading">确定整改
+                    </el-button>
+                    <el-form-item v-show="action=='extendTime'" label="申请延期">
+                        <el-input v-model="extendTimeReason" type="textarea"></el-input>
+                    </el-form-item>
+                    <el-form-item v-show="action=='extendTime'">
+                        <el-input v-model="extendTimeDays" type="text"
+                                  :placeholder='"请输入在"+$options.filters.date(itemProcessVo.taskLimitTime, "YYYY-MM-DD HH:mm:ss")+"上的延期天数"'
+                                  min="1"></el-input>
+                    </el-form-item>
+                    <el-button style="width: 100%;" v-show="action=='extendTime'" type="primary"
+                               @click="submitExtendTime" :disabled="dialogLoading">确定延期申请
+                    </el-button>
+                    <el-form-item v-show="action=='close'" label="请输入不予受理原因">
+                        <el-input class="input-textarea" v-model="closeReason" type="textarea"></el-input>
+                    </el-form-item>
+                    <el-button style="width: 100%;" v-show="action=='close'" type="primary" @click="submitClose"
+                               :disabled="dialogLoading">
+                        确定不予受理
+                    </el-button>
+                </el-form>
+                <h2 class="h2-style-show">上传附件：</h2>
+                <div style="margin-bottom:20px;">
+                    <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
+                               :action="uploadAction" :file-list="uploadAvatars"
+                               :on-success="handleAvatarSuccess"
+                               :on-error="handlerAvatarError"
+                               :show-file-list="true"
+                               :on-preview="handlePictureCardPreview"
+                               :on-remove="handleRemove">
+                        <i class="el-icon-plus"></i>
+                    </el-upload>
+                </div>
+                <h2 class="h2-style-show">审批记录：</h2>
+                <table class="table table-responsive table-bordered">
+                    <tr>
+                        <th>流入时间</th>
+                        <th>办理步骤</th>
+                        <th>表单</th>
+                        <!--<th>整改</th>-->
+                        <th>意见</th>
+                        <th>办理时间</th>
+                        <th>耗时</th>
+                        <th>办理人</th>
+                    </tr>
+                    <tr v-for="h in history">
+                        <td>{{h.createTime | date('YYYY-MM-DD HH:mm')}}</td>
+                        <td>{{h.name}}</td>
+                        <td>
+                            <table v-if="h.formValue!=null" class="table table-bordered">
+                                <tr v-for="(v,k) in h.formValue">
+                                    <th>{{k}}:</th>
+                                    <td>{{v}}</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <!--<td>X</td>-->
+                        <td>{{h.reason}}</td>
+                        <td>
+                            <template v-if="h.endTime">{{h.endTime | date('YYYY-MM-DD HH:mm')}}
                             </template>
-                            <template v-else>
-                                <el-input v-bind:name="'form_'+field.id"
-                                          v-bind:id="'form_field_'+field.id"
-                                          v-model="formData['form_'+field.id]"></el-input>
+                        </td>
+                        <td>
+                            <template v-if="h.durationInMillis">{{h.durationInMillis | duration}}
                             </template>
-                        </el-form-item>
-
-                        <el-form-item v-show="action=='pass'" class="h2-style-show" label="提交办理意见">
-                            <el-input v-model="passRemark" type="textarea"></el-input>
-                        </el-form-item>
-                        <el-button v-show="action=='pass'" style="width: 100%;" type="primary" @click="submitComplete" :disabled="dialogLoading">
-                            确定提交
-                        </el-button>
-                        <el-form-item v-show="action=='correction'" class="h2-style-show" label="请输入整改原因">
-                            <el-input class="input-textarea" v-model="correctionReason" type="textarea"></el-input>
-                        </el-form-item>
-                        <el-form-item v-show="action=='correction'">
-                            <el-input v-model="extendTimeDays" type="text"
-                                      :placeholder='"请输入在"+$options.filters.date(itemProcessVo.taskLimitTime, "YYYY-MM-DD HH:mm:ss")+"上的延期天数"'
-                                      min="1"></el-input>
-                        </el-form-item>
-                        <el-button v-show="action=='correction'" type="primary" style="width: 100%;"
-                                   @click="submitCorrection" :disabled="dialogLoading">确定整改
-                        </el-button>
-                        <el-form-item v-show="action=='extendTime'" label="申请延期">
-                            <el-input v-model="extendTimeReason" type="textarea"></el-input>
-                        </el-form-item>
-                        <el-form-item v-show="action=='extendTime'">
-                            <el-input v-model="extendTimeDays" type="text"
-                                      :placeholder='"请输入在"+$options.filters.date(itemProcessVo.taskLimitTime, "YYYY-MM-DD HH:mm:ss")+"上的延期天数"'
-                                      min="1"></el-input>
-                        </el-form-item>
-                        <el-button style="width: 100%;" v-show="action=='extendTime'" type="primary"
-                                   @click="submitExtendTime" :disabled="dialogLoading">确定延期申请
-                        </el-button>
-                        <el-form-item v-show="action=='close'" label="请输入不予受理原因">
-                            <el-input class="input-textarea" v-model="closeReason" type="textarea"></el-input>
-                        </el-form-item>
-                        <el-button style="width: 100%;" v-show="action=='close'" type="primary" @click="submitClose" :disabled="dialogLoading">
-                            确定不予受理
-                        </el-button>
-                    </el-form>
-                    <h2 class="h2-style-show">上传附件：</h2>
-                    <div style="margin-bottom:20px;">
-                        <el-upload name="uploadFile" list-type="picture-card" accept="image/*"
-                                   :action="uploadAction" :file-list="uploadAvatars"
-                                   :on-success="handleAvatarSuccess"
-                                   :on-error="handlerAvatarError"
-                                   :show-file-list="true"
-                                   :on-preview="handlePictureCardPreview"
-                                   :on-remove="handleRemove">
-                            <i class="el-icon-plus"></i>
-                        </el-upload>
-                    </div>
-                    <h2 class="h2-style-show">审批记录：</h2>
-                    <table class="table table-responsive table-bordered">
-                        <tr>
-                            <th>流入时间</th>
-                            <th>办理步骤</th>
-                            <th>表单</th>
-                            <!--<th>整改</th>-->
-                            <th>意见</th>
-                            <th>办理时间</th>
-                            <th>耗时</th>
-                            <th>办理人</th>
-                        </tr>
-                        <tr v-for="h in history">
-                            <td>{{h.createTime | date('YYYY-MM-DD HH:mm')}}</td>
-                            <td>{{h.name}}</td>
-                            <td>
-                                <table v-if="h.formValue!=null" class="table table-bordered">
-                                    <tr v-for="(v,k) in h.formValue">
-                                        <th>{{k}}:</th>
-                                        <td>{{v}}</td>
+                        </td>
+                        <td>
+                            <template v-if="h.assignee">{{users[h.assignee]}}</template>
+                        </td>
+                    </tr>
+                </table>
+                <el-tabs v-model="tabPaneShow" type="card">
+                    <el-tab-pane label="申请企业/个人" name="first">
+                        <div>
+                            <div v-if="member && member.legalPerson!=null">
+                                <table class="table table-responsive table-bordered">
+                                    <tr>
+                                        <th width="140">办事企业/机构</th>
+                                        <td>{{member.legalPerson.companyName}}</td>
+                                        <th width="140">统一社会信用代码</th>
+                                        <td>{{member.legalPerson.companyCode}}</td>
                                     </tr>
-                                </table>
-                            </td>
-                            <!--<td>X</td>-->
-                            <td>{{h.reason}}</td>
-                            <td>
-                                <template v-if="h.endTime">{{h.endTime | date('YYYY-MM-DD HH:mm')}}
-                                </template>
-                            </td>
-                            <td>
-                                <template v-if="h.durationInMillis">{{h.durationInMillis | duration}}
-                                </template>
-                            </td>
-                            <td>
-                                <template v-if="h.assignee">{{users[h.assignee]}}</template>
-                            </td>
-                        </tr>
-                    </table>
-                    <el-tabs v-model="tabPaneShow" type="card">
-                        <el-tab-pane label="申请企业/个人" name="first">
-                            <div>
-                                <div v-if="member && member.legalPerson!=null">
-                                    <table class="table table-responsive table-bordered">
+                                    <tr>
+                                        <th width="140">法人姓名</th>
+                                        <td>{{member.legalPerson.legalPerson}}</td>
+                                        <th width="140">法人身份证号</th>
+                                        <td>{{member.legalPerson.idcard}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th width="140">企业/机构地址</th>
+                                        <td>{{member.legalPerson.registerPlace}}</td>
+                                        <th width="140">联系电话</th>
+                                        <td>{{member.legalPerson.phone}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th width="140">办事员电话</th>
+                                        <td>{{itemProcessVo.contactsPhone}}</td>
+                                        <th width="140"></th>
+                                        <td></td>
+                                    </tr>
+                                    <template v-if="companyInfo.id">
                                         <tr>
-                                            <th width="140">办事企业/机构</th>
-                                            <td>{{member.legalPerson.companyName}}</td>
-                                            <th width="140">统一社会信用代码</th>
-                                            <td>{{member.legalPerson.companyCode}}</td>
-                                        </tr>
-                                        <tr>
-                                            <th width="140">法人姓名</th>
-                                            <td>{{member.legalPerson.legalPerson}}</td>
-                                            <th width="140">法人身份证号</th>
-                                            <td>{{member.legalPerson.idcard}}</td>
-                                        </tr>
-                                        <tr>
-                                            <th width="140">企业/机构地址</th>
-                                            <td >{{member.legalPerson.registerPlace}}</td>
                                             <th width="140">联系电话</th>
-                                            <td >{{member.legalPerson.phone}}</td>
+                                            <td>{{companyInfo.lxdh}}</td>
+                                            <th width="140">企业类型</th>
+                                            <td>{{companyInfo.qllx}}</td>
                                         </tr>
                                         <tr>
-                                            <th width="140">办事员电话</th>
-                                            <td >{{itemProcessVo.contactsPhone}}</td>
-                                            <th width="140"></th>
-                                            <td ></td>
-                                        </tr>
-                                        <template v-if="companyInfo.id" >
-                                            <tr>
-                                                <th width="140">联系电话</th>
-                                                <td>{{companyInfo.lxdh}}</td>
-                                                <th width="140">企业类型</th>
-                                                <td>{{companyInfo.qllx}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th width="140">注册资金</th>
-                                                <td>{{companyInfo.zczj}}</td>
-                                                <th width="140">成立日期</th>
-                                                <td>{{companyInfo.clrq}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th width="140">营业期限</th>
-                                                <td colspan="3">{{companyInfo.yyqx}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th width="140">经营范围</th>
-                                                <td colspan="3">{{companyInfo.jyfw}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th width="140">状态</th>
-                                                <td>{{companyInfo.djzt}}</td>
-                                                <th width="140">所属街道</th>
-                                                <td>{{companyInfo.ssjd}}</td>
-                                            </tr>
-                                        </template>
-                                    </table>
-                                </div>
-                                <div v-if="member.naturePerson!=null && member.type == 3">
-                                    <h3>授权办事员信息：</h3>
-                                </div>
-                                <div v-if="member && member.naturePerson!=null">
-                                    <table class="table table-responsive table-bordered">
-                                        <tr>
-                                            <th width="140">姓名</th>
-                                            <td>{{member.naturePerson.name}}</td>
-                                            <th width="140">身份证号</th>
-                                            <td>{{member.naturePerson.idcard}}</td>
+                                            <th width="140">注册资金</th>
+                                            <td>{{companyInfo.zczj}}</td>
+                                            <th width="140">成立日期</th>
+                                            <td>{{companyInfo.clrq}}</td>
                                         </tr>
                                         <tr>
-                                            <th width="140">邮箱</th>
-                                            <td>{{member.email}}</td>
-                                            <th width="140">手机</th>
-                                            <td>{{member.naturePerson.phone}}</td>
+                                            <th width="140">营业期限</th>
+                                            <td colspan="3">{{companyInfo.yyqx}}</td>
                                         </tr>
                                         <tr>
-                                            <th width="140">地址</th>
-                                            <td colspan="3">{{member.naturePerson.address}}</td>
+                                            <th width="140">经营范围</th>
+                                            <td colspan="3">{{companyInfo.jyfw}}</td>
                                         </tr>
-                                    </table>
-                                </div>
+                                        <tr>
+                                            <th width="140">状态</th>
+                                            <td>{{companyInfo.djzt}}</td>
+                                            <th width="140">所属街道</th>
+                                            <td>{{companyInfo.ssjd}}</td>
+                                        </tr>
+                                    </template>
+                                </table>
                             </div>
-                        </el-tab-pane>
-                        <el-tab-pane label="办件进度" name="second">
-                            <div v-if="itemProcessVo.status==10">
-                                <table class="table table-bordered table-responsive">
-                                    <tr v-if="itemProcessVo.taskLimitTime">
-                                        <td>当前步骤期限</td>
-                                        <td>
-                                            {{itemProcessVo.taskLimitTime | date('YYYY-MM-DD HH:mm:ss')}}
-                                            <!--包括工作日{{itemProcessVo.taskLimitTime|fromNow}}-->
-                                        </td>
+                            <div v-if="member.naturePerson!=null && member.type == 3">
+                                <h3>授权办事员信息：</h3>
+                            </div>
+                            <div v-if="member && member.naturePerson!=null">
+                                <table class="table table-responsive table-bordered">
+                                    <tr>
+                                        <th width="140">姓名</th>
+                                        <td>{{member.naturePerson.name}}</td>
+                                        <th width="140">身份证号</th>
+                                        <td>{{member.naturePerson.idcard}}</td>
                                     </tr>
                                     <tr>
-                                        <td>当前办理步骤</td>
-                                        <td>{{itemProcessVo.currentTaskName}}</td>
+                                        <th width="140">邮箱</th>
+                                        <td>{{member.email}}</td>
+                                        <th width="140">手机</th>
+                                        <td>{{member.naturePerson.phone}}</td>
                                     </tr>
                                     <tr>
-                                        <td>督办件</td>
-                                        <td>{{itemProcessVo.flagSupervied | enums('YesNo')}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>超期件</td>
-                                        <td>{{itemProcessVo.flagTimeout | enums('YesNo')}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>整改状态</td>
-                                        <td>{{itemProcessVo.flagCorrection | enums('YesNo')}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>申请办件时间</td>
-                                        <td>{{itemProcessVo.startItemTime | date('YYYY-MM-DD HH:mm:ss')}}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>承诺办结日期</td>
-                                        <td>{{itemProcessVo.promiseFinishTime | date('YYYY-MM-DD HH:mm:ss')}}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>流入当前步骤时间</td>
-                                        <td>{{itemProcessVo.taskCreateTime | date('YYYY-MM-DD HH:mm:ss')}}
-                                        </td>
+                                        <th width="140">地址</th>
+                                        <td colspan="3">{{member.naturePerson.address}}</td>
                                     </tr>
                                 </table>
-                                <div style="text-align: center;">
-                                    <img :src="'/api/workSystem/itemProcessWork/showDiagram?processNumber=' + itemProcessVo.processNumber"
-                                         style="max-width:100%"/>
-                                </div>
                             </div>
-                            <div v-if="itemProcessVo.status==15">
-                                已办结
-                            </div>
-
-                            <div v-if="itemProcessVo.status==99">
-                                不予受理
-                            </div>
-
-                        </el-tab-pane>
-                        <el-tab-pane label="整改记录" name="third">
-                            <table class="table table-responsive table-bordered">
-                                <tr>
-                                    <th>整改时间</th>
-                                    <th>所在步骤</th>
-                                    <th>整改原因</th>
-                                    <th>操作人</th>
-                                </tr>
-                                <tr v-for="h in correctionList">
-                                    <td>{{h.correctionTime | date('YYYY-MM-DD HH:mm')}}</td>
-                                    <td>{{h.taskName}}</td>
-                                    <td style="white-space: pre-line">{{h.correctionReason}}
-                                    </td>
-                                    <td>{{h.correctionUserName}}</td>
-                                </tr>
-                            </table>
-                        </el-tab-pane>
-                        <el-tab-pane label="延期记录" name="fourth">
-                            <table class="table table-responsive table-bordered">
-                                <tr>
-                                    <th>申请时间</th>
-                                    <th>延期天数</th>
-                                    <th>延期到</th>
-                                    <th>所在步骤</th>
-                                    <th>延期原因</th>
-                                    <th>审核状态</th>
-                                    <th>申请人</th>
-                                    <th>审核人</th>
-                                    <th>操作</th>
-                                </tr>
-                                <tr v-for="h in extendTimeVoList">
-                                    <td>{{h.timeExtendApply | date('YYYY-MM-DD HH:mm')}}</td>
-                                    <td>{{h.timeExtendWorkdates}}</td>
-                                    <td>{{h.timeExtendToDate | date('YYYY-MM-DD HH:mm')}}</td>
-                                    <td>{{h.taskName}}</td>
-                                    <td>{{h.reason}}</td>
-                                    <td>{{h.timeExtendStatus | enums('TimeExtendStatus')}}</td>
-                                    <td>{{h.applyUserName}}</td>
-                                    <td>{{h.auditUserName}}</td>
-                                    <td>
-                                        <el-button
-                                                v-if="h.timeExtendStatus==1"
-                                                @click="cancelExtendTime(h.id)">撤销申请
-                                        </el-button>
-                                    </td>
-                                </tr>
-                            </table>
-                        </el-tab-pane>
-                        <el-tab-pane label="办件材料" name="fifth">
-                            <el-button @click="downloadMaterialFiles()" type="primary">一键下载材料</el-button><br><br>
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane label="办件进度" name="second">
+                        <div v-if="itemProcessVo.status==10">
                             <table class="table table-bordered table-responsive">
-                                <tr>
-                                    <th>序号</th>
-                                    <th>材料</th>
-                                    <th width="50">查看</th>
+                                <tr v-if="itemProcessVo.taskLimitTime">
+                                    <td>当前步骤期限</td>
+                                    <td>
+                                        {{itemProcessVo.taskLimitTime | date('YYYY-MM-DD HH:mm:ss')}}
+                                        <!--包括工作日{{itemProcessVo.taskLimitTime|fromNow}}-->
+                                    </td>
                                 </tr>
-                                <tr v-for="(c,index) in itemMaterialVoList">
-                                    <td>{{index + 1}}</td>
-                                    <td>{{c.name}}</td>
-                                    <td  style="text-align: center;">
-                                        <div v-if="c.multipleFile" style="color:blue">
+                                <tr>
+                                    <td>当前办理步骤</td>
+                                    <td>{{itemProcessVo.currentTaskName}}</td>
+                                </tr>
+                                <tr>
+                                    <td>督办件</td>
+                                    <td>{{itemProcessVo.flagSupervied | enums('YesNo')}}</td>
+                                </tr>
+                                <tr>
+                                    <td>超期件</td>
+                                    <td>{{itemProcessVo.flagTimeout | enums('YesNo')}}</td>
+                                </tr>
+                                <tr>
+                                    <td>整改状态</td>
+                                    <td>{{itemProcessVo.flagCorrection | enums('YesNo')}}</td>
+                                </tr>
+                                <tr>
+                                    <td>申请办件时间</td>
+                                    <td>{{itemProcessVo.startItemTime | date('YYYY-MM-DD HH:mm:ss')}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>承诺办结日期</td>
+                                    <td>{{itemProcessVo.promiseFinishTime | date('YYYY-MM-DD HH:mm:ss')}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>流入当前步骤时间</td>
+                                    <td>{{itemProcessVo.taskCreateTime | date('YYYY-MM-DD HH:mm:ss')}}
+                                    </td>
+                                </tr>
+                            </table>
+                            <div style="text-align: center;">
+                                <img :src="'/api/workSystem/itemProcessWork/showDiagram?processNumber=' + itemProcessVo.processNumber"
+                                     style="max-width:100%"/>
+                            </div>
+                        </div>
+                        <div v-if="itemProcessVo.status==15">
+                            已办结
+                        </div>
+
+                        <div v-if="itemProcessVo.status==99">
+                            不予受理
+                        </div>
+
+                    </el-tab-pane>
+                    <el-tab-pane label="整改记录" name="third">
+                        <table class="table table-responsive table-bordered">
+                            <tr>
+                                <th>整改时间</th>
+                                <th>所在步骤</th>
+                                <th>整改原因</th>
+                                <th>操作人</th>
+                            </tr>
+                            <tr v-for="h in correctionList">
+                                <td>{{h.correctionTime | date('YYYY-MM-DD HH:mm')}}</td>
+                                <td>{{h.taskName}}</td>
+                                <td style="white-space: pre-line">{{h.correctionReason}}
+                                </td>
+                                <td>{{h.correctionUserName}}</td>
+                            </tr>
+                        </table>
+                    </el-tab-pane>
+                    <el-tab-pane label="延期记录" name="fourth">
+                        <table class="table table-responsive table-bordered">
+                            <tr>
+                                <th>申请时间</th>
+                                <th>延期天数</th>
+                                <th>延期到</th>
+                                <th>所在步骤</th>
+                                <th>延期原因</th>
+                                <th>审核状态</th>
+                                <th>申请人</th>
+                                <th>审核人</th>
+                                <th>操作</th>
+                            </tr>
+                            <tr v-for="h in extendTimeVoList">
+                                <td>{{h.timeExtendApply | date('YYYY-MM-DD HH:mm')}}</td>
+                                <td>{{h.timeExtendWorkdates}}</td>
+                                <td>{{h.timeExtendToDate | date('YYYY-MM-DD HH:mm')}}</td>
+                                <td>{{h.taskName}}</td>
+                                <td>{{h.reason}}</td>
+                                <td>{{h.timeExtendStatus | enums('TimeExtendStatus')}}</td>
+                                <td>{{h.applyUserName}}</td>
+                                <td>{{h.auditUserName}}</td>
+                                <td>
+                                    <el-button
+                                            v-if="h.timeExtendStatus==1"
+                                            @click="cancelExtendTime(h.id)">撤销申请
+                                    </el-button>
+                                </td>
+                            </tr>
+                        </table>
+                    </el-tab-pane>
+                    <el-tab-pane label="办件材料" name="fifth">
+                        <el-button @click="downloadMaterialFiles()" type="primary">一键下载材料</el-button>
+                        <br><br>
+                        <table class="table table-bordered table-responsive">
+                            <tr>
+                                <th>序号</th>
+                                <th>材料</th>
+                                <th width="50">查看</th>
+                            </tr>
+                            <tr v-for="(c,index) in itemMaterialVoList">
+                                <td>{{index + 1}}</td>
+                                <td>{{c.name}}</td>
+                                <td style="text-align: center;">
+                                    <div v-if="c.multipleFile" style="color:blue">
                                             <span v-for="(file,index) in c.multipleFile">
                                             <span v-if="file.url!=null && file.url!=''">
                                             <a v-if="!/\.(gif|jpg|jpeg|png|GIF|JPG|PNG)$/.test(file.url)"
@@ -445,12 +450,36 @@
                                             </span>
                                             <span v-else>未上传</span>
                                          </span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </el-tab-pane>
-                    </el-tabs>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </el-tab-pane>
+                    <el-tab-pane label="表单信息" name="pretrialForm">
+                        <div v-if="pretrialForm && pretrialForm.length>0">
+                            <h2 class="h2-style-show">预审表单：</h2>
+                            <div v-for="form in pretrialForm">
+                                <table class="table table-responsive table-bordered">
+                                    <tr>
+                                        <th colspan="24" style="text-align: center;background: #eee;">{{form.title}}
+                                        </th>
+                                    </tr>
+                                    <tr v-for="row in form.rows">
+                                        <td v-for="(field,index) in row"
+                                            :colspan="field.size"
+                                            :key="field.id"
+                                            style="padding:5px;">
+                                    <span class="label"><span v-if="field.require" style="color:red">*</span>
+                                        {{field.labelAlias || field.label}}:</span> <span
+                                                class="value">{{field.value}}</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div v-else>无</div>
+                    </el-tab-pane>
+                </el-tabs>
                 <div>
                     <el-button v-if="itemProcessVo.flagCorrection || itemProcessVo.status == 99"
                                type="button" @click="print_ycxgzd(itemProcessVo.processNumber)">打印一次性告知单
@@ -565,7 +594,8 @@
                     up_user: '',
                     ssjd: '',
                     vtype: ''
-                }
+                },
+                pretrialForm: []
             }
         },
         created() {
@@ -599,7 +629,7 @@
                     } else {
                         this.$message.error(response.msg);
                     }
-                }).catch(e=>{
+                }).catch(e => {
                     this.listLoading = false;
                     console.error(e);
                     this.$message.error('加载超时');
@@ -614,7 +644,7 @@
                 this.uploadAvatars = []
                 this.processNumber = row.processNumber;
                 this.taskId = row.taskId;
-                this.textMapTitle = '部门办事 - ' + row.itemName + " | 办件号："+row.processNumber;
+                this.textMapTitle = '部门办事 - ' + row.itemName + " | 办件号：" + row.processNumber;
                 this.dialogFormVisible = true;
                 this.passRemark = '确认通过';
                 this.correctionReason = '1、\n2、\n3、\n4、\n5、\n';
@@ -627,30 +657,59 @@
                 }
                 getZwfwDeptWorkDetail(query).then(response => {
                     if (response.httpCode === 200) {
+
+
                         this.dialogLoading = false;
-                        this.approveStepList = response.data.approveStepList;
-                        this.itemConditionVoList = response.data.itemConditionVoList;
-                        this.itemMaterialVoList = response.data.itemMaterialVoList;
-                        this.itemProcessVo = response.data.itemProcessVo;
-                        this.taskForm = response.data.taskForm;
-                        this.itemVo = response.data.itemVo;
-                        this.member = response.data.member;
-                        this.history = response.data.history;
-                        this.users = response.data.users;
-                        this.itemTaskSetting = response.data.itemTaskSetting || {};
+                        let data = response.data;
+                        this.approveStepList = data.approveStepList;
+                        this.itemConditionVoList = data.itemConditionVoList;
+                        this.itemMaterialVoList = data.itemMaterialVoList;
+                        this.itemProcessVo = data.itemProcessVo;
+                        this.taskForm = data.taskForm;
+                        this.itemVo = data.itemVo;
+                        this.member = data.member;
+                        this.history = data.history;
+                        this.users = data.users;
+                        this.itemTaskSetting = data.itemTaskSetting || {};
                         this.action = '';
-                        this.correctionList = response.data.correctionList;
-                        this.extendTimeVoList = response.data.extendTimeVoList;
-                        const itemProcessAttachmentList = response.data.itemProcessAttachmentList;
-                        for (var o in itemProcessAttachmentList) {
+                        this.correctionList = data.correctionList;
+                        this.extendTimeVoList = data.extendTimeVoList;
+                        const itemProcessAttachmentList = data.itemProcessAttachmentList;
+                        for (let o in itemProcessAttachmentList) {
                             this.uploadAvatars.push(
-                                {url: itemProcessAttachmentList[o].fileUrl,
-                                id: itemProcessAttachmentList[o].id,
-                                taskId: itemProcessAttachmentList[o].taskId}
+                                {
+                                    url: itemProcessAttachmentList[o].fileUrl,
+                                    id: itemProcessAttachmentList[o].id,
+                                    taskId: itemProcessAttachmentList[o].taskId
+                                }
                             );
                         }
-                        if(this.member) {
+                        if (this.member) {
                             this.queryCompanyInfo(this.member);
+                        }
+
+                        this.pretrialForm = [];
+                        for (const form of data.pretrialForm || []) {
+                            for (const field of form.fields) {
+                                field.value = data.pretrialFormFieldValueMap[field.fieldId] || '';
+                            }
+                            const fields = form.fields;
+                            const rowsData = [];
+                            let pos = 0;
+                            let rows = 0;
+                            fields.forEach(field => {
+                                if (24 - pos < field.size) {
+                                    rows++;
+                                    pos = 0;
+                                }
+                                pos += field.size;
+                                if (!rowsData[rows]) {
+                                    rowsData[rows] = [];
+                                }
+                                rowsData[rows].push(field);
+                            });
+                            form.rows = rowsData;
+                            this.pretrialForm.push(form);
                         }
                     } else {
                     }
@@ -665,7 +724,7 @@
              * 查询企业信息
              */
             queryCompanyInfo(memberInfo) {
-                if(!memberInfo){
+                if (!memberInfo) {
                     return;
                 }
                 this.companyInfo = {};
@@ -724,7 +783,7 @@
                     } else {
                         this.$message.error(response.msg);
                     }
-                }).catch(e=>{
+                }).catch(e => {
                     this.dialogLoading = false;
                 })
             },
@@ -743,12 +802,12 @@
                         this.dialogFormVisible = false;
                         this.$message.success('提交成功');
                         this.getList();
-                        this.this.dialogLoading =  false;
+                        this.this.dialogLoading = false;
                     } else {
                         this.$message.error(response.msg);
                     }
-                }).catch(e =>{
-                    this.dialogLoading =false;
+                }).catch(e => {
+                    this.dialogLoading = false;
                 })
             },
             /**
@@ -772,7 +831,7 @@
                     } else {
                         this.$message.error(response.msg);
                     }
-                }).catch(e=>{
+                }).catch(e => {
                     this.dialogLoading = true;
                 })
             },
@@ -796,7 +855,7 @@
                     } else {
                         this.$message.error(response.msg);
                     }
-                }).catch(e =>{
+                }).catch(e => {
                     this.dialogLoading = false;
                 })
             },
@@ -821,14 +880,14 @@
             },
             print_ycxgzd(processNumber) {
                 if (processNumber != null) {
-                    window.open('/admin/print/ycxgzd.html?processNumber=' + processNumber);
+                    window.open('print/ycxgzd.html?processNumber=' + processNumber);
                     // window.open('/api/hallSystem/hallCompositeWindow/downloadYcxgzd?processNumber=' + processNumber);
                 }
             },
 
             downloadMaterialFiles() {
                 // console.log(this.itemProcessVo);
-                window.open('/api/common/downloadMaterialFiles?processNumber='+this.itemProcessVo.processNumber+'&taskId='+this.itemProcessVo.taskId);
+                window.open('/api/common/downloadMaterialFiles?processNumber=' + this.itemProcessVo.processNumber + '&taskId=' + this.itemProcessVo.taskId);
             },
 
             /**
@@ -878,12 +937,12 @@
                 }
                 workUploadImgRemove(data).then(response => {
                     this.dialogLoading = false;
-                    if(response.httpCode === 200){
+                    if (response.httpCode === 200) {
                         this.$message.success("删除成功");
-                    }else{
+                    } else {
                         this.$message.error("删除失败");
                     }
-                }).then(e=>{
+                }).then(e => {
                     this.dialogLoading = false;
                 })
             }
@@ -928,7 +987,7 @@
     }
 
     .h2-style-show {
-        font-weight: 100;
+        font-weight: 400;
         font-size: 24px;
         margin-top: 5px;
     }

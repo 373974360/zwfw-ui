@@ -15,29 +15,29 @@
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column type="selection" width="55"/>
             <el-table-column align="center" label="模板ID">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.template_id}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="模板标题" prop="sms_title">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" content="点击编辑" placement="right-start">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.sms_title}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="模板内容" prop="sms_content">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.sms_content}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="短信签名" prop="sms_signature">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.sms_signature}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="enable" class-name="status-col" label="状态">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tag :type="scope.row.template_status | smsStatusFilter">
                         {{scope.row.template_status | dics('sms-status')}}
                     </el-tag>
@@ -62,7 +62,7 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item label="常用字段">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <template v-for="(sysMessageFiled,index) in sysMessageFiledList">
                             <div class="wrapper" v-if="index != 0 && index % 6 == 0"></div>
                             <el-button type="info" @click="btnClick(sysMessageFiled.value)">{{sysMessageFiled.name}}

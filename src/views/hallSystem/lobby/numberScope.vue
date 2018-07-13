@@ -19,29 +19,29 @@
                   style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"/>
             <el-table-column align="center" label="序号" width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
             <el-table-column min-width="50px" align="center" label="排号单前缀">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tooltip content="点击编辑" placement="right" effect="dark">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.prefixName}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="起始段号">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.beginNumber}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="创建时间">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.createTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作" width="350">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-badge :value="scope.row.numberItemCount" class="item">
                         <el-button class="filter-item" @click="handleItemList(scope.row)"
                                    type="primary" size="small">
@@ -96,34 +96,34 @@
                       style="width: 100%" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55"/>
                 <el-table-column align="center" label="序号">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.id}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="事项名称" prop="name">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.itemName}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="基本编码" prop="basicCode">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.basicCode}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="事项类型" prop="type">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span>{{scope.row.type | dics('sslx')}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="办件类型" prop="processType">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <el-tag :type="scope.row.processType | dics('bjlx')">
                             {{scope.row.processType | dics('bjlx')}}
                         </el-tag>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="办理形式" prop="handleType">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <el-tag :type="scope.row.handleType | dics('blxs')">
                             {{scope.row.handleType | dics('blxs')}}
                         </el-tag>

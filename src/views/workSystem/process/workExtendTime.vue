@@ -17,52 +17,52 @@
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
             <el-table-column align="center" label="ID" >
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="办件流水" >
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.processNumber}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="延期任务" >
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.taskName}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="延期原因">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <div style="white-space:pre-wrap;text-align: left;">{{scope.row.reason}}</div>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="申请人">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.applyUserName}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="申请时间">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.timeExtendApply | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="延期工作日">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.timeExtendWorkdates}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="延期到">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.timeExtendToDate | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="enable" class-name="status-col" label="状态">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.timeExtendStatus | enums('TimeExtendStatus')}}</span>
                 </template>
             </el-table-column>
             <el-table-column v-if="operatorShow" align="center" label="操作" width="180">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <div v-show="scope.row.timeExtendStatus == 1" class="filter-container" style="display: flex;">
                         <el-button class="filter-item-show" type="primary" @click="agree(scope.row)">同意
                         </el-button>

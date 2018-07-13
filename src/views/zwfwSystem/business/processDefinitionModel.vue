@@ -37,29 +37,29 @@
                   style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"/>
             <el-table-column align="center" label="模型ID" width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
             <el-table-column  align="center" label="流程模型名称">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-tooltip content="点击编辑" placement="right" effect="dark">
                         <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.name}}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column min-width="50px" align="center" label="修订">
-                <template scope="scope">
+                <template slot-scope="scope">
                     {{scope.row.revision}}
                 </template>
             </el-table-column>
             <el-table-column min-width="50px" align="center" label="发布的流程定义">
-                <template scope="scope">
+                <template slot-scope="scope">
                     {{scope.row.deploymentId}}
                 </template>
             </el-table-column>
             <el-table-column align="center" label="创建时间" width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.createTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>

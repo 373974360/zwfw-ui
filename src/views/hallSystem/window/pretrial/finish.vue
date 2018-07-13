@@ -12,18 +12,18 @@
         <el-table :data="pretrialList" v-loading.body="listLoading" border fit highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column align="center" label="预审号">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.processNumber}}<br/>({{scope.row.itemName}})</span>
                 </template>
             </el-table-column>
             <!--<el-table-column width="250px" align="center" label="申请企业（个人）">-->
-            <!--<template scope="scope">-->
+            <!--<template slot-scope="scope">-->
             <!--<span v-if="scope.row.companyName != null">{{scope.row.companyName}}</span>-->
             <!--<span v-if="scope.row.memberName != null">{{scope.row.memberName}}</span>-->
             <!--</template>-->
             <!--</el-table-column>-->
             <!--<el-table-column align="center" label="办事员">-->
-            <!--<template scope="scope">-->
+            <!--<template slot-scope="scope">-->
             <!--<span v-if="scope.row.clerkName != null && scope.row.memberType == 3">{{scope.row.clerkName}}</span>-->
             <!--<span v-if="scope.row.memberName != null && scope.row.memberType == 1 || scope.row.memberType == 2">{{scope.row.memberName}}</span>-->
             <!--</template>-->
@@ -31,7 +31,7 @@
 
 
             <el-table-column align="left" label="申请企业（个人）" min-width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.memberType == 1">
                         姓名：{{scope.row.memberName}}<br>联系电话：{{scope.row.memberPhone}}<br>
                     </span>
@@ -44,7 +44,7 @@
                 </template>
             </el-table-column>
             <el-table-column align="left" label="办事员信息" min-width="200">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span v-if="scope.row.memberType == 3">
                         <span>
                             姓名：{{scope.row.clerkName}}<br>
@@ -58,32 +58,32 @@
                 </template>
             </el-table-column>
             <el-table-column align="center" label="申请时间">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.applyTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="审核时间">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.auditTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="审核期限">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.expireDate | date('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="状态">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <span>{{scope.row.status | enums('PretrialStatus')}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="备注">
-                <template scope="scope">
-                    <span>{{scope.row.remark}}</span>
+                <template slot-scope="scope">
+                    <div style="white-space:pre-wrap;text-align: left;">{{scope.row.remark}}</div>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="操作">
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-button class="filter-item" type="primary"
                                @click="editAudit(scope.row)">查 看
                     </el-button>
@@ -98,7 +98,7 @@
         </div>
         <el-dialog size="large" :close-on-click-modal="closeOnClickModal" :title="titleName"
                    :visible.sync="dialogFormVisible"
-        >
+                   :before-close="resetItemPretrialForm">
             <div>
                 <div v-if="member.legalPerson != null">
                     <h2 class="h2-style-show">办事企业/机构信息:</h2>
@@ -145,6 +145,25 @@
 
                     </table>
                 </div>
+                <div v-if="pretrialForm && pretrialForm.length>0">
+                    <h2 class="h2-style-show">预审表单：</h2>
+                    <div v-for="form in pretrialForm">
+                        <table class="table table-responsive table-bordered">
+                            <tr>
+                                <th colspan="24" style="text-align: center;background: #eee;">{{form.title}}</th>
+                            </tr>
+                            <tr v-for="row in form.rows">
+                                <td v-for="(field,index) in row"
+                                    :colspan="field.size"
+                                    :key="field.id"
+                                    style="padding:5px;">
+                                    <span class="label"><span v-if="field.require" style="color:red">*</span>
+                                        {{field.labelAlias || field.label}}:</span> <span class="value">{{field.value}}</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
                 <div class="table-show">
                     <div class="table-inline">
                         <h2 class="h2-style-show">预审材料:</h2>
@@ -153,7 +172,7 @@
                                 <th>名称</th>
                                 <th width="50">链接</th>
                             </tr>
-                            <tr v-for="m in materialList">
+                            <tr v-for="m in pretrialMaterialList">
                                 <td>{{m.itemMaterialName}}</td>
                                 <td style="text-align: center;">
                                     <template v-for="(file,index) in m.itemMaterialUrl.split('|')">
@@ -192,7 +211,7 @@
                             </tr>
                             <tr>
                                 <th width="140">备注</th>
-                                <td>{{itemPretrial.remark}}</td>
+                                <td style="white-space:pre-wrap;text-align: left;">{{itemPretrial.remark}}</td>
                             </tr>
                         </table>
                     </div>
@@ -204,11 +223,10 @@
 <script>
     import {
         getZwfwItemPretrialList,
-        getPretrialDetail,
-        submitReview
-    } from 'api/hallSystem/window/pretrial/itemPretrial';
+        getPretrialDetail
+    } from '../../../../api/hallSystem/window/pretrial/itemPretrial';
     import {mapGetters} from 'vuex';
-    import {copyProperties} from 'utils';
+    import {copyProperties, resetForm} from 'utils';
 
     export default {
         name: 'table_demo',
@@ -225,12 +243,14 @@
                 },
                 legalPerson: [],
                 member: [],
-                materialList: [],
+                pretrialMaterialList: [],
                 itemPretrial: [],
                 titleName: '',
                 currentItemPretrial: [],
                 dialogStatus: '',
-                dialogFormVisible: false
+                dialogFormVisible: false,
+                pretrialForm: []
+
             }
         },
         created() {
@@ -275,20 +295,48 @@
                 this.resetTemp();
                 this.itemPretrial = copyProperties(this.itemPretrial, row);
                 this.processNumber = row.id;
-                this.titleName = '办件预审' + " | 办件号：" + row.processNumber;
+                this.titleName = '办件预审' + ' | 办件号：' + row.processNumber;
                 this.dialogFormVisible = true;
                 this.getPretrialDetail();
             },
             getPretrialDetail() {
                 getPretrialDetail(this.processNumber).then(response => {
                     if (response.httpCode === 200) {
-                        this.member = response.data.member;
-                        this.materialList = response.data.pretrialMaterialList;
+                        const data = response.data;
+                        this.member = data.member;
+                        this.pretrialMaterialList = data.pretrialMaterialList;
                         this.itemPretrial = this.currentItemPretrial;
+                        this.itemPretrial.status = '';
+                        this.pretrialForm = [];
+                        for (const form of data.pretrialForm || []) {
+                            for (const field of form.fields) {
+                                field.value = data.pretrialFormFieldValueMap[field.fieldId] || '';
+                            }
+                            const fields = form.fields;
+                            const rowsData = [];
+                            let pos = 0;
+                            let rows = 0;
+                            fields.forEach(field => {
+                                if (24 - pos < field.size) {
+                                    rows++;
+                                    pos = 0;
+                                }
+                                pos += field.size;
+                                if (!rowsData[rows]) {
+                                    rowsData[rows] = [];
+                                }
+                                rowsData[rows].push(field);
+                            });
+                            form.rows = rowsData;
+                            this.pretrialForm.push(form);
+                        }
                     } else {
                         this.$message.error('数据加载失败')
                     }
-                })
+                }).catch(e => {
+                    console.error(e);
+                    this.$message.error('数据加载失败');
+                });
             },
             resetTemp() {
                 this.itemPretrial = {
@@ -301,6 +349,11 @@
                     status: '',
                     remark: ''
                 };
+            },
+            resetItemPretrialForm() {
+                this.dialogFormVisible = false;
+                this.resetTemp();
+                resetForm(this, 'zwfwItemPretrial');
             }
         }
     }
@@ -322,6 +375,10 @@
         background-color: transparent;
         border-spacing: 0;
         border-collapse: collapse;
+    }
+
+    label {
+        font-weight: 500;
     }
 
     .table > tr > td, .table > tr > th {
@@ -358,8 +415,16 @@
     }
 
     .h2-style-show {
-        font-weight: 100;
+        font-weight: 400;
         font-size: 24px;
         margin-top: 5px;
+    }
+
+    .pretrialFormTable .label {
+        font-weight: bold;
+    }
+
+    .pretrialFormTable .value {
+        padding: 0px 20px;
     }
 </style>

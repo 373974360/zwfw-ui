@@ -94,7 +94,7 @@
                                     <el-table-column
                                             prop="dept"
                                             label="操作">
-                                        <template scope="scope">
+                                        <template slot-scope="scope">
                                             <el-button @click="delCadidateUser(scope.row)">删除</el-button>
                                         </template>
                                     </el-table-column>
