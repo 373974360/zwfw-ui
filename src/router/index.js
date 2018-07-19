@@ -47,6 +47,7 @@ const NumberScope = () => import('../views/hallSystem/lobby/numberScope');
 /* 业务管理 */
 const Category = () => import('../views/hallSystem/business/category');
 const Item = () => import('../views/hallSystem/business/item');
+const Material = () => import('../views/hallSystem/business/material');
 
 /* 统计分析 */
 const CallCount = () => import('../views/hallSystem/count/callCount');
@@ -239,6 +240,12 @@ export const asyncRouterMap = [
                 component: Category,
                 name: '事项分类管理 ',
                 meta: {permission: 'hallSystem:business:category:list'}
+            },
+            {
+                path: 'material',
+                component: Material,
+                name: '材料管理',
+                meta: {permission: 'hallSystem:business:material:list'}
             },
             {
                 path: 'item',

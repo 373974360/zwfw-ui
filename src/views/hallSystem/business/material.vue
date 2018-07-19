@@ -70,6 +70,21 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
+                <el-form-item label="原件份数" prop="originalNumber">
+                    <el-input-number v-model="zwfwMaterial.originalNumber" :min="0" :max="20"/>
+                </el-form-item>
+                <el-form-item label="复印件份数" prop="cpoyNumber">
+                    <el-input-number v-model="zwfwMaterial.cpoyNumber" :min="0" :max="20"/>
+                </el-form-item>
+                <el-form-item label="是否必须" prop="necessary">
+                    <el-switch
+                            v-model="zwfwMaterial.necessary"
+                            on-color="#13ce66"
+                            off-color="#ff4949"
+                            :on-value="true"
+                            :off-value="false">
+                    </el-switch>
+                </el-form-item>
                 <el-form-item label="是否需要电子材料" prop="electronicMaterial">
                     <el-switch
                             v-model="zwfwMaterial.electronicMaterial"
@@ -190,7 +205,10 @@
                     source: '',
                     type: '',
                     example: '',
-                    notice: ''
+                    notice: '',
+                    necessary: 0,
+                    originalNumber: 0,
+                    cpoyNumber: 0
                 },
                 currentRow: null,
                 selectedRows: [],

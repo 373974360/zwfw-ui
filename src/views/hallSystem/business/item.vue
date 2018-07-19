@@ -100,22 +100,22 @@
                     </el-tag>
                 </template>
             </el-table-column>
-            <!--<el-table-column align="left" label="操作" width="200" class-name="action">
+            <el-table-column align="left" label="操作" width="100" class-name="action">
                 <template scope="scope">
                     <el-badge :value="scope.row.itemMaterialCount" class="item">
-                        &lt;!&ndash;<el-button class="filter-item" style="" @click="handleMaterialList(scope.row)"
+                        <el-button class="filter-item" style="" @click="handleMaterialList(scope.row)"
                                    type="primary" size="small">
                             办件材料
                         </el-button>
-                        <br/>&ndash;&gt;
-                        &lt;!&ndash;<br />&ndash;&gt;
-                        &lt;!&ndash;<el-button class="filter-item" style="" @click="handleItemConfig(scope.row)"&ndash;&gt;
-                        &lt;!&ndash;type="primary" size="small">&ndash;&gt;
-                        &lt;!&ndash;预约配置&ndash;&gt;
-                        &lt;!&ndash;</el-button>&ndash;&gt;
+                        <br/>
+                        <!--<br />-->
+                        <!--<el-button class="filter-item" style="" @click="handleItemConfig(scope.row)"-->
+                        <!--type="primary" size="small">-->
+                        <!--预约配置-->
+                        <!--</el-button>-->
                     </el-badge>
                 </template>
-            </el-table-column>-->
+            </el-table-column>
         </el-table>
 
         <div v-show="!pageLoading" class="pagination-container">
@@ -125,7 +125,8 @@
             </el-pagination>
         </div>
 
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogItemFormVisible" @open="initEditor"
+        <el-dialog :title="zwfwItem.id?('编辑事项，ID:' + zwfwItem.id):'添加事项'" :visible.sync="dialogItemFormVisible"
+                   @open="initEditor"
                    :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemForm">
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem" label-position="right"
                      label-width="134px"
@@ -348,13 +349,25 @@
                     <el-checkbox-group v-model="zwfwItem.handTypes" @change="handleHandTypesChange">
                         <template v-for="item in enums['HandType']">
                             <el-checkbox
-                                    v-if="item.code == 1"
                                     :disabled="(zwfwItem.handleType=='blxs_ckbl' && (item.code==2 || item.code==3)) ? true : false"
                                     :key="item.code" :label="item.code + ''">
                                 {{item.value}}
                             </el-checkbox>
                         </template>
                     </el-checkbox-group>
+                </el-form-item>
+                <el-form-item label="网办深度" prop="handleDeep">
+                    <el-radio-group v-model="zwfwItem.handleDeep">
+                        <el-radio v-for="item in dics['wbsd']"
+                                  :key="item.code"
+                                  :label="item.code"
+                                  :value="item.code">
+                            <span style="font-weight:normal;">{{item.value}}</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="到窗口次数" prop="comTimes">
+                    <el-input-number v-model="zwfwItem.comTimes" :min="0" :max="10"/>
                 </el-form-item>
                 <el-form-item v-if="zwfwItem.handTypes.includes('2')" label="收件人员" prop="handUserId">
                     <el-select v-model="zwfwItem.handUserId" remote :remote-method="queryHandUserId" filterable
@@ -391,7 +404,7 @@
                 </el-form-item>
                 <el-form-item label="取件方式" prop="takeTypes">
                     <el-checkbox-group v-model="zwfwItem.takeTypes">
-                        <el-checkbox v-for="item in enums['TakeType']" v-if="item.code != 2"
+                        <el-checkbox v-for="item in enums['TakeType']"
                                      :key="item.code" :label="item.code + ''">
                             {{item.value}}
                         </el-checkbox>
@@ -466,6 +479,16 @@
                 <el-form-item label="结果名称" prop="resultName">
                     <el-input v-model="zwfwItem.resultName"></el-input>
                 </el-form-item>
+                <el-form-item label="办件结果类型" prop="resultType">
+                    <el-radio-group v-model="zwfwItem.resultType">
+                        <el-radio v-for="item in dics['bjjglx']"
+                                  :key="item.code"
+                                  :label="item.code"
+                                  :value="item.code">
+                            <span style="font-weight:normal;">{{item.value}}</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
                 <el-form-item label="预审天数" prop="pretrialDays">
                     <el-input v-model="zwfwItem.pretrialDays"></el-input>
                 </el-form-item>
@@ -482,7 +505,14 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="中介服务" prop="mediumService">
-                    <el-input v-model="zwfwItem.mediumService"></el-input>
+                    <el-radio-group v-model="zwfwItem.mediumService">
+                        <el-radio v-for="item in enums['YesNo']"
+                                  :key="item.code"
+                                  :label="item.code"
+                                  :value="item.code">
+                            <span style="font-weight:normal;">{{item.value}}</span>
+                        </el-radio>
+                    </el-radio-group>
                 </el-form-item>
                 <el-form-item label="常见问题" prop="commonRequestion">
                     <el-input v-model="zwfwItem.commonRequestion"></el-input>
@@ -603,6 +633,21 @@
                                 :value="item.code">
                         </el-option>
                     </el-select>
+                </el-form-item>
+                <el-form-item label="原件份数" prop="originalNumber">
+                    <el-input-number v-model="zwfwItemMaterial.originalNumber" :min="0" :max="20"/>
+                </el-form-item>
+                <el-form-item label="复印件份数" prop="cpoyNumber">
+                    <el-input-number v-model="zwfwItemMaterial.cpoyNumber" :min="0" :max="20"/>
+                </el-form-item>
+                <el-form-item label="是否必须" prop="necessary">
+                    <el-switch
+                            v-model="zwfwItemMaterial.necessary"
+                            on-color="#13ce66"
+                            off-color="#ff4949"
+                            :on-value="true"
+                            :off-value="false">
+                    </el-switch>
                 </el-form-item>
                 <el-form-item label="是否需要电子材料" prop="electronicMaterial">
                     <el-switch
@@ -911,7 +956,10 @@
                     source: '',
                     type: '',
                     example: '',
-                    notice: ''
+                    notice: '',
+                    necessary: 0,
+                    originalNumber: 0,
+                    cpoyNumber: 0
                 },
                 isMaterialExist: false,
                 zwfwItemConfig: {
