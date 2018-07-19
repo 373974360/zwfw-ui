@@ -179,7 +179,7 @@
     require('echarts/lib/component/title');
     require('echarts/lib/component/visualMap');
     import {date} from '../../../../filters'
-    import {getAllByNameOrbasicCode} from '../../../../api/zwfwSystem/business/item'
+    import {getAllByNameOrbasicCode} from '../../../../api/hallSystem/business/item'
     import {getAllDept} from '../../../../api/baseSystem/org/dept'
     import {getAllWindow} from '../../../../api/hallSystem/lobby/window';
     import {getAllUser} from '../../../../api/baseSystem/org/user';

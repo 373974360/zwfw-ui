@@ -263,7 +263,7 @@
                 delMenu(id).then(response => {
                     if (response.httpCode === 200) {
                         this.$message.success('删除成功！');
-                        TreeUtil.delRow(response.data, this.menuList);
+                        // TreeUtil.delRow(response.data, this.menuList);
                     } else {
                         this.$message.error('删除失败！');
                     }

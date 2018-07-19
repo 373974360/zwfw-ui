@@ -10,18 +10,6 @@
                 <wscn-icon-svg icon-class="hallSystem"/>
                 <el-button class="pan-btn light-blue-btn" @click="go(1)">大厅综合管理系统</el-button>
             </div>
-            <div class="systemItem" v-if="hasPermission(2)">
-                <wscn-icon-svg icon-class="zwfwSystem"/>
-                <el-button class="pan-btn light-blue-btn" @click="go(2)">政务服务管理系统</el-button>
-            </div>
-            <div class="systemItem" v-if="hasPermission(3)">
-                <wscn-icon-svg icon-class="workSystem"/>
-                <el-button class="pan-btn light-blue-btn" @click="go(3)">政务业务办理系统</el-button>
-            </div>
-            <div class="systemItem" v-if="hasPermission(4)">
-                <wscn-icon-svg icon-class="dataShareSystem"/>
-                <el-button class="pan-btn light-blue-btn" @click="go(4)">共享数据管理系统</el-button>
-            </div>
         </div>
         <div style="float:right;z-index:2000;margin:20px;">
             <el-button @click="logout" class="small">退出登录</el-button>
@@ -42,7 +30,7 @@
         data() {
             return {
                 currentDate: new Date(),
-                systemList: ['baseSystem','hallSystem','zwfwSystem','workSystem','dataShareSystem']
+                systemList: ['baseSystem','hallSystem']
             };
         },
         methods: {

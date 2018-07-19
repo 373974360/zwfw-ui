@@ -50,7 +50,7 @@
     require('echarts/lib/component/dataZoom');
     import {mapGetters} from 'vuex';
     import {date} from '../../../../filters'
-    import {getAllByNameOrbasicCode} from '../../../../api/zwfwSystem/business/item'
+    import {getAllByNameOrbasicCode} from '../../../../api/hallSystem/business/item'
     import {getAllDept} from '../../../../api/baseSystem/org/dept'
     import {getAllWindow} from '../../../../api/hallSystem/lobby/window';
     import {dataPlotByWindow, dataPlotAvgByWindowId} from '../../../../api/hallSystem/count/count'

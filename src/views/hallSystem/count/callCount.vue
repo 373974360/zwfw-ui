@@ -86,7 +86,7 @@
     require('echarts/lib/component/dataZoom');
     import {mapGetters} from 'vuex';
     import moment from 'moment';
-    import {getAllCategory} from 'api/zwfwSystem/business/category';
+    import {getAllCategory} from 'api/hallSystem/business/category';
     import {getAllWindow} from 'api/hallSystem/lobby/window';
     import {plotByCategory, plotByWindow, plotByUser, plotByFixCategory} from 'api/hallSystem/count/dataPlot';
     import {getAllUser} from 'api/baseSystem/org/user';

@@ -44,53 +44,10 @@ const HallSystem = () => import('../views/hallSystem/index');
 /* 大厅管理 */
 const Window = () => import('../views/hallSystem/lobby/window');
 const NumberScope = () => import('../views/hallSystem/lobby/numberScope');
-/* 会员管理 */
-const NaturePerson = () => import('../views/hallSystem/member/naturePerson');
-const LegalPerson = () => import('../views/hallSystem/member/legalPerson');
-/* 综合窗口 */
-/* 窗口收件*/
-const WindowAccept = () => import('../views/hallSystem/window/receive/windowAccept');
-/* 寄件待收查询*/
-const SendingMaterial = () => import('../views/hallSystem/window/receive/sendingMaterial');
-/* 收件记录*/
-const Record = () => import('../views/hallSystem/window/receive/record');
-/* 办结取件*/
-const TakeAway = () => import('../views/hallSystem/window/receive/takeAway');
-/* 出件管理*/
-const Delivery = () => import('../views/hallSystem/window/delivery/index');
-/* 快件箱管理*/
-const Mailbox = () => import('../views/hallSystem/window/mailbox/index');
-/* 收件地址管理*/
-const Addressee = () => import('../views/hallSystem/window/addressee/index');
-/* 企业信息 */
-const CompanyInfo = () => import('../views/hallSystem/window/companyInfo/index');
-/* 未预审 */
-const Pending = () => import('../views/hallSystem/window/pretrial/pending');
-/* 已预审 */
-const Finish = () => import('../views/hallSystem/window/pretrial/finish');
-/* 预审整改 */
-const Correction = () => import('../views/hallSystem/window/pretrial/correction');
-/* 预审未受理 */
-const NoAccept = () => import('../views/hallSystem/window/pretrial/noAccept');
-/* 街办收件 */
-const WindowWork = () => import('../views/hallSystem/window/street/windowWork');
-/* 街办查询 */
-const WindowHistory = () => import('../views/hallSystem/window/street/windowHistory');
-
-/************************政务服务管理系统************************/
-/* index */
-const ZwfwSystem = () => import('../views/zwfwSystem/index');
 /* 业务管理 */
-const Category = () => import('../views/zwfwSystem/business/category');
-const Material = () => import('../views/zwfwSystem/business/material');
-const Item = () => import('../views/zwfwSystem/business/item');
-const ProcessDefinitionModel = () => import('../views/zwfwSystem/business/processDefinitionModel');
-const ProcessDefinition = () => import('../views/zwfwSystem/business/processDefinition');
-const TaskSetting = () => import('../views/zwfwSystem/business/taskSetting');
-const EnterpriseInfoGet = () => import('../views/zwfwSystem/business/enterpriseInfoGet');
-const EnterpriseInfoUp = () => import('../views/zwfwSystem/business/enterpriseInfoUp');
+const Category = () => import('../views/hallSystem/business/category');
+const Item = () => import('../views/hallSystem/business/item');
 
-const FormEditor = () => import('../views/zwfwSystem/business/formEditor');
 /* 统计分析 */
 const CallCount = () => import('../views/hallSystem/count/callCount');
 const OrderAndLine = () => import('../views/hallSystem/count/operation/orderAndLine');
@@ -99,25 +56,6 @@ const DeptHandle = () => import('../views/hallSystem/count/operation/deptHandle'
 const StaffSatisfaction = () => import('../views/hallSystem/count/operation/staffSatisfaction');
 const DeptSatisfaction = () => import('../views/hallSystem/count/operation/deptSatisfaction');
 const Business = () => import('../views/hallSystem/count/approval/business');
-
-/************************政务服务办理系统************************/
-/* index */
-const WorkSystem = () => import('../views/workSystem/index');
-/* 办件管理 */
-const WorkPending = () => import('../views/workSystem/process/workPending');
-/* 待办事项 */
-const WorkQuery = () => import('../views/workSystem/process/workQuery');
-/* 办结查询 */
-const WorkFinish = () => import('../views/workSystem/process/WorkFinish');
-/* 办件查询 */
-const WorkExtendTime = () => import('../views/workSystem/process/workExtendTime');
-/* 延期审核管理 */
-const WorkSupervise = () => import('../views/workSystem/process/workSupervise');
-/* 督办管理 */
-
-/************************共享数据管理系统************************/
-/* index */
-const DataShareSystem = () => import('../views/dataShareSystem/index');
 
 /* error page */
 const Err404 = () => import('../views/common/error/404');
@@ -157,30 +95,6 @@ export const constantRouterMap = [
         meta: {permission: 'hallSystem:admin'},
         hidden: true,
         children: [{path: 'index', component: HallSystem}]
-    },
-    {
-        path: '/zwfwSystem',
-        component: Layout,
-        name: '政务服务管理系统',
-        meta: {permission: 'zwfwSystem:admin'},
-        hidden: true,
-        children: [{path: 'index', component: ZwfwSystem}]
-    },
-    {
-        path: '/workSystem',
-        component: Layout,
-        name: '政务业务办理系统',
-        meta: {permission: 'workSystem:admin'},
-        hidden: true,
-        children: [{path: 'index', component: WorkSystem}]
-    },
-    {
-        path: '/dataShareSystem',
-        component: Layout,
-        name: '共享数据管理系统',
-        meta: {permission: 'dataShareSystem:admin'},
-        hidden: true,
-        children: [{path: 'index', component: DataShareSystem}]
     }
 ]
 
@@ -313,87 +227,25 @@ export const asyncRouterMap = [
         ]
     },
     {
-        path: '/member',
+        path: '/business',
         redirect: 'noredirect',
-        name: '会员管理',
-        meta: {permission: 'hallSystem:member:admin'},
-        icon: 'member',
+        name: '业务管理',
+        meta: {permission: 'hallSystem:business:admin'},
+        icon: 'business',
         component: Layout,
         children: [
             {
-                path: 'naturePerson',
-                component: NaturePerson,
-                name: '自然人管理 ',
-                meta: {permission: 'hallSystem:member:naturePerson:list'}
+                path: 'category',
+                component: Category,
+                name: '事项分类管理 ',
+                meta: {permission: 'hallSystem:business:category:list'}
             },
             {
-                path: 'legalPerson',
-                component: LegalPerson,
-                name: '法人管理',
-                meta: {permission: 'hallSystem:member:legalPerson:list'}
+                path: 'item',
+                component: Item,
+                name: '事项管理',
+                meta: {permission: 'hallSystem:business:item:list'}
             }
-        ]
-    },
-    {
-        path: '/window',
-        redirect: 'noredirect',
-        name: '综合窗口',
-        meta: {permission: 'hallSystem:window:admin'},
-        icon: 'window',
-        component: Layout,
-        children: [
-            {
-                path: '/receive',
-                component: AppMain,
-                name: '收件管理',
-                meta: {permission: 'hallSystem:window:receive:admin'},
-                children: [
-                    {
-                        path: 'windowAccept',
-                        component: WindowAccept,
-                        name: '窗口收件',
-                        meta: {permission: 'hallSystem:window:receive:windowAccept:list'}
-                    },
-                    {
-                        path: 'record',
-                        component: Record,
-                        name: '收件记录',
-                        meta: {permission: 'hallSystem:window:receive:record:list'}
-                    }
-                    // {
-                    //     path: 'sendingMaterial',
-                    //     component: SendingMaterial,
-                    //     name: '待收件查询',
-                    //     meta: {permission: 'hallSystem:window:receive:record:list'}
-                    // }
-                ]
-            },
-            {
-                path: 'delivery',
-                component: Delivery,
-                name: '出件管理',
-                meta: {permission: 'hallSystem:window:delivery:list'}
-            },
-            {
-                path: 'mailbox',
-                component: Mailbox,
-                name: '快件箱管理',
-                meta: {permission: 'hallSystem:window:mailbox:list'}
-            },
-            {
-                path: 'addressee',
-                component: Addressee,
-                name: '收件地址管理',
-                meta: {permission: 'hallSystem:window:addressee:list'}
-            },
-            {
-                path: 'companyInfo',
-                component: CompanyInfo,
-                name: '企业信息',
-                meta: {permission: 'hallSystem:window:companyInfo:list'}
-            }
-            // {path: 'windowWork', component: WindowWork, name: '街办收件'},
-            // {path: 'windowHistory', component: WindowHistory, name: '办件查询'}
         ]
     },
     {redirect: 'noredirect',
@@ -463,153 +315,6 @@ export const asyncRouterMap = [
             }
         ]
     },
-    /************************政务服务管理系统************************/
-    {
-        path: '/business',
-        redirect: 'noredirect',
-        name: '业务管理',
-        meta: {permission: 'zwfwSystem:business:admin'},
-        icon: 'business',
-        component: Layout,
-        children: [
-            {
-                path: 'category',
-                component: Category,
-                name: '事项分类管理 ',
-                meta: {permission: 'zwfwSystem:business:category:list'}
-            },
-            {
-                path: 'material',
-                component: Material,
-                name: '材料管理',
-                meta: {permission: 'zwfwSystem:business:material:list'}
-            },
-            {
-                path: 'item',
-                component: Item,
-                name: '事项管理',
-                meta: {permission: 'zwfwSystem:business:item:list'}
-            },
-            {
-                path: 'enterpriseInfoGet',
-                component: EnterpriseInfoGet,
-                name: '企业信息查询',
-                meta: {permission: 'zwfwSystem:business:enterpriseInfoGet:list'}
-            },
-            {
-                path: 'enterpriseInfoUp',
-                component: EnterpriseInfoUp,
-                name: '企业信息管理',
-                meta: {permission: 'zwfwSystem:business:EnterpriseInfoUp:list'}
-            },
-            {
-                path: 'processDefinitionModel',
-                component: ProcessDefinitionModel,
-                name: '流程模型编辑',
-                meta: {permission: 'zwfwSystem:business:processDefinitionModel:list'}
-            },
-            {
-                path: 'processDefinition',
-                component: ProcessDefinition,
-                name: '已部署流程管理',
-                meta: {permission: 'zwfwSystem:business:processDefinition:list'}
-            },
-            {
-                path: 'taskSetting',
-                component: TaskSetting,
-                name: '审批节点管理',
-                meta: {permission: 'zwfwSystem:business:taskSetting:list'}
-            }
-            // {
-            //     path: 'formEditor',
-            //     component: FormEditor,
-            //     name: '表单编辑器',
-            //     meta: {permission: 'zwfwSystem:business:formEditor:list'}
-            // }
-        ]
-    },
-    /************************政务业务办理系统************************/
-    {
-        path: '/pretrial',
-        component: Layout,
-        icon: 'process',
-        name: '预审管理',
-        meta: {permission: 'workSystem:pretrial:admin'},
-        children: [
-            {
-                path: 'pending',
-                component: Pending,
-                name: '待预审件',
-                meta: {permission: 'workSystem:pretrial:pending:list'}
-            },
-            {
-                path: 'correction',
-                component: Correction,
-                name: '整改件',
-                meta: {permission: 'workSystem:pretrial:correction:list'}
-            },
-            {
-                path: 'noAccept',
-                component: NoAccept,
-                name: '不予受理件',
-                meta: {permission: 'workSystem:pretrial:noAccept:list'}
-            },
-            {
-                path: 'finish',
-                component: Finish,
-                name: '已预审件',
-                meta: {permission: 'workSystem:pretrial:finish:list'}
-            }
-        ]
-    },
-    {
-        path: '/process',
-        redirect: 'noredirect',
-        name: '办件管理',
-        meta: {permission: 'workSystem:process:admin'},
-        icon: 'process',
-        component: Layout,
-        children: [
-            {
-                path: 'workPending',
-                component: WorkPending,
-                name: '待办事项 ',
-                meta: {permission: 'workSystem:process:workPending:list'}
-            },
-            {
-                path: 'workQuery',
-                component: WorkQuery,
-                name: '办件查询',
-                meta: {permission: 'workSystem:process:workQuery:list'}
-            },
-            {
-                path: 'workFinish',
-                component: WorkFinish,
-                name: '办结查询',
-                meta: {permission: 'workSystem:process:workFinish:list'}
-            },
-            {
-                path: 'workExtendTime',
-                component: WorkExtendTime,
-                name: '延期批准',
-                meta: {permission: 'workSystem:process:workExtendTime:list'}
-            },
-            {
-                path: 'workSupervise',
-                component: WorkSupervise,
-                name: '督办管理',
-                meta: {permission: 'workSystem:process:workSupervise:list'}
-            },
-            {
-                path: 'workFinishSupervise',
-                component: WorkFinish,
-                name: '待监管事项',
-                meta: {permission: 'workSystem:process:workFinishSupervise:list'}
-            }
-        ]
-    },
-    /************************共享数据管理系统************************/
-
     /*************************404页面******************************/
     {path: '*', redirect: '/404', hidden: true},
     /*************************个人设置 修改个人信息******************************/

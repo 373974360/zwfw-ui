@@ -32,7 +32,7 @@ module.exports = {
         staticPath: '/static/',
         proxyTable: {
             '/api': {
-                target: 'http://localhost:8765',
+                target: 'http://117.36.51.98:8888',
                 // target: 'http://192.168.2.133:8765',
                 pathRewrite: {
                     '^/api': '/api'

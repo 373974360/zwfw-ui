@@ -220,7 +220,7 @@
     import {copyProperties, resetForm, validateQueryStr} from 'utils';
     import {mapGetters} from 'vuex';
     import {getDeptNameAndUsers} from 'api/baseSystem/org/user';
-    import {getAllByNameOrbasicCode} from 'api/zwfwSystem/business/item';
+    import {getAllByNameOrbasicCode} from 'api/hallSystem/business/item';
 
     export default {
         name: 'table_demo',

@@ -31,7 +31,7 @@
                     </el-col>
                 </el-row>
             </el-col>
-            <el-col :span="6">
+            <!--<el-col :span="6">
                 <el-row :gutter="8"></el-row>
                 <el-row :gutter="8">
                     <el-col>
@@ -43,7 +43,7 @@
                         <router-link class="pan-btn tiffany-btn" to="/receive/record">收件记录</router-link>
                     </el-col>
                 </el-row>
-            </el-col>
+            </el-col>-->
         </el-row>
         <div class="sum-msg">今日累计抽号排队数：{{todayCount.total}}人次</div>
         <el-row :gutter="50">

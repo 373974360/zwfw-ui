@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie';
-import {getDicts, getEnums, getZwfwEnums} from 'api/common/common';
+import {getDicts, getEnums} from 'api/common/common';
 
 const app = {
     state: {

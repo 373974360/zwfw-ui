@@ -39,7 +39,7 @@
     require('echarts/lib/component/dataZoom');
     import {mapGetters} from 'vuex';
     import {date} from '../../../../filters'
-    import {getAllByNameOrbasicCode} from '../../../../api/zwfwSystem/business/item'
+    import {getAllByNameOrbasicCode} from '../../../../api/hallSystem/business/item'
     import {dataPlotByDept, dataPlotAvgBydeptId} from '../../../../api/hallSystem/count/count'
 
     export default {
