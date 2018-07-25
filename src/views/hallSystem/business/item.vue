@@ -989,7 +989,7 @@
                     name: [
                         {required: true, message: '请输入事项名称'}
                     ],
-                    basicCode: [
+                    /*basicCode: [
                         {required: true, message: '请输入基本编码'}
 //                        {min: 10, max: 10, message: '基本编码长度是10位'}
                     ],
@@ -1032,7 +1032,7 @@
                     ],
                     legalEndTime: [
                         {required: true, validator: legalEndTimeValidate, trigger: 'blur'}
-                    ]
+                    ]*/
                 },
                 zwfwItemMaterialRules: {
                     name: [
