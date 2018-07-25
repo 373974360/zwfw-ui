@@ -98,7 +98,7 @@
                 listQuery: {
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
-                    name: undefined,
+                    name: undefined
                 },
                 zwfwCategoryItem: {
                     id: undefined,
@@ -182,7 +182,7 @@
                     }).then(() => {
                         this.listLoading = true;
                         let selectCounts = this.selectedRows.length;
-                        let ids = new Array();
+                        let ids = [];
                         for (const deleteRow of this.selectedRows) {
                             ids.push(deleteRow.id);
                         }

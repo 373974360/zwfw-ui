@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>西安国际港务区 —— 政务服务管理系统</title>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%
+        }
+
+        body {
+            height: 100%;
+            width: 100%;
+            margin: 0px;
+            padding: 0px;
+            background: url("img/beijingtu.jpg") no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .title {
+            font-size: 3em;
+            color: #fff;
+            text-align: center;
+            line-height: 1.8em;
+        }
+
+        #app {
+            height: 85%;
+            width: 100%;
+            position: absolute;
+            top: 10%;
+            bottom: 5%;
+            z-index: 0;
+            overflow: hidden;
+            word-break: break-all;
+        }
+
+        .flex-item {
+            background: rgba(255, 255, 255, .1);
+            border: solid 1px #117084;
+            -webkit-border-radius: 20px;
+            -moz-border-radius: 20px;
+            border-radius: 10px;
+            margin: 8px;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .item-title {
+            font-size: 1.4em;
+            margin-top: 2em;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .item-value {
+            text-align: center;
+            margin: 0.4em 0px;
+            font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+        }
+
+        .item-value span {
+            font-weight: bold;
+        }
+
+        .flex-item.base {
+            background: none;
+            border: none;
+            margin: 0px;
+            color: transparent;
+        }
+
+        .flex-container {
+            display: flex;
+            height: 100%;
+        }
+
+        .flex-column {
+            justify-content: space-evenly;
+            flex-direction: column;
+
+        }
+        .flex-row {
+            flex-direction: row;
+        }
+
+
+
+    </style>
+    <link rel="stylesheet" href="css/liMarquee.css">
+</head>
+
+<script src="js/jquery-1.8.3.min.js"></script>
+<script src="js/jquery.liMarquee.js"></script>
+<script src="../echarts-all.js"></script>
+<script src="../jquery.SuperSlide.2.1.1.js"></script>
+<script src="../vue.min.js"></script>
+<body>
+<div class="title">网厅访问数据可视化</div>
+<div id="app">
+    <div class="flex-container flex-row" style="margin: 0px 20px;">
+        <div class="flex-item base" style="flex:5">
+            <div class="flex-container flex-column">
+                <div class="flex-item base" style="flex:1.02">
+                    <div class="flex-container flex-row">
+                        <div class="flex-item"
+                             style="flex:1;background:-webkit-gradient(linear, 0 0, 0 bottom, from(#b35950), to(#8f3a33)); ">
+                            <table border="0" cellpadding="" cellspacing="20" style="width: 100%;margin: 4em auto;">
+                                <tr>
+                                    <th class="item-title">
+                                        今日页面浏览量
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <td class="item-value" style="font-size: 4em;">
+                                        {{baidutongji.todayPVCount}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="item-title">
+                                        今日网站访客量
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <td class="item-value" style="font-size: 4em;">
+                                        {{baidutongji.todayUVCount}}
+                                    </td>
+                                </tr>
+
+
+                            </table>
+
+                        </div>
+                        <div class="flex-item base" style="flex:1">
+
+                            <div class="flex-container flex-column">
+
+                                <div class="flex-item"
+                                     style="flex:1;background:-webkit-gradient(linear, 0 0, 0 bottom, from(#ab8d4d), to(#a2792a));">
+                                    <table border="0" cellpadding="0" cellspacing="0" style="width: 100%;">
+                                        <tr>
+                                            <td>
+                                                <div class="item-title">注册企业数</div>
+                                                <div class="item-value"
+                                                     style="font-size: 4em;">
+                                                    {{registerCount.registerCompanyTotal}}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="item-title">实名认证企业数</div>
+                                                <div class="item-value"
+                                                     style="font-size: 4em;">
+                                                    {{registerCount.realNameIdentifyTotal}}
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="flex-item"
+                                     style="flex:1;background:-webkit-gradient(linear, 0 0, 0 bottom, from(#5390ad), to(#31658d));">
+                                    <div class="item-title">网站个人注册数</div>
+                                    <div class="item-value" style="font-size: 4em;">
+                                        {{registerCount.registerPersonTotal}}
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="flex-item" style="flex:1">
+                    <div class="flex-container flex-row">
+
+                        <div class="flex-item"
+                             style="flex:5;background: none;border: none;margin: 0px;">
+                            <div style="width: 100%;height: 100%" ref="realVerifyCountHandle"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex-item base" style="flex:5">
+            <div class="flex-container flex-column">
+                <div class="flex-item" style="flex:1">
+                    <div class="flex-container flex-row">
+                        <div style="width: 100%;height: 100%" ref="companyCountHandle"></div>
+                    </div>
+                </div>
+                <div class="flex-item" style="flex:1">
+                    <div style="width: 100%;height: 100%" ref="personCountHandle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var interfaceUrl = '';
+</script>
+<script type="text/javascript">
+    var app = new Vue({
+        el: '#app',
+        data: {
+            data: {},
+            companyCountChart: null,
+            personCountChart: null,
+            realVerifyCountChart: null,
+            baidutongji: {
+                todayPVCount: '',
+                todayUVCount: ''
+            },
+            registerCount: {
+                realNameIdentifyTotal: '',
+                registerCompanyTotal: '',
+                registerPersonTotal: ''
+
+            }
+        },
+        methods: {
+            getBaiDuTongJiAndCount: function () {
+                var _this = this;
+                $.ajax({
+                    url: interfaceUrl + '/api/hallSystem/count/statistics/getBaiDuTongJiAndCount',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: function (result) {
+                        if (result.httpCode == 200) {
+                            _this.data = result.data;
+                            _this.baidutongji = result.data.baidutongji;
+                            _this.registerCount = result.data.registerCount;
+                            if (!$.isEmptyObject(_this.data.CompanyData)) {
+                                let companyData = _this.data.CompanyData;
+                                let companyDate = [];
+                                let companyCount = [];
+                                for (let data of companyData) {
+                                    companyDate.push(data.date);
+                                    companyCount.push(data.count);
+                                }
+                                companyDate.reverse();
+                                if (_this.companyCountChart == null) {
+                                    _this.companyCountChart = echarts.init(_this.$refs.companyCountHandle)
+                                }
+                                const e = _this.companyCountChart;
+                                e.setOption({
+                                    title: {
+                                        x: 'center',
+                                        y: 'top',
+                                        textAlign: 'center',
+                                        text: '企业注册量',
+                                        textStyle: {
+                                            color: '#fff'
+                                        }
+                                    },
+                                    color: ['#3398DB'],
+                                    tooltip: {
+                                        trigger: 'axis'
+                                    },
+                                    xAxis: [
+                                        {
+                                            type: 'category',
+                                            data: companyDate,
+                                            axisLabel: {
+                                                show: true,
+                                                textStyle: {
+                                                    color: '#fff'
+                                                }
+                                            },
+                                            splitLine: {
+                                                show: false
+                                            }
+                                        }
+                                    ],
+                                    yAxis: [
+                                        {
+                                            type: 'value',
+                                            name: '单位：件',
+                                            axisLabel: {
+                                                formatter: '{value}',
+                                                textStyle: {
+                                                    color: '#fff'
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    series: [
+                                        {
+                                            name: '受理量',
+                                            type: 'bar',
+                                            data: companyCount
+                                        }
+                                    ]
+                                })
+                            }
+                            if (!$.isEmptyObject(_this.data.PersonData)) {
+                                let personData = _this.data.PersonData;
+                                let personDate = [];
+                                let personCount = [];
+                                for (let data of personData) {
+                                    personDate.push(data.date);
+                                    personCount.push(data.count);
+                                }
+                                personDate.reverse();
+                                if (_this.personCountChart == null) {
+                                    _this.personCountChart = echarts.init(_this.$refs.personCountHandle)
+                                }
+                                const e = _this.personCountChart;
+                                e.setOption({
+                                    title: {
+                                        x: 'center',
+                                        y: 'top',
+                                        textAlign: 'center',
+                                        text: '个人注册量',
+                                        textStyle: {
+                                            color: '#fff'
+                                        }
+                                    },
+                                    color: ['#3398DB'],
+                                    tooltip: {
+                                        trigger: 'axis'
+                                    },
+                                    xAxis: [
+                                        {
+                                            type: 'category',
+                                            data: personDate,
+                                            axisLabel: {
+                                                show: true,
+                                                textStyle: {
+                                                    color: '#fff'
+                                                }
+                                            },
+                                            splitLine: {
+                                                show: false
+                                            }
+                                        }
+                                    ],
+                                    yAxis: [
+                                        {
+                                            type: 'value',
+                                            name: '单位：件',
+                                            axisLabel: {
+                                                formatter: '{value}',
+                                                textStyle: {
+                                                    color: '#fff'
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    series: [
+                                        {
+                                            name: '受理量',
+                                            type: 'bar',
+                                            data: personCount
+                                        }
+                                    ]
+                                })
+                            }
+                            if (!$.isEmptyObject(_this.data.RealVerifyData)) {
+                                let realVerifyData = _this.data.RealVerifyData;
+                                let realVerifyDate = [];
+                                let realVerifyCount = [];
+                                for (let data of realVerifyData) {
+                                    realVerifyDate.push(data.date);
+                                    realVerifyCount.push(data.count);
+                                }
+                                realVerifyDate.reverse();
+                                if (_this.realVerifyCountChart == null) {
+                                    _this.realVerifyCountChart = echarts.init(_this.$refs.realVerifyCountHandle)
+                                }
+                                const e = _this.realVerifyCountChart;
+                                e.setOption({
+                                    title: {
+                                        x: 'center',
+                                        y: 'top',
+                                        textAlign: 'center',
+                                        text: '实名认证量',
+                                        textStyle: {
+                                            color: '#fff'
+                                        }
+                                    },
+                                    color: ['#3398DB'],
+                                    tooltip: {
+                                        trigger: 'axis'
+                                    },
+                                    xAxis: [
+                                        {
+                                            type: 'category',
+                                            data: realVerifyDate,
+                                            axisLabel: {
+                                                show: true,
+                                                textStyle: {
+                                                    color: '#fff'
+                                                }
+                                            },
+                                            splitLine: {
+                                                show: false
+                                            }
+                                        }
+                                    ],
+                                    yAxis: [
+                                        {
+                                            type: 'value',
+                                            name: '单位：人',
+                                            axisLabel: {
+                                                formatter: '{value}',
+                                                textStyle: {
+                                                    color: '#fff'
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    series: [
+                                        {
+                                            name: '实名认证量',
+                                            type: 'bar',
+                                            data: realVerifyCount
+                                        }
+                                    ]
+                                })
+                            }
+                        }
+                    }
+                })
+            },
+        },
+        mounted: function () {
+            this.$nextTick(function () {
+                // 查询所有接口数据
+                this.getBaiDuTongJiAndCount();
+            })
+            setInterval(this.getBaiDuTongJiAndCount, 30000);
+        }
+    });
+</script>
+
+</body>
+</html>

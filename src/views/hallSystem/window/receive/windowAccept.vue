@@ -1695,7 +1695,6 @@
                 }).catch(e => {
                     this.queryLoading = false;
                 });
-                ;
             },
 
             /**
@@ -2037,7 +2036,7 @@
                                 } else {
                                     _this.$message({
                                         showClose: true,
-                                        message: '没有下一个号码了'
+                                        message: '网络超时，请刷新页面查看最新状态'
                                     });
                                 }
                             } else {
@@ -2198,11 +2197,9 @@
              *
              * */
             skip() {
-                let _itemNumber = _this.itemNumber;
-
-                let msg = '确定跳过吗？';
                 let _this = this;
-
+                let _itemNumber = _this.itemNumber;
+                let msg = '确定跳过吗？';
                 this.$confirm(msg, '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',

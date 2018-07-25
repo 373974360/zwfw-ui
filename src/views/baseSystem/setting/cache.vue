@@ -155,7 +155,7 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        let keys = new Array();
+                        let keys = [];
                         for (const deleteRow of this.selectedRows) {
                             keys.push(deleteRow.key);
                         }

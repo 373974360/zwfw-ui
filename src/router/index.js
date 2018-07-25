@@ -86,7 +86,8 @@ const WindowWork = () => import('../views/hallSystem/window/street/windowWork');
 /* 街办查询 */
 const WindowHistory = () => import('../views/hallSystem/window/street/windowHistory');
 /* 微警认证 */
-const Identification = () => import('../views/hallSystem/window/identification');
+const Identification = () => import('../views/hallSystem/window/identify/identification');
+const IdentifyRegister = () => import('../views/hallSystem/window/identify/identifyRegister');
 
 /** **********************政务服务管理系统************************/
 /* index */
@@ -112,9 +113,14 @@ const Business = () => import('../views/hallSystem/count/approval/business');
 
 /* 数据可视化模块 */
 /* 业务审批数据可视化模块 */
-const BusinessApprove = () => import('../views/hallSystem/visualization/businessApprove.vue');
+const BusinessApprove = () => import('../views/hallSystem/visualization/businessApprove');
 /* 实时受理数据可视化模块 */
-const RealTimeAccept = () => import('../views/hallSystem/visualization/realTimeAccept.vue');
+const RealTimeAccept = () => import('../views/hallSystem/visualization/realTimeAccept');
+/* 系统用户分布数据 */
+const Heatmap = () => import('../views/hallSystem/visualization/heatmap');
+/* 网厅访问数据可视化 */
+const NewWorkHallVisit = () => import('../views/hallSystem/visualization/netWorkHallVisit');
+
 
 /** **********************政务服务办理系统************************/
 /* index */
@@ -443,6 +449,12 @@ export const asyncRouterMap = [
                 component: Identification,
                 name: '微警认证',
                 meta: {permission: 'hallSystem:window:identification:list'}
+            },
+            {
+                path: 'IdentifyRegister',
+                component: IdentifyRegister,
+                name: '微警注册',
+                meta: {permission: 'hallSystem:window:identification:list'}
             }
             // {path: 'windowWork', component: WindowWork, name: '街办收件'},
             // {path: 'windowHistory', component: WindowHistory, name: '办件查询'}
@@ -535,6 +547,18 @@ export const asyncRouterMap = [
                 component: BusinessApprove,
                 name: '业务审批数据可视化',
                 meta: {permission: 'hallSystem:visualization:businessApprove:list'}
+            },
+            {
+                path: 'heatmap',
+                component: Heatmap,
+                name: '系统用户分布数据',
+                meta: {permission: 'hallSystem:visualization:heatmap:list'}
+            },
+            {
+                path: 'newWorkHallVisit',
+                component: NewWorkHallVisit,
+                name: '网厅访问数据可视化',
+                meta: {permission: 'hallSystem:visualization:newWorkHallVisit:list'}
             }
         ]
     },
@@ -718,7 +742,7 @@ export const asyncRouterMap = [
                 meta: {permission: 'workSystem:process:workFinishSupervise:list'}
             }
         ]
-    },,
+    },
     {
         path: '/policyCashing',
         redirect: 'noredirect',

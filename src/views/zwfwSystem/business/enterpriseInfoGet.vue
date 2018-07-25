@@ -381,7 +381,7 @@ s                     v-loading="dialogLoading">
                 this.enterpriseList = copyProperties(this.enterpriseList, row);
                 this.title = '详细信息';
                 this.dialogFormVisible = true;
-            },
+            }
         }
     }
 </script>

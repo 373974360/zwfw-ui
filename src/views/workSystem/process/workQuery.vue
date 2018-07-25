@@ -385,10 +385,11 @@
                                         <div v-if="c.multipleFile" style="color:blue">
                                             <span v-for="(file,index) in c.multipleFile">
                                             <span v-if="file.url!=null && file.url!=''">
-                                            <a v-if="!/\.(gif|jpg|jpeg|png|GIF|JPG|PNG)$/.test(file.url)"
-                                               :href="file.url" :download="file.fileName"
-                                               target="_blank">[{{index + 1}}]</a>
-                                            <a v-else :href="file.url" target="_blank" :title="file.fileName">[{{index + 1}}]</a>
+                                                <a v-if="file.fileType=='zzk'" :href="'/api/zwfw-web/member/zzk/view?licenseNo='+file.url" target="_blank" :title="file.fileName">[{{index + 1}}]</a>
+                                                <a v-else-if="!/\.(gif|jpg|jpeg|png|GIF|JPG|PNG)$/.test(file.url)"
+                                                   :href="file.url" :download="file.fileName"
+                                                   target="_blank">[{{index + 1}}]</a>
+                                                <a v-else :href="file.url" target="_blank" :title="file.fileName">[{{index + 1}}]</a>
                                             </span>
                                             <span v-else>未上传</span>
                                          </span>
@@ -404,7 +405,7 @@
                                 <div v-for="form in pretrialForm">
                                     <table class="table table-responsive table-bordered">
                                         <tr>
-                                            <th colspan="24" style="text-align: center;background: #eee;">{{form.title}}</th>
+                                            <th colspan="24" style="text-align: center;background: #eee;">{{form.title}} <el-button @click="downloadMaterialWord(form.materialId)">下载 word</el-button></th>
                                         </tr>
                                         <tr v-for="row in form.rows">
                                             <td v-for="(field,index) in row"
@@ -621,6 +622,9 @@
                 this.listQuery.ownerPersonId = code;
                 this.getList();
             },
+            downloadMaterialWord(materialId){
+                window.open('/api/workSystem/itemPretrial/downloadMaterialWord?materialId=' + materialId + '&processNumber=' + this.itemProcessVo.processNumber);
+            },
             queryCompanySearch(queryString) {
                 let valid = validateQueryStr(queryString);
                 if (valid) {
@@ -733,7 +737,7 @@
             print_ycxgzd(processNumber) {
                 if (processNumber != null) {
                     // window.open('/api/hallSystem/hallCompositeWindow/downloadYcxgzd?processNumber=' + processNumber);
-                    window.open('/admin/print/ycxgzd.html?processNumber=' + processNumber);
+                    window.open('print/ycxgzd.html?processNumber=' + processNumber);
                 }
             },
             handlePictureCardPreview(file) {

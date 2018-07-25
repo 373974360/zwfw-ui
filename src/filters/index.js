@@ -25,7 +25,7 @@ export function taskStatusFilter(status) {
         'OK': 'success',
         'CRASHED': 'danger',
         'DISABLED': 'gray',
-        'SHARDING_FLAG': 'primary',
+        'SHARDING_FLAG': 'primary'
     };
     return taskStatusMap[status]
 }

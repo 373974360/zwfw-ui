@@ -191,7 +191,7 @@
             },
             handleConnect() {
                 this.listLoading = true;
-                let names = new Array();
+                let names = [];
                 for (const deleteRow of this.selectedRows) {
                     names.push(deleteRow.name);
                 }
@@ -213,7 +213,7 @@
                     type: 'warning'
                 }).then(() => {
                     this.listLoading = true;
-                    let names = new Array();
+                    let names = [];
                     for (const deleteRow of this.selectedRows) {
                         names.push(deleteRow.name);
                     }
