@@ -173,12 +173,22 @@
                                 <th>名称</th>
                                 <th width="50">链接</th>
                             </tr>
-                            <tr v-for="m in pretrialMaterialList">
-                                <td>{{m.itemMaterialName}}</td>
-                                <td style="text-align: center;">
-                                    <template v-for="(file,index) in m.itemMaterialUrl.split('|')">
-                                        <a v-if="index>0" target="_blank" :href="file">[{{index}}]</a>
-                                    </template>
+                            <tr v-for="c in pretrialMaterialList">
+                                <td>{{c.itemMaterialName}}</td>
+                                <td  style="text-align: center;">
+                                    <div v-if="c.multipleFile" style="color:blue">
+                                            <span v-for="(file,index) in c.multipleFile">
+                                            <span v-if="file.url!=null && file.url!=''">
+                                                <a v-if="file.fileType=='zzk'" :href="'/api/zwfw-web/member/zzk/view?licenseNo='+file.url" target="_blank" :title="file.fileName">[{{index + 1}}]</a>
+                                                <a v-else-if="!/\.(gif|jpg|jpeg|png|GIF|JPG|PNG)$/.test(file.url)"
+                                                   :href="file.url" :download="file.fileName"
+                                                   target="_blank">[{{index + 1}}]</a>
+                                                <a v-else :href="file.url" target="_blank" :title="file.fileName">[{{index + 1}}]</a>
+                                            </span>
+                                            <span v-else>未上传</span>
+                                         </span>
+                                    </div>
+
                                 </td>
                             </tr>
                         </table>
