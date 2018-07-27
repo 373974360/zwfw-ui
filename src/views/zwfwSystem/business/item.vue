@@ -464,6 +464,14 @@
                 </el-form-item>
                 <el-form-item label="权限划分" prop="authorityDivision">
                     <el-input v-model="zwfwItem.authorityDivision"></el-input>
+                    <el-radio-group v-model="zwfwItem.authorityDivision">
+                        <el-radio v-for="item in dics['qxhf']"
+                                  :key="item.code"
+                                  :label="item.code"
+                                  :value="item.code">
+                            <span style="font-weight:normal;">{{item.value}}</span>
+                        </el-radio>
+                    </el-radio-group>
                 </el-form-item>
                 <el-form-item label="版本号" prop="version">
                     <el-input v-model="zwfwItem.version"></el-input>
@@ -626,15 +634,38 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="是否需要电子材料" prop="electronicMaterial">
-                    <el-switch
-                            v-model="zwfwItemMaterial.electronicMaterial"
-                            on-color="#13ce66"
-                            off-color="#ff4949"
-                            :on-value="true"
-                            :off-value="false">
-                    </el-switch>
-                </el-form-item>
+                <el-col :span="12">
+                    <el-form-item label="原件份数" prop="originalNumber">
+                        <el-input-number v-model="zwfwItemMaterial.originalNumber" :min="0" :max="20"/>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="复印件份数" prop="copyNumber">
+                        <el-input-number v-model="zwfwItemMaterial.copyNumber" :min="0" :max="20"/>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="是否必须" prop="necessary">
+                        <el-switch
+                                v-model="zwfwItemMaterial.necessary"
+                                on-color="#13ce66"
+                                off-color="#ff4949"
+                                :on-value="true"
+                                :off-value="false">
+                        </el-switch>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="是否需要电子材料" prop="electronicMaterial">
+                        <el-switch
+                                v-model="zwfwItemMaterial.electronicMaterial"
+                                on-color="#13ce66"
+                                off-color="#ff4949"
+                                :on-value="true"
+                                :off-value="false">
+                        </el-switch>
+                    </el-form-item>
+                </el-col>
                 <el-form-item label="纸质材料说明:" prop="paperDescription">
                     <el-input v-model="zwfwItemMaterial.paperDescription" placeholder="数量和规格"></el-input>
                 </el-form-item>
@@ -774,20 +805,24 @@
     import {copyProperties, resetForm, validateQueryStr} from 'utils';
     import {mapGetters} from 'vuex';
     import {
-        getZwfwItemList, createZwfwItem, updateZwfwItem, delZwfwItems,
+        createZwfwItem,
+        delZwfwItems,
+        getItemConfig,
         getPretrialUserListByItemId,
-        getItemConfig, setItemConfig
+        getZwfwItemList,
+        setItemConfig,
+        updateZwfwItem
     } from 'api/zwfwSystem/business/item';
     import {
         createZwfwItemMaterial,
-        getAllItemMaterial,
         deleteZwfwItemMaterial,
-        doUpdateAndRelate
-    } from 'api/zwfwSystem/business/itemMaterial';
-    import {getAllMaterial, updateZwfwMaterial} from 'api/zwfwSystem/business/material';
+        doUpdateAndRelate,
+        getAllItemMaterial
+    } from '../../../api/zwfwSystem/business/itemMaterial';
+    import {getAllMaterial, updateZwfwMaterial} from '../../../api/zwfwSystem/business/material';
     import {getAllUser} from '../../../api/baseSystem/org/user';
     import {getDeptCascader} from 'api/baseSystem/org/dept';
-    import {getAllAddressees, getAddresseeById} from 'api/hallSystem/window/addressee';
+    import {getAddresseeById, getAllAddressees} from 'api/hallSystem/window/addressee';
     import {quillEditor} from 'vue-quill-editor'
 
     export default {
@@ -937,7 +972,10 @@
                     source: '',
                     type: '',
                     example: '',
-                    notice: ''
+                    notice: '',
+                    originalNumber: undefined,
+                    copyNumber: undefined,
+                    necessary: undefined
                 },
                 isMaterialExist: false,
                 zwfwItemConfig: {
@@ -1662,7 +1700,7 @@
                                 this.$message.success('关联成功');
                                 this.currentItem.itemMaterialCount += 1;
                             } else {
-                                this.$message.error('关联失败');
+                                this.$message.error(response.msg ||'关联失败');
                             }
                         })
                     } else {
@@ -1680,7 +1718,7 @@
                         this.resetZwfwMaterialForm();
                         this.$message.success('更新成功');
                     } else {
-                        this.$message.error('更新失败');
+                        this.$message.error(response.msg || '更新失败');
                     }
                 })
             },
@@ -1699,7 +1737,7 @@
                                 this.resetZwfwMaterialForm();
                                 this.$message.success('更新并关联成功');
                             } else {
-                                this.$message.error('更新并关联失败');
+                                this.$message.error(response.msg ||'更新并关联失败');
                             }
                         })
                     } else {
@@ -1902,7 +1940,10 @@
                     source: '',
                     type: '',
                     example: '',
-                    notice: ''
+                    notice: '',
+                    originalNumber: '',
+                    copyNumber: '',
+                    necessary: false
                 };
             },
             handleSizeChange(val) {

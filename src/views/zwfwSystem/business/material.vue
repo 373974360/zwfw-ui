@@ -75,27 +75,27 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-col :span="12">
-                    <el-form-item label="原件份数" prop="originalNumber">
-                        <el-input-number v-model="zwfwMaterial.originalNumber" :min="0" :max="20"/>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="复印件份数" prop="cpoyNumber">
-                        <el-input-number v-model="zwfwMaterial.cpoyNumber" :min="0" :max="20"/>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="是否必须" prop="necessary">
-                        <el-switch
-                                v-model="zwfwMaterial.necessary"
-                                on-color="#13ce66"
-                                off-color="#ff4949"
-                                :on-value="true"
-                                :off-value="false">
-                        </el-switch>
-                    </el-form-item>
-                </el-col>
+                <!--<el-col :span="12">-->
+                    <!--<el-form-item label="原件份数" prop="originalNumber">-->
+                        <!--<el-input-number v-model="zwfwMaterial.originalNumber" :min="0" :max="20"/>-->
+                    <!--</el-form-item>-->
+                <!--</el-col>-->
+                <!--<el-col :span="12">-->
+                    <!--<el-form-item label="复印件份数" prop="copyNumber">-->
+                        <!--<el-input-number v-model="zwfwMaterial.copyNumber" :min="0" :max="20"/>-->
+                    <!--</el-form-item>-->
+                <!--</el-col>-->
+                <!--<el-col :span="12">-->
+                    <!--<el-form-item label="是否必须" prop="necessary">-->
+                        <!--<el-switch-->
+                                <!--v-model="zwfwMaterial.necessary"-->
+                                <!--on-color="#13ce66"-->
+                                <!--off-color="#ff4949"-->
+                                <!--:on-value="true"-->
+                                <!--:off-value="false">-->
+                        <!--</el-switch>-->
+                    <!--</el-form-item>-->
+                <!--</el-col>-->
                 <el-col :span="12">
                     <el-form-item label="是否需要电子材料" prop="electronicMaterial">
                         <el-switch
@@ -254,10 +254,10 @@
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import {
-        createZwfwMaterial,
-        delZwfwMaterials,
         getZwfwMaterialList,
-        updateZwfwMaterial
+        createZwfwMaterial,
+        updateZwfwMaterial,
+        delZwfwMaterials
     } from 'api/zwfwSystem/business/material';
     import ItemPretrialForm from "./itemPretrialForm";
 
