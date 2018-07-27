@@ -463,7 +463,7 @@
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="权限划分" prop="authorityDivision">
-                    <el-input v-model="zwfwItem.authorityDivision"></el-input>
+                    <!--<el-input v-model="zwfwItem.authorityDivision"></el-input>-->
                     <el-radio-group v-model="zwfwItem.authorityDivision">
                         <el-radio v-for="item in dics['qxhf']"
                                   :key="item.code"
