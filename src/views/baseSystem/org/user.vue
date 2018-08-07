@@ -213,13 +213,13 @@
                     empNo: ''
                 },
                 sysUserRules1: {
-                    deptId: [
+                    /*deptId: [
                         {required: true, message: '请选择部门'}
-                    ],
+                    ],*/
                     name: [
                         {required: true, message: '请输入姓名'}
                     ],
-                    phone: [
+                    /*phone: [
                         {required: true, message: '请输入手机号码'},
                         {validator: validateMobiles, trigger: 'blur'}
                     ],
@@ -238,7 +238,7 @@
                     passwordConfirm: [
                         {required: true, message: '请再次输入密码'},
                         {validator: validatePass2, trigger: 'blur'}
-                    ],
+                    ],*/
                     empNo: [
                         {required: true, message: '请输入工号'}
                     ]
@@ -318,8 +318,8 @@
             },
             handleCreate(row) {
                 this.currentRow = row;
-                this.sysUserRules1.password[0].required = true;
-                this.sysUserRules1.passwordConfirm[0].required = true;
+                // this.sysUserRules1.password[0].required = true;
+                // this.sysUserRules1.passwordConfirm[0].required = true;
                 this.dialogStatus = 'create';
                 this.dialogFormVisible = true;
             },
@@ -328,8 +328,8 @@
                 this.resetTemp();
                 this.sysUser = copyProperties(this.sysUser, row);
                 this.sysUser.password = '';
-                this.sysUserRules1.password[0].required = false;
-                this.sysUserRules1.passwordConfirm[0].required = false;
+                // this.sysUserRules1.password[0].required = false;
+                // this.sysUserRules1.passwordConfirm[0].required = false;
                 this.imageUrl = this.sysUser.avatar;
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
