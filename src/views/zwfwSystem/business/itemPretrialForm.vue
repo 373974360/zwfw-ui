@@ -471,6 +471,9 @@
                 for (const field of this.pretrialForm.fields) {
                     field.createTime = null;// 提交上去转换 Date 类型会报错，所以不传
                     field.updateTime = null;// 提交上去转换 Date 类型会报错，所以不传
+                    if (field.value && Array.isArray(field.value)) {
+                        field.value = field.value.join(',');
+                    }
                 }
                 publishForm(Object.assign({
                     id, version, tplId, status, title, materialId,
