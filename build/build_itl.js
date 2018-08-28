@@ -1,5 +1,5 @@
 require('./check-versions')();
-var server = require('pushstate-server');
+// var server = require('pushstate-server');
 var opn = require('opn')
 var ora = require('ora')
 var rm = require('rimraf')
@@ -29,13 +29,13 @@ rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
             }) + '\n\n')
 
         console.log(chalk.cyan('  Build complete.\n'))
-        if(process.env.npm_config_preview){
-            server.start({
-                port: 9528,
-                directory: './dist',
-                file: '/index.html'
-            });
-            console.log('> Listening at ' +  'http://localhost:9528' + '\n')
-        }
+        // if(process.env.npm_config_preview){
+        //     server.start({
+        //         port: 9528,
+        //         directory: './dist',
+        //         file: '/index.html'
+        //     });
+        //     console.log('> Listening at ' +  'http://localhost:9528' + '\n')
+        // }
     })
 })
