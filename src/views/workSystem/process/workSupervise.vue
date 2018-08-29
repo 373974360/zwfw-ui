@@ -15,13 +15,24 @@
                         :value="companyInfo.id">
                 </el-option>
             </el-select>
+            <el-date-picker class="filter-item"
+                    v-model="dataChange"
+                    type="daterange"
+                    align="right"
+                    placeholder="选择日期范围"
+                    :picker-options="pickerOptions2" @change="formatStartDate">
+            </el-date-picker>
+
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getList">搜索</el-button>
+            <el-button  class="filter-item" type="primary" icon="document" @click="handleDownload">
+                导出excel
+            </el-button>
         </div>
 
         <el-table ref="zwfwDeptWorkPendingTable" :data="list" v-loading.body="listLoading" border fit
                   highlight-current-row
                   style="width: 100%" @selection-change="handleSelectionChange" @row-click="toggleSelection">
-            <el-table-column align="center" label="办件序号" >
+            <el-table-column align="center" label="办件序号">
                 <template slot-scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
@@ -39,6 +50,11 @@
             <el-table-column align="center" label="承诺办结时间" prop="promiseFinishTime">
                 <template slot-scope="scope">
                     <span>{{scope.row.promiseFinishTime | date('YYYY-MM-DD HH:mm:ss')}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="实际用时" prop="promiseFinishTime">
+                <template slot-scope="scope">
+                    <span>{{scope.row.durationWorkSeconds | duration}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="超期件" prop="flagTimeout">
@@ -72,21 +88,21 @@
             <el-table-column align="left" label="办事员信息" min-width="200">
                 <template slot-scope="scope">
                     <span v-if="scope.row.memberType == 3">
-                        <span >
+                        <span>
                             姓名：{{scope.row.clerkName}}<br>
                         </span>联系电话：{{scope.row.clerkPhone}}<br>
                     </span>
                     <span v-if="scope.row.memberType == 1 || scope.row.memberType == 2">
-                        <span >
+                        <span>
                             姓名：{{scope.row.memberRealname}}<br>
                         </span>联系电话：{{scope.row.memberPhonenumber}}<br>
                     </span>
                 </template>
             </el-table-column>
             <!--<el-table-column align="center" label="企业名称" prop="companyName">-->
-                <!--<template slot-scope="scope">-->
-                    <!--<span>{{scope.row.companyName}}</span>-->
-                <!--</template>-->
+            <!--<template slot-scope="scope">-->
+            <!--<span>{{scope.row.companyName}}</span>-->
+            <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column prop="enable" class-name="status-col" label="状态">
                 <template slot-scope="scope">
@@ -95,7 +111,7 @@
             </el-table-column>
             <el-table-column align="center" label="操作" width="200px">
                 <template slot-scope="scope">
-                    <el-button  type="primary" @click="handleDetailList(scope.row)">查看
+                    <el-button type="primary" @click="handleDetailList(scope.row)">查看
                     </el-button>
                     <el-button v-show="scope.row.flagSupervied != null && scope.row.flagSupervied == 0"
                                class="filter-item"
@@ -140,17 +156,17 @@
                                 </tr>
                                 <tr>
                                     <th width="140">企业/机构地址</th>
-                                    <td >{{member.legalPerson.registerPlace}}</td>
+                                    <td>{{member.legalPerson.registerPlace}}</td>
                                     <th width="140">联系电话</th>
-                                    <td >{{member.legalPerson.phone}}</td>
+                                    <td>{{member.legalPerson.phone}}</td>
                                 </tr>
                                 <tr>
                                     <th width="140">办事员电话</th>
-                                    <td >{{itemProcessVo.contactsPhone}}</td>
+                                    <td>{{itemProcessVo.contactsPhone}}</td>
                                     <th width="140"></th>
-                                    <td ></td>
+                                    <td></td>
                                 </tr>
-                                <template v-if="companyInfo.id" >
+                                <template v-if="companyInfo.id">
                                     <tr>
                                         <th width="140">联系电话</th>
                                         <td>{{companyInfo.lxdh}}</td>
@@ -394,7 +410,8 @@
                             </span>
                         </el-tab-pane>
                         <el-tab-pane label="办件材料" name="fifth">
-                            <el-button @click="downloadMaterialFiles()" type="primary">一键下载材料</el-button><br><br>
+                            <el-button @click="downloadMaterialFiles()" type="primary">一键下载材料</el-button>
+                            <br><br>
                             <table class="table table-bordered table-responsive">
                                 <tr>
                                     <th>序号</th>
@@ -408,7 +425,9 @@
                                         <div v-if="c.multipleFile" style="color:blue">
                                             <span v-for="(file,index) in c.multipleFile">
                                             <span v-if="file.url!=null && file.url!=''">
-                                                <a v-if="file.fileType=='zzk'" :href="'/api/zwfw-web/member/zzk/view?licenseNo='+file.url" target="_blank" :title="file.fileName">[{{index + 1}}]</a>
+                                                <a v-if="file.fileType=='zzk'"
+                                                   :href="'/api/zwfw-web/member/zzk/view?licenseNo='+file.url"
+                                                   target="_blank" :title="file.fileName">[{{index + 1}}]</a>
                                                 <a v-else-if="!/\.(gif|jpg|jpeg|png|GIF|JPG|PNG)$/.test(file.url)"
                                                    :href="file.url" :download="file.fileName"
                                                    target="_blank">[{{index + 1}}]</a>
@@ -427,7 +446,9 @@
                                 <div v-for="form in pretrialForm">
                                     <table class="table table-responsive table-bordered">
                                         <tr>
-                                            <th colspan="24" style="text-align: center;background: #eee;">{{form.title}}</th>
+                                            <th colspan="24" style="text-align: center;background: #eee;">
+                                                {{form.title}}
+                                            </th>
                                         </tr>
                                         <tr v-for="row in form.rows">
                                             <td v-for="(field,index) in row"
@@ -435,7 +456,8 @@
                                                 :key="field.id"
                                                 style="padding:5px;">
                                     <span class="label"><span v-if="field.require" style="color:red">*</span>
-                                        {{field.labelAlias || field.label}}:</span> <span class="value">{{field.value}}</span>
+                                        {{field.labelAlias || field.label}}:</span> <span
+                                                    class="value">{{field.value}}</span>
                                             </td>
                                         </tr>
                                     </table>
@@ -455,18 +477,49 @@
     import {validateQueryStr} from 'utils';
     import {mapGetters} from 'vuex';
     import {
-        getDeptSuperviseList, getDeptWorkDetail, workCancelSupervised, workSetSupervised
-    } from 'api/zwfwSystem/business/deptSupervise';
+        getDeptSuperviseList, getDeptWorkDetail, workCancelSupervised, workSetSupervised,getProcessDetailInfo
+    } from '../../../api/zwfwSystem/business/deptSupervise';
     import {
         getAllCompany
     } from 'api/other/company';
+    import {date, enums, dics, duration} from '../../../filters'
     import {
         queryCompanyInfo
     } from 'api/hallSystem/window/receive/windowAccept';
+    import moment from 'moment';
+
     export default {
         name: 'zwfwDeptWorkPending_table',
         data() {
             return {
+                pickerOptions2: {
+                    shortcuts: [{
+                        text: '最近一周',
+                        onClick(picker) {
+                            const end = new Date();
+                            const start = new Date();
+                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }, {
+                        text: '最近一个月',
+                        onClick(picker) {
+                            const end = new Date();
+                            const start = new Date();
+                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }, {
+                        text: '最近三个月',
+                        onClick(picker) {
+                            const end = new Date();
+                            const start = new Date();
+                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }]
+                },
+                dataChange: [],
                 textMapTitle: null,
                 itemNumber: [],
                 list: null,
@@ -477,8 +530,15 @@
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     name: undefined,
-                    companyId: undefined
+                    companyId: undefined,
+                    startDate: undefined,
+                    endData: undefined
                 },
+                exportQuery:{
+                    startDate: undefined,
+                    endData: undefined
+                },
+                exportList: null,
                 itemMaterialVoList: [],
                 itemProcessVo: [],
                 correctionList: [],
@@ -537,6 +597,63 @@
             ])
         },
         methods: {
+            formatStartDate() {
+                if (this.dataChange[0] == null) {
+                    this.listQuery.startDate = undefined;
+                    this.listQuery.endDate = undefined;
+                    this.exportQuery.startDate = undefined;
+                    this.exportQuery.endDate = undefined;
+                } else {
+                    this.listQuery.startDate = moment(this.dataChange[0]).format("YYYY-MM-DD");
+                    this.listQuery.endDate = moment(this.dataChange[1]).format("YYYY-MM-DD");
+                    this.exportQuery.startDate = moment(this.dataChange[0]).format("YYYY-MM-DD");
+                    this.exportQuery.endDate = moment(this.dataChange[1]).format("YYYY-MM-DD");
+                }
+                console.log(this.dataChange);
+            },
+            handleDownload() {
+                getProcessDetailInfo(this.exportQuery).then(response => {
+                    this.exportList = response.data;
+                    require.ensure([], () => {
+                        const {export_json_to_excel} = require('vendor/Export2Excel');
+                        const tHeader = ['序号', '事项', '受理时间', '办结时间', '实际使用时间', '是否超期', '是否最多跑一次', '办件类型', '受理窗口', '审批部门', '备注'];
+                        const filterVal = ['id', 'itemName', 'startItemTime','finishItemTime', 'durationWorkSeconds', 'flagSupervied', 'flagOnce', 'itemProcessType', 'windowName', 'departmentName', 'status'];
+                        const exportList = this.exportList;
+                        const data = this.formatJson(filterVal, exportList);
+                        export_json_to_excel(tHeader, data, '办件明细表');
+                    })
+                })
+            },
+            formatJson(filterVal, jsonData) {
+                return jsonData.map(function (v,index) {
+                    return filterVal.map(function (j) {
+                        console.log(index);
+                        if (j === 'id') {
+                            return index+1;
+                        }else if(j === 'durationWorkSeconds'){
+                            return duration(v[j]);
+                        }else if(j === 'durationWorkSeconds'){
+                            return duration(v[j]);
+                        }else if(j === 'itemProcessType'){
+                            return dics(v[j],'bjlx')
+                        }else if(j === 'flagSupervied'){
+                            if (v[j] == 1) {
+                                return '是'
+                            }else {
+                                return '否'
+                            }
+                        }else if(j === 'flagOnce'){
+                            if (v[j] == 1) {
+                                return '是'
+                            }else {
+                                return '否'
+                            }
+                        } else {
+                            return v[j]
+                        }
+                    });
+                });
+            },
             getList() {
                 this.listLoading = true;
                 getDeptSuperviseList(this.listQuery).then(response => {
@@ -687,7 +804,7 @@
             },
             downloadMaterialFiles() {
                 // console.log(this.itemProcessVo);
-                window.open('/api/common/downloadMaterialFiles?processNumber='+this.itemProcessVo.processNumber+'&taskId='+this.itemProcessVo.taskId);
+                window.open('/api/common/downloadMaterialFiles?processNumber=' + this.itemProcessVo.processNumber + '&taskId=' + this.itemProcessVo.taskId);
             }
         }
     }
