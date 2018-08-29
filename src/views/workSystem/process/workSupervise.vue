@@ -54,7 +54,8 @@
             </el-table-column>
             <el-table-column align="center" label="实际用时" prop="promiseFinishTime">
                 <template slot-scope="scope">
-                    <span>{{scope.row.durationWorkSeconds | duration}}</span>
+                    <span v-if="scope.row.durationWorkSeconds == 0"></span>
+                    <span v-else>{{scope.row.durationWorkSeconds*1000 | duration}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="超期件" prop="flagTimeout">
@@ -633,7 +634,11 @@
                         }else if (j === 'status') {
                             return enums(v[j],'ItemProcessStatus')
                         }else if(j === 'durationWorkSeconds'){
-                            return duration(v[j]);
+                            if (v[j] == 0) {
+                                return '';
+                            }else {
+                                return duration(v[j]*1000);
+                            }
                         }else if(j === 'itemProcessType'){
                             return dics(v[j],'bjlx')
                         }else if(j === 'flagSupervied'){
