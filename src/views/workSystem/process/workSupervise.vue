@@ -630,8 +630,8 @@
                         console.log(index);
                         if (j === 'id') {
                             return index+1;
-                        }else if(j === 'durationWorkSeconds'){
-                            return duration(v[j]);
+                        }else if (j === 'status') {
+                            return enums(v[j],'ItemProcessStatus')
                         }else if(j === 'durationWorkSeconds'){
                             return duration(v[j]);
                         }else if(j === 'itemProcessType'){
