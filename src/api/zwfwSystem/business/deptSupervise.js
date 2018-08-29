@@ -26,6 +26,17 @@ export function getDeptWorkDetail(query) {
 }
 
 /**
+ * 导出excel办件明细表
+ * @param query
+ */
+export function getProcessDetailInfo(query) {
+    return fetch({
+        url: '/api/workSystem/itemProcessWork/processDetailInfo',
+        method: 'get',
+        params: query
+    });
+}
+/**
  * 设置为督办
  * @param query
  */
