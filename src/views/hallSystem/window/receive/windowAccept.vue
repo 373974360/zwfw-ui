@@ -1200,6 +1200,9 @@
 //            })
 //        },
         methods: {
+            /**
+             * 显示选择快件箱已取未办的列表
+             */
             queryPendingFromBoxList() {
                 this.pendingFromBoxList = [];
                 this.pendingFromBoxListLoading = true;
@@ -1215,12 +1218,16 @@
                     this.$message.error("加载超时");
                 });
             },
+            /**
+            * 处理选中的快件箱已取未办信息
+            * */
             handlePendingFromBoxCurrentChange(currentRow) {
                 if (currentRow) {
                     this.getNumberBy_processNumber = currentRow.pretrialNumber;
                     this.handlingNumberByProcessNumber();
                 }
             },
+            /** 查询事项分类数据*/
             getCategoryCascader() {
                 getCategoryCascader().then(response => {
                     if (response.httpCode === 200) {
@@ -1230,6 +1237,7 @@
                     }
                 })
             },
+            /** 查询快件箱数据*/
             getMailboxList() {
                 const query = {}
                 getAllMailbox(query).then(response => {
@@ -1240,6 +1248,7 @@
                     }
                 });
             },
+            /** 查询注册用户地址数据*/
             getMemberAddressees() {
                 getAllAddresseesByMemberId({
                     memberId: this.member.id
@@ -1315,6 +1324,7 @@
                 this.displayPendingFromBoxDialog = true;
                 this.queryPendingFromBoxList();
             },
+            /** 身份证号码、统一社会信用代码转大写*/
             toUpperCase() {
                 this.companyCode = this.companyCode.toUpperCase();
                 this.memberCode = this.memberCode.toUpperCase();
@@ -1474,7 +1484,9 @@
                     this.loading = false;
                 });
             },
-            //事项分类变化时触发
+            /**
+             * 事项分类变化时触发
+             * */
             handleCategoryChange(value) {
                 if (value.length > 0) {
                     this.itemCategory = value[value.length - 1];
@@ -1586,7 +1598,7 @@
                 })
             },
             /**
-             * 清除
+             * 清除表单中的信息
              * */
             resetForm() {
 
@@ -1613,7 +1625,7 @@
                 //清空事项下拉框当前值
                 this.selectedItem = null;
             },
-
+            /** 快速注册账号手机验证码发送-目前已经不用了*/
             sendFastRegPhoneCode() {
                 this.queryLoading = true;
                 sendFastRegPhoneCode({
@@ -1630,6 +1642,7 @@
                     this.queryLoading = false;
                 })
             },
+            /** 提交用户信息注册用户-目前已经不用了*/
             fastRegMember() {
                 this.queryLoading = true;
                 fastRegMember({
@@ -1745,6 +1758,8 @@
                     this.queryLoading = false;
                 })
             },
+
+            /** 办件对象发生变化*/
             memberTypeChange() {
                 this.queryItem();
                 this.resetForm();
@@ -1776,6 +1791,7 @@
                     _this.queryLoading = false;
                 });
             },
+            /** 页面更新显示参数传入的号码信息*/
             refreshNumber(data) {
                 let _this = this;
                 _this.numberTab = 'number';
@@ -2193,7 +2209,7 @@
                 });
             },
             /**
-             * 跳过处理
+             * 跳过处理此号码
              *
              * */
             skip() {
@@ -2278,18 +2294,27 @@
             validateField(form, field) {
                 this.$refs[form].validateField(field)
             },
+            /**
+             * 业务受理单打印页面
+             * */
             print_ywsld() {
                 if (this.itemNumber != null) {
                     window.open('print/ywsld.html?numberId=' + this.itemNumber.id);
                     // window.open('/api/hallSystem/hallCompositeWindow/downloadYwsld?numberId=' + this.itemNumber.id);
                 }
             },
+            /**
+             * 物料转移单打印页面
+             * */
             print_wlzyd() {
                 if (this.itemNumber != null) {
                     window.open('print/wlzyd.html?numberId=' + this.itemNumber.id);
                     // window.open('/api/hallSystem/hallCompositeWindow/downloadWlzyd?numberId=' + this.itemNumber.id);
                 }
             },
+            /**
+             * 一次性告知单打印页面
+             * */
             print_ycxgzd() {
                 if (this.itemNumber != null) {
                     window.open('print/ycxgzd.html?numberId=' + this.itemNumber.id);
