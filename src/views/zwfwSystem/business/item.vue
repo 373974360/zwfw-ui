@@ -211,6 +211,16 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
+                <el-form-item label="短信模板类型" prop="messageTemplate">
+                    <el-radio-group v-model="zwfwItem.messageTemplate" placeholder="请选择模板类型" style="width:100%">
+                        <el-radio v-for="item in enums['MessageTemplate']"
+                                  :key="item.code"
+                                  :label="item.code"
+                                  :value="item.code">
+                            <span style="font-weight:normal;">{{item.value}}</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
                 <el-form-item label="结果样本" prop="resultExample">
                     <el-upload name="uploadFile" :accept="fileAccepts"
                                ref="upload"
@@ -914,6 +924,7 @@
                     remark: '',
                     runSystem: 'yxxt_guojiaji',
                     type: '',
+                    messageTemplate: '',
                     resultExample: '',
                     handleLevel: 'xscj_guojiaji',
                     serviceObject: 'fwdx_ziranren',
@@ -1876,6 +1887,7 @@
                     remark: '',
                     runSystem: 'yxxt_guojiaji',
                     type: '',
+                    messageTemplate: '',
                     resultExample: '',
                     handleLevel: 'xscj_guojiaji',
                     serviceObject: 'fwdx_ziranren',
