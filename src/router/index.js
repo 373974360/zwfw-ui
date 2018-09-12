@@ -44,6 +44,8 @@ const HallSystem = () => import('../views/hallSystem/index');
 /* 大厅管理 */
 const Window = () => import('../views/hallSystem/lobby/window');
 const NumberScope = () => import('../views/hallSystem/lobby/numberScope');
+const CallNumber = () => import('../views/hallSystem/lobby/callNumber.vue');
+
 /* 业务管理 */
 const Category = () => import('../views/hallSystem/business/category');
 const Item = () => import('../views/hallSystem/business/item');
@@ -224,6 +226,12 @@ export const asyncRouterMap = [
                 component: NumberScope,
                 name: '抽号管理',
                 meta: {permission: 'hallSystem:lobby:numberScope:list'}
+            },
+            {
+                path: 'callNumber',
+                component: CallNumber,
+                name: '叫号管理',
+                meta: {permission: 'hallSystem:lobby:callNumber:list'}
             }
         ]
     },
