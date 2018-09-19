@@ -27,6 +27,9 @@
                             placeholder="选择叫号日期范围"
                             :picker-options="pickerOptions2" @change="formatStartDate">
             </el-date-picker>
+            <el-input @keyup.enter.native="getCallNumberList" style="width: 230px;" class="filter-item"
+                      placeholder="电话号码"
+                      v-model="listQuery.personPhone"></el-input>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getCallNumberList">搜索
             </el-button>
             <el-button class="filter-item" type="primary" icon="document" @click="handleDownload">
@@ -77,6 +80,16 @@
                     <span>{{scope.row.windowName}}</span>
                 </template>
             </el-table-column>
+            <el-table-column align="center" label="手机号码" prop="personPhone">
+                <template scope="scope">
+                    <span>{{scope.row.personPhone}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="语音状态" prop="resultCode">
+                <template scope="scope">
+                    <span>{{scope.row.resultCode | enums('SingleCallByTtsResultCode')}}</span>
+                </template>
+            </el-table-column>
         </el-table>
 
         <div v-show="!pageLoading" class="pagination-container">
@@ -93,7 +106,7 @@
 <script>
 
     import {getAllByNameOrbasicCode} from 'api/hallSystem/business/item'
-    import {getCallNumberList} from 'api/hallSystem/business/callNumber'
+    import {getCallNumberList} from '../../../api/hallSystem/business/callNumber'
     import {mapGetters} from 'vuex';
     import moment from 'moment';
     import {getAllWindow} from 'api/hallSystem/lobby/window';
@@ -151,7 +164,8 @@
                     windowIds: undefined,
                     startDate: undefined,
                     endDate: undefined,
-                    isCall: ''
+                    isCall: '',
+                    personPhone: undefined
                 },
                 copylistQuery: {
                     page: this.$store.state.app.page,

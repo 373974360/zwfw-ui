@@ -13,8 +13,8 @@
                                 placeholder="结束时间" @change="changeDateEndCategory" :clearable="false">
                 </el-date-picker>
                 <!--<el-select v-model="listQuery.itemCategories" class="filter-item"  filterable placeholder="选择科室分类">-->
-                    <!--<el-option :key="category.id" v-for="category in categoryList" :label="category.name" :value="category.id">-->
-                    <!--</el-option>-->
+                <!--<el-option :key="category.id" v-for="category in categoryList" :label="category.name" :value="category.id">-->
+                <!--</el-option>-->
                 <!--</el-select>-->
                 <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="统计" placement="top-start">
                     <el-button class="filter-item" type="primary" v-waves icon="search" @click="doCategoryPlot">
@@ -38,6 +38,16 @@
                 </el-date-picker>
                 <el-select v-model="listQuery.windowIds" class="filter-item" multiple filterable placeholder="选择窗口">
                     <el-option :key="item.id" v-for="item in windowList" :label="item.name" :value="item.id"/>
+                </el-select>
+                <el-select v-model="listQuery.business" class="filter-item"  filterable placeholder="选择业务">
+                    <el-option label="全部" value="">
+                    </el-option>
+                    <el-option
+                            v-for="item in options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                    </el-option>
                 </el-select>
                 <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="统计" placement="top-start">
                     <el-button class="filter-item" type="primary" v-waves icon="search" @click="doWindowPlot">
@@ -104,7 +114,8 @@
                     endDateUser: undefined,
                     itemCategories: undefined,
                     windowIds: undefined,
-                    userIds: undefined
+                    userIds: undefined,
+                    business: undefined
                 },
                 clearable_show: false,
                 userList: [],
@@ -116,7 +127,39 @@
                 windowTotal: [],
                 userName: [],
                 userTotal: [],
-                all: 0
+                all: 0,
+                // 户政A
+                // 出入境 -B
+                // 社保-C
+                // 人才-D E
+                // 婚登-H
+                // 税务-G
+                // 审批局-K  其他-J
+                options: [{
+                    value: 'A',
+                    label: '户政'
+                }, {
+                    value: 'B',
+                    label: '出入境'
+                }, {
+                    value: 'C',
+                    label: '社保'
+                }, {
+                    value: 'D,E',
+                    label: '人才'
+                }, {
+                    value: 'H',
+                    label: '婚登'
+                }, {
+                    value: 'G',
+                    label: '税务'
+                }, {
+                    value: 'K',
+                    label: '审批局'
+                }, {
+                    value: 'J',
+                    label: '其他'
+                }]
             }
         },
         computed: {
@@ -242,19 +285,23 @@
             },
             plotByWindow() {
                 let query = {};
+                let windowId;
+                let business;
                 if (this.listQuery.windowIds != undefined) {
-                    const windowId = this.listQuery.windowIds.toString();
-                    query = {
-                        startDate: this.listQuery.startDateWindow,
-                        endDate: this.listQuery.endDateWindow,
-                        windowIds: windowId
-                    }
+                    windowId = this.listQuery.windowIds.toString();
                 } else {
-                    query = {
-                        startDate: this.listQuery.startDateWindow,
-                        endDate: this.listQuery.endDateWindow,
-                        windowIds: this.listQuery.windowId
-                    }
+                    windowId = this.listQuery.windowIds;
+                }
+                if (this.listQuery.business != undefined) {
+                    business = this.listQuery.business.toString();
+                } else {
+                    business = this.listQuery.business;
+                }
+                query = {
+                    startDate: this.listQuery.startDateWindow,
+                    endDate: this.listQuery.endDateWindow,
+                    windowIds: windowId,
+                    business: business
                 }
                 plotByWindow(query).then(response => {
                     if (response.httpCode === 200) {
