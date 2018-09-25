@@ -537,6 +537,9 @@
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
+                <el-form-item label="排序">
+                    <el-input-number v-model="zwfwItem.sortNo" :min="1" :max="100"/>
+                </el-form-item>
                 <el-form-item label="注意事项" prop="remark">
                     <!--<el-input v-model="zwfwItem.remark"></el-input>-->
                     <quill-editor ref="noticeTextEditor" v-model="noticeTextHtml"
@@ -941,7 +944,8 @@
                     superviseTreePosition: '',
                     implAgencyTreePosition: '',
                     unionAgencyTreePosition: '',
-                    enable: ''
+                    enable: '',
+                    sortNo: 1
                 },
                 zwfwItemMaterial: {
                     id: undefined,
@@ -1896,7 +1900,8 @@
                     superviseTreePosition: '',
                     implAgencyTreePosition: '',
                     unionAgencyTreePosition: '',
-                    enable: ''
+                    enable: '',
+                    sortNo: 1
                 };
                 this.setBasisHtml = '';
                 this.acceptConditionHtml = '';
