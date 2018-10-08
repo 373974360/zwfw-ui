@@ -33,7 +33,7 @@
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getCallNumberList">搜索
             </el-button>
             <el-button class="filter-item" type="primary" icon="document" @click="handleDownload">
-                导出excel
+                导出叫号信息excel
             </el-button>
         </div>
 
@@ -273,8 +273,8 @@
                     this.exportList = response.data;
                     require.ensure([], () => {
                         const {export_json_to_excel} = require('vendor/Export2Excel');
-                        const tHeader = ['序号', '事项', '抽号时间', '抽号编码', '办事人', '身份证号', '是否叫号', '叫号窗口', '叫号时间'];
-                        const filterVal = ['id', 'itemName', 'takeTime', 'orderNo', 'personName', 'personId', 'numberIsCall', 'windowName', 'callTime', 'departmentName', 'status'];
+                        const tHeader = ['序号', '事项', '抽号时间', '抽号编码', '办事人', '身份证号', '手机号', '是否叫号', '叫号窗口', '叫号时间'];
+                        const filterVal = ['id', 'itemName', 'takeTime', 'orderNo', 'personName', 'personId', 'personPhone', 'numberIsCall', 'windowName', 'callTime', 'departmentName', 'status'];
                         const exportList = this.exportList.list;
                         const data = this.formatJson(filterVal, exportList);
                         export_json_to_excel(tHeader, data, '叫号信息表');
