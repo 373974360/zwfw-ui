@@ -59,16 +59,16 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="基本编码" prop="basicCode">
-                <template scope="scope">
-                    <span>{{scope.row.basicCode}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="事项类型" prop="type">
-                <template scope="scope">
-                    <span>{{scope.row.type | dics('sslx')}}</span>
-                </template>
-            </el-table-column>
+            <!--<el-table-column align="center" label="基本编码" prop="basicCode">-->
+            <!--<template scope="scope">-->
+            <!--<span>{{scope.row.basicCode}}</span>-->
+            <!--</template>-->
+            <!--</el-table-column>-->
+            <!--<el-table-column align="center" label="事项类型" prop="type">-->
+            <!--<template scope="scope">-->
+            <!--<span>{{scope.row.type | dics('sslx')}}</span>-->
+            <!--</template>-->
+            <!--</el-table-column>-->
             <el-table-column align="center" label="办件类型" prop="processType">
                 <template scope="scope">
                     <el-tag :type="scope.row.processType | dics('bjlx')">
@@ -100,19 +100,19 @@
                     </el-tag>
                 </template>
             </el-table-column>
-            <el-table-column align="left" label="操作" width="100" class-name="action">
+            <el-table-column align="center" label="操作" class-name="action">
                 <template scope="scope">
-                    <el-badge :value="scope.row.itemMaterialCount" class="item">
-                        <el-button class="filter-item" style="" @click="handleMaterialList(scope.row)"
-                                   type="primary" size="small">
+                    <el-badge :value="scope.row.itemMaterialCount" class="item" style="display: inline-flex;">
+                        <el-button class="filter-item" type="primary" @click="handleMaterialList(scope.row)"
+                                   size="small">
                             办件材料
                         </el-button>
                         <br/>
-                        <!--<br />-->
-                        <!--<el-button class="filter-item" style="" @click="handleItemConfig(scope.row)"-->
-                        <!--type="primary" size="small">-->
-                        <!--预约配置-->
-                        <!--</el-button>-->
+                        <el-button class="filter-item" style="margin-left: 5px" @click="handleItemConfig(scope.row)"
+                                   type="primary"
+                                   size="small">
+                            预约配置
+                        </el-button>
                     </el-badge>
                 </template>
             </el-table-column>
@@ -967,7 +967,7 @@
                 },
                 isMaterialExist: false,
                 zwfwItemConfig: {
-                    ispreorder: 1,
+                    ispreorder: true,
                     preorderTimeArray: [],
                     preordernum: '',
                     opentime: [],
@@ -1561,7 +1561,7 @@
                 this.itemId = item.id;
                 this.dialogStatus = 'itemConfigUpdate';
                 this.getItemConfig();
-                this.resetMaterialTemp();
+                // this.resetMaterialTemp();
                 this.dialogItemConfigFormVisible = true;
             },
             getItemConfig() {
@@ -1836,7 +1836,7 @@
             },
             closeZwfwItemConfigForm() {
                 this.dialogItemConfigFormVisible = false;
-                this.resetZwfwMaterialForm();
+                // this.resetZwfwMaterialForm();
             },
             resetZwfwMaterialForm() {
                 this.changeMaterialInfo = false;
