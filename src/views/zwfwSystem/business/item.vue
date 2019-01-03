@@ -123,9 +123,16 @@
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem" label-position="right"
                      label-width="134px"
                      style="width: 80%; margin-left: 10%" v-loading="dialogFormLoading" :rules="zwfwItemRules">
+                <el-form-item label="目录名称" prop="mlmc">
+                    <el-input v-model="zwfwItem.mlmc"></el-input>
+                </el-form-item>
+                <el-form-item label="通用目录" prop="tyml">
+                    <el-input v-model="zwfwItem.tyml"></el-input>
+                </el-form-item>
                 <el-form-item label="事项名称" prop="name">
                     <el-input v-model="zwfwItem.name"></el-input>
                 </el-form-item>
+
                 <el-form-item label="所属部门" prop="departmentId">
                     <el-cascader
                             expand-trigger="hover" :show-all-levels="true"
@@ -539,6 +546,16 @@
                 </el-form-item>
                 <el-form-item label="业务状态" prop="enable">
                     <el-radio-group v-model="zwfwItem.enable">
+                        <el-radio :label="1">
+                            <span style="font-weight:normal;">启用</span>
+                        </el-radio>
+                        <el-radio :label="0">
+                            <span style="font-weight:normal;">禁用</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="个别字段不同" prop="diffFlag">
+                    <el-radio-group v-model="zwfwItem.diffFlag">
                         <el-radio :label="1">
                             <span style="font-weight:normal;">启用</span>
                         </el-radio>
@@ -968,7 +985,10 @@
                     enable: '',
                     comTimes: 1,
                     resultType: '',
-                    handleDeep: ''
+                    handleDeep: '',
+                    mlmc:'',
+                    tyml:'',
+                    diffFlag:0
                 },
                 zwfwItemMaterial: {
                     id: undefined,
@@ -1931,7 +1951,10 @@
                     enable: '',
                     comTimes: 1,
                     resultType: '',
-                    handleDeep: ''
+                    handleDeep: '',
+                    mlmc:'',
+                    tyml:'',
+                    diffFlag:0
                 };
                 this.setBasisHtml = '';
                 this.acceptConditionHtml = '';
