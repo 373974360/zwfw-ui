@@ -123,22 +123,6 @@
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem" label-position="right"
                      label-width="134px"
                      style="width: 80%; margin-left: 10%" v-loading="dialogFormLoading" :rules="zwfwItemRules">
-                <el-form-item label="目录名称" prop="mlmc">
-                    <el-input v-model="zwfwItem.mlmc"></el-input>
-                </el-form-item>
-                <el-form-item label="通用目录" prop="tyml">
-                    <el-input v-model="zwfwItem.tyml"></el-input>
-                </el-form-item>
-                <el-form-item label="个别字段不同" prop="diffFlag">
-                    <el-radio-group v-model="zwfwItem.diffFlag">
-                        <el-radio :label="1">
-                            <span style="font-weight:normal;">启用</span>
-                        </el-radio>
-                        <el-radio :label="0">
-                            <span style="font-weight:normal;">禁用</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
                 <el-form-item label="事项名称" prop="name">
                     <el-input v-model="zwfwItem.name"></el-input>
                 </el-form-item>
@@ -575,6 +559,15 @@
                                :on-success="handleEditorUploadSuccess" :on-error="handleEditorUploadError">
                         <el-button id="notice_text_btn"></el-button>
                     </el-upload>
+                </el-form-item>
+                <el-form-item label="目录名称" prop="mlmc">
+                    <el-input v-model="zwfwItem.mlmc"></el-input>
+                </el-form-item>
+                <el-form-item label="通用目录" prop="tyml">
+                    <el-input v-model="zwfwItem.tyml"></el-input>
+                </el-form-item>
+                <el-form-item label="个别字段不同" prop="diffFlag">
+                    <el-input v-model="zwfwItem.diffFlag"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer" style="margin-top:30px; text-align: center;">
