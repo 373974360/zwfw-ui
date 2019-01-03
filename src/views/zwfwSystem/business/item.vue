@@ -129,6 +129,16 @@
                 <el-form-item label="通用目录" prop="tyml">
                     <el-input v-model="zwfwItem.tyml"></el-input>
                 </el-form-item>
+                <el-form-item label="个别字段不同" prop="diffFlag">
+                    <el-radio-group v-model="zwfwItem.diffFlag">
+                        <el-radio :label="1">
+                            <span style="font-weight:normal;">启用</span>
+                        </el-radio>
+                        <el-radio :label="0">
+                            <span style="font-weight:normal;">禁用</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
                 <el-form-item label="事项名称" prop="name">
                     <el-input v-model="zwfwItem.name"></el-input>
                 </el-form-item>
@@ -554,16 +564,7 @@
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item label="个别字段不同" prop="diffFlag">
-                    <el-radio-group v-model="zwfwItem.diffFlag">
-                        <el-radio :label="1">
-                            <span style="font-weight:normal;">启用</span>
-                        </el-radio>
-                        <el-radio :label="0">
-                            <span style="font-weight:normal;">禁用</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
+
                 <el-form-item label="注意事项" prop="remark">
                     <!--<el-input v-model="zwfwItem.remark"></el-input>-->
                     <quill-editor ref="noticeTextEditor" v-model="noticeTextHtml"
