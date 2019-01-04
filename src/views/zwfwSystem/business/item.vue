@@ -637,7 +637,7 @@
                         <el-radio :label="1">
                             <span style="font-weight:normal;">年审</span>
                         </el-radio>
-                        <el-radio :label="0">
+                        <el-radio :label="2">
                             <span style="font-weight:normal;">年检</span>
                         </el-radio>
                         <el-radio :label="3">
@@ -656,10 +656,10 @@
                         <el-radio :label="3">
                             <span style="font-weight:normal;">三年一次</span>
                         </el-radio>
-                        <el-radio :label="3">
+                        <el-radio :label="4">
                             <span style="font-weight:normal;">四年一次</span>
                         </el-radio>
-                        <el-radio :label="3">
+                        <el-radio :label="5">
                             <span style="font-weight:normal;">五年一次</span>
                         </el-radio>
                     </el-radio-group>
