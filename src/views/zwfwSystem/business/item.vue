@@ -583,6 +583,7 @@
         </el-dialog>
 
 
+        <!--事项材料配置-->
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogMaterialFormVisible"
                    :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwMaterialForm">
             <el-row>
