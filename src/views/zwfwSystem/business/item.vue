@@ -569,6 +569,226 @@
                 <el-form-item label="个别字段不同" prop="diffFlag">
                     <el-input v-model="zwfwItem.diffFlag"></el-input>
                 </el-form-item>
+                <el-form-item label="主项编码">
+                    <el-input v-model="zwfwItem.zxbm"></el-input>
+                </el-form-item>
+                <el-form-item label="办理项编码">
+                    <el-input v-model="zwfwItem.blxbm"></el-input>
+                </el-form-item>
+                <el-form-item label="市级部门">
+                    <el-input v-model="zwfwItem.sjbm"></el-input>
+                </el-form-item>
+                <el-form-item label="服务主题">
+                    <el-input v-model="zwfwItem.fwzt"></el-input>
+                </el-form-item>
+                <el-form-item label="行政分类">
+                    <el-input v-model="zwfwItem.xzfl"></el-input>
+                </el-form-item>
+                <el-form-item label="权利来源">
+                    <el-input v-model="zwfwItem.qlly"></el-input>
+                </el-form-item>
+                <el-form-item label="时限类型">
+                    <el-input v-model="zwfwItem.sxlx"></el-input>
+                </el-form-item>
+                <el-form-item label="自然人关注点">
+                    <el-input v-model="zwfwItem.zrrgzd"></el-input>
+                </el-form-item>
+                <el-form-item label="法人关注点">
+                    <el-input v-model="zwfwItem.frgzd"></el-input>
+                </el-form-item>
+                <el-form-item label="是否自贸区事项">
+                    <el-radio-group v-model="zwfwItem.sfzmqsx">
+                        <el-radio :label="1">
+                            <span style="font-weight:normal;">是</span>
+                        </el-radio>
+                        <el-radio :label="0">
+                            <span style="font-weight:normal;">否</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="是否可委托代办">
+                    <el-radio-group v-model="zwfwItem.wtdb">
+                        <el-radio :label="1">
+                            <span style="font-weight:normal;">是</span>
+                        </el-radio>
+                        <el-radio :label="0">
+                            <span style="font-weight:normal;">否</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="批前公示">
+                    <el-radio-group v-model="zwfwItem.pqgs">
+                        <el-radio :label="1">
+                            <span style="font-weight:normal;">是</span>
+                        </el-radio>
+                        <el-radio :label="0">
+                            <span style="font-weight:normal;">否</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="投诉途径">
+                    <el-input v-model="zwfwItem.tstj"></el-input>
+                </el-form-item>
+                <el-form-item label="投诉地址">
+                    <el-input v-model="zwfwItem.tsdz"></el-input>
+                </el-form-item>
+                <el-form-item label="年审或年检">
+                    <el-radio-group v-model="zwfwItem.nshnj">
+                        <el-radio :label="1">
+                            <span style="font-weight:normal;">年审</span>
+                        </el-radio>
+                        <el-radio :label="0">
+                            <span style="font-weight:normal;">年检</span>
+                        </el-radio>
+                        <el-radio :label="3">
+                            <span style="font-weight:normal;">无</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="年审或年检次数">
+                    <el-radio-group v-model="zwfwItem.nshnjcs">
+                        <el-radio :label="1">
+                            <span style="font-weight:normal;">一年一次</span>
+                        </el-radio>
+                        <el-radio :label="2">
+                            <span style="font-weight:normal;">两年一次</span>
+                        </el-radio>
+                        <el-radio :label="3">
+                            <span style="font-weight:normal;">三年一次</span>
+                        </el-radio>
+                        <el-radio :label="3">
+                            <span style="font-weight:normal;">四年一次</span>
+                        </el-radio>
+                        <el-radio :label="3">
+                            <span style="font-weight:normal;">五年一次</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="是否自动预受理">
+                    <el-radio-group v-model="zwfwItem.sfzdysl">
+                        <el-radio :label="1">
+                            <span style="font-weight:normal;">是</span>
+                        </el-radio>
+                        <el-radio :label="0">
+                            <span style="font-weight:normal;">否</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="是否预受理踏勘">
+                    <el-radio-group v-model="zwfwItem.sfysltk">
+                        <el-radio :label="1">
+                            <span style="font-weight:normal;">是</span>
+                        </el-radio>
+                        <el-radio :label="0">
+                            <span style="font-weight:normal;">否</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="一窗是否自动预受理">
+                    <el-radio-group v-model="zwfwItem.ycsfzdysl">
+                        <el-radio :label="1">
+                            <span style="font-weight:normal;">是</span>
+                        </el-radio>
+                        <el-radio :label="0">
+                            <span style="font-weight:normal;">否</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="一网是否自动预受理">
+                    <el-radio-group v-model="zwfwItem.ywsfzdysl">
+                        <el-radio :label="1">
+                            <span style="font-weight:normal;">是</span>
+                        </el-radio>
+                        <el-radio :label="0">
+                            <span style="font-weight:normal;">否</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="图标">
+                    <el-input v-model="zwfwItem.img"></el-input>
+                </el-form-item>
+                <el-form-item label="到现场次数">
+                    <el-input v-model="zwfwItem.dxccs"></el-input>
+                </el-form-item>
+                <el-form-item label="福利">
+                    <el-input v-model="zwfwItem.fuli"></el-input>
+                </el-form-item>
+                <el-form-item label="需要资格预审">
+                    <el-radio-group v-model="zwfwItem.xyzgys">
+                        <el-radio :label="1">
+                            <span style="font-weight:normal;">是</span>
+                        </el-radio>
+                        <el-radio :label="0">
+                            <span style="font-weight:normal;">否</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="需要人工受理">
+                    <el-radio-group v-model="zwfwItem.xyrgsl">
+                        <el-radio :label="1">
+                            <span style="font-weight:normal;">是</span>
+                        </el-radio>
+                        <el-radio :label="0">
+                            <span style="font-weight:normal;">否</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="批量受理">
+                    <el-radio-group v-model="zwfwItem.plsl">
+                        <el-radio :label="1">
+                            <span style="font-weight:normal;">是</span>
+                        </el-radio>
+                        <el-radio :label="0">
+                            <span style="font-weight:normal;">否</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="需要证照">
+                    <el-radio-group v-model="zwfwItem.xyzz">
+                        <el-radio :label="1">
+                            <span style="font-weight:normal;">是</span>
+                        </el-radio>
+                        <el-radio :label="0">
+                            <span style="font-weight:normal;">否</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="需要踏勘">
+                    <el-radio-group v-model="zwfwItem.xytk">
+                        <el-radio :label="1">
+                            <span style="font-weight:normal;">是</span>
+                        </el-radio>
+                        <el-radio :label="0">
+                            <span style="font-weight:normal;">否</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="需要专家评审">
+                    <el-radio-group v-model="zwfwItem.xyzjps">
+                        <el-radio :label="1">
+                            <span style="font-weight:normal;">是</span>
+                        </el-radio>
+                        <el-radio :label="0">
+                            <span style="font-weight:normal;">否</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="需要红头文件">
+                    <el-radio-group v-model="zwfwItem.xyhtwj">
+                        <el-radio :label="1">
+                            <span style="font-weight:normal;">是</span>
+                        </el-radio>
+                        <el-radio :label="0">
+                            <span style="font-weight:normal;">否</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="申请主体权利义务">
+                    <el-input v-model="zwfwItem.sqztqlyw"></el-input>
+                </el-form-item>
+                <el-form-item label="窗口流程图">
+                    <el-input v-model="zwfwItem.cklct"></el-input>
+                </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer" style="margin-top:30px; text-align: center;">
                 <el-button icon="circle-cross" type="danger" @click="closeZwfwItemForm">取 消
@@ -983,7 +1203,39 @@
                     handleDeep: '',
                     mlmc:'',
                     tyml:'',
-                    diffFlag:0
+                    diffFlag:0,
+                    zxbm:'',
+                    blxbm:'',
+                    sjbm:'',
+                    fwzt:'',
+                    xzfl:'',
+                    qlly:'',
+                    sxlx:'',
+                    zrrgzd:'',
+                    frgzd:'',
+                    sfzmqsx:'',
+                    wtdb:'',
+                    pqgs:'',
+                    tstj:'',
+                    tsdz:'',
+                    nshnj:'',
+                    nshnjcs:'',
+                    sfzdysl:'',
+                    sfysltk:'',
+                    ycsfzdysl:'',
+                    ywsfzdysl:'',
+                    img:'',
+                    dxccs:'',
+                    fuli:'',
+                    xyzgys:'',
+                    xyrgsl:'',
+                    plsl:'',
+                    xyzz:'',
+                    xytk:'',
+                    xyzjps:'',
+                    xyhtwj:'',
+                    sqztqlyw:'',
+                    cklct:''
                 },
                 zwfwItemMaterial: {
                     id: undefined,
@@ -1949,7 +2201,39 @@
                     handleDeep: '',
                     mlmc:'',
                     tyml:'',
-                    diffFlag:0
+                    diffFlag:0,
+                    zxbm: '',
+                    blxbm: '',
+                    sjbm: '',
+                    fwzt: '',
+                    xzfl: '',
+                    qlly: '',
+                    sxlx: '',
+                    zrrgzd: '',
+                    frgzd: '',
+                    sfzmqsx: '',
+                    wtdb: '',
+                    pqgs: '',
+                    tstj: '',
+                    tsdz: '',
+                    nshnj: '',
+                    nshnjcs: '',
+                    sfzdysl: '',
+                    sfysltk: '',
+                    ycsfzdysl: '',
+                    ywsfzdysl: '',
+                    img: '',
+                    dxccs: '',
+                    fuli: '',
+                    xyzgys: '',
+                    xyrgsl: '',
+                    plsl: '',
+                    xyzz: '',
+                    xytk: '',
+                    xyzjps: '',
+                    xyhtwj: '',
+                    sqztqlyw: '',
+                    cklct: ''
                 };
                 this.setBasisHtml = '';
                 this.acceptConditionHtml = '';
