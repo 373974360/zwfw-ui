@@ -647,6 +647,9 @@
                 </el-form-item>
                 <el-form-item label="年审或年检次数">
                     <el-radio-group v-model="zwfwItem.nshnjcs">
+                        <el-radio :label="0">
+                            <span style="font-weight:normal;">无</span>
+                        </el-radio>
                         <el-radio :label="1">
                             <span style="font-weight:normal;">一年一次</span>
                         </el-radio>
