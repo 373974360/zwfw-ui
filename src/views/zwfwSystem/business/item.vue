@@ -598,30 +598,30 @@
                 </el-form-item>
                 <el-form-item label="是否自贸区事项">
                     <el-radio-group v-model="zwfwItem.sfzmqsx">
-                        <el-radio :label="1">
+                        <el-radio :label="true">
                             <span style="font-weight:normal;">是</span>
                         </el-radio>
-                        <el-radio :label="0">
+                        <el-radio :label="false">
                             <span style="font-weight:normal;">否</span>
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="是否可委托代办">
                     <el-radio-group v-model="zwfwItem.wtdb">
-                        <el-radio :label="1">
+                        <el-radio :label="true">
                             <span style="font-weight:normal;">是</span>
                         </el-radio>
-                        <el-radio :label="0">
+                        <el-radio :label="false">
                             <span style="font-weight:normal;">否</span>
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="批前公示">
                     <el-radio-group v-model="zwfwItem.pqgs">
-                        <el-radio :label="1">
+                        <el-radio :label="true">
                             <span style="font-weight:normal;">是</span>
                         </el-radio>
-                        <el-radio :label="0">
+                        <el-radio :label="false">
                             <span style="font-weight:normal;">否</span>
                         </el-radio>
                     </el-radio-group>
@@ -669,40 +669,40 @@
                 </el-form-item>
                 <el-form-item label="是否自动预受理">
                     <el-radio-group v-model="zwfwItem.sfzdysl">
-                        <el-radio :label="1">
+                        <el-radio :label="true">
                             <span style="font-weight:normal;">是</span>
                         </el-radio>
-                        <el-radio :label="0">
+                        <el-radio :label="false">
                             <span style="font-weight:normal;">否</span>
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="是否预受理踏勘">
                     <el-radio-group v-model="zwfwItem.sfysltk">
-                        <el-radio :label="1">
+                        <el-radio :label="true">
                             <span style="font-weight:normal;">是</span>
                         </el-radio>
-                        <el-radio :label="0">
+                        <el-radio :label="false">
                             <span style="font-weight:normal;">否</span>
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="一窗是否自动预受理">
                     <el-radio-group v-model="zwfwItem.ycsfzdysl">
-                        <el-radio :label="1">
+                        <el-radio :label="true">
                             <span style="font-weight:normal;">是</span>
                         </el-radio>
-                        <el-radio :label="0">
+                        <el-radio :label="false">
                             <span style="font-weight:normal;">否</span>
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="一网是否自动预受理">
                     <el-radio-group v-model="zwfwItem.ywsfzdysl">
-                        <el-radio :label="1">
+                        <el-radio :label="true">
                             <span style="font-weight:normal;">是</span>
                         </el-radio>
-                        <el-radio :label="0">
+                        <el-radio :label="false">
                             <span style="font-weight:normal;">否</span>
                         </el-radio>
                     </el-radio-group>
@@ -718,70 +718,70 @@
                 </el-form-item>
                 <el-form-item label="需要资格预审">
                     <el-radio-group v-model="zwfwItem.xyzgys">
-                        <el-radio :label="1">
+                        <el-radio :label="true">
                             <span style="font-weight:normal;">是</span>
                         </el-radio>
-                        <el-radio :label="0">
+                        <el-radio :label="false">
                             <span style="font-weight:normal;">否</span>
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="需要人工受理">
                     <el-radio-group v-model="zwfwItem.xyrgsl">
-                        <el-radio :label="1">
+                        <el-radio :label="true">
                             <span style="font-weight:normal;">是</span>
                         </el-radio>
-                        <el-radio :label="0">
+                        <el-radio :label="false">
                             <span style="font-weight:normal;">否</span>
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="批量受理">
                     <el-radio-group v-model="zwfwItem.plsl">
-                        <el-radio :label="1">
+                        <el-radio :label="true">
                             <span style="font-weight:normal;">是</span>
                         </el-radio>
-                        <el-radio :label="0">
+                        <el-radio :label="false">
                             <span style="font-weight:normal;">否</span>
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="需要证照">
                     <el-radio-group v-model="zwfwItem.xyzz">
-                        <el-radio :label="1">
+                        <el-radio :label="true">
                             <span style="font-weight:normal;">是</span>
                         </el-radio>
-                        <el-radio :label="0">
+                        <el-radio :label="false">
                             <span style="font-weight:normal;">否</span>
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="需要踏勘">
                     <el-radio-group v-model="zwfwItem.xytk">
-                        <el-radio :label="1">
+                        <el-radio :label="true">
                             <span style="font-weight:normal;">是</span>
                         </el-radio>
-                        <el-radio :label="0">
+                        <el-radio :label="false">
                             <span style="font-weight:normal;">否</span>
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="需要专家评审">
                     <el-radio-group v-model="zwfwItem.xyzjps">
-                        <el-radio :label="1">
+                        <el-radio :label="true">
                             <span style="font-weight:normal;">是</span>
                         </el-radio>
-                        <el-radio :label="0">
+                        <el-radio :label="false">
                             <span style="font-weight:normal;">否</span>
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="需要红头文件">
                     <el-radio-group v-model="zwfwItem.xyhtwj">
-                        <el-radio :label="1">
+                        <el-radio :label="true">
                             <span style="font-weight:normal;">是</span>
                         </el-radio>
-                        <el-radio :label="0">
+                        <el-radio :label="false">
                             <span style="font-weight:normal;">否</span>
                         </el-radio>
                     </el-radio-group>
