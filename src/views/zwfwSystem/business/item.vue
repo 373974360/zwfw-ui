@@ -710,9 +710,6 @@
                 <el-form-item label="图标">
                     <el-input v-model="zwfwItem.img"></el-input>
                 </el-form-item>
-                <el-form-item label="到现场次数">
-                    <el-input v-model="zwfwItem.dxccs"></el-input>
-                </el-form-item>
                 <el-form-item label="福利">
                     <el-input v-model="zwfwItem.fuli"></el-input>
                 </el-form-item>
@@ -1228,7 +1225,6 @@
                     ycsfzdysl:'',
                     ywsfzdysl:'',
                     img:'',
-                    dxccs:'',
                     fuli:'',
                     xyzgys:'',
                     xyrgsl:'',
@@ -2226,7 +2222,6 @@
                     ycsfzdysl: '',
                     ywsfzdysl: '',
                     img: '',
-                    dxccs: '',
                     fuli: '',
                     xyzgys: '',
                     xyrgsl: '',
