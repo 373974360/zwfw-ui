@@ -55,10 +55,10 @@
                     <el-tooltip class="item" effect="dark" :content="'点击编辑：' +scope.row.id " placement="right-start">
                         <span class="link-type" @click="handleItemUpdate(scope.row)">{{scope.row.name}}</span>
                     </el-tooltip>
-                    <a v-if="scope.row.ali" :disabled="itemSynchronizing" href="javascript:;"
+                    <el-button size="small" v-if="scope.row.ali" :loading="itemSynchronizing" :disabled="itemSynchronizing"
                        @click="syncAliItem(scope.row.itemNo)">
-                        [同步]
-                    </a>
+                        同步
+                    </el-button>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="基本编码" prop="basicCode" width="160">
@@ -2282,10 +2282,13 @@
                 let _this = this;
                 this.itemSynchronizing = true;
                 syncAliItem(aliItemNo).then(function (response) {
-                    console.log(response);
+                    // console.log(response);
                     _this.itemSynchronizing = false;
-                    _this.$message.success('同步失败');
-
+                    if (response.ok) {
+                        _this.$message.success('同步成功');
+                    }else{
+                        _this.$message.error(response.msg ||'同步失败');
+                    }
                 }).catch(function (error) {
                     console.log(error);
                     _this.itemSynchronizing = false;
