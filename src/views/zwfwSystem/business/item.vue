@@ -2284,12 +2284,12 @@
                 syncAliItem(aliItemNo).then(function (response) {
                     console.log(response);
                     _this.itemSynchronizing = false;
-                    this.$message.success('同步失败');
+                    _this.$message.success('同步失败');
 
                 }).catch(function (error) {
                     console.log(error);
                     _this.itemSynchronizing = false;
-                    this.$message.error('同步失败');
+                    _this.$message.error('同步失败');
                 });
             }
         }
