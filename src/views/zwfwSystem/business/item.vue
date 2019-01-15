@@ -55,6 +55,10 @@
                     <el-tooltip class="item" effect="dark" :content="'点击编辑：' +scope.row.id " placement="right-start">
                         <span class="link-type" @click="handleItemUpdate(scope.row)">{{scope.row.name}}</span>
                     </el-tooltip>
+                    <a v-if="scope.row.ali" :disabled="itemSynchronizing" href="javascript:;"
+                       @click="syncAliItem(scope.row.itemNo)">
+                        [同步]
+                    </a>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="基本编码" prop="basicCode" width="160">
@@ -1053,6 +1057,7 @@
         getPretrialUserListByItemId,
         getZwfwItemList,
         setItemConfig,
+        syncAliItem,
         updateZwfwItem
     } from 'api/zwfwSystem/business/item';
     import {
@@ -1201,40 +1206,40 @@
                     comTimes: 1,
                     resultType: '',
                     handleDeep: '',
-                    mlmc:'',
-                    tyml:'',
-                    diffFlag:0,
-                    zxbm:'',
-                    blxbm:'',
-                    sjbm:'',
-                    fwzt:'',
-                    xzfl:'',
-                    qlly:'',
-                    sxlx:'',
-                    zrrgzd:'',
-                    frgzd:'',
-                    sfzmqsx:'',
-                    wtdb:'',
-                    pqgs:'',
-                    tstj:'',
-                    tsdz:'',
-                    nshnj:'',
-                    nshnjcs:'',
-                    sfzdysl:'',
-                    sfysltk:'',
-                    ycsfzdysl:'',
-                    ywsfzdysl:'',
-                    img:'',
-                    fuli:'',
-                    xyzgys:'',
-                    xyrgsl:'',
-                    plsl:'',
-                    xyzz:'',
-                    xytk:'',
-                    xyzjps:'',
-                    xyhtwj:'',
-                    sqztqlyw:'',
-                    cklct:''
+                    mlmc: '',
+                    tyml: '',
+                    diffFlag: 0,
+                    zxbm: '',
+                    blxbm: '',
+                    sjbm: '',
+                    fwzt: '',
+                    xzfl: '',
+                    qlly: '',
+                    sxlx: '',
+                    zrrgzd: '',
+                    frgzd: '',
+                    sfzmqsx: '',
+                    wtdb: '',
+                    pqgs: '',
+                    tstj: '',
+                    tsdz: '',
+                    nshnj: '',
+                    nshnjcs: '',
+                    sfzdysl: '',
+                    sfysltk: '',
+                    ycsfzdysl: '',
+                    ywsfzdysl: '',
+                    img: '',
+                    fuli: '',
+                    xyzgys: '',
+                    xyrgsl: '',
+                    plsl: '',
+                    xyzz: '',
+                    xytk: '',
+                    xyzjps: '',
+                    xyhtwj: '',
+                    sqztqlyw: '',
+                    cklct: ''
                 },
                 zwfwItemMaterial: {
                     id: undefined,
@@ -1977,7 +1982,7 @@
                                 this.$message.success('关联成功');
                                 this.currentItem.itemMaterialCount += 1;
                             } else {
-                                this.$message.error(response.msg ||'关联失败');
+                                this.$message.error(response.msg || '关联失败');
                             }
                         })
                     } else {
@@ -2014,7 +2019,7 @@
                                 this.resetZwfwMaterialForm();
                                 this.$message.success('更新并关联成功');
                             } else {
-                                this.$message.error(response.msg ||'更新并关联失败');
+                                this.$message.error(response.msg || '更新并关联失败');
                             }
                         })
                     } else {
@@ -2198,9 +2203,9 @@
                     comTimes: 1,
                     resultType: '',
                     handleDeep: '',
-                    mlmc:'',
-                    tyml:'',
-                    diffFlag:0,
+                    mlmc: '',
+                    tyml: '',
+                    diffFlag: 0,
                     zxbm: '',
                     blxbm: '',
                     sjbm: '',
@@ -2272,6 +2277,20 @@
             },
             toggleSelection(row) {
                 this.$refs.zwfwItemTable.toggleRowSelection(row);
+            },
+            syncAliItem(aliItemNo) {
+                let _this = this;
+                this.itemSynchronizing = true;
+                syncAliItem(aliItemNo).then(function (response) {
+                    console.log(response);
+                    _this.itemSynchronizing = false;
+                    this.$message.success('同步失败');
+
+                }).catch(function (error) {
+                    console.log(error);
+                    _this.itemSynchronizing = false;
+                    this.$message.error('同步失败');
+                });
             }
         }
     }

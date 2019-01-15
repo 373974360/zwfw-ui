@@ -118,3 +118,16 @@ export function setItemConfig(zwfwItemConfig) {
         params: data
     })
 }
+
+/**
+ * 同步指定的事项
+ * @param id
+ */
+export function syncAliItem(aliItemNo) {
+    const data = {aliItemNo};
+    return fetch({
+        url: '/api/zwfwSystem/business/item/syncAliItem',
+        method: 'post',
+        params: data
+    })
+}
