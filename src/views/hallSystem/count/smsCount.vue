@@ -6,9 +6,11 @@
             </div>
             <hr style="height:1px;border:none;border-top:1px solid #555555;"/>
             <div class="filter-container">
-
+                <div>自定义内容：</div>
                 <el-input type="textarea" v-model="text"></el-input>
 
+                <div>以下内容为系统默认内容：</div>
+                <el-input type="textarea" v-model="newText" :disabled="true"></el-input>
 
                 <el-button class="filter-item" type="primary" v-waves icon="search" @click="flushCount">
                     刷新统计
@@ -30,7 +32,8 @@
         name: 'table_demo',
         data() {
             return {
-                text: ''
+                text: '',
+                newText:''
             }
         },
         computed: {
@@ -57,7 +60,8 @@
             getSetting() {
                 getHallCountMsg().then(response => {
                         if (response.httpCode === 200) {
-                            this.text = response.data.settingText || response.data.newText;
+                            this.text = response.data.settingText;
+                            this.newText = response.data.newText;
                         } else {
                             this.$message.error('信息加载失败')
                         }
