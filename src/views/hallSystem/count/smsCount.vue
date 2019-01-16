@@ -15,7 +15,7 @@
                 <el-button class="filter-item" type="primary" v-waves icon="search" @click="flushCount">
                     刷新统计
                 </el-button>
-                <el-button class="filter-item" type="primary" v-waves icon="search" @click="updateSetting">
+                <el-button class="filter-item" type="primary" v-waves  @click="updateSetting">
                     保存设置
                 </el-button>
             </div>
@@ -50,7 +50,7 @@
             flushCount() {
                 getHallCountMsg().then(response => {
                         if (response.httpCode === 200) {
-                            this.text = response.data.newText;
+                            this.newText = response.data.newText;
                         } else {
                             this.$message.error('信息加载失败')
                         }
