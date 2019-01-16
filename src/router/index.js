@@ -104,6 +104,7 @@ const EnterpriseInfoUp = () => import('../views/zwfwSystem/business/enterpriseIn
 const FormEditor = () => import('../views/zwfwSystem/business/formEditor');
 /* 统计分析 */
 const CallCount = () => import('../views/hallSystem/count/callCount');
+const CallCountSms = () => import('../views/hallSystem/count/smsCount');
 const OrderAndLine = () => import('../views/hallSystem/count/operation/orderAndLine');
 const WindowHandle = () => import('../views/hallSystem/count/operation/windowHandle');
 const DeptHandle = () => import('../views/hallSystem/count/operation/deptHandle');
@@ -523,7 +524,13 @@ export const asyncRouterMap = [
             {
                 path: 'callCount',
                 component: CallCount,
-                name: '叫号统计 ',
+                name: '叫号统计',
+                meta: {permission: 'hallSystem:count:callCount:list'}
+            },
+            {
+                path: 'callCounSms',
+                component: CallCountSms,
+                name: '统计短信设置',
                 meta: {permission: 'hallSystem:count:callCount:list'}
             }
         ]
