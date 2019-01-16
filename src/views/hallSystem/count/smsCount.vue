@@ -24,7 +24,7 @@
 
 <script>
     import {mapGetters} from 'vuex';
-    import {getHallCountMsg} from '../../../api/hallSystem/count/sms';
+    import {getHallCountMsg,updateHallCountMsg} from '../../../api/hallSystem/count/sms';
 
     export default {
         name: 'table_demo',
