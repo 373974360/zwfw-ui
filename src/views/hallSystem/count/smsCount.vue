@@ -40,8 +40,8 @@
                 'closeOnClickModal'
             ])
         },
-        created() {
-
+        mounted() {
+            this.getSetting();
         },
         methods: {
             flushCount() {
