@@ -379,6 +379,7 @@
                         const querry = {
                             id: this.itemPretrial.id,
                             status: this.itemPretrial.status,
+                            aliId: this.itemPretrial.aliId,
                             remark: null
                         }
                         if (this.itemPretrial.status == 3 || this.itemPretrial.status == 5) {
