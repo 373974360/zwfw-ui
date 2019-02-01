@@ -1624,6 +1624,9 @@
                 this.member = {};
                 //清空事项下拉框当前值
                 this.selectedItem = null;
+                // 清空交取件方式
+                this.clearHandType()
+                this.clearTakeType()
             },
             /** 快速注册账号手机验证码发送-目前已经不用了*/
             sendFastRegPhoneCode() {
@@ -1794,6 +1797,9 @@
             /** 页面更新显示参数传入的号码信息*/
             refreshNumber(data) {
                 let _this = this;
+                // 重载数据前先清空旧数据
+                this.clearHandType()
+                this.clearHandType()
                 _this.numberTab = 'number';
                 _this.itemNumber = data.itemNumber;
                 _this.itemVo = data.itemVo;
@@ -2250,6 +2256,21 @@
                 this.materialSelection = val;
             },
             resetItemHandTypeVo() {
+                this.clearHandType()
+                this.itemHandTypeVo.postInfo.addresseeId = this.itemVo.addresseeId;
+                copyProperties(this.itemHandTypeVo, this.handTypeVo);
+                if (this.itemHandTypeVo.handType) {
+                    this.itemHandTypeVo.handType += '';
+                }
+            },
+            resetItemTakeTypeVo() {
+                this.clearTakeType()
+                copyProperties(this.itemTakeTypeVo, this.takeTypeVo);
+                if (this.itemTakeTypeVo.takeType) {
+                    this.itemTakeTypeVo.takeType += '';
+                }
+            },
+            clearHandType() {
                 this.itemHandTypeVo = {
                     id: undefined,
                     handType: undefined,
@@ -2263,14 +2284,9 @@
                         expressCompany: undefined,
                         expressNumber: undefined
                     }
-                };
-                this.itemHandTypeVo.postInfo.addresseeId = this.itemVo.addresseeId;
-                copyProperties(this.itemHandTypeVo, this.handTypeVo);
-                if (this.itemHandTypeVo.handType) {
-                    this.itemHandTypeVo.handType += '';
                 }
             },
-            resetItemTakeTypeVo() {
+            clearTakeType() {
                 this.itemTakeTypeVo = {
                     id: undefined,
                     takeType: undefined,
@@ -2285,10 +2301,6 @@
                         mobilephone: undefined,
                         address: undefined
                     }
-                };
-                copyProperties(this.itemTakeTypeVo, this.takeTypeVo);
-                if (this.itemTakeTypeVo.takeType) {
-                    this.itemTakeTypeVo.takeType += '';
                 }
             },
             validateField(form, field) {
