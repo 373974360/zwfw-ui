@@ -314,8 +314,9 @@
                         const data = response.data;
                         this.member = data.member;
                         this.pretrialMaterialList = data.pretrialMaterialList;
-                        this.itemPretrial = this.currentItemPretrial;
-                        this.itemPretrial.status = '';
+                        this.itemPretrial = data.pretrial
+                        // this.itemPretrial = this.currentItemPretrial;
+                        // this.itemPretrial.status = '';
                         this.pretrialForm = [];
                         for (const form of data.pretrialForm || []) {
                             for (const field of form.fields) {
