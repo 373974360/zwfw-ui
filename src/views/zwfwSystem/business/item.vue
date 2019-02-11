@@ -1378,7 +1378,8 @@
                     defaultFlag: false
                 },
                 cardItemVisible: false,
-                cascader: []
+                cascader: [],
+                itemSynchronizing: false
             }
         },
         computed: {
