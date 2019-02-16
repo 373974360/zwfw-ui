@@ -7,6 +7,13 @@ export function  getAccessToken(clientInfo) {
         params: clientInfo
     })
 }
+export function  getIdentifyAccessToken(clientInfo) {
+    return fetch({
+        url: '/api/authenticationSystem/weChat/authentication/getAccessToken',
+        method: 'get',
+        params: clientInfo
+    })
+}
 
 export function getCertToken(query) {
     return fetch({
@@ -19,6 +26,13 @@ export function getCertToken(query) {
 export function getCertResult(query) {
     return fetch({
         url: '/api/hallSystem/window/identification/getCertResult',
+        method: 'get',
+        params: query
+    })
+}
+export function getIdentifyCertResult(query) {
+    return fetch({
+        url: '/api/authenticationSystem/weChat/authentication/getCertResult',
         method: 'get',
         params: query
     })

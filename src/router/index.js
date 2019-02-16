@@ -453,7 +453,7 @@ export const asyncRouterMap = [
             {
                 path: 'IdentifyRegister',
                 component: IdentifyRegister,
-                name: '微警注册',
+                name: '微警认证结果',
                 meta: {permission: 'hallSystem:window:identification:list'}
             }
             // {path: 'windowWork', component: WindowWork, name: '街办收件'},
