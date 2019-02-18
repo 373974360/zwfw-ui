@@ -30,7 +30,7 @@
             </el-table-column>
             <el-table-column width="100px" align="center" label="姓名">
                 <template slot-scope="scope">
-                    <span class="link-type" @click='handleUpdate(scope.row)'>{{scope.row.fullName}}</span>
+                    <span>{{scope.row.fullName}}</span>
                 </template>
             </el-table-column>
             <el-table-column width="200px" align="center" label="身份证号">
@@ -40,7 +40,7 @@
             </el-table-column>
             <el-table-column width="250px" align="center" label="公司名称">
                 <template slot-scope="scope">
-                    <span>{{scope.row.company}}</span>
+                    <span>{{scope.row.companyName}}</span>
                 </template>
             </el-table-column>
         </el-table>
