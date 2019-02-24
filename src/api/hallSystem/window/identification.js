@@ -7,6 +7,21 @@ export function  getAccessToken(clientInfo) {
         params: clientInfo
     })
 }
+
+export function  getCompanyName(companyName) {
+    return fetch({
+        url: '/api/authenticationSystem/weChat/authentication/getCompanyName',
+        method: 'get',
+        params: {companyName}
+    })
+}
+export function  getAuthIdByCompanyName(companyName) {
+    return fetch({
+        url: '/api/authenticationSystem/weChat/authentication/getAuthIdByCompanyName',
+        method: 'get',
+        params: {companyName}
+    })
+}
 export function  getIdentifyAccessToken(clientInfo) {
     return fetch({
         url: '/api/authenticationSystem/weChat/authentication/getAccessToken',

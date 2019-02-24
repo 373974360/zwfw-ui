@@ -1,21 +1,50 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input style="width: 230px;" class="filter-item" placeholder="流水号"
-                      v-model="certResultParams.authId">
-            </el-input>
-            <el-input style="width: 230px;" class="filter-item" placeholder="公司名称"
-                      v-model="certResultParams.companyName">
-            </el-input>
+            <el-select
+                    v-model="certResultParams.companyName"
+                    filterable
+                    remote
+                    placeholder="请输入公司名称"
+                    :remote-method="getCompanyList"
+                    @change="companyChange" style="width: 300px">
+                <el-option
+                        v-for="item in optionsCompanyName"
+                        :key="item"
+                        :label="item"
+                        :value="item">
+                </el-option>
+            </el-select>
+
+            <el-select
+                    v-model="certResultParams.authId"
+                    filterable
+                    remote
+                    placeholder="选择流水号"
+                    style="width: 400px">
+                <el-option
+                        v-for="item in optionsAuthIdName"
+                        :key="item"
+                        :label="item"
+                        :value="item">
+                </el-option>
+            </el-select>
             <el-button style="margin-left: 10px;" class="filter-item" type="primary" v-waves icon="search"
                        @click="getCertResult">查询
             </el-button>
         </div>
         <el-table :data="list" border fit highlight-current-row
                   style="width: 100%" v-show="showTable">
-            <el-table-column width="250px" align="center" label="流水号">
+
+            <el-table-column width="250px" align="center" label="公司名称">
                 <template slot-scope="scope">
-                    <span>{{scope.row.authId}}</span>
+                    <span>{{scope.row.companyName}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column width="250px" align="center" label="身份">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.status == 2" if>股东</span>
+                    <span v-else>代办人</span>
                 </template>
             </el-table-column>
             <el-table-column width="100px" align="center" label="认证结果">
@@ -38,9 +67,9 @@
                     <span>{{scope.row.idNum}}</span>
                 </template>
             </el-table-column>
-            <el-table-column width="250px" align="center" label="公司名称">
+            <el-table-column width="200px" align="center" label="认证时间">
                 <template slot-scope="scope">
-                    <span>{{scope.row.companyName}}</span>
+                    <span>{{scope.row.authTime}}</span>
                 </template>
             </el-table-column>
         </el-table>
@@ -50,8 +79,11 @@
 <script>
     import {
         getIdentifyAccessToken,
-        getIdentifyCertResult
+        getIdentifyCertResult,
+        getAuthIdByCompanyName,
+        getCompanyName
     } from '../../../../api/hallSystem/window/identification';
+    import {validateQueryStr} from 'utils';
 
     export default {
         data() {
@@ -67,10 +99,45 @@
                     appAccessToken: '',//app的access_token
                     authId: '',
                     companyName: ''
-                }
+                },
+                optionsCompanyName: [],
+                optionsAuthIdName: []
             }
         },
         methods: {
+            companyChange(value) {
+                this.certResultParams.authId = '';
+                getAuthIdByCompanyName(value).then(response => {
+                    if (response.httpCode === 200) {
+                        this.optionsAuthIdName = response.data;
+                    } else {
+                        this.$message.error('数据加载失败')
+                    }
+                })
+            },
+            getCompanyList(query) {
+                let companyName;
+                this.certResultParams.authId = '';
+                if (query !== '') {
+                    let valid = validateQueryStr(query);
+                    if (valid) {
+                        this.$message.error(`输入中包含非法字符 ${valid}`)
+                        return
+                    }
+                    if (/.*[\u4e00-\u9fa5]+.*$/.test(query)) {
+                        companyName = query;
+                    }
+                    getCompanyName(companyName).then(response => {
+                        if (response.httpCode === 200) {
+                            this.optionsCompanyName = response.data;
+                        } else {
+                            this.$message.error('数据加载失败')
+                        }
+                    })
+                } else {
+                    this.optionsCompanyName = [];
+                }
+            },
             getGzhAccessToken() {
                 return new Promise((resolve) => {
                     getIdentifyAccessToken({authType: 'GzhRegular'}).then(response => {
@@ -138,6 +205,8 @@
             getCertResult() {
                 if (this.certResultParams.authId == '') {
                     this.$message.error('请填写流水号')
+                }else if (this.certResultParams.companyName == '') {
+                    this.$message.error('请填写公司名称')
                 } else {
                     this.refreshGzhAccessToken().then(resultGzh => {
                         if (resultGzh == 0) {
@@ -149,9 +218,10 @@
                                             $.each(response.data, function (n) {
                                                 let certRes = response.data[n].certRes;
                                                 if (certRes == 0) {
-                                                    response.data[n].certRes = '认证成功'
+                                                    response.data[n].certRes = '认证成功';
                                                 } else {
-                                                    response.data[n].certRes = '认证失败'
+                                                    response.data[n].certRes = '认证失败';
+                                                    response.data[n].authTime = '-';
                                                 }
                                             })
                                             this.list = response.data;
