@@ -1477,7 +1477,7 @@
                         this.itemVo = data.itemVo;
                         this.itemHandTypeList = data.itemVo.handTypes.split(',');
                         this.itemTakeTypeList = data.itemVo.takeTypes.split(',');
-                        // 事项材料获取途径
+                        // 从阿里查询事项材料信息
                         if (this.itemVo.remoteMaterial) {
                             this.itemMaterialVoList = []
                             getItemMaterialsDefault(this.itemVo.itemNo).then(res => {
@@ -1832,6 +1832,7 @@
                 // _this.company = data.company;
                 _this.itemPretrialVo = data.itemPretrialVo;
 
+                // 从阿里查询材料信息
                 if (_this.itemVo.remoteMaterial) {
                     _this.itemMaterialVoList = []
                     getProcessSyncAli(_this.itemPretrialVo.aliId).then(res => {

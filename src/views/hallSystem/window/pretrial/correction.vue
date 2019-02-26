@@ -169,7 +169,7 @@
                                 <th>名称</th>
                                 <th width="50">链接</th>
                             </tr>
-                            <tr v-for="c in pretrialMaterialList">
+                            <tr v-show="!remoteMaterialFlag" v-for="c in pretrialMaterialList">
                                 <td>{{c.itemMaterialName}}</td>
                                 <td  style="text-align: center;">
                                     <div v-if="c.multipleFile" style="color:blue">
@@ -185,6 +185,23 @@
                                          </span>
                                     </div>
 
+                                </td>
+                            </tr>
+                            <tr v-show="remoteMaterialFlag" v-for="c in remoteMaterials">
+                                <td>{{c.MATERIALS_NAME}}</td>
+                                <td  style="text-align: center;">
+                                    <div v-if="c.multipleFile" style="color:blue">
+                                            <span v-for="(file, index) in c.multipleFile">
+                                            <span v-if="file.url != null && file.url != ''">
+                                                <a v-if="file.fileType=='zzk'" :href="'/api/zwfw-web/member/zzk/view?licenseNo='+file.url" target="_blank" :title="file.fileName">[{{index + 1}}]</a>
+                                                <a v-else-if="!/\.(gif|jpg|jpeg|png|GIF|JPG|PNG)$/.test(file.url)"
+                                                   :href="file.url" :download="file.fileName"
+                                                   target="_blank">[{{index + 1}}]</a>
+                                                <a v-else :href="file.url" target="_blank" :title="file.fileName">[{{index + 1}}]</a>
+                                            </span>
+                                            <span v-else>未上传</span>
+                                         </span>
+                                    </div>
                                 </td>
                             </tr>
                         </table>
@@ -232,6 +249,7 @@
         getZwfwItemPretrialList,
         getPretrialDetail
     } from '../../../../api/hallSystem/window/pretrial/itemPretrial';
+    import {getProcessSyncAli, getItemMaterialsAli} from "../../../../api/hallSystem/window/processSyncAli";
     import {mapGetters} from 'vuex';
     import {copyProperties, resetForm} from 'utils';
 
@@ -256,8 +274,9 @@
                 currentItemPretrial: [],
                 dialogStatus: '',
                 dialogFormVisible: false,
-                pretrialForm: []
-
+                pretrialForm: [],
+                remoteMaterialFlag: false,
+                remoteMaterials: []
             }
         },
         created() {
@@ -310,6 +329,10 @@
                 getPretrialDetail(this.processNumber).then(response => {
                     if (response.httpCode === 200) {
                         const data = response.data;
+                        if (data.item.remoteMaterial) {
+                            this.remoteMaterialFlag = true
+                            this.getProcessSyncAli(data.pretrial.aliId)
+                        }
                         this.member = data.member;
                         this.pretrialMaterialList = data.pretrialMaterialList;
                         this.itemPretrial = data.pretrial
@@ -345,6 +368,52 @@
                     console.error(e);
                     this.$message.error('数据加载失败');
                 });
+            },
+            getProcessSyncAli(projId) {
+                getProcessSyncAli(projId).then(response => {
+                    if (response.httpCode === 200) {
+                        let data = response.data
+                        let remoteFormInfo = JSON.parse(data.formInfos)
+                        let remoteMaterial = JSON.parse(data.attrInfos)
+
+                        getItemMaterialsAli(remoteFormInfo.sceneId).then(res => {
+                            if (res.httpCode === 200) {
+                                let itemMaterials = res.data
+                                if (itemMaterials && itemMaterials.length > 0) {
+                                    for (let material of itemMaterials) {
+                                        if (remoteMaterial && remoteMaterial.length > 0) {
+                                            for (let rm of remoteMaterial) {
+                                                if (material.MATERIALS_ID === rm.attrId) {
+                                                    let ext = rm.ext.split(';')
+                                                    let fileUrl = rm.fileUrl.split(';')
+                                                    let name = rm.name.split(';')
+                                                    let ossUrl = rm.ossUrl.split(';')
+
+                                                    let multipleFile = material.multipleFile
+                                                    if (!multipleFile) {
+                                                        multipleFile = []
+                                                    }
+
+                                                    for (let i of ossUrl.keys()) {
+                                                        let file = {
+                                                            fileType: ext[i],
+                                                            fileUrl: fileUrl[i],
+                                                            fileName: name[i],
+                                                            url: ossUrl[i]
+                                                        }
+                                                        multipleFile.push(file)
+                                                    }
+                                                    this.$set(material, 'multipleFile', multipleFile)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                this.remoteMaterials = itemMaterials
+                            }
+                        })
+                    }
+                })
             },
             print_ycxgzd() {
                 if (this.itemPretrial != null) {

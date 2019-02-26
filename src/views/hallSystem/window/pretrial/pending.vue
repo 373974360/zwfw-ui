@@ -357,7 +357,7 @@
                         const data = response.data;
                         if (data.item.remoteMaterial) {
                             this.remoteMaterialFlag = true
-                            this.getProcessSyncAli(data.aliId)
+                            this.getProcessSyncAli(data.pretrial.aliId)
                         }
                         this.member = data.member;
                         this.pretrialMaterialList = data.pretrialMaterialList;
