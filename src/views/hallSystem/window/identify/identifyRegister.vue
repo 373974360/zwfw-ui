@@ -35,36 +35,35 @@
         </div>
         <el-table :data="list" border fit highlight-current-row
                   style="width: 100%" v-show="showTable">
-
-            <el-table-column width="250px" align="center" label="公司名称">
+            <el-table-column  align="center" label="公司名称">
                 <template slot-scope="scope">
                     <span>{{scope.row.companyName}}</span>
                 </template>
             </el-table-column>
-            <el-table-column width="250px" align="center" label="身份">
-                <template slot-scope="scope">
-                    <span v-if="scope.row.status == 2" if>股东</span>
-                    <span v-else>代办人</span>
-                </template>
-            </el-table-column>
-            <el-table-column width="100px" align="center" label="认证结果">
-                <template slot-scope="scope">
-                    <span>{{scope.row.certRes}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="cert_token">
-                <template slot-scope="scope">
-                    <span>{{scope.row.certToken}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column width="100px" align="center" label="姓名">
+            <el-table-column width="150px" align="center" label="姓名">
                 <template slot-scope="scope">
                     <span>{{scope.row.fullName}}</span>
                 </template>
             </el-table-column>
-            <el-table-column width="200px" align="center" label="身份证号">
+            <el-table-column width="250px" align="center" label="身份证号">
                 <template slot-scope="scope">
                     <span>{{scope.row.idNum}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column width="150px" align="center" label="身份">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.status == 2" if>股东</span>
+                    <span v-else>经办人</span>
+                </template>
+            </el-table-column>
+            <el-table-column width="200px" align="center" label="认证结果">
+                <template slot-scope="scope">
+                    <span>{{scope.row.certRes}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column width="350px" align="center" label="认证凭证">
+                <template slot-scope="scope">
+                    <span>{{scope.row.certToken}}</span>
                 </template>
             </el-table-column>
             <el-table-column width="200px" align="center" label="认证时间">
