@@ -984,6 +984,7 @@
         fastRegMember,
         queryPendingFromBoxList
     } from '../../../../api/hallSystem/window/receive/windowAccept';
+    import {getProcessSyncAli, getItemMaterialsAli, getItemMaterialsDefault} from "../../../../api/hallSystem/window/processSyncAli";
     import {getAllByNameOrbasicCode} from 'api/zwfwSystem/business/item';
     import {getCategoryCascader} from 'api/zwfwSystem/business/category';
     import {getAllMailbox} from 'api/hallSystem/window/mailbox';
@@ -1476,7 +1477,28 @@
                         this.itemVo = data.itemVo;
                         this.itemHandTypeList = data.itemVo.handTypes.split(',');
                         this.itemTakeTypeList = data.itemVo.takeTypes.split(',');
-                        this.itemMaterialVoList = data.itemMaterialVoList;
+                        // 事项材料获取途径
+                        if (this.itemVo.remoteMaterial) {
+                            this.itemMaterialVoList = []
+                            getItemMaterialsDefault(this.itemVo.itemNo).then(res => {
+                                if (res.httpCode === 200) {
+                                    let itemMaterials = res.data
+                                    if (itemMaterials && itemMaterials.length > 0) {
+                                        for (let material of itemMaterials) {
+                                            let m = {
+                                                name: material.MATERIALS_NAME,
+                                                type: material.MATERIALS_TYPE_NAME,
+                                                source: material.MATERIALS_FROM,
+                                                paperDescription: material.REMARK
+                                            }
+                                            this.itemMaterialVoList.push(m)
+                                        }
+                                    }
+                                }
+                            })
+                        } else {
+                            this.itemMaterialVoList = data.itemMaterialVoList;
+                        }
                     } else {
                         this.$message.error('网络超时');
                     }
@@ -1809,7 +1831,60 @@
                 _this.member = data.member;
                 // _this.company = data.company;
                 _this.itemPretrialVo = data.itemPretrialVo;
-                _this.itemMaterialVoList = data.itemMaterialVoList;
+
+                if (_this.itemVo.remoteMaterial) {
+                    _this.itemMaterialVoList = []
+                    getProcessSyncAli(_this.itemPretrialVo.aliId).then(res => {
+                        if (res.httpCode === 200) {
+                            let remoteFormInfo = JSON.parse(res.data.formInfos)
+                            let remoteMaterial = JSON.parse(res.data.attrInfos)
+                            getItemMaterialsAli(remoteFormInfo.sceneId).then(res2 => {
+                                if (res2.httpCode === 200) {
+                                    let itemMaterials = res2.data
+                                    if (itemMaterials && itemMaterials.length > 0) {
+                                        for (let material of itemMaterials) {
+                                            let m = {
+                                                name: material.MATERIALS_NAME,
+                                                type: material.MATERIALS_TYPE_NAME,
+                                                source: material.MATERIALS_FROM,
+                                                paperDescription: material.REMARK
+                                            }
+                                            if (remoteMaterial && remoteMaterial.length > 0) {
+                                                for (let rm of remoteMaterial) {
+                                                    if (material.MATERIALS_ID === rm.attrId) {
+                                                        let ext = rm.ext.split(';')
+                                                        let fileUrl = rm.fileUrl.split(';')
+                                                        let name = rm.name.split(';')
+                                                        let ossUrl = rm.ossUrl.split(';')
+
+                                                        let multipleFile = m.multipleFile
+                                                        if (!multipleFile) {
+                                                            multipleFile = []
+                                                        }
+
+                                                        for (let i of ossUrl.keys()) {
+                                                            let file = {
+                                                                fileType: ext[i],
+                                                                fileUrl: fileUrl[i],
+                                                                fileName: name[i],
+                                                                url: ossUrl[i]
+                                                            }
+                                                            multipleFile.push(file)
+                                                        }
+                                                        this.$set(m, 'multipleFile', multipleFile)
+                                                    }
+                                                }
+                                            }
+                                            _this.itemMaterialVoList.push(m)
+                                        }
+                                    }
+                                }
+                            })
+                        }
+                    })
+                } else {
+                    _this.itemMaterialVoList = data.itemMaterialVoList;
+                }
                 _this.window = data.window;
                 _this.itemWindowUserName = data.itemWindowUserName;
                 if (data.itemNumber) {
