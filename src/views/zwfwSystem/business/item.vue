@@ -793,6 +793,16 @@
                 <el-form-item label="窗口流程图">
                     <el-input v-model="zwfwItem.cklct"></el-input>
                 </el-form-item>
+                <el-form-item label="直接获取阿里材料信息">
+                    <el-radio-group v-model="zwfwItem.remoteMaterial">
+                        <el-radio :label="true">
+                            <span style="font-weight:normal;">是</span>
+                        </el-radio>
+                        <el-radio :label="false">
+                            <span style="font-weight:normal;">否</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer" style="margin-top:30px; text-align: center;">
                 <el-button icon="circle-cross" type="danger" @click="closeZwfwItemForm">取 消
@@ -1239,7 +1249,8 @@
                     xyzjps: '',
                     xyhtwj: '',
                     sqztqlyw: '',
-                    cklct: ''
+                    cklct: '',
+                    remoteMaterial: false
                 },
                 zwfwItemMaterial: {
                     id: undefined,
@@ -2237,7 +2248,8 @@
                     xyzjps: '',
                     xyhtwj: '',
                     sqztqlyw: '',
-                    cklct: ''
+                    cklct: '',
+                    remoteMaterial: false
                 };
                 this.setBasisHtml = '';
                 this.acceptConditionHtml = '';
