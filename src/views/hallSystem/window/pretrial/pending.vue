@@ -286,6 +286,7 @@
                 passRemark: '确认通过',
                 itemPretrial: {
                     id: undefined,
+                    itemId: '',
                     processNumber: '',
                     companyName: '',
                     applyTime: '',
@@ -450,6 +451,7 @@
                             id: this.itemPretrial.id,
                             status: this.itemPretrial.status,
                             aliId: this.itemPretrial.aliId,
+                            itemId: this.itemPretrial.itemId,
                             remark: null
                         }
                         if (this.itemPretrial.status == 3 || this.itemPretrial.status == 5) {
@@ -473,6 +475,7 @@
             resetTemp() {
                 this.itemPretrial = {
                     id: undefined,
+                    itemId: '',
                     processNumber: '',
                     companyName: '',
                     applyTime: '',
