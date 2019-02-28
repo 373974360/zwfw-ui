@@ -1486,6 +1486,7 @@
                                     if (itemMaterials && itemMaterials.length > 0) {
                                         for (let material of itemMaterials) {
                                             let m = {
+                                                id: material.ITEM_NO,
                                                 name: material.MATERIALS_NAME,
                                                 type: material.MATERIALS_TYPE_NAME,
                                                 source: material.MATERIALS_FROM,
@@ -1845,6 +1846,7 @@
                                     if (itemMaterials && itemMaterials.length > 0) {
                                         for (let material of itemMaterials) {
                                             let m = {
+                                                id: material.ITEM_NO,
                                                 name: material.MATERIALS_NAME,
                                                 type: material.MATERIALS_TYPE_NAME,
                                                 source: material.MATERIALS_FROM,
@@ -2124,7 +2126,8 @@
                             contactsPhone: this.contactsPhone,
                             itemHandType: this.itemHandType,
                             itemHandTypeVo: this.itemHandTypeVo,
-                            itemTakeTypeVo: this.takeTypeVo && this.takeTypeVo.takeType ? {} : this.itemTakeTypeVo
+                            itemTakeTypeVo: this.takeTypeVo && this.takeTypeVo.takeType ? {} : this.itemTakeTypeVo,
+                            aliId: this.itemPretrialVo.aliId
                         }).then(response => {
                             this.submiting = false;
                             if (response.httpCode === 200) {
