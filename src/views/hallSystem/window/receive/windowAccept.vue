@@ -2271,7 +2271,8 @@
                         submitWork({
                             numberId: _itemNumber.id,
                             status: 4,  //不予受理
-                            remark: this.remark
+                            remark: this.remark,
+                            aliId: this.itemPretrialVo.aliId
                         }).then(response => {
                             this.submiting = false;
                             if (response.httpCode === 200) {
