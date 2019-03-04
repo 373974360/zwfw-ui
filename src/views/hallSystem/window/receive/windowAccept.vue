@@ -1478,7 +1478,7 @@
                         this.itemHandTypeList = data.itemVo.handTypes.split(',');
                         this.itemTakeTypeList = data.itemVo.takeTypes.split(',');
                         // 从阿里查询事项材料信息
-                        if (this.itemVo.remoteMaterial) {
+                        /*if (this.itemVo.remoteMaterial) {
                             this.itemMaterialVoList = []
                             getItemMaterialsDefault(this.itemVo.itemNo).then(res => {
                                 if (res.httpCode === 200) {
@@ -1497,9 +1497,9 @@
                                     }
                                 }
                             })
-                        } else {
+                        } else {*/
                             this.itemMaterialVoList = data.itemMaterialVoList;
-                        }
+                        /*}*/
                     } else {
                         this.$message.error('网络超时');
                     }
