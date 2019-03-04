@@ -1486,7 +1486,7 @@
                                     if (itemMaterials && itemMaterials.length > 0) {
                                         for (let material of itemMaterials) {
                                             let m = {
-                                                id: material.ITEM_NO,
+                                                id: material.MATERIALS_ID,
                                                 name: material.MATERIALS_NAME,
                                                 type: material.MATERIALS_TYPE_NAME,
                                                 source: material.MATERIALS_FROM,
@@ -1846,7 +1846,7 @@
                                     if (itemMaterials && itemMaterials.length > 0) {
                                         for (let material of itemMaterials) {
                                             let m = {
-                                                id: material.ITEM_NO,
+                                                id: material.MATERIALS_ID,
                                                 name: material.MATERIALS_NAME,
                                                 type: material.MATERIALS_TYPE_NAME,
                                                 source: material.MATERIALS_FROM,
