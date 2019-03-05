@@ -1721,7 +1721,7 @@
                     itemId: this.itemVo.id,
                     name: this.memberRealname,
                     phone: this.memberPhone,
-                    iDNum: this.member.memberCode
+                    iDNum: this.memberCode
                 }).then(response => {
                     if (response.httpCode === 200) {
                         _this.$message.success('抽到的号码是：' + response.data.callNumber);
@@ -1834,7 +1834,7 @@
                 _this.itemPretrialVo = data.itemPretrialVo;
 
                 // 从阿里查询材料信息
-                if (_this.itemVo.remoteMaterial) {
+                if (_this.itemPretrialVo && _this.itemVo.remoteMaterial) {
                     _this.itemMaterialVoList = []
                     getProcessSyncAli(_this.itemPretrialVo.aliId).then(res => {
                         if (res.httpCode === 200) {
