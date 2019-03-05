@@ -329,7 +329,7 @@
                 getPretrialDetail(this.processNumber).then(response => {
                     if (response.httpCode === 200) {
                         const data = response.data;
-                        if (data.item.remoteMaterial) {
+                        if (data.pretrial.aliId && data.item.remoteMaterial) {
                             this.remoteMaterialFlag = true
                             this.getProcessSyncAli(data.pretrial.aliId)
                         }
