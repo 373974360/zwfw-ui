@@ -429,6 +429,7 @@
 <script>
     import {getZwfwApiHost} from 'utils/fetch';
     import {getZwfwItemNumberList, getDatilByItemNumberId} from 'api/hallSystem/window/receive/itemNumber';
+    import {getProcessSyncAli, getItemMaterialsAli} from "../../../../api/hallSystem/window/processSyncAli";
     import {getAllByNameOrbasicCode} from '../../../../api/zwfwSystem/business/item';
     import {getByNameOrLoginName} from '../../../../api/hallSystem/member/member'
     import {copyProperties, validateQueryStr} from 'utils';
@@ -594,6 +595,64 @@
                             this.itemPretrialVo = response.data.itemPretrialVo;
                             this.window = response.data.window;
                             this.itemWindowUserName = response.data.itemWindowUserName;
+
+                            if (this.itemPretrialVo && this.itemVo.remoteMaterial) {
+                                this.itemMaterialVoList = []
+                                getProcessSyncAli(this.itemPretrialVo.aliId).then(res => {
+                                    if (res.httpCode === 200) {
+                                        let remoteFormInfo = JSON.parse(res.data.formInfos)
+                                        let remoteMaterial = JSON.parse(res.data.attrInfos)
+                                        getItemMaterialsAli(remoteFormInfo.sceneId).then(res2 => {
+                                            if (res2.httpCode === 200) {
+                                                let itemMaterials = res2.data
+                                                if (itemMaterials && itemMaterials.length > 0) {
+                                                    for (let material of itemMaterials) {
+                                                        let m = {
+                                                            id: material.MATERIALS_ID,
+                                                            name: material.MATERIALS_NAME,
+                                                            type: material.MATERIALS_TYPE_NAME,
+                                                            source: material.MATERIALS_FROM,
+                                                            paperDescription: material.REMARK
+                                                        }
+                                                        for (let receiveId of response.data.receivedMaterialIds) {
+                                                            if (material.MATERIALS_ID === receiveId) {
+                                                                this.$set(m, 'received', 1)
+                                                            }
+                                                        }
+                                                        if (remoteMaterial && remoteMaterial.length > 0) {
+                                                            for (let rm of remoteMaterial) {
+                                                                if (material.MATERIALS_ID === rm.attrId) {
+                                                                    let ext = rm.ext.split(';')
+                                                                    let fileUrl = rm.fileUrl.split(';')
+                                                                    let name = rm.name.split(';')
+                                                                    let ossUrl = rm.ossUrl.split(';')
+
+                                                                    let multipleFile = m.multipleFile
+                                                                    if (!multipleFile) {
+                                                                        multipleFile = []
+                                                                    }
+
+                                                                    for (let i of ossUrl.keys()) {
+                                                                        let file = {
+                                                                            fileType: ext[i],
+                                                                            fileUrl: fileUrl[i],
+                                                                            fileName: name[i],
+                                                                            url: ossUrl[i]
+                                                                        }
+                                                                        multipleFile.push(file)
+                                                                    }
+                                                                    this.$set(m, 'multipleFile', multipleFile)
+                                                                }
+                                                            }
+                                                        }
+                                                        this.itemMaterialVoList.push(m)
+                                                    }
+                                                }
+                                            }
+                                        })
+                                    }
+                                })
+                            }
                         }
                     } else {
                         this.$message.error('数据加载失败')

@@ -984,6 +984,7 @@
         fastRegMember,
         queryPendingFromBoxList
     } from '../../../../api/hallSystem/window/receive/windowAccept';
+    import {getProcessSyncAli, getItemMaterialsAli, getItemMaterialsDefault} from "../../../../api/hallSystem/window/processSyncAli";
     import {getAllByNameOrbasicCode} from 'api/zwfwSystem/business/item';
     import {getCategoryCascader} from 'api/zwfwSystem/business/category';
     import {getAllMailbox} from 'api/hallSystem/window/mailbox';
@@ -1476,7 +1477,29 @@
                         this.itemVo = data.itemVo;
                         this.itemHandTypeList = data.itemVo.handTypes.split(',');
                         this.itemTakeTypeList = data.itemVo.takeTypes.split(',');
-                        this.itemMaterialVoList = data.itemMaterialVoList;
+                        // 从阿里查询事项材料信息
+                        /*if (this.itemVo.remoteMaterial) {
+                            this.itemMaterialVoList = []
+                            getItemMaterialsDefault(this.itemVo.itemNo).then(res => {
+                                if (res.httpCode === 200) {
+                                    let itemMaterials = res.data
+                                    if (itemMaterials && itemMaterials.length > 0) {
+                                        for (let material of itemMaterials) {
+                                            let m = {
+                                                id: material.MATERIALS_ID,
+                                                name: material.MATERIALS_NAME,
+                                                type: material.MATERIALS_TYPE_NAME,
+                                                source: material.MATERIALS_FROM,
+                                                paperDescription: material.REMARK
+                                            }
+                                            this.itemMaterialVoList.push(m)
+                                        }
+                                    }
+                                }
+                            })
+                        } else {*/
+                            this.itemMaterialVoList = data.itemMaterialVoList;
+                        /*}*/
                     } else {
                         this.$message.error('网络超时');
                     }
@@ -1698,7 +1721,7 @@
                     itemId: this.itemVo.id,
                     name: this.memberRealname,
                     phone: this.memberPhone,
-                    iDNum: this.member.memberCode
+                    iDNum: this.memberCode
                 }).then(response => {
                     if (response.httpCode === 200) {
                         _this.$message.success('抽到的号码是：' + response.data.callNumber);
@@ -1809,7 +1832,62 @@
                 _this.member = data.member;
                 // _this.company = data.company;
                 _this.itemPretrialVo = data.itemPretrialVo;
-                _this.itemMaterialVoList = data.itemMaterialVoList;
+
+                // 从阿里查询材料信息
+                if (_this.itemPretrialVo && _this.itemVo.remoteMaterial) {
+                    _this.itemMaterialVoList = []
+                    getProcessSyncAli(_this.itemPretrialVo.aliId).then(res => {
+                        if (res.httpCode === 200) {
+                            let remoteFormInfo = JSON.parse(res.data.formInfos)
+                            let remoteMaterial = JSON.parse(res.data.attrInfos)
+                            getItemMaterialsAli(remoteFormInfo.sceneId).then(res2 => {
+                                if (res2.httpCode === 200) {
+                                    let itemMaterials = res2.data
+                                    if (itemMaterials && itemMaterials.length > 0) {
+                                        for (let material of itemMaterials) {
+                                            let m = {
+                                                id: material.MATERIALS_ID,
+                                                name: material.MATERIALS_NAME,
+                                                type: material.MATERIALS_TYPE_NAME,
+                                                source: material.MATERIALS_FROM,
+                                                paperDescription: material.REMARK
+                                            }
+                                            if (remoteMaterial && remoteMaterial.length > 0) {
+                                                for (let rm of remoteMaterial) {
+                                                    if (material.MATERIALS_ID === rm.attrId) {
+                                                        let ext = rm.ext.split(';')
+                                                        let fileUrl = rm.fileUrl.split(';')
+                                                        let name = rm.name.split(';')
+                                                        let ossUrl = rm.ossUrl.split(';')
+
+                                                        let multipleFile = m.multipleFile
+                                                        if (!multipleFile) {
+                                                            multipleFile = []
+                                                        }
+
+                                                        for (let i of ossUrl.keys()) {
+                                                            let file = {
+                                                                fileType: ext[i],
+                                                                fileUrl: fileUrl[i],
+                                                                fileName: name[i],
+                                                                url: ossUrl[i]
+                                                            }
+                                                            multipleFile.push(file)
+                                                        }
+                                                        this.$set(m, 'multipleFile', multipleFile)
+                                                    }
+                                                }
+                                            }
+                                            _this.itemMaterialVoList.push(m)
+                                        }
+                                    }
+                                }
+                            })
+                        }
+                    })
+                } else {
+                    _this.itemMaterialVoList = data.itemMaterialVoList;
+                }
                 _this.window = data.window;
                 _this.itemWindowUserName = data.itemWindowUserName;
                 if (data.itemNumber) {
@@ -2048,7 +2126,8 @@
                             contactsPhone: this.contactsPhone,
                             itemHandType: this.itemHandType,
                             itemHandTypeVo: this.itemHandTypeVo,
-                            itemTakeTypeVo: this.takeTypeVo && this.takeTypeVo.takeType ? {} : this.itemTakeTypeVo
+                            itemTakeTypeVo: this.takeTypeVo && this.takeTypeVo.takeType ? {} : this.itemTakeTypeVo,
+                            aliId: this.itemPretrialVo.aliId
                         }).then(response => {
                             this.submiting = false;
                             if (response.httpCode === 200) {
@@ -2192,7 +2271,8 @@
                         submitWork({
                             numberId: _itemNumber.id,
                             status: 4,  //不予受理
-                            remark: this.remark
+                            remark: this.remark,
+                            aliId: this.itemPretrialVo.aliId
                         }).then(response => {
                             this.submiting = false;
                             if (response.httpCode === 200) {
