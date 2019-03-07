@@ -108,7 +108,8 @@
                 this.certResultParams.authId = '';
                 getAuthIdByCompanyName(value).then(response => {
                     if (response.httpCode === 200) {
-                        this.optionsAuthIdName = response.data;
+                        let reverse = response.data.reverse();
+                        this.optionsAuthIdName = reverse;
                     } else {
                         this.$message.error('数据加载失败')
                     }
