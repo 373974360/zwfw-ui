@@ -52,8 +52,10 @@
             </el-table-column>
             <el-table-column width="150px" align="center" label="身份">
                 <template slot-scope="scope">
-                    <span v-if="scope.row.status == 2" if>股东</span>
-                    <span v-else>经办人</span>
+                    <span v-if="scope.row.identityStatus == 2">股东</span>
+                    <span v-if="scope.row.identityStatus == 1">经办人</span>
+                    <span v-if="scope.row.identityStatus == 3">法人</span>
+                    <span v-if="scope.row.identityStatus == 4">法人兼股东</span>
                 </template>
             </el-table-column>
             <el-table-column width="200px" align="center" label="认证结果">
