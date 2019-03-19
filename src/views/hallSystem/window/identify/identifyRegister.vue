@@ -210,8 +210,8 @@
                 }else if (this.certResultParams.companyName == '') {
                     this.$message.error('请填写公司名称')
                 } else {
-                    this.refreshGzhAccessToken().then(resultGzh => {
-                        if (resultGzh == 0) {
+                    // this.refreshGzhAccessToken().then(resultGzh => {
+                    //     if (resultGzh == 0) {
                             this.refreshAppAccessToken().then(resultApp => {
                                 if (resultApp == 0) {
                                     getIdentifyCertResult(this.certResultParams).then(response => {
@@ -232,14 +232,14 @@
                                     })
                                 }
                             });
-                        }
-                    });
+                        // }
+                    // });
                 }
 
             }
         },
         mounted() {
-            this.getGzhAccessToken();
+            // this.getGzhAccessToken();
             this.getAppAccessToken();
         }
     }
