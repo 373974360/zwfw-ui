@@ -167,6 +167,7 @@
                     if (valid) {
                         this.refreshAccessToken().then(result => {
                             if (result == 0) {
+                                this.certTokenParams.id_num = this.certTokenParams.id_num.toUpperCase();
                                 getCertToken(this.certTokenParams).then(response => {
                                     if (response.data.ret_code == 0) {
                                         this.$message.success("请求微警认证成功，请使用微信扫一扫扫描二维码进行认证");
