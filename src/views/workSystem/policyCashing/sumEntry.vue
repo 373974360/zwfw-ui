@@ -395,7 +395,8 @@
                     return;
                 }
                 queryCompanyInfo({
-                    memberCode: memberInfo.memberCode
+                    memberCode: memberInfo.memberCode,
+                    diff: 'gwq'
                 }).then(response => {
                     if (response.httpCode === 200) {
                         let c = response.data;
