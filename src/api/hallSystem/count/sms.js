@@ -26,3 +26,15 @@ export function updateHallCountMsg(text) {
         params: {text}
     });
 }
+
+/**
+ *手动触发短信通知
+ * @param text
+ */
+export function sendMessage(message) {
+    return fetch({
+        url: '/api/hallSystem/sms/setting/sendMessage',
+        method: 'post',
+        params: {message}
+    });
+}

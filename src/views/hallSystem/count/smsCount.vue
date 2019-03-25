@@ -18,6 +18,9 @@
                 <el-button class="filter-item" type="primary" v-waves  @click="updateSetting">
                     保存设置
                 </el-button>
+                <el-button class="filter-item" type="primary" v-waves  @click="ManualTrigger">
+                    发送短信
+                </el-button>
             </div>
             <div class="className" id="plotbyCategory"></div>
         </div>
@@ -26,7 +29,7 @@
 
 <script>
     import {mapGetters} from 'vuex';
-    import {getHallCountMsg,updateHallCountMsg} from '../../../api/hallSystem/count/sms';
+    import {getHallCountMsg,updateHallCountMsg,sendMessage} from '../../../api/hallSystem/count/sms';
 
     export default {
         name: 'table_demo',
@@ -47,6 +50,29 @@
             this.getSetting();
         },
         methods: {
+            ManualTrigger(){
+                //手动触发短信通知自定义信息为空时，发送默认信息
+                let flag = false;
+                let message = '';
+                if(this.text){
+                    message = this.text;
+                    flag = true;
+                }else if(this.newText){
+                    message = this.newText;
+                    flag = true;
+                }else {
+                    this.$message.error('发送内容不能为空');
+                }
+                if (flag) {
+                    sendMessage(message).then(response => {
+                        if (response.httpCode === 200) {
+                            this.$message.success('发送成功');
+                        } else {
+                            this.$message.error('发送失败');
+                        }
+                    });
+                }
+            },
             flushCount() {
                 getHallCountMsg().then(response => {
                         if (response.httpCode === 200) {
