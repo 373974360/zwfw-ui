@@ -1430,8 +1430,8 @@
                     basicCode: undefined,
                     itemCategories: this.itemCategory,
                     serviceObject: this.memberType == '1' ?
-                        'fwdx_ziranren,fwdx_common' : 'fwdx_faren,fwdx_common',
-                    handleType: 'blxs_ckbl'
+                        'fwdx_ziranren,fwdx_common' : 'fwdx_faren,fwdx_common'
+                    // handleType: 'blxs_all'
                 };
                 if (query !== '') {
                     if (/.*[\u4e00-\u9fa5]+.*$/.test(query)) {
