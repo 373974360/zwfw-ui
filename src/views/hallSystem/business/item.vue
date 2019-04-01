@@ -1408,7 +1408,7 @@
                 for (const deleteRow of this.selectedRows) {
                     ids.push(deleteRow.id);
                 }
-                delZwfwItems(ids.join()).then(response => {
+                delZwfwItems(ids).then(response => {
                     if (response.httpCode === 200) {
                         this.getItemList();
                         this.$message.success('删除成功');
