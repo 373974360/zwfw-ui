@@ -87,8 +87,8 @@
                 getAccessTokenTime: 0,
                 accessTokenExpireSecond: 0,
                 clientInfo: {
-                    client_id: 'xa_gjgwqzwzx_prod',
-                    client_secret: 'e16406db-69f9-4e1c-b3b1-ea0027ce7b83'
+                    client_id: '15d765f67afada24',
+                    client_secret: 'b9929e23-ebbc-410b-938a-7800880873c2'
 
                 },
                 certTokenParams: {
@@ -129,11 +129,11 @@
             getAccessToken() {
                 return new Promise((resolve) => {
                     getAccessToken(this.clientInfo).then(response => {
-                        if (response.data.ret_code === 0) {
+                        if (response.data.retCode === 0) {
                             this.getAccessTokenTime = Number(new Date());
-                            this.accessTokenExpireSecond = response.data.expire_seconds;
-                            this.certTokenParams.access_token = response.data.access_token;
-                            this.certResultParams.access_token = response.data.access_token;
+                            this.accessTokenExpireSecond = response.data.expireSeconds;
+                            this.certTokenParams.access_token = response.data.accessToken;
+                            this.certResultParams.access_token = response.data.accessToken;
                             resolve(0);
                         } else {
                             this.$message.error('初始化微警认证失败(' + response.data.error_msg + ')')
@@ -169,11 +169,11 @@
                             if (result == 0) {
                                 this.certTokenParams.id_num = this.certTokenParams.id_num.toUpperCase();
                                 getCertToken(this.certTokenParams).then(response => {
-                                    if (response.data.ret_code == 0) {
+                                    if (response.data.retCode == 0) {
                                         this.$message.success("请求微警认证成功，请使用微信扫一扫扫描二维码进行认证");
-                                        this.certTokenInfo.qrcode_content = response.data.qrcode_content;
-                                        this.certResultParams.cert_token = response.data.cert_token;
-                                        this.qrcode.makeCode(response.data.qrcode_content);
+                                        this.certTokenInfo.qrcode_content = response.data.tokenInfo.qrcodeContent;
+                                        this.certResultParams.cert_token = response.data.tokenInfo.certToken;
+                                        this.qrcode.makeCode(response.data.tokenInfo.qrcodeContent);
                                     }
                                 })
                             } else {
@@ -187,8 +187,8 @@
                 if (this.certResultParams.cert_token != '' && this.certResultParams.access_token != '') {
                     this.certResultBase64 = undefined;
                     getCertResult(Object.assign({},this.certTokenParams,this.certResultParams)).then(response => {
-                        if (response.data.ret_code == 0) {
-                            switch(response.data.log_data.auth_res) {
+                        if (response.data.retCode == 0) {
+                            switch(response.data.authData.resCode) {
                                 case 0 :
                                     this.$message.success("用户信息已通过微警认证");
                                     break;
