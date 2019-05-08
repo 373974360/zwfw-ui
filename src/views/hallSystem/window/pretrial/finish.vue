@@ -428,6 +428,8 @@
                     status: '',
                     remark: ''
                 };
+                this.remoteMaterialFlag = false;
+                this.remoteMaterials = [];
             },
             resetItemPretrialForm() {
                 this.dialogFormVisible = false;
