@@ -389,6 +389,7 @@
                                 </p>
                                 <p>{{cardHeader.address}}</p>
                             </div>
+                            <el-button type="primary" @click="clearAddressee">清除</el-button>
                             <el-button type="primary" @click="showCardItems">选择地址</el-button>
                         </div>
                         <div class="card-body" v-show="cardItemVisible">
@@ -1101,7 +1102,7 @@
                 callback();
             };
             const addresseeIdValidate = (rule, value, callback) => {
-                if (this.zwfwItem.handTypes.includes('3') && !value) {
+                if (!value) {
                     callback(new Error('请选择收件地址'));
                 }
                 callback();
@@ -1560,17 +1561,9 @@
             },
             handleHandTypesChange() {
                 this.initCardHeader();
-                if (!this.zwfwItem.handTypes.includes('2')) {
-                    this.zwfwItem.handUserId = undefined;
-                }
             },
             initCardHeader() {
                 if (!this.addresseeList || this.addresseeList.length <= 0) {
-                    return;
-                }
-                if (!this.zwfwItem.handTypes.includes('3')) {
-                    this.zwfwItem.addresseeId = undefined;
-                    this.cardItemVisible = false;
                     return;
                 }
                 let addressee;
@@ -1581,22 +1574,32 @@
                             break;
                         }
                     }
-                } else {
-                    for (let item of this.addresseeList) {
-                        if (item.defaultFlag) {
-                            addressee = item;
-                            break;
-                        }
-                    }
-                    if (!addressee) {
-                        addressee = this.addresseeList[0];
-                    }
                 }
-                this.zwfwItem.addresseeId = addressee.id;
+                // } else {
+                //     for (let item of this.addresseeList) {
+                //         if (item.defaultFlag) {
+                //             addressee = item;
+                //             break;
+                //         }
+                //     }
+                //     if (!addressee) {
+                //         addressee = this.addresseeList[0];
+                //     }
+                // }
+                // this.zwfwItem.addresseeId = addressee.id;
                 copyProperties(this.cardHeader, addressee);
             },
+            clearAddressee() {
+                this.zwfwItem.addresseeId = undefined;
+                this.cardHeader = {
+                    name: '',
+                    phone: '',
+                    address: '',
+                    defaultFlag: false
+                }
+            },
             getSetdAddressee() {
-                if (this.zwfwItem.handTypes.indexOf('3') && this.zwfwItem.addresseeId) {
+                if (this.zwfwItem.addresseeId) {
                     getAddresseeById(this.zwfwItem.addresseeId).then(response => {
                         if (response.httpCode == 200) {
                             copyProperties(this.cardHeader, response.data);
