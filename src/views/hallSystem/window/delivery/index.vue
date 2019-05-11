@@ -656,6 +656,15 @@
                             addresseeId: '',
                             expressCompany: undefined,
                             expressNumber: undefined
+                        },
+                        mailboxOrderId: undefined,
+                        mailboxOrder: {
+                            status: undefined,
+                            senderMobile: undefined,
+                            consigneeMobile: undefined,
+                            boxNo: undefined,
+                            resvCode: undefined,
+                            openCode: undefined
                         }
                     },
                     offlineFlag: false
