@@ -33,6 +33,11 @@
                     <span>{{scope.row.deviceId}}</span>
                 </template>
             </el-table-column>
+            <el-table-column align="center" label="设备地址" prop="address">
+                <template slot-scope="scope">
+                    <span>{{scope.row.address}}</span>
+                </template>
+            </el-table-column>
             <el-table-column align="center" label="备注" prop="remark">
                 <template slot-scope="scope">
                     <span>{{scope.row.remark}}</span>
@@ -69,6 +74,9 @@
                 </el-form-item>
                 <el-form-item label="设备ID" prop="deviceId">
                     <el-input v-model="mailbox.deviceId"></el-input>
+                </el-form-item>
+                <el-form-item label="设备地址" prop="address">
+                    <el-input v-model="mailbox.address"></el-input>
                 </el-form-item>
                 <el-form-item label="备注" prop="remark">
                     <el-input v-model="mailbox.remark"></el-input>
@@ -110,6 +118,7 @@
                     id: undefined,
                     name: undefined,
                     deviceId: undefined,
+                    address: undefined,
                     remark: undefined
                 },
                 mailboxRules: {
@@ -263,6 +272,7 @@
                     id: undefined,
                     name: undefined,
                     deviceId: undefined,
+                    address: undefined,
                     remark: undefined
                 }
             },

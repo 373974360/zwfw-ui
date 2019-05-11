@@ -1,7 +1,8 @@
 <template xmlns="http://www.w3.org/1999/html">
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-input class="filter-item" style="width: 240px; height: 30px" v-model="listQuery.processNumber" placeholder="按办件号搜索"></el-input>
+            <el-input class="filter-item" style="width: 240px; height: 30px" v-model="listQuery.processNumber" placeholder="按办件号搜索">
+            </el-input>
             <el-select v-model="listQuery.memberId" class="filter-item"
                        clearable filterable remote
                        placeholder="按申请人名称或证件号搜索"
@@ -13,13 +14,16 @@
                         :value="item.id">
                 </el-option>
             </el-select>
-            <el-input class="filter-item" style="width: 240px; height: 30px" v-model="listQuery.memberPhone" placeholder="按联系电话搜索"></el-input>
+            <el-input class="filter-item" style="width: 240px; height: 30px" v-model="listQuery.memberPhone" placeholder="按联系电话搜索">
+            </el-input>
             <el-select class="filter-item" v-model="listQuery.handType" clearable placeholder="请选择交件方式">
-                <el-option v-for="item in enums['HandType']" :key="item.code" :value="item.code" :label="item.value"></el-option>
+                <el-option v-for="item in enums['HandType']" :key="item.code" :value="item.code" :label="item.value">
+                </el-option>
             </el-select>
             <el-select class="filter-item" v-model="listQuery.handStatus" clearable placeholder="请选择交件状态">
                 <el-option v-for="item in enums['HandStatus']" :key="item.code" :value="item.code" :label="item.value"
-                           v-if="[1,2].includes(item.code)?listQuery.handType=='1':([3,4,5].includes(item.code)?listQuery.handType=='2':([6,7,8].includes(item.code)?listQuery.handType=='3':false))"></el-option>
+                           v-if="listQuery.handType && String(item.code).indexOf(String(listQuery.handType)) === 0">
+                </el-option>
             </el-select>
             <!--<el-select
                     v-model="listQuery.itemId"
@@ -54,10 +58,10 @@
             </el-table-column>
             <el-table-column align="left" label="申请企业（个人）" min-width="260">
                 <template slot-scope="scope">
-                    <span v-if="scope.row.memberType == 1">
+                    <span v-if="scope.row.memberType === 1">
                         姓名：{{scope.row.memberName}}<br>联系电话：{{scope.row.memberPhone}}<br>
                     </span>
-                    <span v-if="scope.row.memberType == 2 || scope.row.memberType == 3">
+                    <span v-if="scope.row.memberType === 2 || scope.row.memberType === 3">
                         <span v-if="scope.row.companyName">
                             公司：{{scope.row.companyName}}<br>
                         </span>
@@ -67,12 +71,12 @@
             </el-table-column>
             <el-table-column align="left" label="办事员信息" min-width="200">
                 <template slot-scope="scope">
-                    <span v-if="scope.row.memberType == 3">
+                    <span v-if="scope.row.memberType === 3">
                         <span >
                             姓名：{{scope.row.clerkName}}<br>
                         </span>联系电话：{{scope.row.clerkPhone}}<br>
                     </span>
-                    <span v-if="scope.row.memberType == 1 || scope.row.memberType == 2">
+                    <span v-if="scope.row.memberType === 1 || scope.row.memberType === 2">
                         <span >
                             姓名：{{scope.row.memberName}}<br>
                         </span>联系电话：{{scope.row.memberPhone}}<br>
@@ -98,11 +102,15 @@
             </el-table-column>
             <el-table-column align="center" label="操作" width="240">
                 <template slot-scope="scope">
-                    <el-button v-if="scope.row.handTypeInfo && scope.row.handTypeInfo.handStatus==4" type="primary"
+                    <el-button v-if="scope.row.handTypeInfo && scope.row.handTypeInfo.handStatus===22" type="primary"
                                @click="showOpenCode(scope.row.handTypeInfo)">查看取件码</el-button>
-                    <el-button-group v-else-if="scope.row.handTypeInfo && scope.row.handTypeInfo.handStatus==7">
-                        <el-button type="primary" @click="showExpressInfo(scope.row.handTypeInfo)">查看快递单号</el-button>
-                        <el-button type="primary" @click="showLogistics(scope.row.handTypeInfo)">查看物流</el-button>
+                    <el-button-group v-else-if="scope.row.handTypeInfo && scope.row.handTypeInfo.handStatus===32">
+                        <el-button type="primary" @click="showExpressInfo(scope.row.handTypeInfo.postInfo)">查看快递单号</el-button>
+                        <el-button type="primary" @click="showLogistics(scope.row.handTypeInfo.postInfo)">查看物流</el-button>
+                    </el-button-group>
+                    <el-button-group v-else-if="scope.row.handTypeInfo && scope.row.handTypeInfo.handStatus===53">
+                        <el-button type="primary" @click="showExpressInfo(scope.row.handTypeInfo.mailboxPost)">查看快递单号</el-button>
+                        <el-button type="primary" @click="showLogistics(scope.row.handTypeInfo.mailboxPost)">查看物流</el-button>
                     </el-button-group>
                     <el-button v-else type="primary" @click="showHandInfo(scope.row)">查看</el-button>
                 </template>
@@ -121,37 +129,48 @@
                      label-width="100px" class="small-space" label-position="right"
                      style="width: 80%; margin-left:10%;">
                 <el-form-item label="预审号">
-                    <el-input v-model="currentRow.processNumber" disabled></el-input>
+                    <el-input v-model="currentRow.processNumber" disabled>
+                    </el-input>
                 </el-form-item>
                 <el-form-item label="事项名称">
-                    <el-input v-model="currentRow.itemName" disabled></el-input>
+                    <el-input v-model="currentRow.itemName" disabled>
+                    </el-input>
                 </el-form-item>
                 <el-form-item label="申请时间">
-                    <el-date-picker v-model="currentRow.applyTime" type="datetime" disabled></el-date-picker>
+                    <el-date-picker v-model="currentRow.applyTime" type="datetime" disabled>
+                    </el-date-picker>
                 </el-form-item>
                 <el-form-item label="审批时间">
-                    <el-date-picker v-model="currentRow.auditTime" type="datetime" disabled></el-date-picker>
+                    <el-date-picker v-model="currentRow.auditTime" type="datetime" disabled>
+                    </el-date-picker>
                 </el-form-item>
                 <el-form-item label="公司名称" v-if="currentRow.companyName">
-                    <el-input v-model="currentRow.companyName" disabled></el-input>
+                    <el-input v-model="currentRow.companyName" disabled>
+                    </el-input>
                 </el-form-item>
-                <el-form-item label="法人名称" v-if="currentRow.memberType == 3 && currentRow.memberName">
-                    <el-input v-model="currentRow.memberName" disabled></el-input>
+                <el-form-item label="法人名称" v-if="currentRow.memberType === 3 && currentRow.memberName">
+                    <el-input v-model="currentRow.memberName" disabled>
+                    </el-input>
                 </el-form-item>
-                <el-form-item label="法人联系电话" v-if="currentRow.memberType == 3 && currentRow.memberPhone">
-                    <el-input v-model="currentRow.memberPhone" disabled></el-input>
+                <el-form-item label="法人联系电话" v-if="currentRow.memberType === 3 && currentRow.memberPhone">
+                    <el-input v-model="currentRow.memberPhone" disabled>
+                    </el-input>
                 </el-form-item>
-                <el-form-item label="办事员" v-if="currentRow.memberType == 3 && currentRow.clerkName">
-                    <el-input v-model="currentRow.clerkName" disabled></el-input>
+                <el-form-item label="办事员" v-if="currentRow.memberType === 3 && currentRow.clerkName">
+                    <el-input v-model="currentRow.clerkName" disabled>
+                    </el-input>
                 </el-form-item>
-                <el-form-item label="办事员联系电话" v-if="currentRow.memberType == 3 && currentRow.clerkPhone">
-                    <el-input v-model="currentRow.clerkPhone" disabled></el-input>
+                <el-form-item label="办事员联系电话" v-if="currentRow.memberType === 3 && currentRow.clerkPhone">
+                    <el-input v-model="currentRow.clerkPhone" disabled>
+                    </el-input>
                 </el-form-item>
-                <el-form-item label="申请人姓名" v-if="currentRow.memberType != 3">
-                    <el-input v-model="currentRow.memberName" disabled></el-input>
+                <el-form-item label="申请人姓名" v-if="currentRow.memberType !== 3">
+                    <el-input v-model="currentRow.memberName" disabled>
+                    </el-input>
                 </el-form-item>
-                <el-form-item label="联系电话" v-if="currentRow.memberType != 3">
-                    <el-input v-model="currentRow.memberPhone" disabled></el-input>
+                <el-form-item label="联系电话" v-if="currentRow.memberType !== 3">
+                    <el-input v-model="currentRow.memberPhone" disabled>
+                    </el-input>
                 </el-form-item>
                 <template v-if="currentRow.handTypeInfo">
                     <el-form-item label="交件方式">
@@ -160,34 +179,42 @@
                     <el-form-item label="交件状态">
                         <span>&nbsp;&nbsp;<b>{{currentRow.handTypeInfo.handStatus | enums('HandStatus')}}</b></span>
                         &nbsp;&nbsp;
-                        <el-button v-if="[7,8].includes(currentRow.handTypeInfo.handStatus)" type="text"
-                                   @click="showLogistics(currentRow.handTypeInfo)">查看物流</el-button>
+                        <el-button v-if="[32,33].includes(currentRow.handTypeInfo.handStatus)" type="text"
+                                   @click="showLogistics(currentRow.handTypeInfo.postInfo)">查看物流</el-button>
+                        <el-button v-if="[53,54].includes(currentRow.handTypeInfo.handStatus)" type="text"
+                                   @click="showLogistics(currentRow.handTypeInfo.mailboxPost)">查看物流</el-button>
                     </el-form-item>
                     <el-form-item label="交件时间" v-if="currentRow.handTypeInfo.handTime">
-                        <el-date-picker v-model="currentRow.handTypeInfo.handTime" type="datetime" disabled></el-date-picker>
+                        <el-date-picker v-model="currentRow.handTypeInfo.handTime" type="datetime" disabled>
+                        </el-date-picker>
                     </el-form-item>
-                    <el-form-item label="快件箱" v-if="currentRow.handTypeInfo.handType==2">
+                    <el-form-item label="快件箱" v-if="currentRow.handTypeInfo.handType===2">
                         <el-select v-model="currentRow.handTypeInfo.mailboxInfo.mailboxId" style="width: 100%" disabled>
                             <el-option v-for="item in mailboxList" :key="item.id"
-                                       :value="item.id" :label="item.name"></el-option>
+                                       :value="item.id" :label="item.name">
+                            </el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="箱格序号" v-if="[4,5].includes(currentRow.handTypeInfo.handStatus) && currentRow.handTypeInfo.mailboxInfo.boxNo">
-                        <el-input v-model="currentRow.handTypeInfo.mailboxInfo.boxNo" disabled></el-input>
+                    <el-form-item label="箱格序号" v-if="[22,23].includes(currentRow.handTypeInfo.handStatus) && currentRow.handTypeInfo.mailboxOrder.boxNo">
+                        <el-input v-model="currentRow.handTypeInfo.mailboxOrder.boxNo" disabled>
+                        </el-input>
                     </el-form-item>
-                    <el-form-item label="取件码" v-if="[4,5].includes(currentRow.handTypeInfo.handStatus)">
-                        <el-input v-model="currentRow.handTypeInfo.mailboxInfo.openCode" disabled></el-input>
+                    <el-form-item label="取件码" v-if="[22,23].includes(currentRow.handTypeInfo.handStatus)">
+                        <el-input v-model="currentRow.handTypeInfo.mailboxOrder.openCode" disabled>
+                        </el-input>
                     </el-form-item>
-                    <el-form-item label="收件手机号" v-if="currentRow.handTypeInfo.handType==2">
-                        <el-input v-model="currentRow.handTypeInfo.mailboxInfo.consigneeMobile" disabled></el-input>
+                    <el-form-item label="收件手机号" v-if="currentRow.handTypeInfo.handType===2">
+                        <el-input v-model="currentRow.handTypeInfo.mailboxOrder.consigneeMobile" disabled>
+                        </el-input>
                     </el-form-item>
-                    <el-form-item label="快递公司" v-if="[7,8].includes(currentRow.handTypeInfo.handStatus)">
+                    <el-form-item label="快递公司" v-if="[32,33].includes(currentRow.handTypeInfo.handStatus)">
                         <span>&nbsp;&nbsp;<b>{{currentRow.handTypeInfo.postInfo.expressCompany | dics('kdgs')}}</b></span>
                     </el-form-item>
-                    <el-form-item label="快递单号" v-if="[7,8].includes(currentRow.handTypeInfo.handStatus)">
-                        <el-input v-model="currentRow.handTypeInfo.postInfo.expressNumber" disabled></el-input>
+                    <el-form-item label="快递单号" v-if="[32,33].includes(currentRow.handTypeInfo.handStatus)">
+                        <el-input v-model="currentRow.handTypeInfo.postInfo.expressNumber" disabled>
+                        </el-input>
                     </el-form-item>
-                    <el-form-item label="收件地址" v-if="currentRow.handTypeInfo.handType==3">
+                    <el-form-item label="收件地址" v-if="currentRow.handTypeInfo.handType===3">
                         <el-card class="box-card">
                             <div slot="header" class="clearfix card-header">
                                 <div class="card-item">
@@ -200,6 +227,13 @@
                             </div>
                             <div class="card-body" v-show="false"></div>
                         </el-card>
+                    </el-form-item>
+                    <el-form-item label="快递公司" v-if="[53,54].includes(currentRow.handTypeInfo.handStatus)">
+                        <span>&nbsp;&nbsp;<b>{{currentRow.handTypeInfo.mailboxPost.expressCompany | dics('kdgs')}}</b></span>
+                    </el-form-item>
+                    <el-form-item label="快递单号" v-if="[53,54].includes(currentRow.handTypeInfo.handStatus)">
+                        <el-input v-model="currentRow.handTypeInfo.mailboxPost.expressNumber" disabled>
+                        </el-input>
                     </el-form-item>
                 </template>
             </el-form>
@@ -219,7 +253,7 @@
             <div class="track-list">
                 <ul>
                     <li v-for="(item, index) in logistics.list"
-                        :class="(index == 0 ? 'first' : '') + ' ' + (index == logistics.list.length - 1 ? 'last' : '')">
+                        :class="(index === 0 ? 'first' : '') + ' ' + (index === logistics.list.length - 1 ? 'last' : '')">
                         <div class="node-container">
                             <div class="node"></div>
                         </div>
@@ -368,10 +402,10 @@
             },
             showHandInfo(row) {
                 this.currentRow = row;
-                if (row.handTypeInfo && row.handTypeInfo.handType == 3) {
+                if (row.handTypeInfo && row.handTypeInfo.handType === 3) {
                     let addresseeId = row.handTypeInfo.postInfo.addresseeId;
                     for (let item of this.addresseeList) {
-                        if (item.id == addresseeId) {
+                        if (item.id === addresseeId) {
                             copyProperties(this.addresseeCard, item);
                             break;
                         }
@@ -380,7 +414,7 @@
                 this.handTypeVisible = true;
             },
             showOpenCode(handTypeInfo) {
-                if (!handTypeInfo.mailboxInfo || !handTypeInfo.mailboxInfo.openCode) {
+                if (!handTypeInfo.mailboxOrder || !handTypeInfo.mailboxOrder.openCode) {
                     this.$message.error('未查询到取件码信息，请刷新页面后重试');
                     return;
                 }
@@ -388,29 +422,25 @@
                 this.$msgbox({
                     title: '取件码',
                     message: h('p', { style: 'text-align: center' }, [
-                        h('b', { style: 'font-size: 24px' }, handTypeInfo.mailboxInfo.openCode)
+                        h('b', { style: 'font-size: 24px' }, handTypeInfo.mailboxOrder.openCode)
                     ]),
                     confirmButtonText: '关闭'
                 })
             },
-            showExpressInfo(handTypeInfo) {
-                if (!handTypeInfo.postInfo) {
-                    this.$message.error('未查询到快递信息，请刷新页面后重试');
-                    return;
-                }
-                let company = dics(handTypeInfo.postInfo.expressCompany, 'kdgs');
+            showExpressInfo(postInfo) {
+                let company = dics(postInfo.expressCompany, 'kdgs');
                 const h = this.$createElement;
                 this.$msgbox({
                     title: '快递信息',
                     message: h('p', { style: 'text-align: center' }, [
-                        h('b', { style: 'font-size: 24px' }, company + ' : ' + handTypeInfo.postInfo.expressNumber)
+                        h('b', { style: 'font-size: 24px' }, company + ' : ' + postInfo.expressNumber)
                     ]),
                     confirmButtonText: '关闭'
                 })
             },
-            showLogistics(handTypeInfo) {
-                let company = handTypeInfo.postInfo.expressCompany;
-                let number = handTypeInfo.postInfo.expressNumber;
+            showLogistics(postInfo) {
+                let company = postInfo.expressCompany;
+                let number = postInfo.expressNumber;
                 queryLogistics(company, number).then(response => {
                     if (response.httpCode != 200) {
                         this.$message.error('获取物流信息失败');
