@@ -122,7 +122,7 @@
                     <template v-if="scope.row.takeTypeInfo">
                         <el-button v-if="[11,32].includes(scope.row.takeTypeInfo.flagTakeCert)"
                                    type="primary" @click="completeTake(scope.row)">确认取件</el-button>
-                        <el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert === 21 && (!scope.row.takeTypeInfo.mailboxOrderId || scope.row.takeTypeInfo.mailboxOrder.status === 1)"
+                        <el-button v-else-if="scope.row.takeTypeInfo.flagTakeCert === 21 && (!scope.row.takeTypeInfo.mailboxOrderId || [1,6,7,8].includes(scope.row.takeTypeInfo.mailboxOrder.status))"
                                    type="primary" @click="mailboxReserve(scope.row)">预约投递</el-button>
                         <el-tooltip v-else-if="scope.row.takeTypeInfo.flagTakeCert === 21 && scope.row.takeTypeInfo.mailboxOrder.status === 2"
                                     class="item" effect="dark" placement="right" content="点击更新状态">
