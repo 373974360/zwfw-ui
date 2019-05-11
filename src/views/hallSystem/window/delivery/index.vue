@@ -164,8 +164,8 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="快件箱" prop="mailboxInfo.mailboxId" v-show="takeTypeInfo.takeType === 2"
-                              :rules="takeTypeInfo.takeType === 2 ? takeTypeInfoRules.mailboxId : []">
+                <el-form-item label="快件箱" prop="mailboxInfo.mailboxId" v-show="takeTypeInfo.takeType == 2"
+                              :rules="takeTypeInfo.takeType == 2 ? takeTypeInfoRules.mailboxId : []">
                     <!--<el-radio-group v-model="takeTypeInfo.mailboxId">
                         <el-radio-button v-for="item in mailboxList" :key="item.id" :label="item.id">{{item.name}}</el-radio-button>
                     </el-radio-group>-->
@@ -176,25 +176,25 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="收件人姓名" prop="postInfo.name" v-if="takeTypeInfo.takeType === 3 && !cardVisible"
-                              :rules="takeTypeInfo.takeType === 3 ? takeTypeInfoRules.postName : []">
+                <el-form-item label="收件人姓名" prop="postInfo.name" v-if="takeTypeInfo.takeType == 3 && !cardVisible"
+                              :rules="takeTypeInfo.takeType == 3 ? takeTypeInfoRules.postName : []">
                     <el-input v-model="takeTypeInfo.postInfo.name"
                               @blur="validateField('takeTypeForm', 'postInfo.name')">
                     </el-input>
                 </el-form-item>
-                <el-form-item label="手机号" prop="postInfo.mobilephone" v-if="takeTypeInfo.takeType === 3 && !cardVisible"
-                              :rules="takeTypeInfo.takeType === 3 ? takeTypeInfoRules.postPhone : []">
+                <el-form-item label="手机号" prop="postInfo.mobilephone" v-if="takeTypeInfo.takeType == 3 && !cardVisible"
+                              :rules="takeTypeInfo.takeType == 3 ? takeTypeInfoRules.postPhone : []">
                     <el-input v-model="takeTypeInfo.postInfo.mobilephone"
                               @blur="validateField('takeTypeForm', 'postInfo.mobilephone')">
                     </el-input>
                 </el-form-item>
-                <el-form-item label="收件地址" prop="postInfo.address" v-if="takeTypeInfo.takeType === 3 && !cardVisible"
-                              :rules="takeTypeInfo.takeType === 3 ? takeTypeInfoRules.postAddress : []">
+                <el-form-item label="收件地址" prop="postInfo.address" v-if="takeTypeInfo.takeType == 3 && !cardVisible"
+                              :rules="takeTypeInfo.takeType == 3 ? takeTypeInfoRules.postAddress : []">
                     <el-input v-model="takeTypeInfo.postInfo.address"
                               @blur="validateField('takeTypeForm', 'postInfo.address')">
                     </el-input>
                 </el-form-item>
-                <el-form-item label="收件地址" prop="postInfo.addresseeId" v-if="takeTypeInfo.takeType === 3 && cardVisible">
+                <el-form-item label="收件地址" prop="postInfo.addresseeId" v-if="takeTypeInfo.takeType == 3 && cardVisible">
                     <el-card class="box-card">
                         <div slot="header" class="clearfix card-header">
                             <div class="card-item">
@@ -303,7 +303,7 @@
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item label="快件箱" prop="takeTypeInfo.mailboxInfo.mailboxId"
-                              v-show="processOfflineInfo.takeTypeInfo.takeType === 2"
+                              v-show="processOfflineInfo.takeTypeInfo.takeType == 2"
                               :rules="mailboxRequired ? processOfflineInfoRules.mailboxId : []">
                     <el-select v-model="processOfflineInfo.takeTypeInfo.mailboxInfo.mailboxId" :disabled="offlineReadonly"
                                style="width:100%"
@@ -318,7 +318,7 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item label="取件人手机号" prop="takeTypeInfo.mailboxInfo.consigneeMobile"
-                              v-show="processOfflineInfo.takeTypeInfo.takeType === 2"
+                              v-show="processOfflineInfo.takeTypeInfo.takeType == 2"
                               :rules="mailboxRequired ? processOfflineInfoRules.consigneeMobile : []">
                     <el-input v-model="processOfflineInfo.takeTypeInfo.mailboxOrder.consigneeMobile" v-if="offlineReadonly">
                     </el-input>
@@ -345,27 +345,27 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item label="收件人姓名" prop="takeTypeInfo.postInfo.name"
-                              v-if="processOfflineInfo.takeTypeInfo.takeType === 3 && !offlineCardVisible"
+                              v-if="processOfflineInfo.takeTypeInfo.takeType == 3 && !offlineCardVisible"
                               :rules="postRequired ? processOfflineInfoRules.postName : []">
                     <el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.name" :disabled="offlineReadonly"
                               @blur="validateField('processOfflineForm', 'takeTypeInfo.postInfo.name')">
                     </el-input>
                 </el-form-item>
                 <el-form-item label="收件人手机号" prop="takeTypeInfo.postInfo.mobilephone"
-                              v-if="processOfflineInfo.takeTypeInfo.takeType === 3 && !offlineCardVisible"
+                              v-if="processOfflineInfo.takeTypeInfo.takeType == 3 && !offlineCardVisible"
                               :rules="postRequired ? processOfflineInfoRules.postPhone : []">
                     <el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.mobilephone" :disabled="offlineReadonly"
                               @blur="validateField('processOfflineForm', 'takeTypeInfo.postInfo.mobilephone')">
                     </el-input>
                 </el-form-item>
                 <el-form-item label="收件地址" prop="takeTypeInfo.postInfo.address"
-                              v-if="processOfflineInfo.takeTypeInfo.takeType === 3 && !offlineCardVisible"
+                              v-if="processOfflineInfo.takeTypeInfo.takeType == 3 && !offlineCardVisible"
                               :rules="postRequired ? processOfflineInfoRules.postAddress : []">
                     <el-input v-model="processOfflineInfo.takeTypeInfo.postInfo.address" :disabled="offlineReadonly"
                               @blur="validateField('processOfflineForm', 'takeTypeInfo.postInfo.address')">
                     </el-input>
                 </el-form-item>
-                <el-form-item v-if="processOfflineInfo.takeTypeInfo.takeType === 3 && offlineCardVisible"
+                <el-form-item v-if="processOfflineInfo.takeTypeInfo.takeType == 3 && offlineCardVisible"
                               label="收件地址" prop="takeTypeInfo.postInfo.addresseeId">
                     <el-card class="box-card">
                         <div slot="header" class="clearfix card-header">
@@ -1526,6 +1526,15 @@
                             addresseeId: '',
                             expressCompany: undefined,
                             expressNumber: undefined
+                        },
+                        mailboxOrderId: undefined,
+                        mailboxOrder: {
+                            status: undefined,
+                            senderMobile: undefined,
+                            consigneeMobile: undefined,
+                            boxNo: undefined,
+                            resvCode: undefined,
+                            openCode: undefined
                         }
                     },
                     offlineFlag: false
