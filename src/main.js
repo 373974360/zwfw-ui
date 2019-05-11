@@ -23,6 +23,7 @@ import errLog from 'store/errLog'; // error log组件
 import moment from 'moment';
 import {getToken} from 'utils/auth';
 import Cookies from 'js-cookie';
+import 'babel-polyfill'
 
 // import vueGridLayout from 'components/GridLayout/grid_layout';
 // import vueGridItem from 'components/GridLayout/grid_item';
