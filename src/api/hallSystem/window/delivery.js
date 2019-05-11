@@ -60,7 +60,7 @@ export function complete(takeTypeId) {
 export function reserve(processNumber) {
     const data = {processNumber};
     return fetch({
-        url: '/api/hallSystem/mailbox/request/reserve',
+        url: '/api/workSystem/itemTakeType/mailboxReserve',
         method: 'post',
         data
     })
@@ -69,25 +69,25 @@ export function reserve(processNumber) {
 export function cancelReserve(processNumber) {
     const data = {processNumber};
     return fetch({
-        url: '/api/hallSystem/mailbox/request/cancelReserve',
+        url: '/api/workSystem/itemTakeType/mailboxCancelReserve',
         method: 'post',
         data
     });
 }
 
-export function getOrderStatus(processNumber) {
-    const data = {processNumber};
+export function getOrderStatus(mailboxOrderId) {
+    const data = {mailboxOrderId};
     return fetch({
-        url: '/api/hallSystem/mailbox/request/getOrderStatus',
+        url: '/api/mailbox/request/getOrderStatus',
         method: 'post',
         data
     })
 }
 
-export function getOrderDetail(processNumber) {
-    const data = {processNumber};
+export function getOrderDetail(mailboxOrderId) {
+    const data = {mailboxOrderId};
     return fetch({
-        url: '/api/hallSystem/mailbox/request/getOrderDetail',
+        url: '/api/mailbox/request/getOrderDetail',
         method: 'post',
         data
     });

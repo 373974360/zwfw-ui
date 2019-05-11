@@ -356,35 +356,30 @@
                     <el-checkbox-group v-model="zwfwItem.handTypes" @change="handleHandTypesChange">
                         <template v-for="item in enums['HandType']">
                             <el-checkbox
-                                    :disabled="(zwfwItem.handleType=='blxs_ckbl' && (item.code==2 || item.code==3)) ? true : false"
+                                    :disabled="(zwfwItem.handleType=='blxs_ckbl' && item.code != 1) ? true : false"
                                     :key="item.code" :label="item.code + ''">
                                 {{item.value}}
                             </el-checkbox>
                         </template>
                     </el-checkbox-group>
                 </el-form-item>
-                <el-form-item label="网办深度" prop="handleDeep">
-                    <el-radio-group v-model="zwfwItem.handleDeep">
-                        <el-radio v-for="item in dics['wbsd']"
-                                  :key="item.code"
-                                  :label="item.code"
-                                  :value="item.code">
-                            <span style="font-weight:normal;">{{item.value}}</span>
-                        </el-radio>
-                    </el-radio-group>
+                <el-form-item label="取件方式" prop="takeTypes">
+                    <el-checkbox-group v-model="zwfwItem.takeTypes">
+                        <el-checkbox v-for="item in enums['TakeType']"
+                                     :key="item.code" :label="item.code + ''">
+                            {{item.value}}
+                        </el-checkbox>
+                    </el-checkbox-group>
                 </el-form-item>
-                <el-form-item label="到窗口次数" prop="comTimes">
-                    <el-input-number v-model="zwfwItem.comTimes" :min="0" :max="10"/>
-                </el-form-item>
-                <el-form-item v-if="zwfwItem.handTypes.includes('2')" label="收件人员" prop="handUserId">
+                <!--<el-form-item v-if="zwfwItem.handTypes.includes('2')" label="收件人员" prop="handUserId">
                     <el-select v-model="zwfwItem.handUserId" remote :remote-method="queryHandUserId" filterable
                                placeholder="请选择" style="width: 100%" :multiple="false" clearable>
                         <el-option v-for="u in userListHand" :key="u.id" :label="u.name + ' (工号：' + u.empNo +')'"
                                    :value="u.id">
                         </el-option>
                     </el-select>
-                </el-form-item>
-                <el-form-item v-if="zwfwItem.handTypes.includes('3')" label="收件地址" prop="addresseeId">
+                </el-form-item>-->
+                <el-form-item label="收件地址" prop="addresseeId">
                     <el-card class="box-card">
                         <div slot="header" class="clearfix card-header">
                             <div class="card-item">
@@ -409,13 +404,18 @@
                         </div>
                     </el-card>
                 </el-form-item>
-                <el-form-item label="取件方式" prop="takeTypes">
-                    <el-checkbox-group v-model="zwfwItem.takeTypes">
-                        <el-checkbox v-for="item in enums['TakeType']"
-                                     :key="item.code" :label="item.code + ''">
-                            {{item.value}}
-                        </el-checkbox>
-                    </el-checkbox-group>
+                <el-form-item label="网办深度" prop="handleDeep">
+                    <el-radio-group v-model="zwfwItem.handleDeep">
+                        <el-radio v-for="item in dics['wbsd']"
+                                  :key="item.code"
+                                  :label="item.code"
+                                  :value="item.code">
+                            <span style="font-weight:normal;">{{item.value}}</span>
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="到窗口次数" prop="comTimes">
+                    <el-input-number v-model="zwfwItem.comTimes" :min="0" :max="10"/>
                 </el-form-item>
                 <!--:disabled="(zwfwItem.handleType=='blxs_ckbl' && (item.code==2 || item.code==3)) ? true : false"-->
                 <el-form-item label="版本生效时间" prop="versionAvailableTime">
