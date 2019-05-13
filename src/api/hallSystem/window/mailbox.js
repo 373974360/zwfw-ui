@@ -45,15 +45,7 @@ export function delMailboxes(ids) {
 
 export function queryBoxStatus(deviceId) {
     return fetch({
-        url: '/api/hallSystem/mailbox/request/boxStatus',
-        method: 'get',
-        params: {deviceId}
-    });
-}
-
-export function queryBoxStatusOnline(deviceId) {
-    return fetch({
-        url: '/api/hallSystem/mailbox/request/boxStatus',
+        url: '/api/mailbox/request/boxStatus',
         method: 'get',
         params: {deviceId}
     });

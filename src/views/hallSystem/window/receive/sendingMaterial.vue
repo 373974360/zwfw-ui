@@ -102,7 +102,8 @@
             </el-table-column>
             <el-table-column align="center" label="操作" width="240">
                 <template slot-scope="scope">
-                    <el-button v-if="scope.row.handTypeInfo && scope.row.handTypeInfo.handStatus===22" type="primary"
+                    <el-button v-if="scope.row.handTypeInfo && [21,22].includes(scope.row.handTypeInfo.handStatus)
+                    && scope.row.handTypeInfo.mailboxOrder && [3,4].includes(scope.row.handTypeInfo.mailboxOrder.status)" type="primary"
                                @click="showOpenCode(scope.row.handTypeInfo)">查看取件码</el-button>
                     <el-button-group v-else-if="scope.row.handTypeInfo && scope.row.handTypeInfo.handStatus===32">
                         <el-button type="primary" @click="showExpressInfo(scope.row.handTypeInfo.postInfo)">查看快递单号</el-button>
@@ -111,6 +112,12 @@
                     <el-button-group v-else-if="scope.row.handTypeInfo && scope.row.handTypeInfo.handStatus===53">
                         <el-button type="primary" @click="showExpressInfo(scope.row.handTypeInfo.mailboxPost)">查看快递单号</el-button>
                         <el-button type="primary" @click="showLogistics(scope.row.handTypeInfo.mailboxPost)">查看物流</el-button>
+                    </el-button-group>
+                    <el-button-group v-else-if="scope.row.handTypeInfo && scope.row.handTypeInfo.handStatus===52
+                    && (scope.row.handTypeInfo.mailboxPost.expressOrder.status.indexOf('AF') === 0
+                    || scope.row.handTypeInfo.mailboxPost.expressOrder.status.indexOf('F') === 0)">
+                        <el-button type="primary" @click="showEmsDesc(scope.row.handType.mailboxPost.expressOrder)">查看失败原因</el-button>
+                        <el-button type="primary" @click="mailboxPostMailRequest(scope.row.handTypeInfo)">重新预约上门取件</el-button>
                     </el-button-group>
                     <el-button v-else type="primary" @click="showHandInfo(scope.row)">查看</el-button>
                 </template>
@@ -280,6 +287,7 @@
     import {getByNameOrLoginName} from '../../../../api/hallSystem/member/member'
     import {getToReceiveList} from '../../../../api/hallSystem/window/receive/windowCert'
     import {queryLogistics} from '../../../../api/hallSystem/window/express'
+    import {getHandMailboxOpenCode, mailboxPostMailRequest} from "../../../../api/workSystem/handType";
 
     export default {
         name: 'table_demo',
@@ -414,21 +422,27 @@
                 this.handTypeVisible = true;
             },
             showOpenCode(handTypeInfo) {
-                if (!handTypeInfo.mailboxOrder || !handTypeInfo.mailboxOrder.openCode) {
-                    this.$message.error('未查询到取件码信息，请刷新页面后重试');
-                    return;
-                }
-                const h = this.$createElement;
-                this.$msgbox({
-                    title: '取件码',
-                    message: h('p', { style: 'text-align: center' }, [
-                        h('b', { style: 'font-size: 24px' }, handTypeInfo.mailboxOrder.openCode)
-                    ]),
-                    confirmButtonText: '关闭'
-                })
+                getHandMailboxOpenCode(handTypeInfo.processNumber).then(response => {
+                    if (response.httpCode === 200) {
+                        if (response.data) {
+                            const h = this.$createElement;
+                            this.$msgbox({
+                                title: '取件码',
+                                message: h('p', { style: 'text-align: center' }, [
+                                    h('b', { style: 'font-size: 24px' }, response.data)
+                                ]),
+                                confirmButtonText: '关闭'
+                            })
+                        } else {
+                            this.$message.error('未查询到取件码信息，也许用户还未投件');
+                        }
+                    } else {
+                        this.$message.error('查询取件码失败');
+                    }
+                });
             },
             showExpressInfo(postInfo) {
-                let company = dics(postInfo.expressCompany, 'kdgs');
+                const company = dics(postInfo.expressCompany, 'kdgs');
                 const h = this.$createElement;
                 this.$msgbox({
                     title: '快递信息',
@@ -439,15 +453,33 @@
                 })
             },
             showLogistics(postInfo) {
-                let company = postInfo.expressCompany;
-                let number = postInfo.expressNumber;
-                queryLogistics(company, number).then(response => {
-                    if (response.httpCode != 200) {
+                queryLogistics(postInfo.expressCompany, postInfo.expressNumber).then(response => {
+                    if (response.httpCode !== 200) {
                         this.$message.error('获取物流信息失败');
                         return;
                     }
                     this.logistics = response.data;
                     this.logisticsVisible = true;
+                })
+            },
+            showEmsDesc(expressOrder) {
+                const h = this.$createElement;
+                this.$msgbox({
+                    title: '上门取件状态描述',
+                    message: h('p', { style: 'text-align: center' }, [
+                        h('b', { style: 'font-size: 16px' }, expressOrder.desc)
+                    ]),
+                    confirmButtonText: '关闭'
+                })
+            },
+            mailboxPostMailRequest(handTypeInfo) {
+                mailboxPostMailRequest(handTypeInfo.processNumber).then(response => {
+                    if (response.httpCode === 200) {
+                        this.$message.success('预约已提交');
+                        this.getList();
+                    } else {
+                        this.$message.error('预约提交失败，请重新预约')
+                    }
                 })
             },
             handlePageChange(val) {
