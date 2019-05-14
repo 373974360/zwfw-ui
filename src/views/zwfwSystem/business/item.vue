@@ -1334,9 +1334,9 @@
                     handUserId: [
                         {validator: handUserIdValidate, trigger: 'blur'}
                     ],
-                    addresseeId: [
+                    /*addresseeId: [
                         {validator: addresseeIdValidate, trigger: 'blur'}
-                    ],
+                    ],*/
                     promiseEndTime: [
                         {required: true, validator: promiseEndTimeValidate, trigger: 'blur'}
                     ],
