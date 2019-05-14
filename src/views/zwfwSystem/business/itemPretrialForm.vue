@@ -347,6 +347,7 @@
                 this.pretrialForm = {
                     fields: []
                 };
+                this.selectFormId = '';
                 getFormByMaterialId(this.zwfwMaterial.id).then(response => {
                     this.loading = false;
                     if (response.httpCode === 200) {
