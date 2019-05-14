@@ -117,8 +117,8 @@
                     && scope.row.handTypeInfo.mailboxPost.expressOrder.status
                     && (scope.row.handTypeInfo.mailboxPost.expressOrder.status.indexOf('AF') === 0
                     || scope.row.handTypeInfo.mailboxPost.expressOrder.status.indexOf('F') === 0)">
-                        <el-button type="primary" @click="showEmsDesc(scope.row.handTypeInfo.mailboxPost.expressOrder)">查看失败原因</el-button>
-                        <el-button type="primary" @click="mailboxPostMailRequest(scope.row.handTypeInfo)">重新预约上门取件</el-button>
+                        <el-button type="primary" @click="showEmsDesc(scope.row.handTypeInfo.mailboxPost.expressOrder)">失败原因</el-button>
+                        <el-button type="primary" @click="mailboxPostMailRequest(scope.row.handTypeInfo)">重新揽件</el-button>
                     </el-button-group>
                     <el-button v-else type="primary" @click="showHandInfo(scope.row)">查看</el-button>
                 </template>
