@@ -1409,25 +1409,8 @@
                     this.logistics = response.data;
                     this.logisticsVisible = true;
                     if (this.logistics && this.logistics.deliverystatus === 3 && takeTypeInfo.flagTakeCert !== 33) {
-                        this.$confirm('查询到快递已签收，是否标记客户已取件？', '提示', {
-                            confirmButtonText: '确定',
-                            cancelButtonText: '取消',
-                            type: 'warning'
-                        }).then(() => {
-                            this.listLoading = true;
-                            complete(takeTypeInfo.id).then(response => {
-                                if (response.httpCode === 200) {
-                                    this.processOfflineInfo.takeTypeInfo.flagTakeCert = 33;
-                                    this.processOfflineInfo.takeTypeInfo.takeCertTime = date(new Date(), 'YYYY-MM-DD HH:mm:ss');
-                                    this.getList();
-                                } else {
-                                    this.$message.error('操作失败')
-                                }
-                                this.listLoading = false;
-                            })
-                        }).catch(() => {
-                            console.dir('取消');
-                        });
+                        this.getList();
+                        this.listLoading = false;
                     }
                 })
             },

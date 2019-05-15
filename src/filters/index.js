@@ -42,6 +42,7 @@ export function smsStatusFilter(status) {
 
 export function deliveryStatusFilter(status) {
     const deliveryStatusMap = {
+        0: '快递收件（揽件）',
         1: '在途中',
         2: '派件中',
         3: '已签收',
