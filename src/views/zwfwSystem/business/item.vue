@@ -380,7 +380,8 @@
                     </el-select>
                 </el-form-item>-->
                 <el-form-item label="收件地址" prop="addresseeId">
-                    <el-card class="box-card">
+                    <el-button type="primary" v-show="!addressCardVisible" @click="showAddressCard">选择收件地址</el-button>
+                    <el-card class="box-card" v-show="addressCardVisible">
                         <div slot="header" class="clearfix card-header">
                             <div class="card-item">
                                 <p class="p1">
@@ -1070,7 +1071,7 @@
         setItemConfig,
         syncAliItem,
         updateZwfwItem
-    } from 'api/zwfwSystem/business/item';
+    } from '../../../api/zwfwSystem/business/item';
     import {
         createZwfwItemMaterial,
         deleteZwfwItemMaterial,
@@ -1389,6 +1390,7 @@
                     address: '',
                     defaultFlag: false
                 },
+                addressCardVisible: false,
                 cardItemVisible: false,
                 cascader: [],
                 itemSynchronizing: false
@@ -1560,7 +1562,7 @@
                 })
             },
             handleHandTypesChange() {
-                this.initCardHeader();
+                // this.initCardHeader();
             },
             initCardHeader() {
                 if (!this.addresseeList || this.addresseeList.length <= 0) {
@@ -1568,6 +1570,7 @@
                 }
                 let addressee;
                 if (this.zwfwItem.addresseeId) {
+                    this.addressCardVisible = true;
                     for (let item of this.addresseeList) {
                         if (item.id === this.zwfwItem.addresseeId) {
                             addressee = item;
@@ -1590,7 +1593,8 @@
                 copyProperties(this.cardHeader, addressee);
             },
             clearAddressee() {
-                this.zwfwItem.addresseeId = undefined;
+                this.addressCardVisible = false;
+                this.zwfwItem.addresseeId = '';
                 this.cardHeader = {
                     name: '',
                     phone: '',
@@ -1602,6 +1606,7 @@
                 if (this.zwfwItem.addresseeId) {
                     getAddresseeById(this.zwfwItem.addresseeId).then(response => {
                         if (response.httpCode == 200) {
+                            this.addressCardVisible = true;
                             copyProperties(this.cardHeader, response.data);
                         }
                     });
@@ -1810,6 +1815,10 @@
                     this.zwfwItem.implAgency = 0;
                     this.zwfwItem.implAgencyTreePosition = [];
                 }
+            },
+            showAddressCard() {
+                this.addressCardVisible = true;
+                this.cardItemVisible = true;
             },
             showCardItems() {
                 this.cardItemVisible = !this.cardItemVisible;
