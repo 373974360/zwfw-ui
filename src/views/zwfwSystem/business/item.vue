@@ -381,6 +381,7 @@
                 </el-form-item>-->
                 <el-form-item label="收件地址" prop="addresseeId">
                     <el-button type="primary" v-show="!addressCardVisible" @click="showAddressCard">选择收件地址</el-button>
+                    <span style="color: red"><b>&nbsp;*&nbsp;</b>若不设置则使用默认收件地址</span>
                     <el-card class="box-card" v-show="addressCardVisible">
                         <div slot="header" class="clearfix card-header">
                             <div class="card-item">
@@ -1614,7 +1615,7 @@
             },
             handleItemCreate() {
                 this.resetItemTemp();
-                this.initCardHeader();
+                // this.initCardHeader();
                 this.dialogStatus = 'create';
                 this.dialogItemFormVisible = true;
             },
