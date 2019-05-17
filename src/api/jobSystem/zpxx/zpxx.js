@@ -24,3 +24,21 @@ export function resetOrganZpxx(data) {
         data
     });
 }
+
+export function createZpxx(zpxxVo) {
+    const data = zpxxVo;
+    return fetch({
+        url: '/api/jobSystem/jobOrganZpxx/add',
+        method: 'post',
+        data
+    })
+}
+
+export function updateZpxx(zpxxVo) {
+    const data = zpxxVo;
+    return fetch({
+        url: '/api/jobSystem/jobOrganZpxx/edit',
+        method: 'post',
+        data
+    })
+}

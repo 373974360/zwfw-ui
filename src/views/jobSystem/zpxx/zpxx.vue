@@ -16,6 +16,9 @@
                     搜索
                 </el-button>
             </el-tooltip>
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="plus">
+                添加
+            </el-button>
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleIsRec" type="primary" icon="circle-check">
                 推荐
             </el-button>
@@ -25,12 +28,15 @@
                     取消推荐
                 </el-button>
             </el-tooltip>
-            <!--<el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="撤销审核" placement="top-start">
+            <el-button class="filter-item" style="margin-left: 10px;" @click="handlePublish" type="primary" icon="circle-check">
+                发布
+            </el-button>
+            <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="撤销发布" placement="top-start">
                 <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="delete"
                            @click="handleUnaudit">
-                    撤销审核
+                    撤销发布
                 </el-button>
-            </el-tooltip>-->
+            </el-tooltip>
             <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
                 <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="delete"
                            @click="handleDelete">
@@ -43,8 +49,9 @@
             <el-table-column type="selection" width="55"/>
             <el-table-column align="left" label="职位名称" min-width="300">
                 <template scope="scope">
-                    <nobr class="link-type" @click="handleView(scope.row)">
-                        <el-tag v-if="scope.row.isrec==2" type="danger">推荐</el-tag>
+                    <nobr class="link-type" @click="handleUpdate(scope.row)">
+                        <el-tag v-if="scope.row.isrec==2" type="primary">推荐</el-tag>
+                        <el-tag v-if="scope.row.status==1" type="danger">未发布</el-tag>
                         {{scope.row.zwmc}}
                     </nobr>
                 </template>
@@ -104,14 +111,9 @@
                     <nobr>{{scope.row.zwgjz}}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="刷新日期" width="173">
+            <el-table-column align="center" label="发布日期" width="173">
                 <template scope="scope">
-                    <nobr>{{scope.row.reloadtime | date('YYYY-MM-DD HH:mm:ss')}}</nobr>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="截止日期" width="173">
-                <template scope="scope">
-                    <nobr>{{scope.row.endtime | date('YYYY-MM-DD HH:mm:ss')}}</nobr>
+                    <nobr>{{scope.row.createTime | date('YYYY-MM-DD HH:mm:ss')}}</nobr>
                 </template>
             </el-table-column>
         </el-table>
@@ -123,102 +125,159 @@
         </div>
         <!-- 招聘信息查看弹出框  开始 -->
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogVisible">
-            <el-tabs v-model="activeName" type="card">
-                <el-tab-pane label="招聘信息" name="zpxx">
-                    <table class="member_view" width="100%">
-                        <tr>
-                            <th>公司名称:</th>
-                            <td>{{zpxx.organName}}</td>
-                            <th>职位名称:</th>
-                            <td>{{zpxx.zwmc}}</td>
-                            <th>职位编号:</th>
-                            <td>{{zpxx.zwbh}}</td>
-                        </tr>
-                        <tr>
-                            <th>招聘人数:</th>
-                            <td>{{zpxx.zprs}}</td>
-                            <th>最低学历:</th>
-                            <td>
-                                <span v-if="zpxx.zdxl!='' && zpxx.zdxl!=null">
-                                  {{zpxx.zdxl | dics('xueli')}}
-                                </span>
-                                <span v-else>
-                                    不限
-                                </span>
-                            </td>
-                            <th>年龄要求:</th>
-                            <td>{{zpxx.nlmin}} 至 {{zpxx.nlmax}}</td>
-                        </tr>
-                        <tr>
-                            <th>职能类别:</th>
-                            <td>{{zpxx.znflName}}</td>
-                            <th>工作年限:</th>
-                            <td>
-                                {{zpxx.gznx}}
-                            </td>
-                            <th>工作性质:</th>
-                            <td>
-                                <span v-if="zpxx.gzxz!='' && zpxx.gzxz!=null">
-                                    {{zpxx.gzxz | dics('gzxz')}}
-                                </span>
-                                <span v-else>
-                                    不限
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>关 键 字:</th>
-                            <td>{{zpxx.zwgjz}}</td>
-                            <th>刷新日期:</th>
-                            <td>{{zpxx.reloadtime | date("YYYY-MM-DD HH:mm:ss")}}</td>
-                            <th>薪资标准:</th>
-                            <td>{{zpxx.xzlx | dics('xzfw')}}</td>
-                        </tr>
-                        <tr>
-                            <th>政治面貌:</th>
-                            <td>
-                                <span v-if="zpxx.zzmm!='' && zpxx.zzmm!=null">
-                                    {{zpxx.zzmm | dics('zzmm')}}
-                                </span>
-                                <span v-else>
-                                    不限
-                                </span>
-                            </td>
-                            <th>语言要求:</th>
-                            <td>
-                                <span v-if="zpxx.yyyq!='' && zpxx.yyyq!=null">
-                                    {{zpxx.yyyq | dics('yuyan')}}
-                                </span>
-                                <span v-else>
-                                    不限
-                                </span>
-                            </td>
-                            <th>熟练程度:</th>
-                            <td>
-                                <span v-if="zpxx.slcd!='' && zpxx.slcd!=null">
-                                    {{zpxx.slcd | dics('slcd')}}
-                                </span>
-                                <span v-else>
-                                    不限
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>工作地点:</th>
-                            <td colspan="5">{{zpxx.sbdz}}</td>
-                        </tr>
-                        <tr>
-                            <th valign="top">要求/描述:</th>
-                            <td colspan="5">{{zpxx.zwms}}</td>
-                        </tr>
-                    </table>
-                </el-tab-pane>
-                <!--<el-tab-pane label="投递记录" name="tdjl">-->
-
-                <!--</el-tab-pane>-->
-            </el-tabs>
+            <el-form ref="zpxxForm" class="small-space" :model="zpxx" label-position="right" label-width="80px"
+                     style='width: 80%; margin-left:10%;' v-loading="dialogLoading" :rules="zpxxRules">
+                <table style="width:100%;">
+                    <tr>
+                        <td>
+                            <el-form-item label="职位名称" prop="zwmc" label-width="100px">
+                                <el-input v-model="zpxx.zwmc"></el-input>
+                            </el-form-item>
+                        </td>
+                        <td>
+                            <el-form-item label="企业名称" prop="organName" label-width="100px">
+                                <el-input v-model="zpxx.organName"></el-input>
+                            </el-form-item>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <el-form-item label="职位编号" prop="zwbh" label-width="100px">
+                                <el-input v-model="zpxx.zwbh"></el-input>
+                            </el-form-item>
+                        </td>
+                        <td>
+                            <el-form-item label="招聘人数" prop="zprs" label-width="100px">
+                                <el-input v-model="zpxx.zprs"></el-input>
+                            </el-form-item>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <el-form-item label="最低学历" prop="zdxl" label-width="100px">
+                                <el-select v-model="zpxx.zdxl" placeholder="请选择学历">
+                                    <el-option
+                                            v-for="item in dics['xueli']"
+                                            :key="item.code"
+                                            :label="item.value"
+                                            :value="item.code">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </td>
+                        <td>
+                            <el-form-item label="工作性质" prop="gzxz" label-width="100px">
+                                <el-select v-model="zpxx.gzxz" placeholder="请选择工作性质">
+                                    <el-option
+                                            v-for="item in dics['gzxz']"
+                                            :key="item.code"
+                                            :label="item.value"
+                                            :value="item.code">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </td>
+                    </tr><tr>
+                    <td>
+                        <el-form-item label="语言要求" prop="yyyq" label-width="100px">
+                            <el-select v-model="zpxx.yyyq" placeholder="请选择语言要求">
+                                <el-option
+                                        v-for="item in dics['yuyan']"
+                                        :key="item.code"
+                                        :label="item.value"
+                                        :value="item.code">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </td>
+                    <td>
+                        <el-form-item label="熟练程度" prop="slcd" label-width="100px">
+                            <el-select v-model="zpxx.slcd" placeholder="请选择熟练程度">
+                                <el-option
+                                        v-for="item in dics['slcd']"
+                                        :key="item.code"
+                                        :label="item.value"
+                                        :value="item.code">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </td>
+                </tr>
+                    <tr>
+                        <td>
+                            <el-form-item label="政治面貌" prop="zzmm" label-width="100px">
+                                <el-select v-model="zpxx.zzmm" placeholder="请选择政治面貌">
+                                    <el-option
+                                            v-for="item in dics['zzmm']"
+                                            :key="item.code"
+                                            :label="item.value"
+                                            :value="item.code">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </td>
+                        <td>
+                            <el-form-item label="薪资范围" prop="xzlx" label-width="100px">
+                                <el-select v-model="zpxx.xzlx" placeholder="请选择薪资范围">
+                                    <el-option
+                                            v-for="item in dics['xzfw']"
+                                            :key="item.code"
+                                            :label="item.value"
+                                            :value="item.code">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <el-form-item label="年龄要求" label-width="100px">
+                                <el-input v-model="zpxx.nlmin" style="width: 100px;"></el-input>　-　
+                                <el-input v-model="zpxx.nlmax" style="width: 100px;"></el-input>
+                            </el-form-item>
+                        </td>
+                        <td>
+                            <el-form-item label="职能类别" prop="znlb" label-width="100px">
+                                <el-input v-model="zpxx.znlb"></el-input>
+                            </el-form-item>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <el-form-item label="工作年限" prop="gznx" label-width="100px">
+                                <el-input v-model="zpxx.gznx"></el-input>
+                            </el-form-item>
+                        </td>
+                        <td>
+                            <el-form-item label="工作地址" prop="sbdz" label-width="100px">
+                                <el-input v-model="zpxx.sbdz"></el-input>
+                            </el-form-item>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <el-form-item label="关键字" prop="zwgjz" label-width="100px">
+                                <el-input v-model="zpxx.zwgjz"></el-input>
+                            </el-form-item>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <el-form-item label="职位描述" prop="zwms" label-width="100px">
+                                <el-input type="textarea" v-model="zpxx.zwms" :rows="10"></el-input>
+                            </el-form-item>
+                        </td>
+                    </tr>
+                </table>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button icon="circle-cross" type="danger" @click="dialogVisible = false">取 消</el-button>
+                <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="create">确 定
+                </el-button>
+                <el-button v-else type="primary" icon="circle-check" @Keyup.enter="update" @click="update">确 定
+                </el-button>
+            </div>
         </el-dialog>
-        <!-- 招聘信息查看弹出框  结束 -->
     </div>
 </template>
 <style>
@@ -238,7 +297,7 @@
 </style>
 <script>
     import {getZnflCascader} from 'api/jobSystem/flxx/znfl';
-    import {getOrganZpxxList, delOrganZpxx, resetOrganZpxx} from "api/jobSystem/zpxx/zpxx";
+    import {getOrganZpxxList, delOrganZpxx, resetOrganZpxx, createZpxx, updateZpxx} from "api/jobSystem/zpxx/zpxx";
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import SplitPane from "../../../components/SplitPane/index";
@@ -256,7 +315,7 @@
                     page: this.$store.state.app.page,
                     rows: this.$store.state.app.rows,
                     zwmc: '',
-                    status: 2,
+                    status: '',
                     isrec: ''
                 },
                 recOptions: [{
@@ -269,30 +328,39 @@
                     value: '2',
                     label: '已推荐'
                 }],
+                currentRow: null,
                 selectedRows: [],
                 dialogVisible: false,
                 dialogStatus: '',
                 zpxx: {
-                    organName: '',
-                    znflName: '',
-                    zwmc: '',
-                    zwbh: '',
-                    zprs: '',
-                    sbdz: '',
-                    zdxl: '',
-                    nlmax: '',
-                    nlmin: '',
-                    znlb: '',
-                    gznx: '',
-                    gzxz: '',
-                    xzlx: '',
-                    zwgjz: '',
-                    zwms: '',
-                    zzmm: '',
-                    yyyq: '',
-                    slcd: '',
-                    reloadtime: '',
-                    endtime: ''
+                    id: null,
+                    organName: null,
+                    zwmc: null,
+                    zwbh: null,
+                    zprs: null,
+                    sbdz: null,
+                    zdxl: null,
+                    nlmax: null,
+                    nlmin: null,
+                    znlb: null,
+                    gznx: null,
+                    gzxz: null,
+                    xzlx: null,
+                    zwgjz: null,
+                    zwms: null,
+                    status: '1',
+                    yyyq: null,
+                    slcd: null,
+                    zzmm: null,
+                    isrec: '1'
+                },
+                zpxxRules: {
+                    organName: [
+                        {required: true, message: '请输入企业名称', trigger: 'blur'}
+                    ],
+                    zwmc: [
+                        {required: true, message: '请输入职位名称', trigger: 'blur'}
+                    ]
                 }
             }
         },
@@ -348,11 +416,58 @@
                 this.listQuery.page = val;
                 this.getList();
             },
-            handleView(row) {
+            handleCreate(row) {
+                this.currentRow = row;
+                this.resetTemp();
+                this.dialogStatus = 'create';
+                this.dialogVisible = true;
+            },
+            handleUpdate(row) {
+                this.currentRow = row;
                 this.resetTemp();
                 this.zpxx = copyProperties(this.zpxx, row);
+                this.dialogStatus = 'update';
                 this.dialogVisible = true;
-                this.dialogStatus = 'view';
+            },
+            create() {
+                this.$refs['zpxxForm'].validate((valid) => {
+                    if (valid) {
+                        this.dialogVisible = false;
+                        this.listLoading = true;
+                        createZpxx(this.zpxx).then(response => {
+                            if (response.httpCode == 200) {
+                                this.list.unshift(response.data);
+                                this.total += 1;
+                                this.$message.success('创建成功');
+                            } else {
+                                this.$message.error(response.msg);
+                            }
+                            this.listLoading = false;
+                        })
+                    } else {
+                        return false;
+                    }
+                });
+            },
+            update() {
+                this.$refs['zpxxForm'].validate((valid) => {
+                    if (valid) {
+                        this.dialogVisible = false;
+                        this.listLoading = true;
+                        updateZpxx(this.zpxx).then(response => {
+                            if (response.httpCode == 200) {
+                                copyProperties(this.currentRow, response.data);
+                                this.$message.success('更新成功');
+                                this.getList();
+                            } else {
+                                this.$message.error(response.msg);
+                            }
+                            this.listLoading = false;
+                        })
+                    } else {
+                        return false;
+                    }
+                });
             },
             handleDelete() {
                 var selectCounts = this.selectedRows.length;
@@ -391,12 +506,45 @@
                     });
                 }
             },
+            handlePublish() {
+                var selectCounts = this.selectedRows.length;
+                if (this.selectedRows == 0) {
+                    this.$message.warning('请选择需要操作的记录');
+                } else {
+                    this.$confirm('此操作将发布招聘信息, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        let ids = new Array();
+                        for (const deleteRow of this.selectedRows) {
+                            ids.push(deleteRow.id);
+                        }
+                        this.listLoading = true;
+                        resetOrganZpxx({"ids": ids, "status": 2}).then(response => {
+                            if (response.httpCode == 200) {
+                                this.getList();
+                                this.$message.success('发布成功');
+                            } else {
+                                this.$message.error('发布失败！');
+                            }
+                            this.listLoading = false;
+                        })
+                        for (const deleteRow of this.selectedRows) {
+                            const index = this.list.indexOf(deleteRow);
+                            this.list.splice(index, 1);
+                        }
+                    }).catch(() => {
+                        console.dir('取消');
+                    });
+                }
+            },
             handleUnaudit() {
                 var selectCounts = this.selectedRows.length;
                 if (this.selectedRows == 0) {
                     this.$message.warning('请选择需要操作的记录');
                 } else {
-                    this.$confirm('此操作将撤销审核企业发布的招聘信息, 是否继续?', '提示', {
+                    this.$confirm('此操作将撤销招聘信息, 是否继续?', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning'
@@ -492,26 +640,26 @@
             },
             resetTemp() {
                 this.zpxx = {
-                    organName: '',
-                    znflName: '',
-                    zwmc: '',
-                    zwbh: '',
-                    zprs: '',
-                    sbdz: '',
-                    zdxl: '',
-                    nlmax: '',
-                    nlmin: '',
-                    znlb: '',
-                    gznx: '',
-                    gzxz: '',
-                    xzlx: '',
-                    zwgjz: '',
-                    zwms: '',
-                    zzmm: '',
-                    yyyq: '',
-                    slcd: '',
-                    reloadtime: '',
-                    endtime: ''
+                    id: null,
+                    organName: null,
+                    zwmc: null,
+                    zwbh: null,
+                    zprs: null,
+                    sbdz: null,
+                    zdxl: null,
+                    nlmax: null,
+                    nlmin: null,
+                    znlb: null,
+                    gznx: null,
+                    gzxz: null,
+                    xzlx: null,
+                    zwgjz: null,
+                    zwms: null,
+                    status: '1',
+                    yyyq: null,
+                    slcd: null,
+                    zzmm: null,
+                    isrec: '1'
                 };
             }
         }

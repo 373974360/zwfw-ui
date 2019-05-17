@@ -310,7 +310,7 @@ export const asyncRouterMap = [
             }
         ]
     },
-    {
+    /*{
         path: '/organ',
         redirect: 'noredirect',
         name: '企业信息库',
@@ -343,7 +343,7 @@ export const asyncRouterMap = [
                 meta: {permission: 'jobSystem:member:organ:list'}
             }
         ]
-    },
+    },*/
     {
         path: '/zpxx',
         redirect: 'noredirect',
@@ -352,12 +352,12 @@ export const asyncRouterMap = [
         icon: 'neirongguanli',
         component: Layout,
         children: [
-            {
+            /*{
                 path: 'zpxx_rec',
                 component: ZpxxRec,
                 name: '申请推荐招聘信息',
                 meta: {permission: 'jobSystem:zpxx:notstatus:list'}
-            },
+            },*/
             {
                 path: 'zpxx',
                 component: Zpxx,
