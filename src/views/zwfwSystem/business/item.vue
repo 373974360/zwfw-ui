@@ -3,21 +3,25 @@
         <div class="filter-container">
             <el-input @keyup.enter.native="getItemList" style="width: 230px;" class="filter-item"
                       placeholder="输入事项名称/基本编码"
-                      v-model="listQuery.name"></el-input>
+                      v-model="listQuery.name">
+            </el-input>
             <el-cascader :options="cascader" class="filter-item" @change="handleChange"
                          :show-all-levels="true" clearable filterable expand-trigger="hover"
                          :change-on-select="true" style="width: 180px" placeholder="所属部门">
             </el-cascader>
             <el-select class="filter-item" v-model="listQuery.processType" clearable placeholder="请选择办件类型">
                 <el-option v-for="item in dics['bjlx']" :key="item.code" :value="item.code"
-                           :label="item.value"></el-option>
+                           :label="item.value">
+                </el-option>
             </el-select>
             <el-select class="filter-item" v-model="listQuery.handleType" clearable placeholder="请选择办理形式">
                 <el-option v-for="item in dics['blxs']" :key="item.code" :value="item.code"
-                           :label="item.value"></el-option>
+                           :label="item.value">
+                </el-option>
             </el-select>
             <el-select class="filter-item" v-model="listQuery.enable" clearable placeholder="事项状态">
-                <el-option label="全部" value="2"></el-option>
+                <el-option label="全部" value="2">
+                </el-option>
                 <el-option
                         v-for="item in options"
                         :key="item.value"
@@ -26,9 +30,12 @@
                 </el-option>
             </el-select>
             <el-select class="filter-item" v-model="listQuery.orderable" clearable placeholder="预约筛选">
-                <el-option label="预约和不可预约" value=""></el-option>
-                <el-option label="支持预约" value="true"></el-option>
-                <el-option label="不可预约" value="false"></el-option>
+                <el-option label="预约和不可预约" value="">
+                </el-option>
+                <el-option label="支持预约" value="true">
+                </el-option>
+                <el-option label="不可预约" value="false">
+                </el-option>
             </el-select>
             <el-button class="filter-item" type="primary" v-waves icon="search" @click="getItemList">搜索</el-button>
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleItemCreate" type="primary"
@@ -98,14 +105,16 @@
                     </el-tag>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="操作" width="200" class-name="action">
+            <el-table-column align="center" label="操作" width="220" class-name="action">
                 <template slot-scope="scope">
-                    <el-badge :value="scope.row.itemMaterialCount" class="item">
+                    <el-badge :value="scope.row.itemMaterialCount" class="item" v-if="scope.row.objectType === 1">
                         <el-button class="filter-item" style="" @click="handleMaterialList(scope.row)"
                                    type="primary" size="small">
                             办件材料
                         </el-button>
                     </el-badge>
+                    <el-button v-if="scope.row.objectType === 2" class="filter-item" type="primary" size="small"
+                               @click="handleItemComposite(scope.row)">关联基本事项</el-button>
                     <el-button class="filter-item" style="" @click="handleItemConfig(scope.row)"
                                type="primary" size="small">
                         预约配置
@@ -126,688 +135,700 @@
                    :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemForm">
             <el-form ref="zwfwItemForm" class="small-space" :model="zwfwItem" label-position="right"
                      label-width="134px"
-                     style="width: 80%; margin-left: 10%" v-loading="dialogFormLoading" :rules="zwfwItemRules">
-                <el-form-item label="事项名称" prop="name">
-                    <el-input v-model="zwfwItem.name"></el-input>
+                     style="width: 80%; margin-left: 10%" v-loading="dialogFormLoading"
+                     :rules="itemFormRules">
+                <el-form-item label="类型：" prop="objectType" v-show="!zwfwItem.objectType">
+                    <el-radio-group v-model="zwfwItem.objectType">
+                        <el-radio :label="1">基本事项</el-radio>
+                        <el-radio :label="2">复合事项</el-radio>
+                    </el-radio-group>
                 </el-form-item>
 
-                <el-form-item label="所属部门" prop="departmentId">
-                    <el-cascader
-                            expand-trigger="hover" :show-all-levels="true"
-                            :change-on-select="true"
-                            :options="deptTree"
-                            v-model="belongDeptCascader"
-                            @change="handleBelongDeptChange"
-                            style="width: 100%">
-                    </el-cascader>
-                </el-form-item>
-                <el-form-item label="基本编码" prop="basicCode">
-                    <el-input v-model="zwfwItem.basicCode"></el-input>
-                </el-form-item>
-                <el-form-item label="实施编码" prop="implCode">
-                    <el-input v-model="zwfwItem.implCode"></el-input>
-                </el-form-item>
-                <table>
-                    <tr>
-                        <td>
-                            <el-form-item label="是否支持预约办理" prop="orderable">
-                                <el-switch
-                                        v-model="zwfwItem.orderable"
-                                        on-color="#13ce66"
-                                        off-color="#ff4949"
-                                        :on-value="true"
-                                        :off-value="false">
-                                </el-switch>
-                            </el-form-item>
-                        </td>
-                        <td width="100"></td>
-                        <td>
-                            <el-form-item label="是否收费" prop="chargeable">
-                                <el-switch
-                                        v-model="zwfwItem.chargeable"
-                                        on-color="#13ce66"
-                                        off-color="#ff4949"
-                                        :on-value="true"
-                                        :off-value="false">
-                                </el-switch>
-                            </el-form-item>
-                        </td>
-                    </tr>
-                </table>
-                <el-form-item label="实施主体性质" prop="implObjectType">
-                    <el-radio-group v-model="zwfwItem.implObjectType">
-                        <el-radio v-for="item in dics['ssztxz']"
-                                  :key="item.code"
-                                  :label="item.code"
-                                  :value="item.code">
-                            <span style="font-weight:normal;">{{item.value}}</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="是否支持网上支付" prop="payOnlineAble">
-                    <el-switch
-                            v-model="zwfwItem.payOnlineAble"
-                            on-color="#13ce66"
-                            off-color="#ff4949"
-                            :on-value="true"
-                            :off-value="false">
-                    </el-switch>
-                </el-form-item>
-                <el-form-item label="承诺办结时间" prop="promiseEndTime">
-                    <el-input v-model="zwfwItem.promiseEndTime" placeholder="请填写承诺的工作日，最小单位为0.5天"></el-input>
-                </el-form-item>
-                <el-form-item label="运行系统" prop="runSystem">
-                    <el-radio-group v-model="zwfwItem.runSystem">
-                        <el-radio v-for="item in dics['yxxt']"
-                                  :key="item.code"
-                                  :label="item.code"
-                                  :value="item.code">
-                            <span style="font-weight:normal;">{{item.value}}</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="事项类型" prop="type">
-                    <el-select v-model="zwfwItem.type" placeholder="请选择事项类型" style="width:100%">
-                        <el-option
-                                v-for="item in dics['sslx']"
-                                :key="item.code"
-                                :label="item.value"
-                                :value="item.code">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="短信模板类型" prop="messageTemplate">
-                    <el-radio-group v-model="zwfwItem.messageTemplate" placeholder="请选择模板类型" style="width:100%">
-                        <el-radio v-for="item in enums['MessageTemplate']"
-                                  :key="item.code"
-                                  :label="item.code"
-                                  :value="item.code">
-                            <span style="font-weight:normal;">{{item.value}}</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="结果样本" prop="resultExample">
-                    <el-upload name="uploadFile" :accept="fileAccepts"
-                               ref="upload"
-                               :action="uploadAction" :file-list="resultExampleFileList"
-                               :on-success="handleResultUploadSuccess"
-                               :before-upload="beforeResultUpload"
-                               :on-remove="handleRemoveResult"
-                               :auto-upload="false">
-                        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器
-                        </el-button>
-                        <el-button style="margin-left: 10px;" size="small" type="info" @click="showResultExample">查看图片
-                        </el-button>
-                    </el-upload>
-                </el-form-item>
-                <el-form-item label="行使层级" prop="handleLevel">
-                    <el-radio-group v-model="zwfwItem.handleLevel">
-                        <el-radio v-for="item in dics['xscj']"
-                                  :key="item.code"
-                                  :label="item.code"
-                                  :value="item.code">
-                            <span style="font-weight:normal;">{{item.value}}</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="联办机构" prop="unionAgency">
-                    <el-cascader
-                            expand-trigger="hover" :show-all-levels="true"
-                            :change-on-select="true"
-                            :options="deptTree"
-                            v-model="unionAgencyDeptCascader"
-                            @change="handleUnionAgencyChange"
-                            style="width: 100%">
-                    </el-cascader>
-                </el-form-item>
-                <el-form-item label="监督部门" prop="superviseDepartmentId">
-                    <el-cascader
-                            expand-trigger="hover" :show-all-levels="true"
-                            :change-on-select="true"
-                            :options="deptTree"
-                            v-model="superviseDeptCascader"
-                            @change="handleSuperviseChange"
-                            style="width: 100%">
-                    </el-cascader>
-                </el-form-item>
-                <el-form-item label="监督电话" prop="supervisePhone">
-                    <el-input v-model="zwfwItem.supervisePhone"></el-input>
+                <div v-show="zwfwItem.objectType">
+                    <el-form-item label="事项名称" prop="name">
+                        <el-input v-model="zwfwItem.name">
+                        </el-input>
+                    </el-form-item>
 
-                </el-form-item>
-                <el-form-item label="实施机构" prop="implAgency">
-                    <el-cascader
-                            expand-trigger="hover" :show-all-levels="true"
-                            :change-on-select="true"
-                            :options="deptTree"
-                            v-model="implAgencyDeptCascader"
-                            @change="handleImplAgencyChange"
-                            style="width: 100%">
-                    </el-cascader>
-                </el-form-item>
-                <el-form-item label="服务对象" prop="serviceObject">
-                    <el-radio-group v-model="zwfwItem.serviceObject">
-                        <el-radio v-for="item in dics['fwdx']"
-                                  :key="item.code"
-                                  :label="item.code"
-                                  :value="item.code">
-                            <span style="font-weight:normal;">{{item.value}}</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="办理地点" prop="handlePlace">
-                    <el-input v-model="zwfwItem.handlePlace"></el-input>
-                </el-form-item>
-                <el-form-item label="工作时间" prop="handlePlace">
-                    <el-input v-model="zwfwItem.handleTime"></el-input>
-                </el-form-item>
-                <el-form-item label="行使内容" prop="handleContent">
-                    <el-input v-model="zwfwItem.handleContent"></el-input>
-                </el-form-item>
-                <el-form-item label="数量限制" prop="numberLimit">
-                    <el-input v-model="zwfwItem.numberLimit"></el-input>
-                </el-form-item>
-                <el-form-item label="通办范围" prop="handleScope">
-                    <el-radio-group v-model="zwfwItem.handleScope">
-                        <el-radio v-for="item in dics['tbfw']"
-                                  :key="item.code"
-                                  :label="item.code"
-                                  :value="item.code">
-                            <span style="font-weight:normal;">{{item.value}}</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="咨询电话" prop="askPhone">
-                    <el-input type="textarea" v-model="zwfwItem.askPhone"></el-input>
-                </el-form-item>
-                <el-form-item label="办件类型" prop="processType">
-                    <el-radio-group v-model="zwfwItem.processType">
-                        <el-radio v-for="item in dics['bjlx']"
-                                  :key="item.code"
-                                  :label="item.code"
-                                  :value="item.code">
-                            <span style="font-weight:normal;">{{item.value}}</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="法定办结时限" prop="legalEndTime">
-                    <el-input v-model="zwfwItem.legalEndTime"></el-input>
-                </el-form-item>
-                <!--<el-form-item label="是否支持物流快递" prop="postable">
-                    <el-switch
-                            v-model="zwfwItem.postable"
-                            on-color="#13ce66"
-                            off-color="#ff4949"
-                            :on-value="true"
-                            :off-value="false">
-                    </el-switch>
-                </el-form-item>-->
-                <el-form-item label="办理形式" prop="handleType">
-                    <el-radio-group v-model="zwfwItem.handleType">
-                        <el-radio v-for="item in dics['blxs']"
-                                  :key="item.code"
-                                  :label="item.code"
-                                  :value="item.code">
-                            <span style="font-weight:normal;">{{item.value}}</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="交件方式" prop="handTypes">
-                    <el-checkbox-group v-model="zwfwItem.handTypes" @change="handleHandTypesChange">
-                        <template v-for="item in enums['HandType']">
-                            <el-checkbox
-                                    :disabled="(zwfwItem.handleType=='blxs_ckbl' && item.code != 1) ? true : false"
-                                    :key="item.code" :label="item.code + ''">
+                    <el-form-item label="所属部门" prop="departmentId" v-show="zwfwItem.objectType === 1">
+                        <el-cascader
+                                expand-trigger="hover" :show-all-levels="true"
+                                :change-on-select="true"
+                                :options="deptTree"
+                                v-model="belongDeptCascader"
+                                @change="handleBelongDeptChange"
+                                style="width: 100%">
+                        </el-cascader>
+                    </el-form-item>
+                    <el-form-item label="基本编码" prop="basicCode" v-show="zwfwItem.objectType === 1">
+                        <el-input v-model="zwfwItem.basicCode"></el-input>
+                    </el-form-item>
+                    <el-form-item label="实施编码" prop="implCode" v-show="zwfwItem.objectType === 1">
+                        <el-input v-model="zwfwItem.implCode"></el-input>
+                    </el-form-item>
+                    <table>
+                        <tr>
+                            <td>
+                                <el-form-item label="是否支持预约办理" prop="orderable">
+                                    <el-switch
+                                            v-model="zwfwItem.orderable"
+                                            on-color="#13ce66"
+                                            off-color="#ff4949"
+                                            :on-value="true"
+                                            :off-value="false">
+                                    </el-switch>
+                                </el-form-item>
+                            </td>
+                            <td width="100"></td>
+                            <td>
+                                <el-form-item label="是否收费" prop="chargeable">
+                                    <el-switch
+                                            v-model="zwfwItem.chargeable"
+                                            on-color="#13ce66"
+                                            off-color="#ff4949"
+                                            :on-value="true"
+                                            :off-value="false">
+                                    </el-switch>
+                                </el-form-item>
+                            </td>
+                        </tr>
+                    </table>
+                    <el-form-item label="实施主体性质" prop="implObjectType" v-show="zwfwItem.objectType === 1">
+                        <el-radio-group v-model="zwfwItem.implObjectType">
+                            <el-radio v-for="item in dics['ssztxz']"
+                                      :key="item.code"
+                                      :label="item.code"
+                                      :value="item.code">
+                                <span style="font-weight:normal;">{{item.value}}</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="是否支持网上支付" prop="payOnlineAble">
+                        <el-switch
+                                v-model="zwfwItem.payOnlineAble"
+                                on-color="#13ce66"
+                                off-color="#ff4949"
+                                :on-value="true"
+                                :off-value="false">
+                        </el-switch>
+                    </el-form-item>
+                    <el-form-item label="承诺办结时间" prop="promiseEndTime">
+                        <el-input v-model="zwfwItem.promiseEndTime" placeholder="请填写承诺的工作日，最小单位为0.5天"></el-input>
+                    </el-form-item>
+                    <el-form-item label="运行系统" prop="runSystem">
+                        <el-radio-group v-model="zwfwItem.runSystem">
+                            <el-radio v-for="item in dics['yxxt']"
+                                      :key="item.code"
+                                      :label="item.code"
+                                      :value="item.code">
+                                <span style="font-weight:normal;">{{item.value}}</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="事项类型" prop="type" v-show="zwfwItem.objectType === 1">
+                        <el-select v-model="zwfwItem.type" placeholder="请选择事项类型" style="width:100%">
+                            <el-option
+                                    v-for="item in dics['sslx']"
+                                    :key="item.code"
+                                    :label="item.value"
+                                    :value="item.code">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="短信模板类型" prop="messageTemplate">
+                        <el-radio-group v-model="zwfwItem.messageTemplate" placeholder="请选择模板类型" style="width:100%">
+                            <el-radio v-for="item in enums['MessageTemplate']"
+                                      :key="item.code"
+                                      :label="item.code"
+                                      :value="item.code">
+                                <span style="font-weight:normal;">{{item.value}}</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="结果样本" prop="resultExample">
+                        <el-upload name="uploadFile" :accept="fileAccepts"
+                                   ref="upload"
+                                   :action="uploadAction" :file-list="resultExampleFileList"
+                                   :on-success="handleResultUploadSuccess"
+                                   :before-upload="beforeResultUpload"
+                                   :on-remove="handleRemoveResult"
+                                   :auto-upload="false">
+                            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                            <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器
+                            </el-button>
+                            <el-button style="margin-left: 10px;" size="small" type="info" @click="showResultExample">查看图片
+                            </el-button>
+                        </el-upload>
+                    </el-form-item>
+                    <el-form-item label="行使层级" prop="handleLevel" v-show="zwfwItem.objectType === 1">
+                        <el-radio-group v-model="zwfwItem.handleLevel">
+                            <el-radio v-for="item in dics['xscj']"
+                                      :key="item.code"
+                                      :label="item.code"
+                                      :value="item.code">
+                                <span style="font-weight:normal;">{{item.value}}</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="联办机构" prop="unionAgency" v-show="zwfwItem.objectType === 1">
+                        <el-cascader
+                                expand-trigger="hover" :show-all-levels="true"
+                                :change-on-select="true"
+                                :options="deptTree"
+                                v-model="unionAgencyDeptCascader"
+                                @change="handleUnionAgencyChange"
+                                style="width: 100%">
+                        </el-cascader>
+                    </el-form-item>
+                    <el-form-item label="监督部门" prop="superviseDepartmentId" v-show="zwfwItem.objectType === 1">
+                        <el-cascader
+                                expand-trigger="hover" :show-all-levels="true"
+                                :change-on-select="true"
+                                :options="deptTree"
+                                v-model="superviseDeptCascader"
+                                @change="handleSuperviseChange"
+                                style="width: 100%">
+                        </el-cascader>
+                    </el-form-item>
+                    <el-form-item label="监督电话" prop="supervisePhone" v-show="zwfwItem.objectType === 1">
+                        <el-input v-model="zwfwItem.supervisePhone">
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="实施机构" prop="implAgency" v-show="zwfwItem.objectType === 1">
+                        <el-cascader
+                                expand-trigger="hover" :show-all-levels="true"
+                                :change-on-select="true"
+                                :options="deptTree"
+                                v-model="implAgencyDeptCascader"
+                                @change="handleImplAgencyChange"
+                                style="width: 100%">
+                        </el-cascader>
+                    </el-form-item>
+                    <el-form-item label="服务对象" prop="serviceObject">
+                        <el-radio-group v-model="zwfwItem.serviceObject">
+                            <el-radio v-for="item in dics['fwdx']"
+                                      :key="item.code"
+                                      :label="item.code"
+                                      :value="item.code">
+                                <span style="font-weight:normal;">{{item.value}}</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="办理地点" prop="handlePlace">
+                        <el-input v-model="zwfwItem.handlePlace"></el-input>
+                    </el-form-item>
+                    <el-form-item label="工作时间" prop="handlePlace">
+                        <el-input v-model="zwfwItem.handleTime"></el-input>
+                    </el-form-item>
+                    <el-form-item label="行使内容" prop="handleContent">
+                        <el-input v-model="zwfwItem.handleContent"></el-input>
+                    </el-form-item>
+                    <el-form-item label="数量限制" prop="numberLimit">
+                        <el-input v-model="zwfwItem.numberLimit"></el-input>
+                    </el-form-item>
+                    <el-form-item label="通办范围" prop="handleScope">
+                        <el-radio-group v-model="zwfwItem.handleScope">
+                            <el-radio v-for="item in dics['tbfw']"
+                                      :key="item.code"
+                                      :label="item.code"
+                                      :value="item.code">
+                                <span style="font-weight:normal;">{{item.value}}</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="咨询电话" prop="askPhone">
+                        <el-input type="textarea" v-model="zwfwItem.askPhone"></el-input>
+                    </el-form-item>
+                    <el-form-item label="办件类型" prop="processType">
+                        <el-radio-group v-model="zwfwItem.processType">
+                            <el-radio v-for="item in dics['bjlx']"
+                                      :key="item.code"
+                                      :label="item.code"
+                                      :value="item.code">
+                                <span style="font-weight:normal;">{{item.value}}</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="法定办结时限" prop="legalEndTime">
+                        <el-input v-model="zwfwItem.legalEndTime"></el-input>
+                    </el-form-item>
+                    <!--<el-form-item label="是否支持物流快递" prop="postable">
+                        <el-switch
+                                v-model="zwfwItem.postable"
+                                on-color="#13ce66"
+                                off-color="#ff4949"
+                                :on-value="true"
+                                :off-value="false">
+                        </el-switch>
+                    </el-form-item>-->
+                    <el-form-item label="办理形式" prop="handleType">
+                        <el-radio-group v-model="zwfwItem.handleType">
+                            <el-radio v-for="item in dics['blxs']"
+                                      :key="item.code"
+                                      :label="item.code"
+                                      :value="item.code">
+                                <span style="font-weight:normal;">{{item.value}}</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="交件方式" prop="handTypes">
+                        <el-checkbox-group v-model="zwfwItem.handTypes" @change="handleHandTypesChange">
+                            <template v-for="item in enums['HandType']">
+                                <el-checkbox
+                                        :disabled="(zwfwItem.handleType=='blxs_ckbl' && item.code != 1) ? true : false"
+                                        :key="item.code" :label="item.code + ''">
+                                    {{item.value}}
+                                </el-checkbox>
+                            </template>
+                        </el-checkbox-group>
+                    </el-form-item>
+                    <el-form-item label="取件方式" prop="takeTypes">
+                        <el-checkbox-group v-model="zwfwItem.takeTypes">
+                            <el-checkbox v-for="item in enums['TakeType']"
+                                         :key="item.code" :label="item.code + ''">
                                 {{item.value}}
                             </el-checkbox>
-                        </template>
-                    </el-checkbox-group>
-                </el-form-item>
-                <el-form-item label="取件方式" prop="takeTypes">
-                    <el-checkbox-group v-model="zwfwItem.takeTypes">
-                        <el-checkbox v-for="item in enums['TakeType']"
-                                     :key="item.code" :label="item.code + ''">
-                            {{item.value}}
-                        </el-checkbox>
-                    </el-checkbox-group>
-                </el-form-item>
-                <!--<el-form-item v-if="zwfwItem.handTypes.includes('2')" label="收件人员" prop="handUserId">
-                    <el-select v-model="zwfwItem.handUserId" remote :remote-method="queryHandUserId" filterable
-                               placeholder="请选择" style="width: 100%" :multiple="false" clearable>
-                        <el-option v-for="u in userListHand" :key="u.id" :label="u.name + ' (工号：' + u.empNo +')'"
-                                   :value="u.id">
-                        </el-option>
-                    </el-select>
-                </el-form-item>-->
-                <el-form-item label="收件地址" prop="addresseeId">
-                    <el-button type="primary" v-show="!addressCardVisible" @click="showAddressCard">选择收件地址</el-button>
-                    <span style="color: red"><b>&nbsp;*&nbsp;</b>若不设置则使用默认收件地址</span>
-                    <el-card class="box-card" v-show="addressCardVisible">
-                        <div slot="header" class="clearfix card-header">
-                            <div class="card-item">
-                                <p class="p1">
-                                    {{cardHeader.name}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{cardHeader.phone}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <span v-if="cardHeader.defaultFlag">默认</span>
-                                </p>
-                                <p>{{cardHeader.address}}</p>
+                        </el-checkbox-group>
+                    </el-form-item>
+                    <!--<el-form-item v-if="zwfwItem.handTypes.includes('2')" label="收件人员" prop="handUserId">
+                        <el-select v-model="zwfwItem.handUserId" remote :remote-method="queryHandUserId" filterable
+                                   placeholder="请选择" style="width: 100%" :multiple="false" clearable>
+                            <el-option v-for="u in userListHand" :key="u.id" :label="u.name + ' (工号：' + u.empNo +')'"
+                                       :value="u.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>-->
+                    <el-form-item label="收件地址" prop="addresseeId">
+                        <el-button type="primary" v-show="!addressCardVisible" @click="showAddressCard">选择收件地址</el-button>
+                        <span style="color: red"><b>&nbsp;*&nbsp;</b>若不设置则使用默认收件地址</span>
+                        <el-card class="box-card" v-show="addressCardVisible">
+                            <div slot="header" class="clearfix card-header">
+                                <div class="card-item">
+                                    <p class="p1">
+                                        {{cardHeader.name}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{cardHeader.phone}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <span v-if="cardHeader.defaultFlag">默认</span>
+                                    </p>
+                                    <p>{{cardHeader.address}}</p>
+                                </div>
+                                <el-button type="primary" @click="clearAddressee">清除</el-button>
+                                <el-button type="primary" @click="showCardItems">选择地址</el-button>
                             </div>
-                            <el-button type="primary" @click="clearAddressee">清除</el-button>
-                            <el-button type="primary" @click="showCardItems">选择地址</el-button>
-                        </div>
-                        <div class="card-body" v-show="cardItemVisible">
-                            <div v-for="item in addresseeList" :key="item.id" class="card-item">
-                                <el-radio v-model="zwfwItem.addresseeId" :label="item.id">{{item.remark}}</el-radio>
-                                <p class="p1">
-                                    {{item.name}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{item.phone}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <span v-if="item.defaultFlag">默认</span>
-                                </p>
-                                <p>{{item.address}}</p>
+                            <div class="card-body" v-show="cardItemVisible">
+                                <div v-for="item in addresseeList" :key="item.id" class="card-item">
+                                    <el-radio v-model="zwfwItem.addresseeId" :label="item.id">{{item.remark}}</el-radio>
+                                    <p class="p1">
+                                        {{item.name}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{item.phone}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <span v-if="item.defaultFlag">默认</span>
+                                    </p>
+                                    <p>{{item.address}}</p>
+                                </div>
+                                <div v-if="!addresseeList || addresseeList.length <= 0">没有任何收件地址信息</div>
                             </div>
-                            <div v-if="!addresseeList || addresseeList.length <= 0">没有任何收件地址信息</div>
-                        </div>
-                    </el-card>
-                </el-form-item>
-                <el-form-item label="网办深度" prop="handleDeep">
-                    <el-radio-group v-model="zwfwItem.handleDeep">
-                        <el-radio v-for="item in dics['wbsd']"
-                                  :key="item.code"
-                                  :label="item.code"
-                                  :value="item.code">
-                            <span style="font-weight:normal;">{{item.value}}</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="到窗口次数" prop="comTimes">
-                    <el-input-number v-model="zwfwItem.comTimes" :min="0" :max="10"/>
-                </el-form-item>
-                <!--:disabled="(zwfwItem.handleType=='blxs_ckbl' && (item.code==2 || item.code==3)) ? true : false"-->
-                <el-form-item label="版本生效时间" prop="versionAvailableTime">
-                    <el-date-picker v-model="zwfwItem.versionAvailableTime" type="datetime"
-                                    placeholder="选择日期"></el-date-picker>
-                </el-form-item>
-                <el-form-item label="设定依据" prop="setBasis">
-                    <!--<el-input v-model="zwfwItem.setBasis" type="textarea" :rows="3"></el-input>-->
-                    <quill-editor ref="setBasisEditor" v-model="setBasisHtml"
-                                  :options="quillEditorOption" @focus="onEditorFocus($event)">
-                    </quill-editor>
-                    <el-upload name="uploadFile" v-show="false" :show-file-list="false"
-                               :action="uploadAction" :accept="imageAccepts"
-                               :on-success="handleEditorUploadSuccess" :on-error="handleEditorUploadError">
-                        <el-button id="setBasis_btn"></el-button>
-                    </el-upload>
-                </el-form-item>
-                <el-form-item label="受理条件" prop="acceptCondition">
-                    <!--<el-input v-model="zwfwItem.acceptCondition" type="textarea"></el-input>-->
-                    <quill-editor ref="conditionEditor" v-model="acceptConditionHtml"
-                                  :options="quillEditorOption" @focus="onEditorFocus($event)">
-                    </quill-editor>
-                    <el-upload name="uploadFile" v-show="false" :show-file-list="false"
-                               :action="uploadAction" :accept="imageAccepts"
-                               :on-success="handleEditorUploadSuccess" :on-error="handleEditorUploadError">
-                        <el-button id="condition_btn"></el-button>
-                    </el-upload>
-                </el-form-item>
-                <el-form-item label="内部流程描述" prop="workflowDescription">
-                    <!--<el-input v-model="zwfwItem.workflowDescription" type="textarea"></el-input>-->
-                    <quill-editor ref="workflowEditor" v-model="workflowDescriptionHtml"
-                                  :options="quillEditorOption" @focus="onEditorFocus($event)">
-                    </quill-editor>
-                    <el-upload name="uploadFile" v-show="false" :show-file-list="false"
-                               :action="uploadAction" :accept="imageAccepts"
-                               :on-success="handleEditorUploadSuccess" :on-error="handleEditorUploadError">
-                        <el-button id="workflow_btn"></el-button>
-                    </el-upload>
-                </el-form-item>
-                <el-form-item label="收费标准" prop="chargeStandard">
-                    <!--<el-input v-model="zwfwItem.chargeStandard" type="textarea"></el-input>-->
-                    <quill-editor ref="standardEditor" v-model="chargeStandardHtml"
-                                  :options="quillEditorOption" @focus="onEditorFocus($event)">
-                    </quill-editor>
-                    <el-upload name="uploadFile" v-show="false" :show-file-list="false"
-                               :action="uploadAction" :accept="imageAccepts"
-                               :on-success="handleEditorUploadSuccess" :on-error="handleEditorUploadError">
-                        <el-button id="standard_btn"></el-button>
-                    </el-upload>
-                </el-form-item>
-                <el-form-item label="收费依据" prop="chargeBasis">
-                    <!--<el-input v-model="zwfwItem.chargeBasis" type="textarea"></el-input>-->
-                    <quill-editor ref="basisEditor" v-model="chargeBasisHtml"
-                                  :options="quillEditorOption" @focus="onEditorFocus($event)">
-                    </quill-editor>
-                    <el-upload name="uploadFile" v-show="false" :show-file-list="false"
-                               :action="uploadAction" :accept="imageAccepts"
-                               :on-success="handleEditorUploadSuccess" :on-error="handleEditorUploadError">
-                        <el-button id="basis_btn"></el-button>
-                    </el-upload>
-                </el-form-item>
-                <el-form-item label="权限划分" prop="authorityDivision">
-                    <!--<el-input v-model="zwfwItem.authorityDivision"></el-input>-->
-                    <el-radio-group v-model="zwfwItem.authorityDivision">
-                        <el-radio v-for="item in dics['qxhf']"
-                                  :key="item.code"
-                                  :label="item.code"
-                                  :value="item.code">
-                            <span style="font-weight:normal;">{{item.value}}</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="版本号" prop="version">
-                    <el-input v-model="zwfwItem.version"></el-input>
-                </el-form-item>
-                <el-form-item label="结果名称" prop="resultName">
-                    <el-input v-model="zwfwItem.resultName"></el-input>
-                </el-form-item>
-                <el-form-item label="办件结果类型" prop="resultType">
-                    <el-radio-group v-model="zwfwItem.resultType">
-                        <el-radio v-for="item in dics['bjjglx']"
-                                  :key="item.code"
-                                  :label="item.code"
-                                  :value="item.code">
-                            <span style="font-weight:normal;">{{item.value}}</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="预审天数" prop="pretrialDays">
-                    <el-input v-model="zwfwItem.pretrialDays"></el-input>
-                </el-form-item>
-                <el-form-item label="预审人员">
-                    <el-select style="width:100%" v-model="zwfwItem.pretrialUserIds" remote
-                               :remote-method="queryPretrialUserId"
-                               multiple filterable placeholder="请选择">
-                        <el-option
-                                v-for="u in userListPretrial"
-                                :key="u.id"
-                                :label="u.name + ' (工号：' + u.empNo +')'"
-                                :value="u.id">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="中介服务" prop="mediumService">
-                    <el-radio-group v-model="zwfwItem.mediumService">
-                        <el-radio v-for="item in enums['YesNo']"
-                                  :key="item.code"
-                                  :label="item.code"
-                                  :value="item.code">
-                            <span style="font-weight:normal;">{{item.value}}</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="常见问题" prop="commonRequestion">
-                    <el-input v-model="zwfwItem.commonRequestion"></el-input>
-                </el-form-item>
-                <el-form-item label="显示方式" prop="showStatus">
-                    <el-radio-group v-model="zwfwItem.showStatus">
-                        <el-radio v-for="item in enums['ShowStatus']"
-                                  :key="item.code"
-                                  :label="item.code"
-                                  :value="item.code">
-                            <span style="font-weight:normal;">{{item.value}}</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="业务状态" prop="enable">
-                    <el-radio-group v-model="zwfwItem.enable">
-                        <el-radio :label="1">
-                            <span style="font-weight:normal;">启用</span>
-                        </el-radio>
-                        <el-radio :label="0">
-                            <span style="font-weight:normal;">禁用</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
+                        </el-card>
+                    </el-form-item>
+                    <el-form-item label="网办深度" prop="handleDeep">
+                        <el-radio-group v-model="zwfwItem.handleDeep">
+                            <el-radio v-for="item in dics['wbsd']"
+                                      :key="item.code"
+                                      :label="item.code"
+                                      :value="item.code">
+                                <span style="font-weight:normal;">{{item.value}}</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="到窗口次数" prop="comTimes">
+                        <el-input-number v-model="zwfwItem.comTimes" :min="0" :max="10"/>
+                    </el-form-item>
+                    <!--:disabled="(zwfwItem.handleType=='blxs_ckbl' && (item.code==2 || item.code==3)) ? true : false"-->
+                    <el-form-item label="版本生效时间" prop="versionAvailableTime">
+                        <el-date-picker v-model="zwfwItem.versionAvailableTime" type="datetime"
+                                        placeholder="选择日期"></el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="设定依据" prop="setBasis" v-show="zwfwItem.objectType === 1">
+                        <!--<el-input v-model="zwfwItem.setBasis" type="textarea" :rows="3"></el-input>-->
+                        <quill-editor ref="setBasisEditor" v-model="setBasisHtml"
+                                      :options="quillEditorOption" @focus="onEditorFocus($event)">
+                        </quill-editor>
+                        <el-upload name="uploadFile" v-show="false" :show-file-list="false"
+                                   :action="uploadAction" :accept="imageAccepts"
+                                   :on-success="handleEditorUploadSuccess" :on-error="handleEditorUploadError">
+                            <el-button id="setBasis_btn"></el-button>
+                        </el-upload>
+                    </el-form-item>
+                    <el-form-item label="受理条件" prop="acceptCondition" v-show="zwfwItem.objectType === 1">
+                        <!--<el-input v-model="zwfwItem.acceptCondition" type="textarea"></el-input>-->
+                        <quill-editor ref="conditionEditor" v-model="acceptConditionHtml"
+                                      :options="quillEditorOption" @focus="onEditorFocus($event)">
+                        </quill-editor>
+                        <el-upload name="uploadFile" v-show="false" :show-file-list="false"
+                                   :action="uploadAction" :accept="imageAccepts"
+                                   :on-success="handleEditorUploadSuccess" :on-error="handleEditorUploadError">
+                            <el-button id="condition_btn"></el-button>
+                        </el-upload>
+                    </el-form-item>
+                    <el-form-item label="内部流程描述" prop="workflowDescription" v-show="zwfwItem.objectType === 1">
+                        <!--<el-input v-model="zwfwItem.workflowDescription" type="textarea"></el-input>-->
+                        <quill-editor ref="workflowEditor" v-model="workflowDescriptionHtml"
+                                      :options="quillEditorOption" @focus="onEditorFocus($event)">
+                        </quill-editor>
+                        <el-upload name="uploadFile" v-show="false" :show-file-list="false"
+                                   :action="uploadAction" :accept="imageAccepts"
+                                   :on-success="handleEditorUploadSuccess" :on-error="handleEditorUploadError">
+                            <el-button id="workflow_btn"></el-button>
+                        </el-upload>
+                    </el-form-item>
+                    <el-form-item label="收费标准" prop="chargeStandard" v-show="zwfwItem.objectType === 1">
+                        <!--<el-input v-model="zwfwItem.chargeStandard" type="textarea"></el-input>-->
+                        <quill-editor ref="standardEditor" v-model="chargeStandardHtml"
+                                      :options="quillEditorOption" @focus="onEditorFocus($event)">
+                        </quill-editor>
+                        <el-upload name="uploadFile" v-show="false" :show-file-list="false"
+                                   :action="uploadAction" :accept="imageAccepts"
+                                   :on-success="handleEditorUploadSuccess" :on-error="handleEditorUploadError">
+                            <el-button id="standard_btn"></el-button>
+                        </el-upload>
+                    </el-form-item>
+                    <el-form-item label="收费依据" prop="chargeBasis" v-show="zwfwItem.objectType === 1">
+                        <!--<el-input v-model="zwfwItem.chargeBasis" type="textarea"></el-input>-->
+                        <quill-editor ref="basisEditor" v-model="chargeBasisHtml"
+                                      :options="quillEditorOption" @focus="onEditorFocus($event)">
+                        </quill-editor>
+                        <el-upload name="uploadFile" v-show="false" :show-file-list="false"
+                                   :action="uploadAction" :accept="imageAccepts"
+                                   :on-success="handleEditorUploadSuccess" :on-error="handleEditorUploadError">
+                            <el-button id="basis_btn"></el-button>
+                        </el-upload>
+                    </el-form-item>
+                    <el-form-item label="权限划分" prop="authorityDivision">
+                        <!--<el-input v-model="zwfwItem.authorityDivision"></el-input>-->
+                        <el-radio-group v-model="zwfwItem.authorityDivision">
+                            <el-radio v-for="item in dics['qxhf']"
+                                      :key="item.code"
+                                      :label="item.code"
+                                      :value="item.code">
+                                <span style="font-weight:normal;">{{item.value}}</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="版本号" prop="version">
+                        <el-input v-model="zwfwItem.version"></el-input>
+                    </el-form-item>
+                    <el-form-item label="结果名称" prop="resultName">
+                        <el-input v-model="zwfwItem.resultName"></el-input>
+                    </el-form-item>
+                    <el-form-item label="办件结果类型" prop="resultType">
+                        <el-radio-group v-model="zwfwItem.resultType">
+                            <el-radio v-for="item in dics['bjjglx']"
+                                      :key="item.code"
+                                      :label="item.code"
+                                      :value="item.code">
+                                <span style="font-weight:normal;">{{item.value}}</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="预审天数" prop="pretrialDays">
+                        <el-input v-model="zwfwItem.pretrialDays"></el-input>
+                    </el-form-item>
+                    <el-form-item label="预审人员">
+                        <el-select style="width:100%" v-model="zwfwItem.pretrialUserIds" remote
+                                   :remote-method="queryPretrialUserId"
+                                   multiple filterable placeholder="请选择">
+                            <el-option
+                                    v-for="u in userListPretrial"
+                                    :key="u.id"
+                                    :label="u.name + ' (工号：' + u.empNo +')'"
+                                    :value="u.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="中介服务" prop="mediumService">
+                        <el-radio-group v-model="zwfwItem.mediumService">
+                            <el-radio v-for="item in enums['YesNo']"
+                                      :key="item.code"
+                                      :label="item.code"
+                                      :value="item.code">
+                                <span style="font-weight:normal;">{{item.value}}</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="常见问题" prop="commonRequestion">
+                        <el-input v-model="zwfwItem.commonRequestion"></el-input>
+                    </el-form-item>
+                    <el-form-item label="显示方式" prop="showStatus">
+                        <el-radio-group v-model="zwfwItem.showStatus">
+                            <el-radio v-for="item in enums['ShowStatus']"
+                                      :key="item.code"
+                                      :label="item.code"
+                                      :value="item.code">
+                                <span style="font-weight:normal;">{{item.value}}</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="业务状态" prop="enable">
+                        <el-radio-group v-model="zwfwItem.enable">
+                            <el-radio :label="1">
+                                <span style="font-weight:normal;">启用</span>
+                            </el-radio>
+                            <el-radio :label="0">
+                                <span style="font-weight:normal;">禁用</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
 
-                <el-form-item label="注意事项" prop="remark">
-                    <!--<el-input v-model="zwfwItem.remark"></el-input>-->
-                    <quill-editor ref="noticeTextEditor" v-model="noticeTextHtml"
-                                  :options="quillEditorOption" @focus="onEditorFocus($event)">
-                    </quill-editor>
-                    <el-upload name="uploadFile" v-show="false" :show-file-list="false"
-                               :action="uploadAction" :accept="imageAccepts"
-                               :on-success="handleEditorUploadSuccess" :on-error="handleEditorUploadError">
-                        <el-button id="notice_text_btn"></el-button>
-                    </el-upload>
-                </el-form-item>
-                <el-form-item label="目录名称" prop="mlmc">
-                    <el-input v-model="zwfwItem.mlmc"></el-input>
-                </el-form-item>
-                <el-form-item label="通用目录" prop="tyml">
-                    <el-input v-model="zwfwItem.tyml"></el-input>
-                </el-form-item>
-                <el-form-item label="个别字段不同" prop="diffFlag">
-                    <el-input v-model="zwfwItem.diffFlag"></el-input>
-                </el-form-item>
-                <el-form-item label="主项编码">
-                    <el-input v-model="zwfwItem.zxbm"></el-input>
-                </el-form-item>
-                <el-form-item label="办理项编码">
-                    <el-input v-model="zwfwItem.blxbm"></el-input>
-                </el-form-item>
-                <el-form-item label="市级部门">
-                    <el-input v-model="zwfwItem.sjbm"></el-input>
-                </el-form-item>
-                <el-form-item label="服务主题">
-                    <el-input v-model="zwfwItem.fwzt"></el-input>
-                </el-form-item>
-                <el-form-item label="行政分类">
-                    <el-input v-model="zwfwItem.xzfl"></el-input>
-                </el-form-item>
-                <el-form-item label="权利来源">
-                    <el-input v-model="zwfwItem.qlly"></el-input>
-                </el-form-item>
-                <el-form-item label="时限类型">
-                    <el-input v-model="zwfwItem.sxlx"></el-input>
-                </el-form-item>
-                <el-form-item label="自然人关注点">
-                    <el-input v-model="zwfwItem.zrrgzd"></el-input>
-                </el-form-item>
-                <el-form-item label="法人关注点">
-                    <el-input v-model="zwfwItem.frgzd"></el-input>
-                </el-form-item>
-                <el-form-item label="是否自贸区事项">
-                    <el-radio-group v-model="zwfwItem.sfzmqsx">
-                        <el-radio :label="true">
-                            <span style="font-weight:normal;">是</span>
-                        </el-radio>
-                        <el-radio :label="false">
-                            <span style="font-weight:normal;">否</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="是否可委托代办">
-                    <el-radio-group v-model="zwfwItem.wtdb">
-                        <el-radio :label="true">
-                            <span style="font-weight:normal;">是</span>
-                        </el-radio>
-                        <el-radio :label="false">
-                            <span style="font-weight:normal;">否</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="批前公示">
-                    <el-radio-group v-model="zwfwItem.pqgs">
-                        <el-radio :label="true">
-                            <span style="font-weight:normal;">是</span>
-                        </el-radio>
-                        <el-radio :label="false">
-                            <span style="font-weight:normal;">否</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="投诉途径">
-                    <el-input v-model="zwfwItem.tstj"></el-input>
-                </el-form-item>
-                <el-form-item label="投诉地址">
-                    <el-input v-model="zwfwItem.tsdz"></el-input>
-                </el-form-item>
-                <el-form-item label="年审或年检">
-                    <el-radio-group v-model="zwfwItem.nshnj">
-                        <el-radio :label="1">
-                            <span style="font-weight:normal;">年审</span>
-                        </el-radio>
-                        <el-radio :label="2">
-                            <span style="font-weight:normal;">年检</span>
-                        </el-radio>
-                        <el-radio :label="3">
-                            <span style="font-weight:normal;">无</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="年审或年检次数">
-                    <el-radio-group v-model="zwfwItem.nshnjcs">
-                        <el-radio :label="0">
-                            <span style="font-weight:normal;">无</span>
-                        </el-radio>
-                        <el-radio :label="1">
-                            <span style="font-weight:normal;">一年一次</span>
-                        </el-radio>
-                        <el-radio :label="2">
-                            <span style="font-weight:normal;">两年一次</span>
-                        </el-radio>
-                        <el-radio :label="3">
-                            <span style="font-weight:normal;">三年一次</span>
-                        </el-radio>
-                        <el-radio :label="4">
-                            <span style="font-weight:normal;">四年一次</span>
-                        </el-radio>
-                        <el-radio :label="5">
-                            <span style="font-weight:normal;">五年一次</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="是否自动预受理">
-                    <el-radio-group v-model="zwfwItem.sfzdysl">
-                        <el-radio :label="true">
-                            <span style="font-weight:normal;">是</span>
-                        </el-radio>
-                        <el-radio :label="false">
-                            <span style="font-weight:normal;">否</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="是否预受理踏勘">
-                    <el-radio-group v-model="zwfwItem.sfysltk">
-                        <el-radio :label="true">
-                            <span style="font-weight:normal;">是</span>
-                        </el-radio>
-                        <el-radio :label="false">
-                            <span style="font-weight:normal;">否</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="一窗是否自动预受理">
-                    <el-radio-group v-model="zwfwItem.ycsfzdysl">
-                        <el-radio :label="true">
-                            <span style="font-weight:normal;">是</span>
-                        </el-radio>
-                        <el-radio :label="false">
-                            <span style="font-weight:normal;">否</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="一网是否自动预受理">
-                    <el-radio-group v-model="zwfwItem.ywsfzdysl">
-                        <el-radio :label="true">
-                            <span style="font-weight:normal;">是</span>
-                        </el-radio>
-                        <el-radio :label="false">
-                            <span style="font-weight:normal;">否</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="图标">
-                    <el-input v-model="zwfwItem.img"></el-input>
-                </el-form-item>
-                <el-form-item label="福利">
-                    <el-input v-model="zwfwItem.fuli"></el-input>
-                </el-form-item>
-                <el-form-item label="需要资格预审">
-                    <el-radio-group v-model="zwfwItem.xyzgys">
-                        <el-radio :label="true">
-                            <span style="font-weight:normal;">是</span>
-                        </el-radio>
-                        <el-radio :label="false">
-                            <span style="font-weight:normal;">否</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="需要人工受理">
-                    <el-radio-group v-model="zwfwItem.xyrgsl">
-                        <el-radio :label="true">
-                            <span style="font-weight:normal;">是</span>
-                        </el-radio>
-                        <el-radio :label="false">
-                            <span style="font-weight:normal;">否</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="批量受理">
-                    <el-radio-group v-model="zwfwItem.plsl">
-                        <el-radio :label="true">
-                            <span style="font-weight:normal;">是</span>
-                        </el-radio>
-                        <el-radio :label="false">
-                            <span style="font-weight:normal;">否</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="需要证照">
-                    <el-radio-group v-model="zwfwItem.xyzz">
-                        <el-radio :label="true">
-                            <span style="font-weight:normal;">是</span>
-                        </el-radio>
-                        <el-radio :label="false">
-                            <span style="font-weight:normal;">否</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="需要踏勘">
-                    <el-radio-group v-model="zwfwItem.xytk">
-                        <el-radio :label="true">
-                            <span style="font-weight:normal;">是</span>
-                        </el-radio>
-                        <el-radio :label="false">
-                            <span style="font-weight:normal;">否</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="需要专家评审">
-                    <el-radio-group v-model="zwfwItem.xyzjps">
-                        <el-radio :label="true">
-                            <span style="font-weight:normal;">是</span>
-                        </el-radio>
-                        <el-radio :label="false">
-                            <span style="font-weight:normal;">否</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="需要红头文件">
-                    <el-radio-group v-model="zwfwItem.xyhtwj">
-                        <el-radio :label="true">
-                            <span style="font-weight:normal;">是</span>
-                        </el-radio>
-                        <el-radio :label="false">
-                            <span style="font-weight:normal;">否</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="申请主体权利义务">
-                    <el-input v-model="zwfwItem.sqztqlyw"></el-input>
-                </el-form-item>
-                <el-form-item label="窗口流程图">
-                    <el-input v-model="zwfwItem.cklct"></el-input>
-                </el-form-item>
-                <el-form-item label="直接获取阿里材料信息">
-                    <el-radio-group v-model="zwfwItem.remoteMaterial">
-                        <el-radio :label="true">
-                            <span style="font-weight:normal;">是</span>
-                        </el-radio>
-                        <el-radio :label="false">
-                            <span style="font-weight:normal;">否</span>
-                        </el-radio>
-                    </el-radio-group>
-                </el-form-item>
+                    <el-form-item label="注意事项" prop="remark">
+                        <!--<el-input v-model="zwfwItem.remark"></el-input>-->
+                        <quill-editor ref="noticeTextEditor" v-model="noticeTextHtml"
+                                      :options="quillEditorOption" @focus="onEditorFocus($event)">
+                        </quill-editor>
+                        <el-upload name="uploadFile" v-show="false" :show-file-list="false"
+                                   :action="uploadAction" :accept="imageAccepts"
+                                   :on-success="handleEditorUploadSuccess" :on-error="handleEditorUploadError">
+                            <el-button id="notice_text_btn"></el-button>
+                        </el-upload>
+                    </el-form-item>
+                    <el-form-item label="目录名称" prop="mlmc" v-show="zwfwItem.objectType === 1">
+                        <el-input v-model="zwfwItem.mlmc"></el-input>
+                    </el-form-item>
+                    <el-form-item label="通用目录" prop="tyml" v-show="zwfwItem.objectType === 1">
+                        <el-input v-model="zwfwItem.tyml"></el-input>
+                    </el-form-item>
+                    <el-form-item label="个别字段不同" prop="diffFlag" v-show="zwfwItem.objectType === 1">
+                        <el-input v-model="zwfwItem.diffFlag"></el-input>
+                    </el-form-item>
+                    <el-form-item label="主项编码" v-show="zwfwItem.objectType === 1">
+                        <el-input v-model="zwfwItem.zxbm"></el-input>
+                    </el-form-item>
+                    <el-form-item label="办理项编码" v-show="zwfwItem.objectType === 1">
+                        <el-input v-model="zwfwItem.blxbm"></el-input>
+                    </el-form-item>
+                    <el-form-item label="市级部门" v-show="zwfwItem.objectType === 1">
+                        <el-input v-model="zwfwItem.sjbm"></el-input>
+                    </el-form-item>
+                    <el-form-item label="服务主题" v-show="zwfwItem.objectType === 1">
+                        <el-input v-model="zwfwItem.fwzt"></el-input>
+                    </el-form-item>
+                    <el-form-item label="行政分类" v-show="zwfwItem.objectType === 1">
+                        <el-input v-model="zwfwItem.xzfl"></el-input>
+                    </el-form-item>
+                    <el-form-item label="权利来源" v-show="zwfwItem.objectType === 1">
+                        <el-input v-model="zwfwItem.qlly"></el-input>
+                    </el-form-item>
+                    <el-form-item label="时限类型" v-show="zwfwItem.objectType === 1">
+                        <el-input v-model="zwfwItem.sxlx"></el-input>
+                    </el-form-item>
+                    <el-form-item label="自然人关注点" v-show="zwfwItem.objectType === 1">
+                        <el-input v-model="zwfwItem.zrrgzd"></el-input>
+                    </el-form-item>
+                    <el-form-item label="法人关注点" v-show="zwfwItem.objectType === 1">
+                        <el-input v-model="zwfwItem.frgzd"></el-input>
+                    </el-form-item>
+                    <el-form-item label="是否自贸区事项" v-show="zwfwItem.objectType === 1">
+                        <el-radio-group v-model="zwfwItem.sfzmqsx">
+                            <el-radio :label="true">
+                                <span style="font-weight:normal;">是</span>
+                            </el-radio>
+                            <el-radio :label="false">
+                                <span style="font-weight:normal;">否</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="是否可委托代办" v-show="zwfwItem.objectType === 1">
+                        <el-radio-group v-model="zwfwItem.wtdb">
+                            <el-radio :label="true">
+                                <span style="font-weight:normal;">是</span>
+                            </el-radio>
+                            <el-radio :label="false">
+                                <span style="font-weight:normal;">否</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="批前公示" v-show="zwfwItem.objectType === 1">
+                        <el-radio-group v-model="zwfwItem.pqgs">
+                            <el-radio :label="true">
+                                <span style="font-weight:normal;">是</span>
+                            </el-radio>
+                            <el-radio :label="false">
+                                <span style="font-weight:normal;">否</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="投诉途径" v-show="zwfwItem.objectType === 1">
+                        <el-input v-model="zwfwItem.tstj"></el-input>
+                    </el-form-item>
+                    <el-form-item label="投诉地址" v-show="zwfwItem.objectType === 1">
+                        <el-input v-model="zwfwItem.tsdz"></el-input>
+                    </el-form-item>
+                    <el-form-item label="年审或年检" v-show="zwfwItem.objectType === 1">
+                        <el-radio-group v-model="zwfwItem.nshnj">
+                            <el-radio :label="1">
+                                <span style="font-weight:normal;">年审</span>
+                            </el-radio>
+                            <el-radio :label="2">
+                                <span style="font-weight:normal;">年检</span>
+                            </el-radio>
+                            <el-radio :label="3">
+                                <span style="font-weight:normal;">无</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="年审或年检次数" v-show="zwfwItem.objectType === 1">
+                        <el-radio-group v-model="zwfwItem.nshnjcs">
+                            <el-radio :label="0">
+                                <span style="font-weight:normal;">无</span>
+                            </el-radio>
+                            <el-radio :label="1">
+                                <span style="font-weight:normal;">一年一次</span>
+                            </el-radio>
+                            <el-radio :label="2">
+                                <span style="font-weight:normal;">两年一次</span>
+                            </el-radio>
+                            <el-radio :label="3">
+                                <span style="font-weight:normal;">三年一次</span>
+                            </el-radio>
+                            <el-radio :label="4">
+                                <span style="font-weight:normal;">四年一次</span>
+                            </el-radio>
+                            <el-radio :label="5">
+                                <span style="font-weight:normal;">五年一次</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="是否自动预受理" v-show="zwfwItem.objectType === 1">
+                        <el-radio-group v-model="zwfwItem.sfzdysl">
+                            <el-radio :label="true">
+                                <span style="font-weight:normal;">是</span>
+                            </el-radio>
+                            <el-radio :label="false">
+                                <span style="font-weight:normal;">否</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="是否预受理踏勘" v-show="zwfwItem.objectType === 1">
+                        <el-radio-group v-model="zwfwItem.sfysltk">
+                            <el-radio :label="true">
+                                <span style="font-weight:normal;">是</span>
+                            </el-radio>
+                            <el-radio :label="false">
+                                <span style="font-weight:normal;">否</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="一窗是否自动预受理" v-show="zwfwItem.objectType === 1">
+                        <el-radio-group v-model="zwfwItem.ycsfzdysl">
+                            <el-radio :label="true">
+                                <span style="font-weight:normal;">是</span>
+                            </el-radio>
+                            <el-radio :label="false">
+                                <span style="font-weight:normal;">否</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="一网是否自动预受理" v-show="zwfwItem.objectType === 1">
+                        <el-radio-group v-model="zwfwItem.ywsfzdysl">
+                            <el-radio :label="true">
+                                <span style="font-weight:normal;">是</span>
+                            </el-radio>
+                            <el-radio :label="false">
+                                <span style="font-weight:normal;">否</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="图标" v-show="zwfwItem.objectType === 1">
+                        <el-input v-model="zwfwItem.img"></el-input>
+                    </el-form-item>
+                    <el-form-item label="福利" v-show="zwfwItem.objectType === 1">
+                        <el-input v-model="zwfwItem.fuli"></el-input>
+                    </el-form-item>
+                    <el-form-item label="需要资格预审" v-show="zwfwItem.objectType === 1">
+                        <el-radio-group v-model="zwfwItem.xyzgys">
+                            <el-radio :label="true">
+                                <span style="font-weight:normal;">是</span>
+                            </el-radio>
+                            <el-radio :label="false">
+                                <span style="font-weight:normal;">否</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="需要人工受理" v-show="zwfwItem.objectType === 1">
+                        <el-radio-group v-model="zwfwItem.xyrgsl">
+                            <el-radio :label="true">
+                                <span style="font-weight:normal;">是</span>
+                            </el-radio>
+                            <el-radio :label="false">
+                                <span style="font-weight:normal;">否</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="批量受理" v-show="zwfwItem.objectType === 1">
+                        <el-radio-group v-model="zwfwItem.plsl">
+                            <el-radio :label="true">
+                                <span style="font-weight:normal;">是</span>
+                            </el-radio>
+                            <el-radio :label="false">
+                                <span style="font-weight:normal;">否</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="需要证照" v-show="zwfwItem.objectType === 1">
+                        <el-radio-group v-model="zwfwItem.xyzz">
+                            <el-radio :label="true">
+                                <span style="font-weight:normal;">是</span>
+                            </el-radio>
+                            <el-radio :label="false">
+                                <span style="font-weight:normal;">否</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="需要踏勘" v-show="zwfwItem.objectType === 1">
+                        <el-radio-group v-model="zwfwItem.xytk">
+                            <el-radio :label="true">
+                                <span style="font-weight:normal;">是</span>
+                            </el-radio>
+                            <el-radio :label="false">
+                                <span style="font-weight:normal;">否</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="需要专家评审" v-show="zwfwItem.objectType === 1">
+                        <el-radio-group v-model="zwfwItem.xyzjps">
+                            <el-radio :label="true">
+                                <span style="font-weight:normal;">是</span>
+                            </el-radio>
+                            <el-radio :label="false">
+                                <span style="font-weight:normal;">否</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="需要红头文件" v-show="zwfwItem.objectType === 1">
+                        <el-radio-group v-model="zwfwItem.xyhtwj">
+                            <el-radio :label="true">
+                                <span style="font-weight:normal;">是</span>
+                            </el-radio>
+                            <el-radio :label="false">
+                                <span style="font-weight:normal;">否</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="申请主体权利义务" v-show="zwfwItem.objectType === 1">
+                        <el-input v-model="zwfwItem.sqztqlyw"></el-input>
+                    </el-form-item>
+                    <el-form-item label="窗口流程图" v-show="zwfwItem.objectType === 1">
+                        <el-input v-model="zwfwItem.cklct"></el-input>
+                    </el-form-item>
+                    <el-form-item label="直接获取阿里材料信息" v-show="zwfwItem.objectType === 1">
+                        <el-radio-group v-model="zwfwItem.remoteMaterial">
+                            <el-radio :label="true">
+                                <span style="font-weight:normal;">是</span>
+                            </el-radio>
+                            <el-radio :label="false">
+                                <span style="font-weight:normal;">否</span>
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+
+                </div>
             </el-form>
-            <div slot="footer" class="dialog-footer" style="margin-top:30px; text-align: center;">
+            <div slot="footer" class="dialog-footer" v-show="zwfwItem.objectType" style="margin-top:30px; text-align: center;">
                 <el-button icon="circle-cross" type="danger" @click="closeZwfwItemForm">取 消
                 </el-button>
                 <el-button v-if="dialogStatus=='create'" type="primary" icon="circle-check" @click="doItemCreate">
@@ -821,7 +842,7 @@
 
 
         <!--事项材料配置-->
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogMaterialFormVisible"
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogMaterialFormVisible" width="80%"
                    :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwMaterialForm">
             <el-row>
                 <el-button class="filter-item" style="margin-left: 10px;" @click="handleMaterialDelete" type="danger"
@@ -1017,6 +1038,55 @@
             </div>
         </el-dialog>
 
+        <el-dialog title="关联基本事项" :visible.sync="dialogItemCompositeVisible"
+                   :close-on-click-modal="closeOnClickModal" :before-close="closeDialogItemComposite">
+            <el-row>
+                <el-button class="filter-item" style="margin-left: 10px;" @click="handleItemCompositeDelete" type="danger"
+                           icon="delete">删除</el-button>
+            </el-row>
+            <el-table ref="itemCompositeTable" :data="itemCompositeList" v-loading.body="dialogTableLoading"
+                      border fit
+                      highlight-current-row
+                      style="width: 100%" @selection-change="handleItemCompositeSelectionChange">
+                <el-table-column type="selection" width="40"/>
+                <el-table-column prop="name" align="left" label="事项名称">
+                </el-table-column>
+                <el-table-column prop="basicCode" align="center" label="基本编码" width="180">
+                </el-table-column>
+                <el-table-column align="center" label="事项类型" prop="type" width="180">
+                    <template slot-scope="scope">
+                        <span>{{scope.row.type | dics('sslx')}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center" label="操作" width="120">
+                    <template slot-scope="scope">
+                        <el-button size="small" @click="sortUp(scope.row)" icon="arrow-up">
+                        </el-button>
+                        <el-button size="small" @click="sortDown(scope.row)" icon="arrow-down">
+                        </el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-form ref="itemCompositeForm" class="small-space" :model="itemComposite"
+                     label-position="right"
+                     label-width="80px"
+                     style='width: 80%; margin-left:10%; margin-top: 5%;' v-loading="dialogFormLoading"
+                     :rules="itemCompositeFormRules">
+                <el-form-item label="事项：" prop="item">
+                    <el-select style="width: 80%" v-model="itemComposite.item" filterable remote placeholder="请输入事项名称或基本编码"
+                               :remote-method="searchItem">
+                        <el-option v-for="item in pendingBasic" :key="item.id" :label="item.name" :value="item">
+                        </el-option>
+                    </el-select>
+                    <el-button type="primary" @click="addPendingBasic">添 加</el-button>
+                </el-form-item>
+            </el-form>
+            <div style="text-align: center" slot="footer" class="dialog-footer">
+                <el-button icon="circle-cross" type="danger" @click="closeDialogItemComposite">取 消</el-button>
+                <el-button type="primary" icon="circle-check" @click="saveItemComposite">确 定</el-button>
+            </div>
+        </el-dialog>
+
         <!--事项预约配置-->
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogItemConfigFormVisible"
                    :close-on-click-modal="closeOnClickModal" :before-close="closeZwfwItemConfigForm">
@@ -1061,7 +1131,7 @@
 </template>
 
 <script>
-    import {copyProperties, resetForm, validateQueryStr} from 'utils';
+    import {copyProperties, copyNewObj, resetForm, validateQueryStr} from '../../../utils';
     import {mapGetters} from 'vuex';
     import {
         createZwfwItem,
@@ -1071,7 +1141,8 @@
         getZwfwItemList,
         setItemConfig,
         syncAliItem,
-        updateZwfwItem
+        updateZwfwItem,
+        getAllByNameOrbasicCode
     } from '../../../api/zwfwSystem/business/item';
     import {
         createZwfwItemMaterial,
@@ -1084,6 +1155,7 @@
     import {getDeptCascader} from 'api/baseSystem/org/dept';
     import {getAddresseeById, getAllAddressees} from 'api/hallSystem/window/addressee';
     import {quillEditor} from 'vue-quill-editor'
+    import {listBasicByCompositeId, saveItemComposite} from "../../../api/zwfwSystem/business/itemComposite";
 
     export default {
         name: 'zwfwItem_table',
@@ -1160,6 +1232,7 @@
                 activeName: 'first',
                 zwfwItem: {
                     id: undefined,
+                    objectType: undefined,
                     departmentId: [],
                     superviseDepartmentId: [],
                     unionAgency: [],
@@ -1292,6 +1365,7 @@
                 dialogItemFormVisible: false,
                 dialogMaterialFormVisible: false,
                 dialogItemConfigFormVisible: false,
+                dialogItemCompositeVisible: false,
                 dialogStatus: '',
                 uploadAction: this.$store.state.app.uploadUrl,
                 fileAccepts: this.$store.state.app.fileAccepts,
@@ -1362,6 +1436,16 @@
                         {required: true, message: '请选择预约时间', trigger: 'blur'}
                     ]
                 },
+                zwfwItemCompositeRules: {
+                    name: [
+                        {required: true, message: '请输入事项名称'}
+                    ]
+                },
+                itemCompositeFormRules: {
+                    item: [
+                        {required: true, message: '请选择事项'}
+                    ]
+                },
                 userListPretrial: [],
                 userListHand: [],
                 deptTree: [],
@@ -1394,10 +1478,24 @@
                 addressCardVisible: false,
                 cardItemVisible: false,
                 cascader: [],
-                itemSynchronizing: false
+                itemSynchronizing: false,
+                itemCompositeList: [],
+                selectedItemCompositeRows: [],
+                pendingBasic: [],
+                itemComposite: {
+                    item: undefined
+                }
             }
         },
         computed: {
+            itemFormRules() {
+                if (this.zwfwItem.objectType === 1) {
+                    return this.zwfwItemRules;
+                } else if (this.zwfwItem.objectType === 2) {
+                    return this.zwfwItemCompositeRules;
+                }
+                return {};
+            },
             belongDeptCascader() {
                 if (this.zwfwItem.departmentId) {
                     if (this.zwfwItem.departmentTreePosition) {
@@ -1470,9 +1568,6 @@
 
         },
         methods: {
-            preorderChange(value) {
-                console.log(value);
-            },
             initEditor() {
                 this.$nextTick(() => {
                     this.$refs.conditionEditor.quill.getModule('toolbar').addHandler('image', this.imgHandlerCondition);
@@ -2169,6 +2264,7 @@
             resetItemTemp() {
                 this.zwfwItem = {
                     id: undefined,
+                    objectType: undefined,
                     departmentId: [],
                     superviseDepartmentId: [],
                     unionAgency: [],
@@ -2268,7 +2364,8 @@
                 this.acceptConditionHtml = '';
                 this.workflowDescriptionHtml = '';
                 this.chargeStandardHtml = '';
-                this.chargeBasisHtml = ''
+                this.chargeBasisHtml = '';
+                this.clearAddressee();
             },
             resetMaterialTemp() {
                 this.zwfwItemMaterial = {
@@ -2320,6 +2417,121 @@
                     _this.itemSynchronizing = false;
                     _this.$message.error('同步失败');
                 });
+            },
+            handleItemComposite(row) {
+                this.currentRow = row;
+                this.dialogItemCompositeVisible = true;
+                this.dialogTableLoading = true;
+                listBasicByCompositeId(row.id).then(response => {
+                    if (response.httpCode === 200) {
+                        this.itemCompositeList = response.data
+                    } else {
+                        this.$message.error('查询关联事项列表失败')
+                    }
+                    this.dialogTableLoading = false;
+                }).catch(err => {
+                    this.dialogTableLoading = false;
+                })
+            },
+            handleItemCompositeSelectionChange(rows) {
+                this.selectedItemCompositeRows = rows;
+            },
+            handleItemCompositeDelete() {
+                if (this.selectedItemCompositeRows.length === 0) {
+                    this.$message.warning('请选择需要操作的数据');
+                    return;
+                }
+                for (const row of this.selectedItemCompositeRows) {
+                    this.itemCompositeList.splice(this.itemCompositeList.indexOf(row), 1)
+                }
+            },
+            searchItem(query) {
+                const listQueryName = {
+                    objectType: 1,
+                    name: undefined,
+                    basicCode: undefined
+                };
+                if (query !== '') {
+                    let valid = validateQueryStr(query);
+                    if (valid) {
+                        this.$message.error(`输入中包含非法字符 ${valid}`)
+                        return
+                    }
+                    if (/.*[\u4e00-\u9fa5]+.*$/.test(query)) {
+                        listQueryName.name = query;
+                    } else {
+                        listQueryName.basicCode = query
+                    }
+                    getAllByNameOrbasicCode(listQueryName).then(response => {
+                        if (response.httpCode === 200) {
+                            this.pendingBasic = response.data;
+                        } else {
+                            this.$message.error(response.msg);
+                        }
+                    })
+                } else {
+                    this.pendingBasic = [];
+                }
+            },
+            addPendingBasic() {
+                this.$refs['itemCompositeForm'].validate(valid => {
+                    if (valid) {
+                        this.itemCompositeList.push(this.itemComposite.item);
+                        this.resetItemCompositeForm();
+                    } else {
+                        return false;
+                    }
+                })
+            },
+            sortUp(row) {
+                const index = this.itemCompositeList.indexOf(row);
+                if (index === 0) {
+                    return;
+                }
+                const prev = this.itemCompositeList[index - 1];
+                this.$set(this.itemCompositeList, index - 1, row);
+                this.$set(this.itemCompositeList, index, prev);
+            },
+            sortDown(row) {
+                const index = this.itemCompositeList.indexOf(row);
+                if (index === this.itemCompositeList.length - 1) {
+                    return;
+                }
+                const next = this.itemCompositeList[index + 1];
+                this.$set(this.itemCompositeList, index + 1, row);
+                this.$set(this.itemCompositeList, index, next);
+            },
+            saveItemComposite() {
+                if (this.itemCompositeList.length === 0) {
+                    this.$message.warning('请添加需要关联的基本事项');
+                }
+                const compositeId = this.currentRow.id;
+                const itemIds = [];
+                for (const item of this.itemCompositeList) {
+                    itemIds.push(item.id)
+                }
+                saveItemComposite(compositeId, itemIds).then(response => {
+                    if (response.httpCode === 200) {
+                        this.$message.success('保存成功');
+                        this.closeDialogItemComposite();
+                    } else {
+                        this.$message.error('保存失败');
+                    }
+                })
+            },
+            closeDialogItemComposite() {
+                this.dialogItemCompositeVisible = false;
+                this.dialogTableLoading = false;
+                this.itemCompositeList = [];
+                this.pendingBasic = [];
+                this.selectedItemCompositeRows = [];
+                this.resetItemCompositeForm();
+            },
+            resetItemCompositeForm() {
+                this.itemComposite = {
+                    item: undefined
+                };
+                this.$refs.itemCompositeForm.resetFields();
             }
         }
     }
