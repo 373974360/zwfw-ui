@@ -160,7 +160,7 @@
                                 style="width: 100%">
                         </el-cascader>
                     </el-form-item>
-                    <el-form-item label="基本编码" prop="basicCode" v-show="zwfwItem.objectType === 1">
+                    <el-form-item label="基本编码" prop="basicCode">
                         <el-input v-model="zwfwItem.basicCode"></el-input>
                     </el-form-item>
                     <el-form-item label="实施编码" prop="implCode" v-show="zwfwItem.objectType === 1">
@@ -1073,9 +1073,9 @@
                      style='width: 80%; margin-left:10%; margin-top: 5%;' v-loading="dialogFormLoading"
                      :rules="itemCompositeFormRules">
                 <el-form-item label="事项：" prop="item">
-                    <el-select style="width: 80%" v-model="itemComposite.item" filterable remote placeholder="请输入事项名称或基本编码"
+                    <el-select style="width: 80%" v-model="itemComposite.itemId" filterable remote placeholder="请输入事项名称或基本编码"
                                :remote-method="searchItem">
-                        <el-option v-for="item in pendingBasic" :key="item.id" :label="item.name" :value="item">
+                        <el-option v-for="item in pendingBasic" :key="item.id" :label="item.name" :value="item.id">
                         </el-option>
                     </el-select>
                     <el-button type="primary" @click="addPendingBasic">添 加</el-button>
@@ -1439,10 +1439,13 @@
                 zwfwItemCompositeRules: {
                     name: [
                         {required: true, message: '请输入事项名称'}
+                    ],
+                    basicCode: [
+                        {required: true, message: '请输入基本编码'}
                     ]
                 },
                 itemCompositeFormRules: {
-                    item: [
+                    itemId: [
                         {required: true, message: '请选择事项'}
                     ]
                 },
@@ -1483,7 +1486,7 @@
                 selectedItemCompositeRows: [],
                 pendingBasic: [],
                 itemComposite: {
-                    item: undefined
+                    itemId: undefined
                 }
             }
         },
@@ -2476,7 +2479,12 @@
             addPendingBasic() {
                 this.$refs['itemCompositeForm'].validate(valid => {
                     if (valid) {
-                        this.itemCompositeList.push(this.itemComposite.item);
+                        for (const basic of this.pendingBasic) {
+                            if (basic.id === this.itemComposite.itemId) {
+                                this.itemCompositeList.push(basic);
+                                break;
+                            }
+                        }
                         this.resetItemCompositeForm();
                     } else {
                         return false;
@@ -2529,7 +2537,7 @@
             },
             resetItemCompositeForm() {
                 this.itemComposite = {
-                    item: undefined
+                    itemId: undefined
                 };
                 this.$refs.itemCompositeForm.resetFields();
             }
