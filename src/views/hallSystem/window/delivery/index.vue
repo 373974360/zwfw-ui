@@ -160,7 +160,7 @@
                 <el-form-item label="取件方式" prop="takeType">
                     <el-select v-model="takeTypeInfo.takeType" @change="changeTakeTypeInfo">
                         <el-option v-for="item in takeTypeList" :key="item"
-                                   :value="item" :label="item | parseToInt | enums('TakeType')">
+                                   :value="item" :label="item | enums('TakeType')">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -288,7 +288,7 @@
                 <el-form-item label="取件方式">
                     <el-select v-model="processOfflineInfo.takeTypeInfo.takeType" :disabled="offlineReadonly">
                         <el-option v-for="item in takeTypeList" :key="item"
-                                   :value="item" :label="item | parseToInt | enums('TakeType')">
+                                   :value="item" :label="item | enums('TakeType')">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -883,13 +883,16 @@
             },
             getItemTakeTypes(id) {
                 return new Promise((resolve, reject) => {
+                    this.takeTypeList = [];
                     if (!id) {
-                        this.takeTypeList = [];
                         return reject();
                     }
                     getDetailById(id).then(response => {
                         if (response.httpCode === 200 && response.data) {
-                            this.takeTypeList = response.data.takeTypes.split(',');
+                            const takeTypeList = response.data.takeTypes.split(',');
+                            for (const takeType of takeTypeList) {
+                                this.takeTypeList.push(parseInt(takeType))
+                            }
                             resolve();
                         } else {
                             this.$message.error('事项信息获取失败');
@@ -1013,7 +1016,7 @@
                     return;
                 }
                 this.validateField('processOfflineForm', 'memberId');
-                if (!memberId || this.processOfflineInfo.takeTypeInfo.takeType !== 2) {
+                if (!memberId || this.processOfflineInfo.takeTypeInfo.takeType != 2) {
                     return;
                 }
                 getMemberById(memberId).then(response => {
@@ -1051,7 +1054,7 @@
             },
             initOfflineCardHeader() {
                 if (!this.offlineAddresseeList || this.offlineAddresseeList.length <= 0
-                    || this.processOfflineInfo.takeTypeInfo.takeType !== 3) {
+                    || this.processOfflineInfo.takeTypeInfo.takeType != 3) {
                     this.processOfflineInfo.takeTypeInfo.postInfo.addresseeId = undefined;
                     this.offlineCardVisible = false;
                     this.resetOfflineCardHeader();
@@ -1126,7 +1129,7 @@
                 this.takeTypeInfo.memberId = row.memberId;
                 if (row.takeTypeInfo) {
                     this.takeTypeInfo.id = row.takeTypeInfo.id;
-                    this.takeTypeInfo.takeType = row.takeTypeInfo.takeType + '';
+                    this.takeTypeInfo.takeType = row.takeTypeInfo.takeType;
                     if (row.takeTypeInfo.mailboxInfo) {
                         copyProperties(this.takeTypeInfo.mailboxInfo, row.takeTypeInfo.mailboxInfo);
                     }
@@ -1157,7 +1160,7 @@
                 this.initCardHeader();
             },
             initCardHeader() {
-                if (!this.addresseeList || this.addresseeList.length <= 0 || this.takeTypeInfo.takeType !== 3) {
+                if (!this.addresseeList || this.addresseeList.length <= 0 || this.takeTypeInfo.takeType != 3) {
                     this.cardVisible = false;
                     this.takeTypeInfo.postInfo.addresseeId = undefined;
                     this.resetCardHeader();
@@ -1339,12 +1342,11 @@
                     this.getWindow(row.takeTypeInfo.windowId);
                 }
                 Promise.all([
+                    this.getItemTakeTypes(row.itemId),
                     this.getMemberInfo(row.memberId),
                     this.changeMemberAddressee(row.memberId)
                 ]).then(() => {
                     copyProperties(this.processOfflineInfo, row);
-                    this.processOfflineInfo.takeTypeInfo.takeType += '';
-                    this.processOfflineInfo.memberId += '';
                     this.processOfflineVisible = true;
                 });
             },
