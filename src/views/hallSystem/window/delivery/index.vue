@@ -320,9 +320,7 @@
                 <el-form-item label="取件人手机号" prop="takeTypeInfo.mailboxInfo.consigneeMobile"
                               v-show="processOfflineInfo.takeTypeInfo.takeType == 2"
                               :rules="mailboxRequired ? processOfflineInfoRules.consigneeMobile : []">
-                    <el-input v-model="processOfflineInfo.takeTypeInfo.mailboxOrder.consigneeMobile" v-if="offlineReadonly">
-                    </el-input>
-                    <el-input v-model="processOfflineInfo.takeTypeInfo.mailboxInfo.consigneeMobile" v-else
+                    <el-input v-model="processOfflineInfo.takeTypeInfo.mailboxInfo.consigneeMobile" :disabled="offlineReadonly"
                               @blur="validateField('processOfflineForm', 'takeTypeInfo.mailboxInfo.consigneeMobile')">
                     </el-input>
                 </el-form-item>
