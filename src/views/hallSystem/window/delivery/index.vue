@@ -492,7 +492,9 @@
                 <div slot="header" class="clearfix card-header">
                     <p><b>物流状态&nbsp;&nbsp;&nbsp;&nbsp;{{logistics.deliverystatus | deliveryStatusFilter}}</b></p>
                     <p>承运来源：{{logistics.type | expressTypeFilter}}</p>
-                    <p>运单编号：{{logistics.number}}</p>
+                    <p>运单编号：{{logistics.number}}
+                        <el-button type="text" @click="refreshLogistics(logistics)">物流信息不对</el-button>
+                    </p>
                 </div>
             </el-card>
             <div class="track-list">
@@ -528,7 +530,7 @@
     import {getFinishList, addProcessOffline, deleteProcessOffline, saveExpressInfo, saveTakeType, complete, reserve, cancelReserve,
         getOrderStatus, getOrderDetail} from '../../../../api/hallSystem/window/delivery'
     import {getAllAddresseesByMemberId, getMemberAddresseeById} from '../../../../api/hallSystem/member/memberAddressee';
-    import {queryLogistics} from '../../../../api/hallSystem/window/express';
+    import {queryLogistics, queryRealLogistics} from '../../../../api/hallSystem/window/express';
     import {getUserInfo} from '../../../../api/baseSystem/org/user'
     import {getWindowInfo} from '../../../../api/hallSystem/lobby/window'
 
@@ -1399,18 +1401,31 @@
                 })
             },
             showLogistics(takeTypeInfo) {
-                let company = takeTypeInfo.postInfo.expressCompany;
-                let number = takeTypeInfo.postInfo.expressNumber;
+                const company = takeTypeInfo.postInfo.expressCompany;
+                const number = takeTypeInfo.postInfo.expressNumber;
                 queryLogistics(company, number).then(response => {
-                    if (response.httpCode !== 200) {
+                    if (response.httpCode === 200) {
+                        this.logistics = response.data;
+                        this.logisticsVisible = true;
+                        if (this.logistics && this.logistics.deliverystatus === 3 && takeTypeInfo.flagTakeCert !== 33) {
+                            this.getList();
+                            this.listLoading = false;
+                        }
+                    } else {
                         this.$message.error('获取物流信息失败');
-                        return;
                     }
-                    this.logistics = response.data;
-                    this.logisticsVisible = true;
-                    if (this.logistics && this.logistics.deliverystatus === 3 && takeTypeInfo.flagTakeCert !== 33) {
-                        this.getList();
-                        this.listLoading = false;
+                })
+            },
+            refreshLogistics(logistics) {
+                queryRealLogistics(logistics.type, logistics.number).then(response => {
+                    if (response.httpCode === 200) {
+                        this.logistics = response.data;
+                        if (this.logistics && this.logistics.deliverystatus === 3 && takeTypeInfo.flagTakeCert !== 33) {
+                            this.getList();
+                            this.listLoading = false;
+                        }
+                    } else {
+                        this.$message.error('获取物流信息失败');
                     }
                 })
             },

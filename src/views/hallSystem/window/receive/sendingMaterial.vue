@@ -255,7 +255,9 @@
                 <div slot="header" class="clearfix card-header">
                     <p><b>物流状态&nbsp;&nbsp;&nbsp;&nbsp;{{logistics.deliverystatus | deliveryStatusFilter}}</b></p>
                     <p>承运来源：{{logistics.type | expressTypeFilter}}</p>
-                    <p>运单编号：{{logistics.number}}</p>
+                    <p>运单编号：{{logistics.number}}
+                        <el-button type="text" @click="refreshLogistics(logistics)">物流信息不对</el-button>
+                    </p>
                 </div>
             </el-card>
             <div class="track-list">
@@ -287,7 +289,7 @@
     import {getAllAddressees} from 'api/hallSystem/window/addressee';
     import {getByNameOrLoginName} from '../../../../api/hallSystem/member/member'
     import {getToReceiveList} from '../../../../api/hallSystem/window/receive/windowCert'
-    import {queryLogistics} from '../../../../api/hallSystem/window/express'
+    import {queryLogistics, queryRealLogistics} from '../../../../api/hallSystem/window/express'
     import {getHandMailboxOpenCode, mailboxPostMailRequest} from "../../../../api/workSystem/handType";
 
     export default {
@@ -455,12 +457,21 @@
             },
             showLogistics(postInfo) {
                 queryLogistics(postInfo.expressCompany, postInfo.expressNumber).then(response => {
-                    if (response.httpCode !== 200) {
+                    if (response.httpCode === 200) {
+                        this.logistics = response.data;
+                        this.logisticsVisible = true;
+                    } else {
                         this.$message.error('获取物流信息失败');
-                        return;
                     }
-                    this.logistics = response.data;
-                    this.logisticsVisible = true;
+                })
+            },
+            refreshLogistics(logistics) {
+                queryRealLogistics(logistics.type, logistics.number).then(response => {
+                    if (response.httpCode === 200) {
+                        this.logistics = response.data;
+                    } else {
+                        this.$message.error('获取物流信息失败');
+                    }
                 })
             },
             showEmsDesc(expressOrder) {
