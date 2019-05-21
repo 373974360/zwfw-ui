@@ -320,7 +320,9 @@
                 <el-form-item label="取件人手机号" prop="takeTypeInfo.mailboxInfo.consigneeMobile"
                               v-show="processOfflineInfo.takeTypeInfo.takeType == 2"
                               :rules="mailboxRequired ? processOfflineInfoRules.consigneeMobile : []">
-                    <el-input v-model="processOfflineInfo.takeTypeInfo.mailboxInfo.consigneeMobile" :disabled="offlineReadonly"
+                    <el-input v-model="processOfflineInfo.takeTypeInfo.mailboxOrder.consigneeMobile" disabled v-if="offlineReadonly">
+                    </el-input>
+                    <el-input v-model="processOfflineInfo.takeTypeInfo.mailboxInfo.consigneeMobile" v-else
                               @blur="validateField('processOfflineForm', 'takeTypeInfo.mailboxInfo.consigneeMobile')">
                     </el-input>
                 </el-form-item>
@@ -943,7 +945,11 @@
                     }
                     getByNameOrLoginName(query).then(response => {
                         if (response.httpCode === 200) {
-                            this.memberListFilter = response.data;
+                            if (response.data.length > 50) {
+                                this.memberListFilter = response.data.slice(0, 50);
+                            } else {
+                                this.memberListFilter = response.data
+                            }
                         } else {
                             this.$message.error('数据加载失败')
                         }
@@ -965,7 +971,11 @@
                         }
                         getByNameOrLoginName(query).then(response => {
                             if (response.httpCode === 200) {
-                                this.memberList = response.data;
+                                if (response.data.length > 50) {
+                                    this.memberList = response.data.slice(0, 50);
+                                } else {
+                                    this.memberList = response.data
+                                }
                                 resolve();
                             } else {
                                 this.$message.error('数据加载失败');
