@@ -8,3 +8,11 @@ export function queryLogistics(company, number) {
         params: data
     });
 }
+
+export function queryRealLogistics(company, number) {
+    return fetch({
+        url: '/api/express/logistics/queryLogistics',
+        method: 'get',
+        params: {company, number, remote: true}
+    })
+}
