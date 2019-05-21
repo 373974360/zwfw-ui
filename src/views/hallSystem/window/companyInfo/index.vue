@@ -498,7 +498,6 @@
                 });
             },
             doCreate() {
-                debugger;
                 this.$refs['enterpriseForm'].validate(valid => {
                     if (valid) {
                         this.dialogFormVisible = false;
