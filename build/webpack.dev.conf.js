@@ -41,7 +41,7 @@ module.exports = merge(baseWebpackConfig, {
             favicon: resolveApp('favicon.ico'),
             inject: true,
             path: config.dev.staticPath,
-            title: '西安经开区人才服务中心'
+            title: '西咸新区空港新城人才服务中心'
         }),
         new FriendlyErrorsPlugin()
     ]

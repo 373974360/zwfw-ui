@@ -310,7 +310,7 @@ export const asyncRouterMap = [
             }
         ]
     },
-    /*{
+    {
         path: '/organ',
         redirect: 'noredirect',
         name: '企业信息库',
@@ -323,7 +323,7 @@ export const asyncRouterMap = [
                 component: MemberOrganDs,
                 name: '待审企业',
                 meta: {permission: 'jobSystem:member:organ:statuslist'}
-            },
+            }/*,
             {
                 path: 'organ_auth',
                 component: MemberOrganAuth,
@@ -335,7 +335,7 @@ export const asyncRouterMap = [
                 component: MemberOrganRec,
                 name: '申请推荐企业',
                 meta: {permission: 'jobSystem:member:organ:reclist'}
-            },
+            }*/,
             {
                 path: 'organ',
                 component: MemberOrgan,
@@ -343,7 +343,7 @@ export const asyncRouterMap = [
                 meta: {permission: 'jobSystem:member:organ:list'}
             }
         ]
-    },*/
+    },
     {
         path: '/zpxx',
         redirect: 'noredirect',

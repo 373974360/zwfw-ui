@@ -25,9 +25,9 @@
             <el-button class="filter-item" style="margin-left: 10px;" @click="handleUnaudit" type="danger" icon="circle-cross">
                 撤销审核
             </el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" @click="handleNotAuth" type="danger" icon="circle-cross">
+            <!--<el-button class="filter-item" style="margin-left: 10px;" @click="handleNotAuth" type="danger" icon="circle-cross">
                 撤销实名认证
-            </el-button>
+            </el-button>-->
             <el-button class="filter-item" style="margin-left: 10px;" type="danger" @click="handleDelete" icon="delete">
                 删除
             </el-button>

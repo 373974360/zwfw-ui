@@ -3,12 +3,20 @@
         <div class="filter-container">
             <el-input v-model="listQuery.zwmc" style="width: 180px;" class="filter-item"
                       placeholder="职位名称"></el-input>
-            <el-select v-model="listQuery.isrec" placeholder="请选择" style="width: 120px;" class="filter-item">
+            <el-select v-model="listQuery.isrec" placeholder="是否推荐" style="width: 120px;" class="filter-item">
                 <el-option
                         v-for="item in recOptions"
                         :key="item.value"
                         :label="item.label"
                         :value="item.value">
+                </el-option>
+            </el-select>
+            <el-select v-model="listQuery.memberId" filterable placeholder="公司名称" class="filter-item">
+                <el-option
+                        v-for="item in organList"
+                        :key="item.memberId"
+                        :label="item.name"
+                        :value="item.memberId">
                 </el-option>
             </el-select>
             <el-tooltip style="margin-left: 10px;" class="item" effect="dark" content="搜索" placement="top-start">
@@ -61,17 +69,7 @@
                     <nobr>{{scope.row.organName}}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="职位编号" width="120">
-                <template scope="scope">
-                    <nobr>{{scope.row.zwbh}}</nobr>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="招聘人数" width="100">
-                <template scope="scope">
-                    <nobr>{{scope.row.zprs}}</nobr>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="最低学历" width="100">
+            <el-table-column align="center" label="学历要求" width="100">
                 <template scope="scope">
                     <span v-if="scope.row.zdxl!='' && scope.row.zdxl!=null">
                         <nobr>{{scope.row.zdxl | dics('xueli')}}</nobr>
@@ -81,39 +79,24 @@
                     </span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="年龄" width="100">
+            <el-table-column align="center" label="招聘人数" width="100">
                 <template scope="scope">
-                    <nobr>{{scope.row.nlmin}} 至 {{scope.row.nlmax}}</nobr>
+                    <nobr>{{scope.row.zprs}}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="工作年限" width="100">
+            <el-table-column align="center" label="年龄要求" width="100">
+                <template scope="scope">
+                    <nobr>{{scope.row.nlmax}}</nobr>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="工作经验" width="100">
                 <template scope="scope">
                     <nobr>{{scope.row.gznx}}</nobr>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="工作性质" width="100">
-                <template scope="scope">
-                    <span v-if="scope.row.gzxz!='' && scope.row.gzxz!=null">
-                        <nobr>{{scope.row.gzxz | dics('gzxz')}}</nobr>
-                    </span>
-                    <span v-else>
-                        <nobr>不限</nobr>
-                    </span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="薪资标准" width="150">
-                <template scope="scope">
-                    <nobr>{{scope.row.xzlx | dics('xzfw')}}</nobr>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="关键字" width="170">
-                <template scope="scope">
-                    <nobr>{{scope.row.zwgjz}}</nobr>
-                </template>
-            </el-table-column>
             <el-table-column align="center" label="发布日期" width="173">
                 <template scope="scope">
-                    <nobr>{{scope.row.createTime | date('YYYY-MM-DD HH:mm:ss')}}</nobr>
+                    <nobr>{{scope.row.reloadtime | date('YYYY-MM-DD HH:mm:ss')}}</nobr>
                 </template>
             </el-table-column>
         </el-table>
@@ -135,26 +118,33 @@
                             </el-form-item>
                         </td>
                         <td>
-                            <el-form-item label="企业名称" prop="organName" label-width="100px">
-                                <el-input v-model="zpxx.organName"></el-input>
+                            <el-form-item label="企业名称" prop="memberId" label-width="100px">
+                                <el-select v-model="zpxx.memberId" filterable placeholder="公司名称" class="filter-item">
+                                    <el-option
+                                            v-for="item in organList"
+                                            :key="item.memberId"
+                                            :label="item.name"
+                                            :value="item.memberId">
+                                    </el-option>
+                                </el-select>
                             </el-form-item>
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            <el-form-item label="职位编号" prop="zwbh" label-width="100px">
-                                <el-input v-model="zpxx.zwbh"></el-input>
-                            </el-form-item>
-                        </td>
                         <td>
                             <el-form-item label="招聘人数" prop="zprs" label-width="100px">
                                 <el-input v-model="zpxx.zprs"></el-input>
                             </el-form-item>
                         </td>
+                        <td>
+                            <el-form-item label="性　　别" prop="zwbh" label-width="100px">
+                                <el-input v-model="zpxx.zwbh"></el-input>
+                            </el-form-item>
+                        </td>
                     </tr>
                     <tr>
                         <td>
-                            <el-form-item label="最低学历" prop="zdxl" label-width="100px">
+                            <el-form-item label="学历要求" prop="zdxl" label-width="100px">
                                 <el-select v-model="zpxx.zdxl" placeholder="请选择学历">
                                     <el-option
                                             v-for="item in dics['xueli']"
@@ -165,106 +155,51 @@
                                 </el-select>
                             </el-form-item>
                         </td>
-                        <td>
-                            <el-form-item label="工作性质" prop="gzxz" label-width="100px">
-                                <el-select v-model="zpxx.gzxz" placeholder="请选择工作性质">
-                                    <el-option
-                                            v-for="item in dics['gzxz']"
-                                            :key="item.code"
-                                            :label="item.value"
-                                            :value="item.code">
-                                    </el-option>
-                                </el-select>
-                            </el-form-item>
-                        </td>
-                    </tr><tr>
-                    <td>
-                        <el-form-item label="语言要求" prop="yyyq" label-width="100px">
-                            <el-select v-model="zpxx.yyyq" placeholder="请选择语言要求">
-                                <el-option
-                                        v-for="item in dics['yuyan']"
-                                        :key="item.code"
-                                        :label="item.value"
-                                        :value="item.code">
-                                </el-option>
-                            </el-select>
+                        <el-form-item label="工作经验" prop="gznx" label-width="100px">
+                            <el-input v-model="zpxx.gznx"></el-input>
                         </el-form-item>
-                    </td>
-                    <td>
-                        <el-form-item label="熟练程度" prop="slcd" label-width="100px">
-                            <el-select v-model="zpxx.slcd" placeholder="请选择熟练程度">
-                                <el-option
-                                        v-for="item in dics['slcd']"
-                                        :key="item.code"
-                                        :label="item.value"
-                                        :value="item.code">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                    </td>
-                </tr>
-                    <tr>
-                        <td>
-                            <el-form-item label="政治面貌" prop="zzmm" label-width="100px">
-                                <el-select v-model="zpxx.zzmm" placeholder="请选择政治面貌">
-                                    <el-option
-                                            v-for="item in dics['zzmm']"
-                                            :key="item.code"
-                                            :label="item.value"
-                                            :value="item.code">
-                                    </el-option>
-                                </el-select>
-                            </el-form-item>
-                        </td>
-                        <td>
-                            <el-form-item label="薪资范围" prop="xzlx" label-width="100px">
-                                <el-select v-model="zpxx.xzlx" placeholder="请选择薪资范围">
-                                    <el-option
-                                            v-for="item in dics['xzfw']"
-                                            :key="item.code"
-                                            :label="item.value"
-                                            :value="item.code">
-                                    </el-option>
-                                </el-select>
-                            </el-form-item>
-                        </td>
                     </tr>
                     <tr>
                         <td>
                             <el-form-item label="年龄要求" label-width="100px">
-                                <el-input v-model="zpxx.nlmin" style="width: 100px;"></el-input>　-　
-                                <el-input v-model="zpxx.nlmax" style="width: 100px;"></el-input>
+                                <el-input v-model="zpxx.nlmax"></el-input>
                             </el-form-item>
                         </td>
                         <td>
-                            <el-form-item label="职能类别" prop="znlb" label-width="100px">
-                                <el-input v-model="zpxx.znlb"></el-input>
-                            </el-form-item>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <el-form-item label="工作年限" prop="gznx" label-width="100px">
-                                <el-input v-model="zpxx.gznx"></el-input>
-                            </el-form-item>
-                        </td>
-                        <td>
-                            <el-form-item label="工作地址" prop="sbdz" label-width="100px">
-                                <el-input v-model="zpxx.sbdz"></el-input>
+                            <el-form-item label="发布日期" prop="reloadtime" label-width="100px">
+                                <el-date-picker
+                                        v-model="zpxx.reloadtime"
+                                        type="datetime"
+                                        placeholder="选择日期时间">
+                                </el-date-picker>
                             </el-form-item>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <el-form-item label="关键字" prop="zwgjz" label-width="100px">
+                            <el-form-item label="食宿条件" prop="zwgjz" label-width="100px">
                                 <el-input v-model="zpxx.zwgjz"></el-input>
                             </el-form-item>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2">
+                            <el-form-item label="任职要求" prop="znlb" label-width="100px">
+                                <el-input type="textarea" v-model="zpxx.znlb"></el-input>
+                            </el-form-item>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
                             <el-form-item label="职位描述" prop="zwms" label-width="100px">
-                                <el-input type="textarea" v-model="zpxx.zwms" :rows="10"></el-input>
+                                <el-input type="textarea" v-model="zpxx.zwms"></el-input>
+                            </el-form-item>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <el-form-item label="联系我们" prop="sbdz" label-width="100px">
+                                <el-input type="textarea" v-model="zpxx.sbdz"></el-input>
                             </el-form-item>
                         </td>
                     </tr>
@@ -298,6 +233,7 @@
 <script>
     import {getZnflCascader} from 'api/jobSystem/flxx/znfl';
     import {getOrganZpxxList, delOrganZpxx, resetOrganZpxx, createZpxx, updateZpxx} from "api/jobSystem/zpxx/zpxx";
+    import {getOrganAllList} from "api/jobSystem/organ/organ";
     import {copyProperties} from 'utils';
     import {mapGetters} from 'vuex';
     import SplitPane from "../../../components/SplitPane/index";
@@ -306,6 +242,7 @@
         name: 'table_demo',
         data() {
             return {
+                organList: null,
                 list: null,
                 total: null,
                 listLoading: true,
@@ -316,7 +253,8 @@
                     rows: this.$store.state.app.rows,
                     zwmc: '',
                     status: '',
-                    isrec: ''
+                    isrec: '',
+                    memberId: ''
                 },
                 recOptions: [{
                     value: '0',
@@ -334,7 +272,7 @@
                 dialogStatus: '',
                 zpxx: {
                     id: null,
-                    organName: null,
+                    memberId: null,
                     zwmc: null,
                     zwbh: null,
                     zprs: null,
@@ -352,14 +290,18 @@
                     yyyq: null,
                     slcd: null,
                     zzmm: null,
-                    isrec: '1'
+                    isrec: '1',
+                    reloadtime: null
                 },
                 zpxxRules: {
-                    organName: [
-                        {required: true, message: '请输入企业名称', trigger: 'blur'}
+                    memberId: [
+                        {required: true, message: '请选择企业名称', trigger: 'blur'}
                     ],
                     zwmc: [
                         {required: true, message: '请输入职位名称', trigger: 'blur'}
+                    ],
+                    reloadtime: [
+                        {type: 'date',required: true, message: '请输入发布日期', trigger: 'blur'}
                     ]
                 }
             }
@@ -374,6 +316,7 @@
         created() {
             this.getList();
             this.getOptions();
+            this.getOrganList();
         },
         methods: {
             getOptions(id) {
@@ -405,6 +348,15 @@
                     this.listLoading = false;
                 })
             },
+            getOrganList() {
+                getOrganAllList().then(response => {
+                    if (response.httpCode == 200) {
+                        this.organList = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
+                })
+            },
             handleSelectionChange(row) {
                 this.selectedRows = row;
             },
@@ -426,6 +378,9 @@
                 this.currentRow = row;
                 this.resetTemp();
                 this.zpxx = copyProperties(this.zpxx, row);
+                if (typeof this.zpxx.reloadtime == 'string') {
+                    this.zpxx.reloadtime = new Date(this.zpxx.reloadtime);
+                }
                 this.dialogStatus = 'update';
                 this.dialogVisible = true;
             },
@@ -436,8 +391,7 @@
                         this.listLoading = true;
                         createZpxx(this.zpxx).then(response => {
                             if (response.httpCode == 200) {
-                                this.list.unshift(response.data);
-                                this.total += 1;
+                                this.getList();
                                 this.$message.success('创建成功');
                             } else {
                                 this.$message.error(response.msg);
@@ -486,11 +440,7 @@
                         this.listLoading = true;
                         delOrganZpxx(ids).then(response => {
                             if (response.httpCode == 200) {
-                                this.total -= selectCounts;
-                                for (const deleteRow of this.selectedRows) {
-                                    const index = this.list.indexOf(deleteRow);
-                                    this.list.splice(index, 1);
-                                }
+                                this.getList();
                                 this.$message.success('删除成功');
                             } else {
                                 this.$message.error(response.msg);
@@ -641,7 +591,7 @@
             resetTemp() {
                 this.zpxx = {
                     id: null,
-                    organName: null,
+                    memberId: null,
                     zwmc: null,
                     zwbh: null,
                     zprs: null,
@@ -659,7 +609,8 @@
                     yyyq: null,
                     slcd: null,
                     zzmm: null,
-                    isrec: '1'
+                    isrec: '1',
+                    reloadtime: null
                 };
             }
         }

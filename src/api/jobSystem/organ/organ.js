@@ -9,6 +9,14 @@ export function getOrganList(query) {
     });
 }
 
+export function getOrganAllList(query) {
+    return fetch({
+        url: '/api/jobSystem/jobOrgan/allList',
+        method: 'get',
+        params: query
+    });
+}
+
 export function getOrgan(memberId) {
     return fetch({
         url: '/api/jobSystem/jobOrgan/get',
