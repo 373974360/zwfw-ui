@@ -114,10 +114,12 @@
                         <el-button type="primary" @click="showLogistics(scope.row.handTypeInfo.mailboxPost)">查看物流</el-button>
                     </el-button-group>
                     <el-button-group v-else-if="scope.row.handTypeInfo && scope.row.handTypeInfo.handStatus===52
-                    && scope.row.handTypeInfo.mailboxPost.expressOrder.status
+                    && (!scope.row.handTypeInfo.mailboxPost.expressOrder
+                    || (scope.row.handTypeInfo.mailboxPost.expressOrder.status
                     && (scope.row.handTypeInfo.mailboxPost.expressOrder.status.indexOf('AF') === 0
-                    || scope.row.handTypeInfo.mailboxPost.expressOrder.status.indexOf('F') === 0)">
-                        <el-button type="primary" @click="showEmsDesc(scope.row.handTypeInfo.mailboxPost.expressOrder)">失败原因</el-button>
+                    || scope.row.handTypeInfo.mailboxPost.expressOrder.status.indexOf('F') === 0)))">
+                        <el-button type="primary" v-if="scope.row.handTypeInfo.mailboxPost.expressOrder"
+                                   @click="showEmsDesc(scope.row.handTypeInfo.mailboxPost.expressOrder)">失败原因</el-button>
                         <el-button type="primary" @click="mailboxPostMailRequest(scope.row.handTypeInfo)">重新揽件</el-button>
                     </el-button-group>
                     <el-button v-else type="primary" @click="showHandInfo(scope.row)">查看</el-button>
