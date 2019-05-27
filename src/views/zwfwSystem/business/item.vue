@@ -1073,8 +1073,8 @@
                      style='width: 80%; margin-left:10%; margin-top: 5%;' v-loading="dialogFormLoading"
                      :rules="itemCompositeFormRules">
                 <el-form-item label="事项：" prop="item">
-                    <el-select style="width: 80%" v-model="itemComposite.itemId" filterable remote placeholder="请输入事项名称或基本编码"
-                               :remote-method="searchItem">
+                    <el-select style="width: 80%" v-model="itemComposite.itemId" clearable filterable remote
+                               placeholder="请输入事项名称或基本编码" :remote-method="searchItem">
                         <el-option v-for="item in pendingBasic" :key="item.id" :label="item.name" :value="item.id">
                         </el-option>
                     </el-select>
@@ -2479,6 +2479,12 @@
             addPendingBasic() {
                 this.$refs['itemCompositeForm'].validate(valid => {
                     if (valid) {
+                        for (const item of this.itemCompositeList) {
+                            if (item.id === this.itemComposite.itemId) {
+                                this.$message.warning('该事项已添加')
+                                return;
+                            }
+                        }
                         for (const basic of this.pendingBasic) {
                             if (basic.id === this.itemComposite.itemId) {
                                 this.itemCompositeList.push(basic);
