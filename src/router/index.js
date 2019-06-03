@@ -104,13 +104,15 @@ const EnterpriseInfoUp = () => import('../views/zwfwSystem/business/enterpriseIn
 const FormEditor = () => import('../views/zwfwSystem/business/formEditor');
 /* 统计分析 */
 const CallCount = () => import('../views/hallSystem/count/callCount');
-const CallCountSms = () => import('../views/hallSystem/count/smsCount');
 const OrderAndLine = () => import('../views/hallSystem/count/operation/orderAndLine');
 const WindowHandle = () => import('../views/hallSystem/count/operation/windowHandle');
 const DeptHandle = () => import('../views/hallSystem/count/operation/deptHandle');
 const StaffSatisfaction = () => import('../views/hallSystem/count/operation/staffSatisfaction');
 const DeptSatisfaction = () => import('../views/hallSystem/count/operation/deptSatisfaction');
 const Business = () => import('../views/hallSystem/count/approval/business');
+
+/* 统计短信设置 */
+const MessageSet = () => import('../views/hallSystem/statisticsSms/smsCount');
 
 /* 数据可视化模块 */
 /* 业务审批数据可视化模块 */
@@ -526,12 +528,6 @@ export const asyncRouterMap = [
                 component: CallCount,
                 name: '叫号统计',
                 meta: {permission: 'hallSystem:count:callCount:list'}
-            },
-            {
-                path: 'callCounSms',
-                component: CallCountSms,
-                name: '统计短信设置',
-                meta: {permission: 'hallSystem:count:callCount:list'}
             }
         ]
     },
@@ -566,6 +562,22 @@ export const asyncRouterMap = [
                 component: NewWorkHallVisit,
                 name: '网厅访问数据可视化',
                 meta: {permission: 'hallSystem:visualization:newWorkHallVisit:list'}
+            }
+        ]
+    },
+    {
+        redirect: 'noredirect',
+        name: '统计短信',
+        path: '/statisticsSms',
+        meta: {permission: 'hallSystem:statisticsSms:admin'},
+        icon: 'duanxinshezhi1',
+        component: Layout,
+        children: [
+            {
+                path: 'messageSet',
+                component: MessageSet,
+                name: '短信设置',
+                meta: {permission: 'hallSystem:statisticsSms:messageSet:list'}
             }
         ]
     },
