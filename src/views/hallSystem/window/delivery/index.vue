@@ -160,7 +160,7 @@
                 <el-form-item label="取件方式" prop="takeType">
                     <el-select v-model="takeTypeInfo.takeType" @change="changeTakeTypeInfo">
                         <el-option v-for="item in takeTypeList" :key="item"
-                                   :value="item" :label="item | parseToInt | enums('TakeType')">
+                                   :value="item" :label="item | enums('TakeType')">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -288,7 +288,7 @@
                 <el-form-item label="取件方式">
                     <el-select v-model="processOfflineInfo.takeTypeInfo.takeType" :disabled="offlineReadonly">
                         <el-option v-for="item in takeTypeList" :key="item"
-                                   :value="item" :label="item | parseToInt | enums('TakeType')">
+                                   :value="item" :label="item | enums('TakeType')">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -320,7 +320,7 @@
                 <el-form-item label="取件人手机号" prop="takeTypeInfo.mailboxInfo.consigneeMobile"
                               v-show="processOfflineInfo.takeTypeInfo.takeType == 2"
                               :rules="mailboxRequired ? processOfflineInfoRules.consigneeMobile : []">
-                    <el-input v-model="processOfflineInfo.takeTypeInfo.mailboxOrder.consigneeMobile" v-if="offlineReadonly">
+                    <el-input v-model="processOfflineInfo.takeTypeInfo.mailboxOrder.consigneeMobile" disabled v-if="offlineReadonly">
                     </el-input>
                     <el-input v-model="processOfflineInfo.takeTypeInfo.mailboxInfo.consigneeMobile" v-else
                               @blur="validateField('processOfflineForm', 'takeTypeInfo.mailboxInfo.consigneeMobile')">
@@ -492,7 +492,9 @@
                 <div slot="header" class="clearfix card-header">
                     <p><b>物流状态&nbsp;&nbsp;&nbsp;&nbsp;{{logistics.deliverystatus | deliveryStatusFilter}}</b></p>
                     <p>承运来源：{{logistics.type | expressTypeFilter}}</p>
-                    <p>运单编号：{{logistics.number}}</p>
+                    <p>运单编号：{{logistics.number}}
+                        <el-button type="text" @click="refreshLogistics(logistics)">物流信息不对</el-button>
+                    </p>
                 </div>
             </el-card>
             <div class="track-list">
@@ -528,7 +530,7 @@
     import {getFinishList, addProcessOffline, deleteProcessOffline, saveExpressInfo, saveTakeType, complete, reserve, cancelReserve,
         getOrderStatus, getOrderDetail} from '../../../../api/hallSystem/window/delivery'
     import {getAllAddresseesByMemberId, getMemberAddresseeById} from '../../../../api/hallSystem/member/memberAddressee';
-    import {queryLogistics} from '../../../../api/hallSystem/window/express';
+    import {queryLogistics, queryRealLogistics} from '../../../../api/hallSystem/window/express';
     import {getUserInfo} from '../../../../api/baseSystem/org/user'
     import {getWindowInfo} from '../../../../api/hallSystem/lobby/window'
 
@@ -881,13 +883,16 @@
             },
             getItemTakeTypes(id) {
                 return new Promise((resolve, reject) => {
+                    this.takeTypeList = [];
                     if (!id) {
-                        this.takeTypeList = [];
                         return reject();
                     }
                     getDetailById(id).then(response => {
                         if (response.httpCode === 200 && response.data) {
-                            this.takeTypeList = response.data.takeTypes.split(',');
+                            const takeTypeList = response.data.takeTypes.split(',');
+                            for (const takeType of takeTypeList) {
+                                this.takeTypeList.push(parseInt(takeType))
+                            }
                             resolve();
                         } else {
                             this.$message.error('事项信息获取失败');
@@ -940,7 +945,11 @@
                     }
                     getByNameOrLoginName(query).then(response => {
                         if (response.httpCode === 200) {
-                            this.memberListFilter = response.data;
+                            if (response.data.length > 50) {
+                                this.memberListFilter = response.data.slice(0, 50);
+                            } else {
+                                this.memberListFilter = response.data
+                            }
                         } else {
                             this.$message.error('数据加载失败')
                         }
@@ -962,7 +971,11 @@
                         }
                         getByNameOrLoginName(query).then(response => {
                             if (response.httpCode === 200) {
-                                this.memberList = response.data;
+                                if (response.data.length > 50) {
+                                    this.memberList = response.data.slice(0, 50);
+                                } else {
+                                    this.memberList = response.data
+                                }
                                 resolve();
                             } else {
                                 this.$message.error('数据加载失败');
@@ -1011,7 +1024,7 @@
                     return;
                 }
                 this.validateField('processOfflineForm', 'memberId');
-                if (!memberId || this.processOfflineInfo.takeTypeInfo.takeType !== 2) {
+                if (!memberId || this.processOfflineInfo.takeTypeInfo.takeType != 2) {
                     return;
                 }
                 getMemberById(memberId).then(response => {
@@ -1049,7 +1062,7 @@
             },
             initOfflineCardHeader() {
                 if (!this.offlineAddresseeList || this.offlineAddresseeList.length <= 0
-                    || this.processOfflineInfo.takeTypeInfo.takeType !== 3) {
+                    || this.processOfflineInfo.takeTypeInfo.takeType != 3) {
                     this.processOfflineInfo.takeTypeInfo.postInfo.addresseeId = undefined;
                     this.offlineCardVisible = false;
                     this.resetOfflineCardHeader();
@@ -1124,7 +1137,7 @@
                 this.takeTypeInfo.memberId = row.memberId;
                 if (row.takeTypeInfo) {
                     this.takeTypeInfo.id = row.takeTypeInfo.id;
-                    this.takeTypeInfo.takeType = row.takeTypeInfo.takeType + '';
+                    this.takeTypeInfo.takeType = row.takeTypeInfo.takeType;
                     if (row.takeTypeInfo.mailboxInfo) {
                         copyProperties(this.takeTypeInfo.mailboxInfo, row.takeTypeInfo.mailboxInfo);
                     }
@@ -1155,7 +1168,7 @@
                 this.initCardHeader();
             },
             initCardHeader() {
-                if (!this.addresseeList || this.addresseeList.length <= 0 || this.takeTypeInfo.takeType !== 3) {
+                if (!this.addresseeList || this.addresseeList.length <= 0 || this.takeTypeInfo.takeType != 3) {
                     this.cardVisible = false;
                     this.takeTypeInfo.postInfo.addresseeId = undefined;
                     this.resetCardHeader();
@@ -1337,12 +1350,11 @@
                     this.getWindow(row.takeTypeInfo.windowId);
                 }
                 Promise.all([
+                    this.getItemTakeTypes(row.itemId),
                     this.getMemberInfo(row.memberId),
                     this.changeMemberAddressee(row.memberId)
                 ]).then(() => {
                     copyProperties(this.processOfflineInfo, row);
-                    this.processOfflineInfo.takeTypeInfo.takeType += '';
-                    this.processOfflineInfo.memberId += '';
                     this.processOfflineVisible = true;
                 });
             },
@@ -1399,18 +1411,31 @@
                 })
             },
             showLogistics(takeTypeInfo) {
-                let company = takeTypeInfo.postInfo.expressCompany;
-                let number = takeTypeInfo.postInfo.expressNumber;
+                const company = takeTypeInfo.postInfo.expressCompany;
+                const number = takeTypeInfo.postInfo.expressNumber;
                 queryLogistics(company, number).then(response => {
-                    if (response.httpCode !== 200) {
+                    if (response.httpCode === 200) {
+                        this.logistics = response.data;
+                        this.logisticsVisible = true;
+                        if (this.logistics && this.logistics.deliverystatus === 3 && takeTypeInfo.flagTakeCert !== 33) {
+                            this.getList();
+                            this.listLoading = false;
+                        }
+                    } else {
                         this.$message.error('获取物流信息失败');
-                        return;
                     }
-                    this.logistics = response.data;
-                    this.logisticsVisible = true;
-                    if (this.logistics && this.logistics.deliverystatus === 3 && takeTypeInfo.flagTakeCert !== 33) {
-                        this.getList();
-                        this.listLoading = false;
+                })
+            },
+            refreshLogistics(logistics) {
+                queryRealLogistics(logistics.type, logistics.number).then(response => {
+                    if (response.httpCode === 200) {
+                        this.logistics = response.data;
+                        if (this.logistics && this.logistics.deliverystatus === 3 && takeTypeInfo.flagTakeCert !== 33) {
+                            this.getList();
+                            this.listLoading = false;
+                        }
+                    } else {
+                        this.$message.error('获取物流信息失败');
                     }
                 })
             },
