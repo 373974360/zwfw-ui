@@ -97,7 +97,7 @@
                         if (response.data.code === 0) {
                             this.authenticationVo.token = response.data.data;
                             this.authenticationVo.unitno = response.data.platcode;
-                            this.getAccessTokenTime = Number(new Date());
+                            this.getAccessTokenTime = new Date().getTime();
                             resolve(0);
                         } else {
                             this.$message.error('获取token失败(' + response.data.message + ')')
@@ -110,9 +110,8 @@
             },
             refreshGetToken() {
                 return new Promise((resolve) => {
-                    const now = Number(new Date());
-                    if ((now - this.getAccessTokenTime) > 7000 * 1000) {
-                        alert(now - this.getAccessTokenTime)
+                    const now = new Date().getTime();
+                    if ((now - this.getAccessTokenTime) > 7000000) {
                         this.getToken().then(result => {
                             resolve(result);
                         });
@@ -126,7 +125,6 @@
                 this.$refs['zwfwidentificationForm'].validate(valid => {
                     if (valid) {
                         this.refreshGetToken().then(result => {
-                            alert(result)
                             if (result == 0) {
                                 this.authenticationVo.pid = this.authenticationVo.pid.toUpperCase();
                                 axios.get('/ctid/authentication/addUser', {
