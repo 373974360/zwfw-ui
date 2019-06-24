@@ -92,17 +92,16 @@
         },
         methods: {
             getToken() {
-                var _this = this;
                 return new Promise((resolve) => {
                     axios.get('/ctid/authentication/getScanToken').then(function(response) {
+                        alert(JSON.stringify(response));
                         if (response.code === 0) {
-                            _this.authenticationVo.token = response.data;
-                            _this.authenticationVo.unitno = response.platcode;
-                            _this.getAccessTokenTime = new Date().getTime();
-                            alert(_this.getAccessTokenTime);
+                            this.authenticationVo.token = response.data;
+                            this.authenticationVo.unitno = response.platcode;
+                            this.getAccessTokenTime = new Date().getTime();
                             resolve(0);
                         } else {
-                            _this.$message.error('获取token失败(' + response.message + ')')
+                            this.$message.error('获取token失败(' + response.message + ')')
                         }
                     }).catch(function(error) {
                         console.log(error);
@@ -111,13 +110,10 @@
 
             },
             refreshGetToken() {
-                var _this = this;
                 return new Promise((resolve) => {
                     const now = new Date().getTime();
-                    alert(_this.getAccessTokenTime);
-                    alert(now-_this.getAccessTokenTime);
-                    if ((now - _this.getAccessTokenTime) > 7000000) {
-                        _this.getToken().then(result => {
+                    if ((now - this.getAccessTokenTime) > 7000000) {
+                        this.getToken().then(result => {
                             resolve(result);
                         });
                     } else {
