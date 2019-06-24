@@ -112,6 +112,7 @@
                 return new Promise((resolve) => {
                     const now = Number(new Date());
                     if ((now - this.getAccessTokenTime) > 7000 * 1000) {
+                        alert(now - this.getAccessTokenTime)
                         this.getToken().then(result => {
                             resolve(result);
                         });
@@ -125,6 +126,7 @@
                 this.$refs['zwfwidentificationForm'].validate(valid => {
                     if (valid) {
                         this.refreshGetToken().then(result => {
+                            alert(result)
                             if (result == 0) {
                                 this.authenticationVo.pid = this.authenticationVo.pid.toUpperCase();
                                 axios.get('/ctid/authentication/addUser', {
