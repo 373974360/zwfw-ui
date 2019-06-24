@@ -93,7 +93,7 @@
         methods: {
             getToken() {
                 return new Promise((resolve) => {
-                    axios.get('http://localhost:8538/authentication/getScanToken').then(function(response) {
+                    axios.get('/ctid/authentication/getScanToken').then(function(response) {
                         if (response.data.code === 0) {
                             this.authenticationVo.token = response.data.data;
                             this.authenticationVo.unitno = response.data.platcode;
@@ -127,7 +127,7 @@
                         this.refreshGetToken().then(result => {
                             if (result == 0) {
                                 this.authenticationVo.pid = this.authenticationVo.pid.toUpperCase();
-                                axios.get('http://localhost:8538/authentication/addUser', {
+                                axios.get('/ctid/authentication/addUser', {
                                     params: {
                                         token: this.authenticationVo.token,
                                         pid: this.authenticationVo.pid,
