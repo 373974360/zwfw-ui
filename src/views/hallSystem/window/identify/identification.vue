@@ -95,14 +95,14 @@
                 var _this = this;
                 return new Promise((resolve) => {
                     axios.get('/ctid/authentication/getScanToken').then(function(response) {
-                        if (response.data.code === 0) {
-                            _this.authenticationVo.token = response.data.data;
-                            _this.authenticationVo.unitno = response.data.platcode;
+                        if (response.code === 0) {
+                            _this.authenticationVo.token = response.data;
+                            _this.authenticationVo.unitno = response.platcode;
                             _this.getAccessTokenTime = new Date().getTime();
                             alert(_this.getAccessTokenTime);
                             resolve(0);
                         } else {
-                            _this.$message.error('获取token失败(' + response.data.message + ')')
+                            _this.$message.error('获取token失败(' + response.message + ')')
                         }
                     }).catch(function(error) {
                         console.log(error);
@@ -141,19 +141,19 @@
                                         unitno: this.authenticationVo.unitno
                                     }
                                 }).then(function(response) {
-                                    if (response.data.code === 0) {
+                                    if (response.code === 0) {
                                         this.$message.success('请使用微信扫一扫扫描二维码进行认证');
-                                        this.resultUrl.qrcodeContent = response.data.url;
-                                        this.resultUrl.sernum = response.data.sernum;
+                                        this.resultUrl.qrcodeContent = response.url;
+                                        this.resultUrl.sernum = response.sernum;
                                         this.qrcode.makeCode(this.resultUrl.qrcodeContent + '?param=' + this.resultUrl.sernum);
                                     } else {
-                                        this.$message.error('上传认证信息失败(' + response.data.message + ')')
+                                        this.$message.error('上传认证信息失败(' + response.message + ')')
                                     }
                                 }).catch(function(error) {
                                     console.log(error);
                                 });
                             } else {
-                                this.$message.error('获取token失败(' + response.data.message + ')')
+                                this.$message.error('获取token失败(' + response.message + ')')
                             }
                         })
                     }
