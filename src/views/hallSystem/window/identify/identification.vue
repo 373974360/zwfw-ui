@@ -111,6 +111,9 @@
             refreshGetToken() {
                 return new Promise((resolve) => {
                     const now = new Date().getTime();
+                    alert(now);
+                    alert(this.getAccessTokenTime);
+                    alert(now-this.getAccessTokenTime);
                     if ((now - this.getAccessTokenTime) > 7000000) {
                         this.getToken().then(result => {
                             resolve(result);
