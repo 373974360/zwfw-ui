@@ -92,15 +92,17 @@
         },
         methods: {
             getToken() {
+                var _this = this;
                 return new Promise((resolve) => {
                     axios.get('/ctid/authentication/getScanToken').then(function(response) {
                         if (response.data.code === 0) {
-                            this.authenticationVo.token = response.data.data;
-                            this.authenticationVo.unitno = response.data.platcode;
-                            this.getAccessTokenTime = new Date().getTime();
+                            _this.authenticationVo.token = response.data.data;
+                            _this.authenticationVo.unitno = response.data.platcode;
+                            _this.getAccessTokenTime = new Date().getTime();
+                            alert(_this.getAccessTokenTime);
                             resolve(0);
                         } else {
-                            this.$message.error('获取token失败(' + response.data.message + ')')
+                            _this.$message.error('获取token失败(' + response.data.message + ')')
                         }
                     }).catch(function(error) {
                         console.log(error);
@@ -109,13 +111,13 @@
 
             },
             refreshGetToken() {
+                var _this = this;
                 return new Promise((resolve) => {
                     const now = new Date().getTime();
-                    alert(now);
-                    alert(this.getAccessTokenTime);
-                    alert(now-this.getAccessTokenTime);
-                    if ((now - this.getAccessTokenTime) > 7000000) {
-                        this.getToken().then(result => {
+                    alert(_this.getAccessTokenTime);
+                    alert(now-_this.getAccessTokenTime);
+                    if ((now - _this.getAccessTokenTime) > 7000000) {
+                        _this.getToken().then(result => {
                             resolve(result);
                         });
                     } else {
