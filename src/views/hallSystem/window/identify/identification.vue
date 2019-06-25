@@ -94,7 +94,9 @@
             getToken() {
                 return new Promise((resolve) => {
                     axios.get('/ctid/authentication/getScanToken').then(function(response) {
+                        alert(response);
                         if (response.code == "0") {
+                            alert(response);
                             this.authenticationVo.token = response.token;
                             this.authenticationVo.unitno = response.platcode;
                             this.getAccessTokenTime = new Date().getTime();
@@ -126,6 +128,7 @@
                 this.$refs['zwfwidentificationForm'].validate(valid => {
                     if (valid) {
                         this.refreshGetToken().then(result => {
+                            alert(result);
                             if (result == 0) {
                                 this.authenticationVo.pid = this.authenticationVo.pid.toUpperCase();
                                 axios.get('/ctid/authentication/addUser', {
