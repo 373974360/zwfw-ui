@@ -94,9 +94,9 @@
             getToken() {
                 return new Promise((resolve) => {
                     axios.get('/ctid/authentication/getScanToken').then(function(response) {
-                        alert(response);
+                        alert(JSON.stringify(response));
+                        alert(response.code);
                         if (response.code == "0") {
-                            alert(response);
                             this.authenticationVo.token = response.token;
                             this.authenticationVo.unitno = response.platcode;
                             this.getAccessTokenTime = new Date().getTime();
