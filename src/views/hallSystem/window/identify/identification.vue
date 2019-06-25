@@ -94,10 +94,11 @@
             getToken() {
                 return new Promise((resolve) => {
                     axios.get('/ctid/authentication/getScanToken').then(function(response) {
-                        if (response.code == 0) {
+                        if (response.code == "0") {
                             this.authenticationVo.token = response.token;
                             this.authenticationVo.unitno = response.platcode;
                             this.getAccessTokenTime = new Date().getTime();
+                            alert(this.getAccessTokenTime);
                             resolve(0);
                         } else {
                             this.$message.error('获取token失败(' + response.message + ')')
@@ -136,7 +137,7 @@
                                         unitno: this.authenticationVo.unitno
                                     }
                                 }).then(function(response) {
-                                    if (response.code == 0) {
+                                    if (response.code == "0") {
                                         this.$message.success('请使用微信扫一扫扫描二维码进行认证');
                                         this.resultUrl.qrcodeContent = response.url;
                                         this.resultUrl.sernum = response.sernum;
