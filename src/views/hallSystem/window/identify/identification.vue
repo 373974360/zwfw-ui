@@ -106,8 +106,7 @@
                     axios.get('/ctid/authentication/getScanToken').then(function(response) {
                         console.log(JSON.stringify(response));
                         if (response.data.code == 0) {
-                            alert(this.authentication);
-                            alert(this.getAccessTokenTime);
+                            console.log(this.getAccessTokenTime);
                             this.authentication.token = response.data.token;
                             this.authentication.unitno = response.data.platcode;
                             this.getAccessTokenTime = new Date().getTime();
