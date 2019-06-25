@@ -87,7 +87,8 @@
                     phone: '',
                     unitno: ''
                 },
-                getAccessTokenTime: 0
+                getAccessTokenTime: 0,
+                token: ''
             }
         },
         methods: {
@@ -95,10 +96,10 @@
                 return new Promise((resolve) => {
                     axios.get('/ctid/authentication/getScanToken').then(function(response) {
                         alert(JSON.stringify(response));
-                        alert(response.data.code);
                         if (response.data.code == 0) {
-                            alert(1)
-                            this.authenticationVo.token = response.data.token;
+                            alert(response.data.token);
+                            this.token = response.data.token;
+                            alert(this.token);
                             this.authenticationVo.unitno = response.data.platcode;
                             this.getAccessTokenTime = new Date().getTime();
                             alert(this.getAccessTokenTime);
@@ -160,7 +161,7 @@
                 });
             }
         },
-        mounted() {
+        created() {
             this.getToken();
             this.qrcode = new QRCode('qrcode', {
                 width: 300,
@@ -168,24 +169,5 @@
             });
         }
     }
+
 </script>
-<style scoped="scoped">
-    .el-row {
-        margin-bottom: 20px;
-
-    :last-child {
-        margin-bottom: 0;
-    }
-
-    }
-    .el-col {
-        border-radius: 4px;
-        line-height: 40px;
-    }
-
-    .ewm img {
-        width: 150px;
-    }
-
-
-</style>
