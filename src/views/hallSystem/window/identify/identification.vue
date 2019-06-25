@@ -16,16 +16,16 @@
         <el-row :gutter="10">
             <el-col :span="14">
                 <el-form id="checkboxTable" class="small-space" label-position="right"
-                         label-width="100px" ref="zwfwidentificationForm" :model="authenticationVo"
-                         :rules="authenticationVoRules">
+                         label-width="100px" ref="zwfwidentificationForm" :model="authentication"
+                         :rules="authenticationRules">
                     <el-form-item label="姓名" prop="name">
-                        <el-input style="width: 310px;" v-model="authenticationVo.name"></el-input>
+                        <el-input style="width: 310px;" v-model="authentication.name"></el-input>
                     </el-form-item>
                     <el-form-item label="身份证号" prop="pid">
-                        <el-input style="width: 310px;" v-model="authenticationVo.pid"></el-input>
+                        <el-input style="width: 310px;" v-model="authentication.pid"></el-input>
                     </el-form-item>
                     <el-form-item label="手机号" prop="phone">
-                        <el-input style="width: 310px;" v-model="authenticationVo.phone"></el-input>
+                        <el-input style="width: 310px;" v-model="authentication.phone"></el-input>
                     </el-form-item>
                     <el-form-item style="margin-left: 100px;">
                         <el-button type="primary" style="font-size: medium;height:60px; width: 130px; "
@@ -65,7 +65,7 @@
                 }
             };
             return {
-                authenticationVoRules: {
+                authenticationRules: {
                     name: [
                         {required: true, message: '请填写姓名', trigger: 'blur'}
                     ],
@@ -83,7 +83,7 @@
                     sernum: ''
                 },
                 qrcode: undefined,
-                authenticationVo: {
+                authentication: {
                     token: '',
                     pid: '',
                     name: '',
@@ -106,9 +106,10 @@
                     axios.get('/ctid/authentication/getScanToken').then(function(response) {
                         console.log(JSON.stringify(response));
                         if (response.data.code == 0) {
-                            alert(this.authenticationVo);
-                            this.authenticationVo.token = response.data.token;
-                            this.authenticationVo.unitno = response.data.platcode;
+                            alert(this.authentication);
+                            alert(this.getAccessTokenTime);
+                            this.authentication.token = response.data.token;
+                            this.authentication.unitno = response.data.platcode;
                             this.getAccessTokenTime = new Date().getTime();
                             resolve(0);
                         } else {
@@ -140,14 +141,14 @@
                         this.refreshGetToken().then(result => {
                             alert(result);
                             if (result == 0) {
-                                this.authenticationVo.pid = this.authenticationVo.pid.toUpperCase();
+                                this.authentication.pid = this.authentication.pid.toUpperCase();
                                 axios.get('/ctid/authentication/addUser', {
                                     params: {
-                                        token: this.authenticationVo.token,
-                                        pid: this.authenticationVo.pid,
-                                        name: this.authenticationVo.name,
-                                        phone: this.authenticationVo.phone,
-                                        unitno: this.authenticationVo.unitno
+                                        token: this.authentication.token,
+                                        pid: this.authentication.pid,
+                                        name: this.authentication.name,
+                                        phone: this.authentication.phone,
+                                        unitno: this.authentication.unitno
                                     }
                                 }).then(function(response) {
                                     if (response.data.code == 0) {
