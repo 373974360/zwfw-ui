@@ -40,12 +40,16 @@
         </el-row>
     </div>
 </template>
+
 <script>
+
     import {isIdCardNo, validatMobiles} from '../../../../utils/validate';
     import QRCode from 'qrcodejs2';
+    import {mapGetters} from 'vuex';
     import axios from 'axios';
 
     export default {
+        name: 'identification_table',
         data() {
             const validateIdcard = (rule, value, callback) => {
                 if (!isIdCardNo(value)) {
@@ -87,9 +91,19 @@
                     phone: '',
                     unitno: ''
                 },
-                getAccessTokenTime: 0,
-                token: ''
+                getAccessTokenTime: 0
             }
+        },
+        created() {
+            this.getToken();
+        },
+        computed: {
+            ...mapGetters([
+                'textMap',
+                'enums',
+                'closeOnClickModal',
+                'dics'
+            ])
         },
         methods: {
             getToken() {
@@ -97,12 +111,10 @@
                     axios.get('/ctid/authentication/getScanToken').then(function(response) {
                         console.log(JSON.stringify(response));
                         if (response.data.code == 0) {
-                            alert(response.data.token);
-                            this.token = response.data.token;
-                            alert(this.token);
+                            alert(this.authenticationVo);
+                            this.authenticationVo.token = response.data.token;
                             this.authenticationVo.unitno = response.data.platcode;
                             this.getAccessTokenTime = new Date().getTime();
-                            alert(this.getAccessTokenTime);
                             resolve(0);
                         } else {
                             this.$message.error('获取token失败(' + response.data.message + ')')
@@ -160,14 +172,6 @@
                     }
                 });
             }
-        },
-        created() {
-            this.getToken();
-            this.qrcode = new QRCode('qrcode', {
-                width: 300,
-                height: 300
-            });
         }
     }
-
 </script>
