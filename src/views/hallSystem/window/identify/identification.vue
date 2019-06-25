@@ -45,7 +45,6 @@
 
     import {isIdCardNo, validatMobiles} from '../../../../utils/validate';
     import QRCode from 'qrcodejs2';
-    import {mapGetters} from 'vuex';
     import axios from 'axios';
 
     export default {
@@ -94,16 +93,12 @@
                 getAccessTokenTime: 0
             }
         },
-        created() {
+        mounted() {
             this.getToken();
-        },
-        computed: {
-            ...mapGetters([
-                'textMap',
-                'enums',
-                'closeOnClickModal',
-                'dics'
-            ])
+            this.qrcode = new QRCode('qrcode', {
+                width: 300,
+                height: 300
+            });
         },
         methods: {
             getToken() {
@@ -128,6 +123,7 @@
             refreshGetToken() {
                 return new Promise((resolve) => {
                     const now = new Date().getTime();
+                    console.log(this.getAccessTokenTime);
                     if ((now - this.getAccessTokenTime) > 7000000) {
                         this.getToken().then(result => {
                             resolve(result);
