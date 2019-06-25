@@ -95,7 +95,7 @@
             getToken() {
                 return new Promise((resolve) => {
                     axios.get('/ctid/authentication/getScanToken').then(function(response) {
-                        alert(JSON.stringify(response));
+                        console.log(JSON.stringify(response));
                         if (response.data.code == 0) {
                             alert(response.data.token);
                             this.token = response.data.token;
