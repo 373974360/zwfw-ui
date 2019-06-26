@@ -27,7 +27,10 @@
                     <el-form-item label="手机号" prop="phone">
                         <el-input style="width: 310px;" v-model="authentication.phone"></el-input>
                     </el-form-item>
-                    <el-form-item style="margin-left: 100px;">
+                    <el-form-item>
+                        <el-button type="primary" style="font-size: medium;height:60px; width: 130px; "
+                                   @click="resetIdenForm()">清空数据
+                        </el-button>
                         <el-button type="primary" style="font-size: medium;height:60px; width: 130px; "
                                    @click="getCertToken()">实名认证
                         </el-button>
@@ -35,17 +38,18 @@
                 </el-form>
             </el-col>
             <el-col :span="7">
-                <div v-show="resultUrl.qrcodeContent != ''" id="qrcode"></div>
+                <div  v-show="resultUrl.qrcodeContent != ''" class="qrcode" ref="qrCodeUrl"></div>
             </el-col>
         </el-row>
     </div>
 </template>
 
-<script>
 
+<script>
     import {isIdCardNo, validatMobiles} from '../../../../utils/validate';
     import QRCode from 'qrcodejs2';
-    import axios from 'axios';
+    import {getScanToken, addUser} from '../../../../api/hallSystem/window/identification';
+    import {resetForm} from 'utils';
 
     export default {
         name: 'identification_table',
@@ -93,9 +97,9 @@
                 getAccessTokenTime: 0
             }
         },
-        mounted() {
+        created() {
             this.getToken();
-            this.qrcode = new QRCode('qrcode', {
+            this.qrcode = new QRCode(this.$refs.qrCodeUrl, {
                 width: 300,
                 height: 300
             });
@@ -103,27 +107,22 @@
         methods: {
             getToken() {
                 return new Promise((resolve) => {
-                    axios.get('/ctid/authentication/getScanToken').then(function(response) {
+                    getScanToken().then(response => {
                         console.log(JSON.stringify(response));
-                        if (response.data.code == 0) {
-                            console.log(this.getAccessTokenTime);
-                            this.authentication.token = response.data.token;
-                            this.authentication.unitno = response.data.platcode;
-                            this.getAccessTokenTime = new Date().getTime();
+                        if (response.code == 0) {
+                            this.authentication.token = response.token;
+                            this.authentication.unitno = response.platcode;
+                            this.getAccessTokenTime = Number(new Date());
                             resolve(0);
                         } else {
-                            this.$message.error('获取token失败(' + response.data.message + ')')
+                            this.$message.error('获取token失败(' + response.message + ')')
                         }
-                    }).catch(function(error) {
-                        console.log(error);
-                    });
+                    })
                 })
-
             },
             refreshGetToken() {
                 return new Promise((resolve) => {
-                    const now = new Date().getTime();
-                    console.log(this.getAccessTokenTime);
+                    const now = Number(new Date());
                     if ((now - this.getAccessTokenTime) > 7000000) {
                         this.getToken().then(result => {
                             resolve(result);
@@ -135,28 +134,28 @@
             },
             getCertToken() {
                 this.resultUrl.qrcodeContent = '';
+                this.resultUrl.sernum = '';
+                $('.qrcode').html("");
                 this.$refs['zwfwidentificationForm'].validate(valid => {
                     if (valid) {
                         this.refreshGetToken().then(result => {
-                            alert(result);
                             if (result == 0) {
                                 this.authentication.pid = this.authentication.pid.toUpperCase();
-                                axios.get('/ctid/authentication/addUser', {
-                                    params: {
-                                        token: this.authentication.token,
-                                        pid: this.authentication.pid,
-                                        name: this.authentication.name,
-                                        phone: this.authentication.phone,
-                                        unitno: this.authentication.unitno
-                                    }
-                                }).then(function(response) {
-                                    if (response.data.code == 0) {
+                                addUser(this.authentication).then(response => {
+                                    if (response.code == 0) {
                                         this.$message.success('请使用微信扫一扫扫描二维码进行认证');
-                                        this.resultUrl.qrcodeContent = response.data.url;
-                                        this.resultUrl.sernum = response.data.sernum;
-                                        this.qrcode.makeCode(this.resultUrl.qrcodeContent + '?param=' + this.resultUrl.sernum);
+                                        this.resultUrl.qrcodeContent = response.url;
+                                        this.resultUrl.sernum = response.sernum;
+                                        this.qrcode = new QRCode(this.$refs.qrCodeUrl, {
+                                            text: this.resultUrl.qrcodeContent + '?param=' + this.resultUrl.sernum,
+                                            width: 300,
+                                            height: 300,
+                                            colorDark: '#000000',
+                                            colorLight: '#ffffff',
+                                            correctLevel: QRCode.CorrectLevel.H
+                                        });
                                     } else {
-                                        this.$message.error('上传认证信息失败(' + response.data.message + ')')
+                                        this.$message.error('上传认证信息失败(' + response.message + ')')
                                     }
                                 }).catch(function(error) {
                                     console.log(error);
@@ -167,7 +166,19 @@
                         })
                     }
                 });
-            }
+            },
+            resetTemp() {
+                this.authentication.pid ='';
+                this.authentication.name ='';
+                this.authentication.phone ='';
+                this.resultUrl.qrcodeContent = '';
+                this.resultUrl.sernum = '';
+                $('.qrcode').html("");
+            },
+            resetIdenForm() {
+                this.resetTemp();
+                resetForm(this, 'zwfwidentificationForm');
+            },
         }
     }
 </script>

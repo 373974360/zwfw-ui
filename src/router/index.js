@@ -86,7 +86,7 @@ const WindowWork = () => import('../views/hallSystem/window/street/windowWork');
 /* 街办查询 */
 const WindowHistory = () => import('../views/hallSystem/window/street/windowHistory');
 /* 微警认证 */
-const Identification = () => import('../views/hallSystem/window/identify/identification');
+const Identification = () => import('../views/hallSystem/window/identify/index');
 const IdentifyRegister = () => import('../views/hallSystem/window/identify/identifyRegister');
 
 /** **********************政务服务管理系统************************/
