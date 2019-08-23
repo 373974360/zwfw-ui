@@ -1046,6 +1046,9 @@
                     <el-form-item label="每个时段预约人数" prop="preordernum">
                         <el-input-number v-model="zwfwItemConfig.preordernum" :min="1" label="预约人数"></el-input-number>
                     </el-form-item>
+                    <el-form-item label="最大可预约天数" prop="availableDays">
+                        <el-input-number v-model="zwfwItemConfig.availableDays" :min="1" label="预约天数"></el-input-number>
+                    </el-form-item>
                 </div>
             </el-form>
             <div style="text-align: center" slot="footer" class="dialog-footer">
@@ -1279,7 +1282,8 @@
                     preorderTimeArray: [],
                     preordernum: '',
                     opentime: [],
-                    itemId: ''
+                    itemId: '',
+                    availableDays: ''
                 },
                 applyMaterials: '',
                 itemId: '',
