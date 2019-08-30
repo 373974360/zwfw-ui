@@ -8,10 +8,10 @@ export function getHandMailboxOpenCode(processNumber) {
     });
 }
 
-export function mailboxPostMailRequest(processNumber) {
+export function expressRequest(processNumber) {
     const data = {processNumber}
     return fetch({
-        url: '/api/workSystem/itemHandType/mailboxPostMailRequest',
+        url: '/api/workSystem/itemHandType/expressRequest',
         method: 'post',
         data
     });
