@@ -1096,7 +1096,7 @@
                     },
                     postInfo: {
                         id: undefined,
-                        addresseeId: undefined,
+                        receiverAddresseeId: undefined,
                         expressCompany: undefined,
                         expressNumber: undefined
                     }
@@ -1828,7 +1828,7 @@
                 _this.itemVo = data.itemVo;
                 this.itemHandTypeList = data.itemVo.handTypes.split(',');
                 this.itemTakeTypeList = data.itemVo.takeTypes.split(',');
-                this.itemHandTypeVo.postInfo.addresseeId = data.itemVo.addresseeId;
+                this.itemHandTypeVo.postInfo.receiverAddresseeId = data.itemVo.addresseeId;
                 _this.member = data.member;
                 // _this.company = data.company;
                 _this.itemPretrialVo = data.itemPretrialVo;
@@ -2337,7 +2337,7 @@
             },
             resetItemHandTypeVo() {
                 this.clearHandType()
-                this.itemHandTypeVo.postInfo.addresseeId = this.itemVo.addresseeId;
+                this.itemHandTypeVo.postInfo.receiverAddresseeId = this.itemVo.addresseeId;
                 copyProperties(this.itemHandTypeVo, this.handTypeVo);
                 if (this.itemHandTypeVo.handType) {
                     this.itemHandTypeVo.handType += '';
@@ -2360,7 +2360,7 @@
                     },
                     postInfo: {
                         id: undefined,
-                        addresseeId: undefined,
+                        receievrAddresseeId: undefined,
                         expressCompany: undefined,
                         expressNumber: undefined
                     }
