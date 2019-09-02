@@ -416,7 +416,7 @@
             showHandInfo(row) {
                 this.currentRow = row;
                 if (row.handTypeInfo && row.handTypeInfo.handType === 3) {
-                    let addresseeId = row.handTypeInfo.postInfo.addresseeId;
+                    let addresseeId = row.handTypeInfo.postInfo.receiverAddresseeId;
                     for (let item of this.addresseeList) {
                         if (item.id === addresseeId) {
                             copyProperties(this.addresseeCard, item);
