@@ -88,6 +88,7 @@ const WindowHistory = () => import('../views/hallSystem/window/street/windowHist
 /* 微警认证 */
 const Identification = () => import('../views/hallSystem/window/identify/identification');
 const IdentifyRegister = () => import('../views/hallSystem/window/identify/identifyRegister');
+const Authentication = () => import('../views/hallSystem/window/identify/authentication');
 
 /** **********************政务服务管理系统************************/
 /* index */
@@ -446,6 +447,12 @@ export const asyncRouterMap = [
                 component: CompanyInfo,
                 name: '企业信息',
                 meta: {permission: 'hallSystem:window:companyInfo:list'}
+            },
+            {
+                path: 'authentication',
+                component: Authentication,
+                name: '身份认证',
+                meta: {permission: 'hallSystem:window:authentication:list'}
             },
             {
                 path: 'identification',

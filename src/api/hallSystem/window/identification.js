@@ -68,3 +68,18 @@ export function setQrCode(query){
         params: query
     })
 }
+export function addUser(query){
+    return fetch({
+        url: '/ctid/authentication/addUser',
+        method: 'get',
+        params: query
+    })
+}
+
+export function  getScanToken(query) {
+    return fetch({
+        url: '/ctid/authentication/getScanToken',
+        method: 'get',
+        params: query
+    })
+}
