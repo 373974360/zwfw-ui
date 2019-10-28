@@ -322,10 +322,13 @@
              */
             saveCandidateUser() {
                 var _this = this;
-                console.log(this.task)
-                saveCandidateUser(this.processDefinitionId, this.task.taskDefinitionKey, this.candidateUserList.map(function (item) {
-                    return item.id
-                })).then(function (response) {
+                console.log(this.task);
+                var users = [];
+                this.candidateUserList.map(function (item) {
+                    users.push(item.id) ;
+                })
+                console.log(users.join());
+                saveCandidateUser(this.processDefinitionId, this.task.taskDefinitionKey, users.join()).then(function (response) {
                     _this.$message.success("保存成功")
                 }).catch(function () {
                     _this.$message.error("保存失败");
