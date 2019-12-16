@@ -17,11 +17,7 @@
                   style="width: 100%">
             <el-table-column align="left" label="事项名称">
                 <template slot-scope="scope">
-                    <el-tooltip class="item" effect="dark" placement="right" content="点击查看">
-                        <div style="cursor:pointer;" @click="showApproveInfo(scope.row)">
-                            <div>{{scope.row.approveName}}</div>
-                        </div>
-                    </el-tooltip>
+                    <div>{{scope.row.approveName}}</div>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="持有者类型">
@@ -65,9 +61,10 @@
             </el-table-column>
             <el-table-column align="center" label="操作" width="300">
                 <template slot-scope="scope">
-                    <el-button type="primary" @click="handleUpdate(scope.row)">查看</el-button>
+                    <el-button type="primary" @click="handleUpdate(scope.row)">编辑</el-button>
                     <el-button type="primary" @click="doAddRelease(scope.row)">新增发布</el-button>
                     <el-button type="primary" @click="doUpdateRelease(scope.row)">更新发布</el-button>
+                    <el-button type="primary" @click="preview(scope.row)">预览</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -143,8 +140,14 @@
                 <el-form-item label="经办人身份证号" prop="operatorIdcard" v-if="getLicenceTypeShow">
                     <el-input v-model="licenceEnter.operatorIdcard"></el-input>
                 </el-form-item>
-                <el-form-item label="打印份数限制" prop="printNum" v-if="getLicenceTypeShow">
-                    <el-input v-model="licenceEnter.printNum"></el-input>
+                <el-form-item label="正本打印份数限制" prop="printNum" v-if="getLicenceTypeShow">
+                    <el-input-number v-model="licenceEnter.printNum" :min="0"></el-input-number>
+                </el-form-item>
+                <el-form-item label="副本打印份数限制" prop="copyNum" v-if="getLicenceTypeShow">
+                    <el-input-number v-model="licenceEnter.copyNum" :min="0"></el-input-number>
+                </el-form-item>
+                <el-form-item label="副本一次性打印份数" prop="copyPage" v-if="getLicenceTypeShow">
+                    <el-input-number v-model="licenceEnter.copyPage" :min="0"></el-input-number>
                 </el-form-item>
 
                 <div v-for="list in surfaceDta1" v-if="getLicenceTypeShow">
@@ -201,13 +204,14 @@
     import {copyProperties, resetForm} from 'utils';
     import {mapGetters} from 'vuex';
     import moment from 'moment';
-    import {isIdCardNo, validatMobiles, checkSocialCreditCode} from 'utils/validate'
+    import {isIdCardNo, validatMobiles} from 'utils/validate'
     import {
         getLicenceList,
         getLicenceTypeByItemCode,
         getPaginateSurfaceByType,
         createLicenceEnter,
-        releaseLicenceEnter
+        getLicenseInfoAndPicture,
+        release
     } from '../../../../api/hallSystem/window/licence';
 
     export default {
@@ -395,7 +399,9 @@
                     remark: undefined,
                     chooseLicenceType: undefined,
                     licenceId: undefined,
-                    printNum: 1
+                    printNum: 0,
+                    copyNum: 0,
+                    copyPage: 0
                 },
                 jsonObject: {
                     type: 'new',
@@ -435,44 +441,33 @@
                 btnLoading: false,
                 readonlyFlag: false,
                 licenceEnterRules: {
-                    // approveCode: [
-                    //     {required: true, message: '请选择事项', trigger: 'blur'}
-                    // ],
-                    // licenseTypeCode: [
-                    //     {required: true, message: '请输入证照模板编码', trigger: 'blur'}
-                    // ],
-                    // licenseTypeName: [
-                    //     {required: true, message: '请输入证照模板名称', trigger: 'blur'}
-                    // ],
-                    // sequence: [
-                    //     {required: true, message: '请输入照面项序号', trigger: 'blur'}
-                    // ],
-                    // value: [
-                    //     {required: true, message: '请输入照面编号取值', trigger: 'blur'}
-                    // ],
-                    // deptOrganizeCode: [
-                    //     {required: true, message: '请输入证照颁发机构代码', trigger: 'blur'}
-                    // ],
-                    // holderName: [
-                    //     {required: true, message: '请输入持有者名称', trigger: 'blur'}
-                    // ],
-                    // certificateType: [
-                    //     {required: true, message: '请选择持有者证件类型', trigger: 'blur'}
-                    // ],
-                    // certificateNo: [
-                    //     {required: true, message: '请输入持有者证件号码', trigger: 'blur'}
-                    // ],
-                    // operatorName: [
-                    //     {required: true, message: '请输入经办人姓名', trigger: 'blur'}
-                    // ],
-                    // operatorPhone: [
-                    //     // {required: true, message: '请输入经办人联系方式', trigger: 'blur'},
-                    //     // {validator: validateMobiles, trigger: 'blur'}
-                    // ],
-                    // operatorIdcard: [
-                    //     // {required: true, message: '请输入经办人身份证号', trigger: 'blur'},
-                    //     // {validator: validateIdcard, trigger: 'blur'}
-                    // ]
+                    approveCode: [
+                        {required: true, message: '请选择事项', trigger: 'blur'}
+                    ],
+                    licenseTypeCode: [
+                        {required: true, message: '请输入证照模板编码', trigger: 'blur'}
+                    ],
+                    licenseTypeName: [
+                        {required: true, message: '请输入证照模板名称', trigger: 'blur'}
+                    ],
+                    sequence: [
+                        {required: true, message: '请输入照面项序号'}
+                    ],
+                    value: [
+                        {required: true, message: '请输入照面编号取值', trigger: 'blur'}
+                    ],
+                    deptOrganizeCode: [
+                        {required: true, message: '请输入证照颁发机构代码', trigger: 'blur'}
+                    ],
+                    holderName: [
+                        {required: true, message: '请输入持有者名称', trigger: 'blur'}
+                    ],
+                    certificateType: [
+                        {required: true, message: '请选择持有者证件类型', trigger: 'blur'}
+                    ],
+                    certificateNo: [
+                        {required: true, message: '请输入持有者证件号码', trigger: 'blur'}
+                    ]
                 }
             }
         },
@@ -501,10 +496,6 @@
                     console.log(this.licenceEnter.chooseLicenceType);
                     this.getPaginateSurfaceByType();
                 }
-            },
-            showApproveInfo(value) {
-                this.licenceEnter.approveId = value.approveId;
-                this.licenceEnter.approveName = value.approveName;
             },
             getList() {
                 this.listLoading = true;
@@ -718,28 +709,28 @@
                 _this.jsonObject.metaData.approveCode = row.approveCode;
                 _this.jsonObject.metaData.approveName = row.approveName;
                 _this.jsonObject.surfaceData = _this.licenceEnter.surfaceData;
-                $.ajax({
-                    url: 'http://localhost:8765/api/licence/licenceEnter/release',
-                    type: 'POST',
-                    data: JSON.stringify(_this.jsonObject),
-                    contentType: 'application/json;charset=UTF-8',
-                    success(response) {
-                        if (response.status == 200 && response.data.retCode == 'SUCCESS') {
-                            //    修改证照标识id
-                            _this.licenceEnter = {};
-                            _this.licenceEnter.id = row.id;
-                            _this.licenceEnter.licenceId = response.data.id;
-                            createLicenceEnter(this.licenceEnter).then(response => {
-                                if (response.httpCode === 200) {
-                                    _this.$message.success('入库成功');
-                                    _this.getList();
-                                } else {
-                                    _this.$message.success('入库失败');
-                                }
-                            })
-                        } else {
-                            _this.$message.error(response.data.errors.message);
-                        }
+                release(JSON.stringify(_this.jsonObject),_this.licenceEnter.operatorPhone,_this.licenceEnter.operatorName,_this.licenceEnter.approveName).then(response => {
+                    if (response.status == 200 && response.data.retCode == 'SUCCESS') {
+                        //    修改证照标识id
+                        _this.updateLicenceInfo(row.id, response.data.id);
+                    } else {
+                        _this.$message.error(response.data.errors.message);
+                    }
+                })
+            },
+            updateLicenceInfo(id, licenceId) {
+                this.resetTemp();
+                this.licenceEnter = {
+                    id: id,
+                    licenceId: licenceId
+                };
+                console.dir(this.licenceEnter);
+                createLicenceEnter(this.licenceEnter).then(response => {
+                    if (response.httpCode === 200) {
+                        this.$message.success('入库成功');
+                        this.getList();
+                    } else {
+                        this.$message.success('入库失败');
                     }
                 })
             },
@@ -768,30 +759,28 @@
                 _this.jsonObject.oldData.licenseNo = row.licenceId;
                 _this.jsonObject.surfaceData = _this.licenceEnter.surfaceData;
                 console.log(JSON.stringify(_this.jsonObject));
-                $.ajax({
-                    url: 'http://localhost:8765/api/licence/licenceEnter/release',
-                    type: 'POST',
-                    data: JSON.stringify(_this.jsonObject),
-                    contentType: 'application/json;charset=UTF-8',
-                    success(response) {
-                        if (response.status == 200 && response.data.retCode == 'SUCCESS') {
-                            //    修改证照标识id
-                            _this.licenceEnter = {};
-                            _this.licenceEnter.id = row.id;
-                            _this.licenceEnter.licenceId = response.data.id;
-                            createLicenceEnter(_this.licenceEnter).then(response => {
-                                if (response.httpCode === 200) {
-                                    _this.$message.success('入库成功');
-                                    _this.getList();
-                                } else {
-                                    _this.$message.error('入库失败');
-                                }
-                            })
-                        } else {
-                            _this.$message.error(response.data.errors.message);
-                        }
+                release(JSON.stringify(_this.jsonObject)).then(response => {
+                    if (response.status == 200 && response.data.retCode == 'SUCCESS') {
+                        //    修改证照标识id
+                        _this.updateLicenceInfo(row.id, response.data.id);
+                    } else {
+                        _this.$message.error(response.data.errors.message);
                     }
                 })
+
+            },
+            //预览
+            preview(row){
+                console.dir(row.licenceId);
+                if (row.licenceId == null){
+                    this.$message.error('该证照未入库，请先点击新增发布');
+                }else{
+                    getLicenseInfoAndPicture(row.licenceId).then(response => {
+                        if (response.httpCode === 200) {
+                            window.open("http://new.zwfw.itl.gov.cn:10240"+response.data.url.substr(4))
+                        }
+                    })
+                }
             },
             formatDate() {
                 if (!this.licenceEnter.registerDate) {
@@ -831,7 +820,9 @@
                     remark: undefined,
                     chooseLicenceType: undefined,
                     licenceId: undefined,
-                    printNum: undefined
+                    printNum: undefined,
+                    copyPage: undefined,
+                    copyNum: undefined
                 };
             },
             resetLicenceEnterForm() {

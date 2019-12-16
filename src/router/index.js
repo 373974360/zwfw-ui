@@ -69,6 +69,8 @@ const TakeAway = () => import('../views/hallSystem/window/receive/takeAway');
 const Delivery = () => import('../views/hallSystem/window/delivery/index');
 /* 证照录入 */
 const Licence = () => import('../views/hallSystem/window/licence/index');
+/* 取证记录 */
+const LicenceRecord = () => import('../views/hallSystem/window/licenceRecord/index');
 /* 快件箱管理*/
 const Mailbox = () => import('../views/hallSystem/window/mailbox/index');
 /* 收件地址管理*/
@@ -438,7 +440,12 @@ export const asyncRouterMap = [
                 name: '快件箱管理',
                 meta: {permission: 'hallSystem:window:mailbox:list'}
             },
-
+            {
+                path: 'licenceRecord',
+                component: LicenceRecord,
+                name: '取证记录',
+                meta: {permission: 'hallSystem:window:licenceRecord:list'}
+            },
             {
                 path: 'licence',
                 component: Licence,

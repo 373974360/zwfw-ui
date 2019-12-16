@@ -14,6 +14,13 @@ export function  getLicenceTypeByItemCode(approveCode) {
         params: approveCode
     })
 }
+export function  getLicenseInfoAndPicture(licenseNo) {
+    return fetch({
+        url: '/api/licence/licenceEnter/getLicenseInfoAndPicture',
+        method: 'get',
+        params: {licenseNo}
+    })
+}
 export function  createLicenceEnter(licenceEnter) {
     var data = licenceEnter;
     return fetch({
@@ -22,8 +29,9 @@ export function  createLicenceEnter(licenceEnter) {
         data
     })
 }
-export function  releaseLicenceEnter(jsonParam) {
-    var data = jsonParam;
+
+export function  release(jsonParam,phone,personName,itemName) {
+    var data ={jsonParam,phone,personName,itemName};
     return fetch({
         url: '/api/licence/licenceEnter/release',
         method: 'post',
