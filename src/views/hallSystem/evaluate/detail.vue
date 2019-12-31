@@ -206,7 +206,7 @@
                 listLoading: true,
                 listQuery: {
                     page: this.$store.state.app.page,
-                    rows: this.$store.state.app.rows,
+                    size: this.$store.state.app.rows,
                     channel: undefined,
                     itemCode: undefined,
                     itemName: undefined,
@@ -296,7 +296,7 @@
                 })
             },
             handleSizeChange(val){
-                this.listQuery.rows = val;
+                this.listQuery.size = val;
                 this.reloadList();
             },
             handleCurrentChange(val){
@@ -337,7 +337,7 @@
                 }
             },
             loadEnum(name) {
-                return getStore({name: 'enums'})[name];
+                return this.$store.state.app.enums[name];
             },
             submitTimeRangeChange(submitTimeRange) {
                 if (submitTimeRange && submitTimeRange.length > 0) {

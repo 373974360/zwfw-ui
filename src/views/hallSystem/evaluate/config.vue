@@ -147,7 +147,7 @@
                 listLoading: true,
                 listQuery: {
                     page: this.$store.state.app.page,
-                    rows: this.$store.state.app.rows,
+                    size: this.$store.state.app.rows,
                     contentCode: undefined,
                     level: undefined
                 },
@@ -201,12 +201,10 @@
         created(){
             this.evaluationLevelEnum = this.loadEnum('EvaluationLevelEnum');
             this.reloadList();
-            console.log(this.$store.state.app.enums)
-            console.log(this.enums)
         },
         methods: {
             loadEnum(name) {
-                return getStore({name: 'enums'})[name];
+                return this.$store.state.app.enums[name];
             },
             resetSearch(){
                 this.listQuery.contentCode = undefined;
@@ -221,7 +219,7 @@
                 })
             },
             handleSizeChange(val){
-                this.listQuery.rows = val;
+                this.listQuery.size = val;
                 this.reloadList();
             },
             handleCurrentChange(val){
