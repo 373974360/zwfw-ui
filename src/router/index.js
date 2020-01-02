@@ -94,6 +94,20 @@ const Identification = () => import('../views/hallSystem/window/identify/identif
 const IdentifyRegister = () => import('../views/hallSystem/window/identify/identifyRegister');
 const Authentication = () => import('../views/hallSystem/window/identify/authentication');
 
+
+/*好差评管理*/
+/*配置管理*/
+const Config = () => import('../views/hallSystem/evaluate/config');
+/*评价详情*/
+const Detail = () => import('../views/hallSystem/evaluate/detail');
+/*评价整改*/
+const Reform = () => import('../views/hallSystem/evaluate/reform');
+/*整改管理*/
+const ReformManage = () => import('../views/hallSystem/evaluate/reformManage');
+/*信息统计*/
+const Statistics = () => import('../views/hallSystem/evaluate/statistics');
+
+
 /** **********************政务服务管理系统************************/
 /* index */
 const ZwfwSystem = () => import('../views/zwfwSystem/index');
@@ -602,6 +616,46 @@ export const asyncRouterMap = [
                 name: '短信设置',
                 meta: {permission: 'hallSystem:statisticsSms:messageSet:list'}
             }
+        ]
+    },
+    {
+        path: '/evaluate',
+        redirect: 'noredirect',
+        name: '好差评管理',
+        meta: {permission: 'hallSystem:evaluate:admin'},
+        icon: 'evaluate',
+        component: Layout,
+        children: [
+            {
+                path: 'config',
+                component: Config,
+                name: '配置管理 ',
+                meta: {permission: 'hallSystem:evaluate:config:list'}
+            },
+            {
+                path: 'detail',
+                component: Detail,
+                name: '评价详情 ',
+                meta: {permission: 'hallSystem:evaluate:detail:list'}
+            },
+            {
+                path: 'reform',
+                component: Reform,
+                name: '评价整改 ',
+                meta: {permission: 'hallSystem:evaluate:reform:list'}
+            },
+            {
+                path: 'reformManage',
+                component: ReformManage,
+                name: '整改管理 ',
+                meta: {permission: 'hallSystem:evaluate:reformManage:list'}
+            },
+            {
+                path: 'statistics',
+                component: Statistics,
+                name: '信息统计 ',
+                meta: {permission: 'hallSystem:evaluate:statistics:list'}
+            },
         ]
     },
     /** **********************政务服务管理系统************************/

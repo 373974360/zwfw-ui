@@ -11,14 +11,11 @@
             </el-select>-->
             <el-date-picker
                 class="filter-item"
-                style="width: 384px"
+                style="width: 320px"
                 v-model="submitTimeRange"
-                value-format="yyyy-MM-dd HH:mm:ss"
                 type="datetimerange"
                 align="right"
-                start-placeholder="评价时间开始"
-                end-placeholder="评价时间结束"
-                :default-time="['00:00:00', '23:59:59']"
+                placeholder="选择时间范围"
                 @change="submitTimeRangeChange">
             </el-date-picker>
             <el-button type="primary" icon="el-icon-search" @click="doPlot" class="filter-item">查询</el-button>
@@ -83,13 +80,7 @@
                 countByLevelList: [],
                 channelList: [],
                 countByChannelList: [],
-                channelMap: {
-                    1: 'PC端',
-                    2: '移动端',
-                    3: '二维码',
-                    4: '政务大厅平板电脑',
-                    5: '政务大厅其他终端'
-                }
+                channelMap: {}
             }
         },
         computed: {
@@ -111,6 +102,12 @@
             });
         },
         methods: {
+            initChannelMap() {
+                const channelEnum = this.$store.state.app.enums['EvaluationChannelEnum'];
+                for (let e of channelEnum) {
+                    this.channelMap[e.code] = e.value;
+                }
+            },
             resetSearch() {
                 this.listQuery.statisticsType = undefined
                 this.listQuery.proDepartment = undefined;
@@ -120,8 +117,9 @@
             },
             submitTimeRangeChange(submitTimeRange) {
                 if (submitTimeRange && submitTimeRange.length > 0) {
-                    this.listQuery.evaluationTimeStart = submitTimeRange[0];
-                    this.listQuery.evaluationTimeEnd = submitTimeRange[1];
+                    const timeRange = submitTimeRange.split(' - ');
+                    this.listQuery.evaluationTimeStart = timeRange[0];
+                    this.listQuery.evaluationTimeEnd = timeRange[1];
                 } else {
                     this.listQuery.evaluationTimeStart = undefined;
                     this.listQuery.evaluationTimeEnd = undefined;
@@ -131,11 +129,11 @@
                 return new Promise((resolve, reject) => {
                     queryEvaluateCountByLevel().then(res => {
                         let countByLevelMap = res.data;
-                        this.countByLevelList.push({name: '非常不满意', value: countByLevelMap['1'] ? countByLevelMap['1'].count : 0});
-                        this.countByLevelList.push({name: '不满意', value: countByLevelMap['2'] ? countByLevelMap['2'].count : 0});
-                        this.countByLevelList.push({name: '基本满意', value: countByLevelMap['3'] ? countByLevelMap['3'].count : 0});
-                        this.countByLevelList.push({name: '满意', value: countByLevelMap['4'] ? countByLevelMap['4'].count : 0});
                         this.countByLevelList.push({name: '非常满意', value: countByLevelMap['5'] ? countByLevelMap['5'].count : 0});
+                        this.countByLevelList.push({name: '满意', value: countByLevelMap['4'] ? countByLevelMap['4'].count : 0});
+                        this.countByLevelList.push({name: '基本满意', value: countByLevelMap['3'] ? countByLevelMap['3'].count : 0});
+                        this.countByLevelList.push({name: '不满意', value: countByLevelMap['2'] ? countByLevelMap['2'].count : 0});
+                        this.countByLevelList.push({name: '非常不满意', value: countByLevelMap['1'] ? countByLevelMap['1'].count : 0});
                         resolve();
                     })
                 });
@@ -143,6 +141,7 @@
             queryCountByChannel() {
                 return new Promise((resolve, reject) => {
                     queryEvaluateCountByChannel().then(res => {
+                        this.initChannelMap();
                         for (let countByChannel of res.data) {
                             this.channelList.push(this.channelMap[countByChannel.channel]);
                             this.countByChannelList.push({name: this.channelMap[countByChannel.channel], value: countByChannel.count});
@@ -165,7 +164,7 @@
                     legend: {
                         orient: 'vertical',
                         left: 'left',
-                        data: ['非常不满意','不满意','基本满意','满意','非常满意']
+                        data: ['非常满意', '满意', '基本满意', '不满意', '非常不满意']
                     },
                     series : [
                         {
@@ -260,7 +259,7 @@
                                 text: '评价汇总统计'
                             },
                             legend: {
-                                data: ['非常满意', '满意', '一般', '不满意', '非常不满意']
+                                data: ['非常满意', '满意', '基本满意', '不满意', '非常不满意']
                             },
                             tooltip: {
                                 trigger: 'axis'
@@ -335,7 +334,7 @@
                                     data: this.satisfiedTotals
                                 },
                                 {
-                                    name: '一般',
+                                    name: '基本满意',
                                     type: 'bar',
                                     stack: '总分',
                                     data: this.basicSatisfiedTotals
@@ -418,7 +417,7 @@
                 this.submitTimeRange.push(start);
                 this.submitTimeRange.push(end);
 
-                this.submitTimeRangeChange(this.submitTimeRange);
+                this.submitTimeRangeChange(this.submitTimeRange.join(' - '));
             },
         }
     }
@@ -440,12 +439,12 @@
         float: left;
     }
 
-    .filter-item {
+/*    .filter-item {
         display: inline-block;
         vertical-align: middle;
         margin-bottom: 10px;
         margin-left: 10px;
-    }
+    }*/
 
     .splitBar {
         height: 60px;

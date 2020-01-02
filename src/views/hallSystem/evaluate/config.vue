@@ -19,12 +19,10 @@
                     </el-rate>
                 </template>
             </el-table-column>
-            <el-table-column prop="enable" class-name="status-col" label="操作" align="center" width="100">
+            <el-table-column prop="enable" class-name="status-col" label="操作" align="center" width="150">
                 <template slot-scope="scope">
-                    <el-button title="编辑" type="primary" icon="el-icon-edit"  circle
-                               @click.stop.safe="btnUpdate(scope.row)"></el-button>
-                    <el-button title="删除" type="danger" icon="el-icon-delete"  circle
-                               @click.stop.safe="btnDeleteByLevel(scope.row)"></el-button>
+                    <el-button type="primary" icon="edit" @click.stop.safe="btnUpdate(scope.row)"></el-button>
+                    <el-button type="danger" icon="delete" @click.stop.safe="btnDeleteByLevel(scope.row)"></el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -71,8 +69,7 @@
                             </el-form-item>
                         </el-col>
                         <el-col :span="12">
-                            <el-button title="删除" type="danger" icon="el-icon-delete"  circle
-                                       @click.prevent="removeContent(content)"></el-button>
+                            <el-button type="danger" icon="delete" @click.prevent="removeContent(content)"></el-button>
                         </el-col>
                     </el-row>
                     <el-row :gutter="20" :span="24">
@@ -111,7 +108,6 @@
 <script>
     import {mapGetters} from 'vuex';
     import {copyProperties} from 'utils';
-    import {getStore} from '@/util/store';
     import {
         getEvaluateConfig,
         createOrUpdateConfig,

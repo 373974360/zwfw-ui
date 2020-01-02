@@ -1,7 +1,8 @@
-import request from '@/router/axios';
+import fetch from 'utils/fetch';
+
 export function getDetail(id) {
-    return request({
-        url: '/manage/evaluate/detail/getByDetail',
+    return fetch({
+        url: '/api/evaluate/detail/getByDetail',
         method: 'get',
         params: {id}
     })
@@ -9,40 +10,40 @@ export function getDetail(id) {
 
 export function createOrUpdateDetail(detailVo){
     const data = detailVo;
-    return request({
-        url: '/manage/evaluate/detail/saveOrUpdate',
+    return fetch({
+        url: '/api/evaluate/detail/saveOrUpdate',
         method: 'post',
-        data
+        data: data
     })
 }
 
 export function delDetail(id) {
     const data = {id};
-    return request({
-        url: '/manage/evaluate/detail/removeByDetail',
+    return fetch({
+        url: '/api/evaluate/detail/removeByDetail',
         method: 'post',
-        data
+        data: data
     })
 }
 export function delDetails(ids) {
     const data = {ids};
-    return request({
-        url: '/manage/evaluate/detail/removeByIds',
+    return fetch({
+        url: '/api/evaluate/detail/removeByIds',
         method: 'post',
-        data
+        data: data
     })
 }
 export function getDetailList(query) {
-    return request({
-        url: '/manage/evaluate/detail/pageByDetail',
+    return fetch({
+        url: '/api/evaluate/detail/pageByDetail',
         method: 'get',
         params: query
     });
 }
 
 export function getReplyDetailList(query) {
-    return request({
-        url: '/manage/evaluate/detail/pageReplyByDetail',
+    return fetch({
+        url: '/api/evaluate/detail/pageReplyByDetail',
         method: 'get',
         params: query
     });
@@ -50,16 +51,16 @@ export function getReplyDetailList(query) {
 
 export function saveReply(detailVo){
     const data = detailVo;
-    return request({
-        url: '/manage/evaluate/detail/saveReply',
+    return fetch({
+        url: '/api/evaluate/detail/saveReply',
         method: 'post',
-        data
+        data: data
     })
 }
 
 export function getStatistics(query) {
-    return request({
-        url: '/manage/evaluate/detail/getStatistics',
+    return fetch({
+        url: '/api/evaluate/detail/getStatistics',
         method: 'get',
         params: query
     });
@@ -68,56 +69,56 @@ export function getStatistics(query) {
 
 
 export function poorInvalidAudit(detailVo) {
-    return request({
-        url: '/manage/evaluate/detail/poorInvalidAudit',
+    return fetch({
+        url: '/api/evaluate/detail/poorInvalidAudit',
         method: 'post',
         data: detailVo
     })
 }
 
 export function reformChange(detailVo) {
-    return request({
-        url: '/manage/evaluate/detail/reformChange',
+    return fetch({
+        url: '/api/evaluate/detail/reformChange',
         method: 'post',
         data: detailVo
     })
 }
 
 export function unchangedAudit(detailVo) {
-    return request({
-        url: '/manage/evaluate/detail/unchangedAudit',
+    return fetch({
+        url: '/api/evaluate/detail/unchangedAudit',
         method: 'post',
         data: detailVo
     })
 }
 
 export function reformDelay(detailVo) {
-    return request({
-        url: '/manage/evaluate/detail/reformDelay',
+    return fetch({
+        url: '/api/evaluate/detail/reformDelay',
         method: 'post',
         data: detailVo
     })
 }
 
 export function reformDelayAudit(detailVo) {
-    return request({
-        url: '/manage/evaluate/detail/reformDelayAudit',
+    return fetch({
+        url: '/api/evaluate/detail/reformDelayAudit',
         method: 'post',
         data: detailVo
     })
 }
 
 export function queryEvaluateRecordList(detailId) {
-    return request({
-        url: '/manage/evaluate/detail/queryEvaluateRecordList',
+    return fetch({
+        url: '/api/evaluate/detail/queryEvaluateRecordList',
         method: 'get',
         params: {detailId}
     })
 }
 
 export function reformRevisit(detailVo) {
-    return request({
-        url: '/manage/evaluate/detail/reformRevisit',
+    return fetch({
+        url: '/api/evaluate/detail/reformRevisit',
         method: 'post',
         data: detailVo
     })

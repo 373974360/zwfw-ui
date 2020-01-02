@@ -55,7 +55,7 @@ ul {
     margin: 0;
 }
 
-.el-dialog {
+/*.el-dialog {
     display: flex;
     flex-direction: column;
     margin:0 !important;
@@ -79,10 +79,15 @@ ul {
 }
 .el-dialog .el-form .el-form-item {
     margin: 0;
-}
+}*/
 /* 弹窗底部按钮居中 */
-.el-dialog .el-dialog__footer {
+/*.el-dialog .el-dialog__footer {
     padding: 10px 20px;
     text-align: center;
     box-sizing: border-box;
+}*/
+
+
+.el-button+.el-button {
+     margin-left: 0;
 }

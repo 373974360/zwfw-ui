@@ -1,7 +1,7 @@
 <template>
     <div class="app-container calendar-list-container">
         <div class="filter-container">
-            <el-select v-model="listQuery.levelCode" clearable placeholder="请选择评价等级" class="filter-item">
+            <el-select v-model="listQuery.levelCode" clearable placeholder="请选择评价等级" class="filter-item" style="width: 200px">
                 <el-option
                     v-for="item in loadEnum('EvaluationLevelEnum')"
                     :key="item.code"
@@ -9,7 +9,7 @@
                     :value="item.code">
                 </el-option>
             </el-select>
-            <el-select v-model="listQuery.channel" clearable placeholder="请选择评价渠道" class="filter-item">
+            <el-select v-model="listQuery.channel" clearable placeholder="请选择评价渠道" class="filter-item" style="width: 200px">
                 <el-option
                     v-for="item in loadEnum('EvaluationChannelEnum')"
                     :key="item.code"
@@ -17,7 +17,7 @@
                     :value="item.code">
                 </el-option>
             </el-select>
-            <el-select v-model="listQuery.subMatter" clearable placeholder="请选择事项主题" class="filter-item">
+            <el-select v-model="listQuery.subMatter" clearable placeholder="请选择事项主题" class="filter-item" style="width: 200px">
                 <el-option
                     v-for="item in loadEnum('ServiceObjectEnum')"
                     :key="item.code"
@@ -25,19 +25,16 @@
                     :value="item.code">
                 </el-option>
             </el-select>
-            <el-input clearable placeholder="请输入事项编码" v-model="listQuery.itemCode" style="width: 187px" class="filter-item"></el-input>
-            <el-input clearable placeholder="请输入事项名称" v-model="listQuery.itemName" style="width: 187px" class="filter-item"></el-input>
-            <el-input clearable placeholder=请输入用户姓名" v-model="listQuery.userName" style="width: 187px" class="filter-item"></el-input>
+            <el-input clearable placeholder="请输入事项编码" v-model="listQuery.itemCode" style="width: 200px" class="filter-item"></el-input>
+            <el-input clearable placeholder="请输入事项名称" v-model="listQuery.itemName" style="width: 200px" class="filter-item"></el-input>
+            <el-input clearable placeholder="请输入用户姓名" v-model="listQuery.userName" style="width: 200px" class="filter-item"></el-input>
             <el-date-picker
                 class="filter-item"
-                style="width: 384px"
+                style="width: 320px"
                 v-model="submitTimeRange"
-                value-format="yyyy-MM-dd HH:mm:ss"
                 type="datetimerange"
                 align="right"
-                start-placeholder="评价时间开始"
-                end-placeholder="评价时间结束"
-                :default-time="['00:00:00', '23:59:59']"
+                placeholder="选择时间范围"
                 @change="submitTimeRangeChange">
             </el-date-picker>
             <el-button type="primary" icon="el-icon-search" @click="searchReloadList" class="filter-item">查询</el-button>
@@ -68,7 +65,7 @@
         </el-table>
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
                        :current-page.sync="listQuery.page" :page-sizes="this.$store.state.app.pageSize"
-                       :page-size="listQuery.rows" layout="total, sizes, prev, pager, next, jumper" :total="total">
+                       :page-size="listQuery.size" layout="total, sizes, prev, pager, next, jumper" :total="total">
         </el-pagination>
 
         <!--详情-->
@@ -135,7 +132,8 @@
                 </tr>
                 <tr v-if="detail.words">
                     <td class="column">文字评价</td>
-                    <td class="reform" colspan="3">{{detail.words | convertBlank}}</td>
+<!--                    <td class="reform" colspan="3">{{detail.words | convertBlank}}</td>-->
+                    <td class="reform" colspan="3">{{detail.words}}</td>
                 </tr>
                 <tr v-if="recordsList && recordsList.length > 0">
                     <td class="column">操作记录</td>
@@ -186,7 +184,6 @@
 <script>
     import {mapGetters} from 'vuex';
     import {copyProperties} from 'utils';
-    import {getStore} from '@/util/store';
     import {
         getDetailList,
         queryEvaluateRecordList
@@ -341,8 +338,9 @@
             },
             submitTimeRangeChange(submitTimeRange) {
                 if (submitTimeRange && submitTimeRange.length > 0) {
-                    this.listQuery.evaluationTimeStart = submitTimeRange[0];
-                    this.listQuery.evaluationTimeEnd = submitTimeRange[1];
+                    const timeRange = submitTimeRange.split(' - ');
+                    this.listQuery.evaluationTimeStart = timeRange[0];
+                    this.listQuery.evaluationTimeEnd = timeRange[1];
                 } else {
                     this.listQuery.evaluationTimeStart = undefined;
                     this.listQuery.evaluationTimeEnd = undefined;
