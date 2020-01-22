@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>西安国际港务区补正补齐资料单</title>
+    <style media="print">button {
+        display: none;
+    }</style>
+
+    <style type="text/css" id="style1">
+
+        body {
+            font-size: 16px;
+            line-height: 2em;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        table tr td {
+            border: solid black 1px;
+            padding: 10px;
+            font-size: 20px
+
+        }
+    </style>
+</head>
+
+<body>
+<div class="printTable">
+
+    <div style="width:600px;margin:0px auto">
+
+        <p style="margin-top:0px;font-size: medium;text-align: center;white-space: normal;background-color: rgb(255, 255, 255)">
+            <span style="font-size: 29px;font-weight: bold">关于办理公共场所卫生许可新办温馨提示</span>
+        </p>
+        <div style="width: 600px;text-align: center;margin: 10px auto;">
+
+            <p style="font-size: medium;text-align: left;white-space: normal;background-color: rgb(255, 255, 255);text-indent:40px">
+                <span style="font-size: 21px;text-indent:25px">根据《西安市卫生和计划生育委员会转发陕西省卫生计生委办公室关于实施公共场所卫生许可告知承诺制有关事项的通知》（市卫计函﹝2018﹞1192号），您办理的事项实行告知承诺制，请您于2020年3月25日前将资料补齐，递交至行政审批服务局政务大厅一楼，逾期未提交资料或所提交的资料不符合要求且无法补正的，将依法撤销行政许可决定。</span>
+            </p>
+        </div>
+
+        <div style="text-align: center;">
+            <button onclick="window.print()">打印</button>
+        </div>
+
+        <table width="100%">
+            <tbody>
+
+            <tr>
+                <td colspan="1" align="center" width="50%" style="">企业（个人）信息</td>
+                <td colspan="1" align="center" style="font-size:20px">补齐补正资料信息</td>
+            </tr>
+            <tr>
+                <td colspan="1" align="left" valign="top">
+                    <div style=" margin-top:1em">
+                        <p>单位名称：{{info.DanWeiMingChen}}</p>
+                        <p>办证时间：{{info.FaZhengShiJian}}</p>
+                        <p>法定代表人： {{info.FaDingDaiBiaoRen}}</p>
+                        <p>地址：{{info.DiZhi}}</p>
+                        <p>许可项目：{{info.XuKeXiangMu}}</p>
+                    </div>
+                </td>
+                <td colspan="1" align="left" valign="top">
+                    <div style=" margin-top:1em">
+                        <p v-for="(material,index) in materialList">{{index+1}}、{{material}}</p>
+
+                    </div>
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+        <div style="height:70px"></div>
+        <div style="width: 600px;text-align: right;margin: 0px auto;">
+
+            <div style="font-size: 21px;">行政审批服务局</div>
+            <div style="font-size: 21px;">{{info.FaZhengShiJian}}</div>
+            <div style="font-size: 21px;">（联系人：李静 联系方式：83620335）</div>
+        </div>
+    </div>
+
+
+</div>
+<script src="../vue.min.js"></script>
+<script src="../jquery.min.js"></script>
+<script type="text/javascript">
+
+    function getParam(name) {
+        return location.search.match(new RegExp('[?&]' + name + '=([^?&]+)', 'i')) ? decodeURIComponent(RegExp.$1) : '';
+    }
+
+    var printTable = new Vue({
+        el: '.printTable',
+        data: {
+            date: "",
+            info: null,
+            materialList: null
+        },
+        mounted: function () {
+            this.info = $.parseJSON(getParam("info"));
+            this.materialList = (getParam("material")).split(',');
+            console.log(this.info);
+            console.log(this.materialList);
+        }
+    });
+</script>
+
+</body>
+
+
+</html>

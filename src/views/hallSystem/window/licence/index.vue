@@ -65,6 +65,7 @@
                     <el-button type="primary" @click="doAddRelease(scope.row)">新增发布</el-button>
                     <el-button type="primary" @click="doUpdateRelease(scope.row)">更新发布</el-button>
                     <el-button type="primary" @click="preview(scope.row)">预览</el-button>
+                    <el-button v-if="scope.row.approveCode == 'be755d835f3e4050b2d0c3ea61651188'" type="primary" @click="bqbzMaterial(scope.row)">补齐补正资料单</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -97,6 +98,16 @@
                             <span style="font-weight:normal;white-space: pre-wrap;line-height: 25px;">持有者类型：{{data.holderType}}<br/>证照模板编码:{{data.licenceTypeCode}}<br/>证照模板名称:{{data.licenceTypeName}}<br/>证照颁发机构代码:{{data.deptOrganizeCode}}<br/>证照颁发机构:{{data.deptName}}</span><br/>
                         </el-radio>
                     </el-radio-group>
+                </el-form-item>
+
+                <el-form-item label="补齐补正资料" prop="material" v-if="checkShow">
+                    <template>
+                        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+                        <div style="margin: 15px 0;"></div>
+                        <el-checkbox-group v-model="material" @change="handleMaterialChange">
+                            <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
+                        </el-checkbox-group>
+                    </template>
                 </el-form-item>
                 <el-form-item label="证照模板编码" prop="licenseTypeCode" v-if="!updateShow">
                     <el-input v-model="licenceEnter.licenseTypeCode" :disabled="updateLicenceDisabled"></el-input>
@@ -213,7 +224,7 @@
         getLicenseInfoAndPicture,
         release
     } from '../../../../api/hallSystem/window/licence';
-
+    const cityOptions = ['卫生检测报告', '使用集中空调通风系统还应当提供集中空调通风系统卫生检测或评价报告', '从业人员（包括临时工）的花名册', '从业人员（包括临时工）的健康合格证明', '公共场所卫生管理制度'];
     export default {
         name: 'table_demo',
         data() {
@@ -230,6 +241,11 @@
                 callback();
             };
             return {
+                checkShow: false,
+                checkAll: true,
+                material: ['卫生检测报告', '使用集中空调通风系统还应当提供集中空调通风系统卫生检测或评价报告'],
+                cities: cityOptions,
+                isIndeterminate: true,
                 zzmbShow: false,
                 updateLicenceDisabled: false,
                 updateShow: false,
@@ -401,7 +417,8 @@
                     licenceId: undefined,
                     printNum: 0,
                     copyNum: 0,
-                    copyPage: 0
+                    copyPage: 0,
+                    material: undefined
                 },
                 jsonObject: {
                     type: 'new',
@@ -483,6 +500,19 @@
             ])
         },
         methods: {
+            bqbzMaterial(row){
+                window.open('print/ggwsxk.html?material='+row.material+'&info=' + row.licenceValue);
+                console.log($.parseJSON(row.licenceValue));
+            },
+            handleCheckAllChange() {
+                this.material = this.checkAll ? cityOptions : [];
+                this.isIndeterminate = false;
+            },
+            handleMaterialChange(value) {
+                let checkedCount = value.length;
+                this.checkAll = checkedCount === this.cities.length;
+                this.isIndeterminate = checkedCount > 0 && checkedCount < this.cities.length;
+            },
             onRadioChange(data) {
                 if (/^[0-9]+$/.test(data)) {
                     console.log(this.radio);
@@ -514,6 +544,9 @@
                 this.surfaceDta1 = [];
                 this.licenceEnter.licenceType = undefined;
                 this.radio = undefined;
+                if (this.licenceEnter.approveCode=='be755d835f3e4050b2d0c3ea61651188'){
+                    this.checkShow = true;
+                }
                 getLicenceTypeByItemCode({approveCode: this.licenceEnter.approveCode}).then(response => {
                     this.getLicenceTypeShow = true;
                     if (response.httpCode === 200) {
@@ -581,6 +614,7 @@
                 this.dialogStatus = 'create';
                 this.updateShow = true;
                 this.zzmbShow = false;
+                this.checkShow = false;
                 this.updateLicenceDisabled = false;
                 this.getLicenceTypeShow = false;
                 this.dialogFormVisible = true;
@@ -602,6 +636,18 @@
                 this.getPaginateSurfaceByType()
                 if (this.licenceEnter.surfaceData.ZhaoPian != undefined) {
                     this.imageUrl = this.licenceEnter.surfaceData.ZhaoPian.content;
+                }
+
+                if (this.licenceEnter.approveCode=='be755d835f3e4050b2d0c3ea61651188'){
+                    this.checkShow = true;
+                    if (this.licenceEnter.material!=undefined) {
+                        let split = this.licenceEnter.material.split(",");
+                        this.material = split;
+                    }else{
+                        this.material = [];
+                    }
+                }else{
+                    this.checkShow = false;
                 }
                 this.dialogStatus = 'update';
                 this.dialogFormVisible = true;
@@ -631,6 +677,9 @@
                                 this.licenceEnter.approveId = this.itemList[i].approveId;
                                 this.licenceEnter.approveName = this.itemList[i].approveName
                             }
+                        }
+                        if (this.licenceEnter.approveCode=='be755d835f3e4050b2d0c3ea61651188'){
+                            this.licenceEnter.material = this.material.toString()
                         }
                         this.licenceEnter.chooseLicenceType = JSON.stringify(this.licenceEnter.chooseLicenceType);
                         this.licenceEnter.licenceType = JSON.stringify(this.licenceEnter.licenceType);
@@ -663,6 +712,9 @@
                                 this.licenceEnter.approveId = this.itemList[i].approveId;
                                 this.licenceEnter.approveName = this.itemList[i].approveName
                             }
+                        }
+                        if (this.licenceEnter.approveCode=='be755d835f3e4050b2d0c3ea61651188'){
+                            this.licenceEnter.material = this.material.toString()
                         }
                         this.licenceEnter.chooseLicenceType = JSON.stringify(this.licenceEnter.chooseLicenceType);
                         this.licenceEnter.licenceType = JSON.stringify(this.licenceEnter.licenceType);
@@ -822,7 +874,8 @@
                     licenceId: undefined,
                     printNum: undefined,
                     copyPage: undefined,
-                    copyNum: undefined
+                    copyNum: undefined,
+                    material: undefined
                 };
             },
             resetLicenceEnterForm() {
